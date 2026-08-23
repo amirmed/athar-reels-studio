@@ -3,6 +3,7 @@
   "version": "2.0.0",
   "type": "module",
   "description": "أَثَــر ستوديو • صانع الريلز والفيديوهات القرآنية الفيروسي 2026",
+  "author": "Athar Reels Studio <contact@atar-studio.com>",
   "main": "dist-electron/main.js",
   "scripts": {
     "dev": "vite",
@@ -116,8 +117,7 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "أَثَــر ستوديو",
-      "differentialPackage": false,
-      "solid": true
+      "differentialPackage": false
     }
   }
 }
