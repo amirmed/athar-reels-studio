@@ -52,6 +52,38 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ==================== Semantic CSS Variables Design System ==================== */
+:root,
+html.dark {
+  color-scheme: dark;
+  --color-surface-50: 248 249 252;
+  --color-surface-100: 238 240 246;
+  --color-surface-200: 213 217 232;
+  --color-surface-300: 176 184 209;
+  --color-surface-400: 132 144 181;
+  --color-surface-500: 100 112 155;
+  --color-surface-600: 79 89 129;
+  --color-surface-700: 65 73 105;
+  --color-surface-800: 30 34 53;
+  --color-surface-900: 22 25 39;
+  --color-surface-950: 13 15 26;
+}
+
+html.light {
+  color-scheme: light;
+  --color-surface-50: 15 23 42;
+  --color-surface-100: 30 41 59;
+  --color-surface-200: 51 65 85;
+  --color-surface-300: 71 85 105;
+  --color-surface-400: 100 116 139;
+  --color-surface-500: 148 163 184;
+  --color-surface-600: 203 213 225;
+  --color-surface-700: 226 232 240;
+  --color-surface-800: 241 245 249;
+  --color-surface-900: 255 255 255;
+  --color-surface-950: 248 250 252;
+}
+
 @layer base {
   * {
     margin: 0;
@@ -64,11 +96,25 @@
     direction: rtl;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: rgb(var(--color-surface-950));
+    color: #ffffff;
+  }
+
+  html.light {
+    background-color: #f8fafc;
+    color: #0f172a;
   }
 
   body {
     overflow: hidden;
     user-select: none;
+    background-color: rgb(var(--color-surface-950));
+  }
+
+  html.light body,
+  html.light #root {
+    background-color: #f8fafc;
+    color: #0f172a;
   }
 
   /* Quranic verse and reading text selection support */
@@ -79,7 +125,7 @@
     -webkit-user-select: text !important;
   }
 
-  /* Electron window drag regions - MUST be in CSS not inline styles */
+  /* Electron window drag regions */
   .drag-region {
     -webkit-app-region: drag;
   }
@@ -114,14 +160,13 @@
     color: #ffffff;
   }
 
-  /* Focus-visible accessibility ring — keyboard users see a teal ring */
+  /* Focus-visible accessibility ring */
   :focus-visible {
     outline: 2px solid rgb(20 184 166 / 0.6);
     outline-offset: 2px;
     border-radius: 8px;
   }
 
-  /* Inputs keep a subtler ring when focused */
   input:focus-visible,
   select:focus-visible,
   textarea:focus-visible {
@@ -129,12 +174,11 @@
     outline-offset: 0;
   }
 
-  /* Mouse/touch users don't see the ring */
   :focus:not(:focus-visible) {
     outline: none;
   }
 
-  /* Range input sliders */
+  /* ==================== Unified Range Slider (Gold Brand Accent) ==================== */
   input[type='range'] {
     -webkit-appearance: none;
     appearance: none;
@@ -142,40 +186,53 @@
     border-radius: 999px;
     height: 6px;
     outline: none;
+    direction: ltr;
     transition: background 0.2s ease;
   }
 
+  html.light input[type='range'] {
+    background: rgba(15, 23, 42, 0.12);
+  }
+
   input[type='range']:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.22);
   }
 
   input[type='range']::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 15px;
-    height: 15px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
-    background: #eab308;
+    background: linear-gradient(135deg, #fbbf24, #d97706);
     border: 2px solid #0f172a;
-    box-shadow: 0 0 6px rgba(234, 179, 8, 0.4);
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.45);
     cursor: pointer;
     transition:
       transform 0.15s ease,
-      background-color 0.15s ease;
+      box-shadow 0.15s ease;
+  }
+
+  html.light input[type='range']::-webkit-slider-thumb {
+    border: 2px solid #ffffff;
   }
 
   input[type='range']::-webkit-slider-thumb:hover {
-    transform: scale(1.15);
-    background: #facc15;
+    transform: scale(1.2);
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.65);
+  }
+
+  input[type='range']::-webkit-slider-thumb:active {
+    transform: scale(0.95);
   }
 
   input[type='range']::-moz-range-thumb {
-    width: 15px;
-    height: 15px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
-    background: #eab308;
+    background: linear-gradient(135deg, #fbbf24, #d97706);
     border: 2px solid #0f172a;
-    box-shadow: 0 0 6px rgba(234, 179, 8, 0.4);
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.45);
     cursor: pointer;
     transition: transform 0.15s ease;
   }
@@ -193,166 +250,17 @@
   }
 }
 
-/* ==================== Comprehensive Light Mode Design System ==================== */
-html.light {
-  color-scheme: light;
-  background-color: #f8fafc !important;
-  color: #0f172a !important;
-}
-
-html.light body,
-html.light #root {
-  background-color: #f8fafc !important;
-  color: #0f172a !important;
-}
-
-/* 1. All background surfaces with any opacity in Light Mode */
-html.light .bg-surface-950,
-html.light [class*='bg-surface-950'] {
-  background-color: #f8fafc !important;
-}
-
-html.light .bg-surface-900,
-html.light [class*='bg-surface-900'] {
-  background-color: #ffffff !important;
-  border-color: rgba(15, 23, 42, 0.08) !important;
-}
-
-html.light .bg-surface-800,
-html.light [class*='bg-surface-800'] {
-  background-color: #f1f5f9 !important;
-  border-color: rgba(15, 23, 42, 0.08) !important;
-}
-
-html.light .bg-surface-700,
-html.light [class*='bg-surface-700'],
-html.light .bg-surface-600,
-html.light [class*='bg-surface-600'] {
-  background-color: #e2e8f0 !important;
-  border-color: rgba(15, 23, 42, 0.08) !important;
-}
-
-/* 2. Fix gradients in Light Mode */
-html.light [class*='from-surface-950'] {
-  --tw-gradient-from: #f8fafc var(--tw-gradient-from-position) !important;
-  --tw-gradient-to: rgb(248 250 252 / 0) var(--tw-gradient-to-position) !important;
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
-}
-
-html.light [class*='from-surface-900'] {
-  --tw-gradient-from: #ffffff var(--tw-gradient-from-position) !important;
-  --tw-gradient-to: rgb(255 255 255 / 0) var(--tw-gradient-to-position) !important;
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
-}
-
-html.light [class*='from-surface-800'] {
-  --tw-gradient-from: #f1f5f9 var(--tw-gradient-from-position) !important;
-  --tw-gradient-to: rgb(241 245 249 / 0) var(--tw-gradient-to-position) !important;
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
-}
-
-html.light [class*='via-surface-950'] {
-  --tw-gradient-to: rgb(248 250 252 / 0) var(--tw-gradient-to-position) !important;
-  --tw-gradient-stops:
-    var(--tw-gradient-from), #f8fafc var(--tw-gradient-via-position), var(--tw-gradient-to) !important;
-}
-
-html.light [class*='via-surface-900'] {
-  --tw-gradient-to: rgb(255 255 255 / 0) var(--tw-gradient-to-position) !important;
-  --tw-gradient-stops:
-    var(--tw-gradient-from), #ffffff var(--tw-gradient-via-position), var(--tw-gradient-to) !important;
-}
-
-html.light [class*='via-surface-800'] {
-  --tw-gradient-to: rgb(241 245 249 / 0) var(--tw-gradient-to-position) !important;
-  --tw-gradient-stops:
-    var(--tw-gradient-from), #f1f5f9 var(--tw-gradient-via-position), var(--tw-gradient-to) !important;
-}
-
-html.light [class*='to-surface-950'] {
-  --tw-gradient-to: #f8fafc var(--tw-gradient-to-position) !important;
-}
-
-html.light [class*='to-surface-900'] {
-  --tw-gradient-to: #ffffff var(--tw-gradient-to-position) !important;
-}
-
-html.light [class*='to-surface-800'] {
-  --tw-gradient-to: #f1f5f9 var(--tw-gradient-to-position) !important;
-}
-
-/* 3. Glass panels, cards, docks, sidebars, headers, inspectors, toolbars */
-html.light .glass-panel,
-html.light .glass-panel-solid,
-html.light .glass-dock,
-html.light .glass-inspector,
-html.light .floating-toolbar,
-html.light .glass-card,
-html.light aside,
-html.light header,
-html.light nav {
-  background-color: #ffffff !important;
-  border-color: rgba(15, 23, 42, 0.08) !important;
-  color: #0f172a !important;
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04) !important;
-}
-
-/* 4. Inputs, selects, textareas */
-html.light input:not([type='range']),
-html.light select,
-html.light textarea,
-html.light .glass-input,
-html.light .glass-select {
-  background-color: #ffffff !important;
-  border-color: #cbd5e1 !important;
-  color: #0f172a !important;
-}
-
-html.light input::placeholder,
-html.light textarea::placeholder,
-html.light .glass-input::placeholder {
-  color: #94a3b8 !important;
-}
-
-/* 5. Buttons */
-html.light .glass-button,
-html.light .btn-ghost {
-  background-color: #f1f5f9 !important;
-  border-color: #cbd5e1 !important;
-  color: #334155 !important;
-}
-
-html.light .glass-button:hover,
-html.light .btn-ghost:hover {
-  background-color: #e2e8f0 !important;
-  color: #0f172a !important;
-}
-
-/* 6. Navigation Items */
-html.light .nav-item {
-  color: #475569 !important;
-}
-
-html.light .nav-item:hover {
-  background-color: rgba(20, 184, 166, 0.08) !important;
-  color: #0d9488 !important;
-}
-
-html.light .nav-item.active {
-  background-color: rgba(20, 184, 166, 0.12) !important;
-  color: #0d9488 !important;
-}
-
-/* 7. Typography in Light Mode */
-html.light [class*='text-white'] {
-  color: #0f172a !important;
+/* ==================== Light Mode Precision Adjustments ==================== */
+/* 1. Typography in Light Mode */
+html.light [class*='text-white']:not([class*='from-']):not([class*='bg-']):not(.btn-primary *):not(.btn-gold *):not(#preview-canvas-container *):not(.video-preview-studio *) {
+  color: #0f172a;
 }
 
 html.light [class*='text-white/95'],
 html.light [class*='text-white/90'],
 html.light [class*='text-white/85'],
 html.light [class*='text-white/80'] {
-  color: #1e293b !important;
+  color: #1e293b;
 }
 
 html.light [class*='text-white/75'],
@@ -360,7 +268,7 @@ html.light [class*='text-white/70'],
 html.light [class*='text-white/65'],
 html.light [class*='text-white/60'],
 html.light [class*='text-white/50'] {
-  color: #475569 !important;
+  color: #475569;
 }
 
 html.light [class*='text-white/45'],
@@ -368,83 +276,36 @@ html.light [class*='text-white/40'],
 html.light [class*='text-white/30'],
 html.light [class*='text-white/20'],
 html.light [class*='text-white/10'] {
-  color: #94a3b8 !important;
+  color: #94a3b8;
 }
 
-/* 8. Borders in Light Mode */
-html.light [class*='border-white'] {
-  border-color: rgba(15, 23, 42, 0.08) !important;
+/* 2. Borders in Light Mode */
+html.light [class*='border-white']:not(#preview-canvas-container *):not(.video-preview-studio *) {
+  border-color: rgba(15, 23, 42, 0.08);
 }
 
-html.light .divider {
-  border-color: rgba(15, 23, 42, 0.08) !important;
+/* 3. High-Contrast WCAG Accent Text in Light Mode */
+html.light .text-gold-200,
+html.light .text-gold-300,
+html.light .text-gold-400,
+html.light .text-amber-300,
+html.light .text-amber-400 {
+  color: #b45309;
 }
 
-/* 9. White text inside colored gradients & primary buttons */
-html.light .btn-primary,
-html.light .btn-primary-sm,
-html.light .btn-gold,
-html.light .btn-danger,
-html.light [class*='from-accent-'],
-html.light [class*='from-gold-'],
-html.light [class*='from-emerald-'],
-html.light [class*='from-sky-'],
-html.light [class*='from-rose-'],
-html.light [class*='from-amber-'],
-html.light [class*='from-purple-'],
-html.light [class*='from-blue-'],
-html.light .bg-accent-500,
-html.light .bg-accent-600,
-html.light .bg-gold-500,
-html.light .bg-gold-600,
-html.light .bg-emerald-500,
-html.light .bg-emerald-600,
-html.light .bg-rose-500,
-html.light .bg-rose-600,
-html.light .bg-red-500,
-html.light .bg-red-600,
-html.light .bg-sky-500,
-html.light .bg-sky-600 {
-  color: #ffffff !important;
+html.light .text-emerald-300,
+html.light .text-emerald-400 {
+  color: #047857;
 }
 
-html.light .btn-primary *,
-html.light .btn-primary-sm *,
-html.light .btn-gold *,
-html.light .btn-danger * {
-  color: #ffffff !important;
-}
-
-/* 10. Light mode patterns */
-html.light .pattern-dots {
-  background-image: radial-gradient(circle, rgba(15, 23, 42, 0.06) 1px, transparent 1px) !important;
-}
-
-html.light .pattern-grid {
-  background-image:
-    linear-gradient(rgba(15, 23, 42, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(15, 23, 42, 0.05) 1px, transparent 1px) !important;
-}
-
-/* 11. Modals & Dialogs in Light Mode */
-html.light [role='dialog'],
-html.light .modal-content,
-html.light [class*='rounded-3xl bg-surface-900'],
-html.light [class*='rounded-2xl bg-surface-900'],
-html.light [class*='rounded-2xl bg-surface-800'] {
-  background-color: #ffffff !important;
-  border-color: rgba(15, 23, 42, 0.08) !important;
-  color: #0f172a !important;
-}
-
-/* 12. Modal Backdrops in Light Mode */
+/* 4. Modal Backdrops in Light Mode */
 html.light [class*='bg-black/60'],
 html.light [class*='bg-black/70'],
 html.light [class*='bg-black/80'],
 html.light [class*='bg-black/85'],
 html.light [class*='bg-black/90'],
 html.light [class*='bg-black/95'] {
-  background-color: rgba(15, 23, 42, 0.45) !important;
+  background-color: rgba(15, 23, 42, 0.45);
 }
 
 /* ==================== Video Canvas Isolation ==================== */
@@ -464,36 +325,6 @@ html.light [class*='bg-black/95'] {
 #preview-canvas-container [class*='text-white'],
 .video-preview-studio [class*='text-white'] {
   color: #ffffff !important;
-}
-
-#preview-canvas-container [class*='text-white/90'],
-.video-preview-studio [class*='text-white/90'] {
-  color: rgba(255, 255, 255, 0.9) !important;
-}
-
-#preview-canvas-container [class*='text-white/80'],
-.video-preview-studio [class*='text-white/80'] {
-  color: rgba(255, 255, 255, 0.8) !important;
-}
-
-#preview-canvas-container [class*='text-white/70'],
-.video-preview-studio [class*='text-white/70'] {
-  color: rgba(255, 255, 255, 0.7) !important;
-}
-
-#preview-canvas-container [class*='text-white/60'],
-.video-preview-studio [class*='text-white/60'] {
-  color: rgba(255, 255, 255, 0.6) !important;
-}
-
-#preview-canvas-container [class*='text-white/50'],
-.video-preview-studio [class*='text-white/50'] {
-  color: rgba(255, 255, 255, 0.5) !important;
-}
-
-#preview-canvas-container [class*='text-white/40'],
-.video-preview-studio [class*='text-white/40'] {
-  color: rgba(255, 255, 255, 0.4) !important;
 }
 
 #preview-canvas-container [class*='border-white'],
@@ -618,11 +449,21 @@ html.light [class*='bg-black/95'] {
     background-size: 24px 24px;
   }
 
+  html.light .pattern-dots {
+    background-image: radial-gradient(circle, rgba(15, 23, 42, 0.06) 1px, transparent 1px);
+  }
+
   .pattern-grid {
     background-image:
       linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
       linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
     background-size: 40px 40px;
+  }
+
+  html.light .pattern-grid {
+    background-image:
+      linear-gradient(rgba(15, 23, 42, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
   }
 }
 
@@ -651,38 +492,6 @@ html.light [class*='bg-black/95'] {
   font-family: 'Amiri', serif;
   line-height: 2.2;
   letter-spacing: 0.02em;
-}
-
-/* Range slider custom styling */
-input[type='range'] {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 99px;
-  outline: none;
-  direction: ltr;
-}
-
-input[type='range']::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #14b8a6, #0d9488);
-  cursor: pointer;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 2px 8px rgba(20, 184, 166, 0.3);
-  transition: transform 0.15s ease;
-}
-
-input[type='range']::-webkit-slider-thumb:hover {
-  transform: scale(1.15);
-}
-
-input[type='range']::-webkit-slider-thumb:active {
-  transform: scale(0.95);
 }
 
 /* Toggle switch */
@@ -762,33 +571,4 @@ input[type='range']::-webkit-slider-thumb:active {
     transform: none !important;
     transition: none !important;
   }
-}
-
-/* ==================== Light Theme High-Contrast WCAG Overrides ==================== */
-html.light .text-gold-200,
-html.light .text-gold-300,
-html.light .text-gold-400,
-html.light .text-amber-300,
-html.light .text-amber-400 {
-  color: #b45309 !important; /* Rich amber-700 / bronze with >4.5:1 WCAG contrast on white */
-}
-
-html.light .text-gold-300\/90,
-html.light .text-gold-400\/80,
-html.light .text-gold-400\/90 {
-  color: #92400e !important;
-}
-
-html.light .bg-gold-400\/10,
-html.light .bg-gold-400\/15,
-html.light .bg-gold-500\/10,
-html.light .bg-gold-500\/15,
-html.light .bg-gold-500\/20 {
-  background-color: rgba(180, 83, 9, 0.1) !important;
-  border-color: rgba(180, 83, 9, 0.25) !important;
-}
-
-html.light .text-emerald-300,
-html.light .text-emerald-400 {
-  color: #047857 !important; /* Emerald-700 for light backgrounds */
 }

@@ -9,17 +9,17 @@ export default {
     extend: {
       colors: {
         surface: {
-          50: '#f8f9fc',
-          100: '#eef0f6',
-          200: '#d5d9e8',
-          300: '#b0b8d1',
-          400: '#8490b5',
-          500: '#64709b',
-          600: '#4f5981',
-          700: '#414969',
-          800: '#1e2235',
-          900: '#161927',
-          950: '#0d0f1a',
+          50: 'rgb(var(--color-surface-50) / <alpha-value>)',
+          100: 'rgb(var(--color-surface-100) / <alpha-value>)',
+          200: 'rgb(var(--color-surface-200) / <alpha-value>)',
+          300: 'rgb(var(--color-surface-300) / <alpha-value>)',
+          400: 'rgb(var(--color-surface-400) / <alpha-value>)',
+          500: 'rgb(var(--color-surface-500) / <alpha-value>)',
+          600: 'rgb(var(--color-surface-600) / <alpha-value>)',
+          700: 'rgb(var(--color-surface-700) / <alpha-value>)',
+          800: 'rgb(var(--color-surface-800) / <alpha-value>)',
+          900: 'rgb(var(--color-surface-900) / <alpha-value>)',
+          950: 'rgb(var(--color-surface-950) / <alpha-value>)',
         },
         accent: {
           50: '#f0fdfa',
