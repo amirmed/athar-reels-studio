@@ -1,0 +1,123 @@
+{
+  "name": "athar-reels-studio",
+  "version": "2.0.0",
+  "type": "module",
+  "description": "أَثَــر ستوديو • صانع الريلز والفيديوهات القرآنية الفيروسي 2026",
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "electron:dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
+    "electron:build": "npm run build && electron-builder",
+    "lint": "eslint . && tsc --noEmit",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json}\"",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "fluent-ffmpeg": "^2.1.3",
+    "framer-motion": "^11.11.17",
+    "lucide-react": "^0.460.0",
+    "mp4-muxer": "^5.2.2",
+    "msedge-tts": "^2.0.7",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zustand": "^5.0.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/fluent-ffmpeg": "^2.1.28",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "concurrently": "^9.1.0",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "eslint": "^10.9.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.4",
+    "ffmpeg-static": "^5.3.0",
+    "postcss": "^8.4.49",
+    "prettier": "^3.9.6",
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.67.0",
+    "vite": "^6.0.3",
+    "vite-plugin-electron": "^0.28.8",
+    "vite-plugin-electron-renderer": "^0.14.6",
+    "vitest": "^4.1.11",
+    "wait-on": "^8.0.1"
+  },
+  "build": {
+    "appId": "com.athar-studio.app",
+    "productName": "أَثَــر ستوديو - Athar Reels Studio",
+    "icon": "assets/icon.ico",
+    "compression": "maximum",
+    "electronLanguages": [
+      "ar",
+      "en-US",
+      "fr"
+    ],
+    "asar": true,
+    "asarUnpack": [
+      "**/ffmpeg-static/ffmpeg.exe"
+    ],
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*",
+      "node_modules/**/*",
+      "!node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
+      "!node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
+      "!node_modules/*.d.ts",
+      "!node_modules/**/*.d.ts",
+      "!node_modules/**/*.map",
+      "!node_modules/**/.bin",
+      "!**/*.map",
+      "!**/tsconfig*.json",
+      "!**/eslint.config.js"
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "extraResources": [
+      {
+        "from": "resources/fonts",
+        "to": "fonts",
+        "filter": [
+          "**/*.ttf",
+          "**/*.otf"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "أَثَــر ستوديو",
+      "differentialPackage": false,
+      "solid": true
+    }
+  }
+}
