@@ -1,0 +1,70 @@
+name: Athar Studio CI & Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  lint-and-test:
+    name: 🧪 Quality Check & Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 📦 Install Dependencies
+        run: npm ci
+
+      - name: 🧹 Lint & TypeScript Verification
+        run: npm run lint
+
+      - name: 🧪 Run Automated Unit Tests
+        run: npm test
+
+  build-installer:
+    name: 📦 Build Windows Installer
+    needs: lint-and-test
+    runs-on: windows-latest
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 📦 Install Dependencies
+        run: npm ci
+
+      - name: 🔨 Compile Frontend & Electron Main
+        run: npm run build
+
+      - name: 🗜️ Package & Compress Windows Installer (.exe)
+        run: npx electron-builder --win --x64
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🚀 Upload Windows Setup Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Athar-Reels-Studio-Windows-Setup
+          path: |
+            release/*.exe
+            release/*.blockmap
+          retention-days: 14

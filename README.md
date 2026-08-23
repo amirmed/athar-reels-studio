@@ -5,6 +5,12 @@
   <h3>المنصة الاحترافية الأولى لإنتاج الريلز والفيديوهات القرآنية الفيروسية</h3>
   <p><em>﴿إِنَّا نَحْنُ نُحْيِي الْمَوْتَىٰ وَنَكْتُبُ مَا قَدَّمُوا وَآثَارَهُمْ﴾</em></p>
   <p><strong>صدقة جارية عن الوالدة تيجاني عائشة (رحمها الله وغفر لها وأسكنها الفردوس الأعلى)</strong></p>
+
+  <p>
+    <a href="https://github.com/amirmed/athar-reels-studio/actions/workflows/ci.yml">
+      <img src="https://github.com/amirmed/athar-reels-studio/actions/workflows/ci.yml/badge.svg" alt="CI & Build Status" />
+    </a>
+  </p>
 </div>
 
 ---
