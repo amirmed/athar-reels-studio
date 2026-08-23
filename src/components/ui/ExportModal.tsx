@@ -529,9 +529,10 @@ export const ExportModal: React.FC<ExportModalProps> = ({
       const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
       if (!ctx) throw new Error('فشل إنشاء سياق Canvas للتصدير');
 
-      // Pre-load background image or video
+      // Pre-load background image or video and multi-scene backgrounds
       let bgImg: HTMLImageElement | null = null;
       let bgVideo: HTMLVideoElement | null = null;
+      const sceneBgImages: Record<number, HTMLImageElement> = {};
 
       if (backgroundPath) {
         const isVideo = isVideoMedia(backgroundPath);
@@ -569,6 +570,28 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             bgImg.src = backgroundPath;
           });
         }
+      }
+
+      // Pre-load all scene backgrounds if multi-scene is enabled
+      if (textSettings?.sceneBackgrounds && Object.keys(textSettings.sceneBackgrounds).length > 0) {
+        const entries = Object.entries(textSettings.sceneBackgrounds);
+        await Promise.all(
+          entries.map(async ([idxStr, sceneUrl]) => {
+            if (!sceneUrl) return;
+            try {
+              const img = new Image();
+              img.crossOrigin = 'anonymous';
+              await new Promise((resolve) => {
+                img.onload = () => resolve(null);
+                img.onerror = () => resolve(null);
+                img.src = sceneUrl;
+              });
+              sceneBgImages[Number(idxStr)] = img;
+            } catch (e) {
+              console.warn('[ExportModal] Failed to preload scene background:', sceneUrl, e);
+            }
+          })
+        );
       }
 
       // 2. Audio setup with Web Audio API
@@ -729,6 +752,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
           masterAudioBuffer: masterBuffer,
           audioUrls: validAyahs.map((a) => a.audioUrl).filter(Boolean),
           bgImage: bgImg,
+          sceneBgImages,
           bgOpacity: bgOpacity ?? 0.6,
           textSettings,
           watermark,

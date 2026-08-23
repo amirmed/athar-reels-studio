@@ -26,6 +26,7 @@ export interface WebCodecsExportParams {
   audioUrls?: string[];
   bgImage?: HTMLImageElement | null;
   bgVideoUrl?: string | null;
+  sceneBgImages?: Record<number, HTMLImageElement | HTMLVideoElement>;
   bgOpacity: number;
   textSettings?: TextSettings;
   watermark?: string;
@@ -322,14 +323,15 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
     const durationUs = Math.round((1 / fps) * 1_000_000);
 
     // Find active timeline segment
-    let activeSegment = timeline.find((s) => currentTimeSec >= s.start && currentTimeSec < s.end);
-    if (!activeSegment && timeline.length > 0) {
-      activeSegment =
-        currentTimeSec >= timeline[timeline.length - 1].end
-          ? timeline[timeline.length - 1]
-          : timeline[0];
+    let activeSegmentIndex = timeline.findIndex(
+      (s) => currentTimeSec >= s.start && currentTimeSec < s.end
+    );
+    if (activeSegmentIndex === -1 && timeline.length > 0) {
+      activeSegmentIndex =
+        currentTimeSec >= timeline[timeline.length - 1].end ? timeline.length - 1 : 0;
     }
 
+    const activeSegment = timeline[activeSegmentIndex];
     const currentAyah = activeSegment ? activeSegment.ayah : params.ayahs[0];
 
     // Render frame to canvas with full visual parity
@@ -341,6 +343,8 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
       totalFrames,
       currentTimeSec,
       bgImage,
+      sceneBgImages: params.sceneBgImages,
+      currentAyahIndex: activeSegmentIndex >= 0 ? activeSegmentIndex : 0,
       bgOpacity,
       currentAyah,
       textSettings,

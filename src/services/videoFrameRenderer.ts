@@ -21,6 +21,8 @@ export interface FrameRenderOptions {
   currentTimeSec: number;
   bgImage?: HTMLImageElement | null;
   bgVideo?: HTMLVideoElement | null;
+  sceneBgImages?: Record<number, HTMLImageElement | HTMLVideoElement>;
+  currentAyahIndex?: number;
   bgOpacity: number;
   currentAyah: AyahData;
   textSettings?: TextSettings;
@@ -87,6 +89,8 @@ export function renderVideoExportFrame(opts: FrameRenderOptions): void {
     currentTimeSec,
     bgImage,
     bgVideo,
+    sceneBgImages,
+    currentAyahIndex = 0,
     bgOpacity,
     currentAyah,
     textSettings,
@@ -104,8 +108,12 @@ export function renderVideoExportFrame(opts: FrameRenderOptions): void {
   ctx.fillStyle = '#05070e';
   ctx.fillRect(0, 0, width, height);
 
-  // 2. Background Video or Image with Smooth Ken Burns Zoom/Pan
-  const bgSource = bgVideo || bgImage;
+  // 2. Background Video or Image with Multi-Scene Support & Ken Burns Zoom/Pan
+  let bgSource: HTMLImageElement | HTMLVideoElement | null | undefined = bgVideo || bgImage;
+  if (sceneBgImages && sceneBgImages[currentAyahIndex]) {
+    bgSource = sceneBgImages[currentAyahIndex];
+  }
+
   if (bgSource) {
     ctx.save();
     ctx.globalAlpha = Math.max(0, Math.min(1, bgOpacity));

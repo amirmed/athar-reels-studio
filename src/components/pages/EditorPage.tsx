@@ -803,6 +803,7 @@ export const EditorPage: React.FC = () => {
       // Ctrl + E -> Export Modal
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'e') {
         e.preventDefault();
+        handleSave();
         setShowExportModal(true);
         return;
       }
@@ -989,7 +990,10 @@ export const EditorPage: React.FC = () => {
         onRedo={redo}
         onSave={handleSave}
         saveStatus={saveStatus}
-        onOpenExport={() => setShowExportModal(true)}
+        onOpenExport={() => {
+          handleSave();
+          setShowExportModal(true);
+        }}
         onOpenAutoReel={() => setShowAutoReelModal(true)}
         onOpenPlaylists={() => setIsPlaylistModalOpen(true)}
         onOpenEvents={() => setIsIslamicEventsModalOpen(true)}

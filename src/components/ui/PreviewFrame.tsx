@@ -159,12 +159,10 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = React.memo(
 
     const activeVariant = transitionVariants[transition] || transitionVariants.fadeScale;
 
-    const isMultiScene = Boolean(textSettings?.enableMultiScene && ayahs.length > 1);
-    const activeBackgroundUrl = isMultiScene
-      ? textSettings?.sceneBackgrounds?.[currentAyahIndex] ||
-        backgroundUrl ||
-        CURATED_SCENE_FALLBACKS[Math.max(0, currentAyahIndex) % CURATED_SCENE_FALLBACKS.length]
-      : backgroundUrl || CURATED_SCENE_FALLBACKS[0];
+    const activeBackgroundUrl =
+      textSettings?.sceneBackgrounds?.[currentAyahIndex] ||
+      backgroundUrl ||
+      CURATED_SCENE_FALLBACKS[Math.max(0, currentAyahIndex) % CURATED_SCENE_FALLBACKS.length];
 
     return (
       <motion.div

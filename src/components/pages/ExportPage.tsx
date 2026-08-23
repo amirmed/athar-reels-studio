@@ -744,6 +744,32 @@ export const ExportPage: React.FC = () => {
           }
         }
 
+        // Pre-load scene backgrounds if any
+        const sceneBgImages: Record<number, HTMLImageElement> = {};
+        if (
+          currentProject.textSettings?.sceneBackgrounds &&
+          Object.keys(currentProject.textSettings.sceneBackgrounds).length > 0
+        ) {
+          const entries = Object.entries(currentProject.textSettings.sceneBackgrounds);
+          await Promise.all(
+            entries.map(async ([idxStr, sceneUrl]) => {
+              if (!sceneUrl) return;
+              try {
+                const img = new window.Image();
+                img.crossOrigin = 'anonymous';
+                await new Promise((resolve) => {
+                  img.onload = () => resolve(null);
+                  img.onerror = () => resolve(null);
+                  img.src = sceneUrl;
+                });
+                sceneBgImages[Number(idxStr)] = img;
+              } catch (e) {
+                console.warn('Could not load scene background:', sceneUrl, e);
+              }
+            })
+          );
+        }
+
         updateExportJob(jobId, { progress: 20 });
 
         if (exportCancelledRef.current) return;
@@ -797,6 +823,7 @@ export const ExportPage: React.FC = () => {
             totalDurationSec: totalDuration,
             audioUrls: ayahs.map((a) => a.audioUrl).filter(Boolean),
             bgImage,
+            sceneBgImages,
             bgOpacity: currentProject.backgroundOpacity ?? 0.6,
             textSettings: currentProject.textSettings,
             watermark: currentProject.watermark,

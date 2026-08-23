@@ -60,6 +60,8 @@ type ExportTextSettings = {
   wordHighlightColor?: string;
   displayMode?: 'full' | 'chunked';
   wordsPerChunk?: number;
+  sceneBackgrounds?: Record<number, string>;
+  enableMultiScene?: boolean;
 };
 
 const imageExtensions = new Set(['.jpg', '.jpeg', '.png', '.webp', '.bmp']);
