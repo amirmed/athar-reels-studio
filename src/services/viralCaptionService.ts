@@ -248,19 +248,41 @@ export function generateViralCaption(
 }
 
 /**
+ * Helper to safely encode text without throwing URIError on malformed surrogate pairs
+ */
+function safeEncode(text: string): string {
+  try {
+    return encodeURIComponent(text);
+  } catch {
+    try {
+      // Clean any lone surrogate halves if present
+      const sanitized = text.replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g, '');
+      return encodeURIComponent(sanitized);
+    } catch {
+      return encodeURI(text);
+    }
+  }
+}
+
+/**
  * Generate Direct Social Share URLs
  */
 export function getSocialShareLinks(
-  caption: string,
+  caption: string = '',
   projectUrl: string = 'https://atar-studio.com'
 ) {
-  const encodedText = encodeURIComponent(caption);
-  const encodedUrl = encodeURIComponent(projectUrl);
+  const safeCaption = caption || '';
+  // Safe Unicode-aware slicing using Array.from to prevent splitting UTF-16 surrogate pairs (e.g. emojis 🔥✨)
+  const sliced240 = Array.from(safeCaption).slice(0, 240).join('');
+
+  const encodedText = safeEncode(safeCaption);
+  const encodedSliced = safeEncode(sliced240);
+  const encodedUrl = safeEncode(projectUrl);
 
   return {
     whatsapp: `https://api.whatsapp.com/send?text=${encodedText}`,
     telegram: `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`,
-    x: `https://twitter.com/intent/tweet?text=${encodeURIComponent(caption.slice(0, 240))}&url=${encodedUrl}`,
+    x: `https://twitter.com/intent/tweet?text=${encodedSliced}&url=${encodedUrl}`,
   };
 }
 

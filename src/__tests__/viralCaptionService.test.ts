@@ -37,4 +37,15 @@ describe('Viral Caption Service', () => {
     expect(links.telegram).toContain('https://t.me/share/url?');
     expect(links.x).toContain('https://twitter.com/intent/tweet?');
   });
+
+  it('should never throw URIError when caption has dense emojis at the 240 char boundary', () => {
+    // Generate string where emoji lands exactly across index 240
+    const prefix = 'أ'.repeat(239);
+    const emojiStr = `${prefix}🔥✨🚀🌿🤍🌧️`;
+    expect(() => {
+      const links = getSocialShareLinks(emojiStr);
+      expect(links.x).toBeDefined();
+      expect(links.whatsapp).toBeDefined();
+    }).not.toThrow();
+  });
 });

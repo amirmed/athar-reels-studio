@@ -29,12 +29,34 @@ export const ViralCaptionModal: React.FC<ViralCaptionModalProps> = ({
   const [copiedType, setCopiedType] = useState<string | null>(null);
 
   const captionData = useMemo(() => {
+    if (!isOpen) {
+      return {
+        title: '',
+        hook: '',
+        body: '',
+        callToAction: '',
+        fullCaption: '',
+        hashtags: [],
+        hashtagsText: '',
+        surahName: '',
+        reciterName: '',
+        verseRange: '',
+        broadHashtags: [],
+        nicheHashtags: [],
+        targetedHashtags: [],
+        goldenHashtags: [],
+        hashtagTiers: [],
+      };
+    }
     return generateViralCaption(project, ayahs, translationText);
-  }, [project, ayahs, translationText]);
+  }, [isOpen, project, ayahs, translationText]);
 
   const shareLinks = useMemo(() => {
+    if (!isOpen || !captionData.fullCaption) {
+      return { whatsapp: '', telegram: '', x: '' };
+    }
     return getSocialShareLinks(captionData.fullCaption);
-  }, [captionData.fullCaption]);
+  }, [isOpen, captionData.fullCaption]);
 
   useEffect(() => {
     if (!isOpen) return;
