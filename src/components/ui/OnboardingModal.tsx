@@ -130,7 +130,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClos
               </div>
               <div className="text-right min-w-0">
                 <h4 className="text-xs font-bold text-white">اختر السورة والآيات</h4>
-                <p className="text-[11px] text-white/65">أكثر من 100+ قارئ معتمد بمصاحف كاملة</p>
+                <p className="text-[11px] text-white/65">أكثر من 70+ قارئ معتمد بمصاحف كاملة</p>
               </div>
             </div>
 
