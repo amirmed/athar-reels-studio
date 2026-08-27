@@ -32,10 +32,6 @@ import { getSocialShareLinks, triggerNativeShare } from '../../services/viralCap
 import { renderVideoExportFrame } from '../../services/videoFrameRenderer';
 import { AyahData } from '../../services/quranApi';
 import {
-  render8DSpatialBuffer,
-  Spatial8DAudioProcessor,
-} from '../../services/spatial8DAudioEngine';
-import {
   TextSettings,
   AudioSettings,
   AspectRatio,
@@ -43,11 +39,12 @@ import {
   VideoEffectType,
 } from '../../types';
 import { isVideoMedia } from '../../utils/imageUtils';
-import {
-  isWebCodecsExportSupported,
-  exportVideoWithWebCodecs,
-} from '../../services/webCodecsExportService';
 import { useHotkeys } from '../../hooks/useHotkeys';
+import {
+  PLATFORM_PRESETS,
+  PlatformPreset,
+  exportProject,
+} from '../../services/exportOrchestrator';
 
 interface ExportModalProps {
   isOpen: boolean;
@@ -73,101 +70,6 @@ interface ExportModalProps {
 }
 
 type ExportStatus = 'idle' | 'choosing' | 'exporting' | 'done' | 'error';
-
-interface PlatformPreset {
-  id: string;
-  name: string;
-  sub: string;
-  icon: string;
-  aspect: AspectRatio;
-  width: number;
-  height: number;
-  fps: number;
-  bitrate: number;
-  bitrateLabel: string;
-  desc: string;
-}
-
-const PLATFORM_PRESETS: PlatformPreset[] = [
-  {
-    id: 'tiktok',
-    name: 'تيك توك',
-    sub: 'TikTok 9:16',
-    icon: '🎵',
-    aspect: '9:16',
-    width: 1080,
-    height: 1920,
-    fps: 60,
-    bitrate: 8_000_000,
-    bitrateLabel: '8 Mbps',
-    desc: 'أعلى سرعة انتشار وخوارزمية TikTok',
-  },
-  {
-    id: 'reels',
-    name: 'إنستغرام ريلز',
-    sub: 'Reels 9:16',
-    icon: '📸',
-    aspect: '9:16',
-    width: 1080,
-    height: 1920,
-    fps: 30,
-    bitrate: 6_000_000,
-    bitrateLabel: '6 Mbps',
-    desc: 'متوافق 100% مع ضغط إنستغرام بدون فقدان الجودة',
-  },
-  {
-    id: 'shorts',
-    name: 'يوتيوب شورتس',
-    sub: 'Shorts 9:16',
-    icon: '▶️',
-    aspect: '9:16',
-    width: 1080,
-    height: 1920,
-    fps: 60,
-    bitrate: 12_000_000,
-    bitrateLabel: '12 Mbps',
-    desc: 'أعلى نقاء وتفاصيل فائقة لخوارزميات اليوتيوب',
-  },
-  {
-    id: 'whatsapp',
-    name: 'واتساب ستاتوس',
-    sub: 'Status 9:16',
-    icon: '💬',
-    aspect: '9:16',
-    width: 720,
-    height: 1280,
-    fps: 30,
-    bitrate: 2_500_000,
-    bitrateLabel: '2.5 Mbps',
-    desc: 'حجم خفيف جداً ومثالي للمجموعات',
-  },
-  {
-    id: 'square',
-    name: 'بوست مربع',
-    sub: 'Square 1:1',
-    icon: '🔲',
-    aspect: '1:1',
-    width: 1080,
-    height: 1080,
-    fps: 30,
-    bitrate: 5_000_000,
-    bitrateLabel: '5 Mbps',
-    desc: 'منشورات إنستغرام وفيسبوك المربعة',
-  },
-  {
-    id: 'youtube',
-    name: 'يوتيوب أفقي',
-    sub: 'Landscape 16:9',
-    icon: '🖥️',
-    aspect: '16:9',
-    width: 1920,
-    height: 1080,
-    fps: 60,
-    bitrate: 14_000_000,
-    bitrateLabel: '14 Mbps',
-    desc: 'شاشات العرض الكبيرة والتلفاز',
-  },
-];
 
 export const ExportModal: React.FC<ExportModalProps> = ({
   isOpen,
@@ -217,7 +119,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
   const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const previewAnimRef = useRef<number | null>(null);
 
-  const abortControllerRef = useRef<boolean>(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     if (!isOpen) {
@@ -226,7 +128,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
       setPhase('');
       setError(null);
       setDownloadBlobUrl(null);
-      abortControllerRef.current = false;
+      abortControllerRef.current = null;
       if (previewAnimRef.current) {
         cancelAnimationFrame(previewAnimRef.current);
       }
@@ -235,48 +137,6 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
   const activePreset =
     PLATFORM_PRESETS.find((p) => p.id === selectedPlatformPreset) || PLATFORM_PRESETS[0];
-
-  // Helper: Fetch and decode audio URL into AudioBuffer with CORS fallbacks
-  const fetchAndDecodeAudio = async (
-    audioCtx: AudioContext,
-    url: string
-  ): Promise<AudioBuffer | null> => {
-    try {
-      const response = await fetch(url, { mode: 'cors' });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const arrayBuffer = await response.arrayBuffer();
-      return await audioCtx.decodeAudioData(arrayBuffer);
-    } catch (e) {
-      console.warn(`[ExportModal] CORS fetch failed for ${url}, trying fallback`, e);
-      return null;
-    }
-  };
-
-  // Helper: Concatenate multiple AudioBuffers into one seamless buffer
-  const concatenateAudioBuffers = (
-    audioCtx: AudioContext,
-    buffers: AudioBuffer[]
-  ): AudioBuffer | null => {
-    if (buffers.length === 0) return null;
-    if (buffers.length === 1) return buffers[0];
-
-    const totalLength = buffers.reduce((sum, b) => sum + b.length, 0);
-    const numberOfChannels = Math.max(...buffers.map((b) => b.numberOfChannels));
-    const sampleRate = buffers[0].sampleRate;
-
-    const outBuffer = audioCtx.createBuffer(numberOfChannels, totalLength, sampleRate);
-
-    for (let channel = 0; channel < numberOfChannels; channel++) {
-      const outData = outBuffer.getChannelData(channel);
-      let offset = 0;
-      for (const b of buffers) {
-        const inData = b.getChannelData(Math.min(channel, b.numberOfChannels - 1));
-        outData.set(inData, offset);
-        offset += b.length;
-      }
-    }
-    return outBuffer;
-  };
 
   // 5.1 🎥 Live Export Canvas Preview Loop
   useEffect(() => {
@@ -381,6 +241,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
     watermark,
     projectName,
     surahName,
+    reciterName,
     showTranslation,
   ]);
 
@@ -390,581 +251,69 @@ export const ExportModal: React.FC<ExportModalProps> = ({
     setProgress(0);
     setError(null);
     setPhase('جاري تهيئة منصة التصيير والموارد...');
-    abortControllerRef.current = false;
+    abortControllerRef.current = new AbortController();
 
-    const startWallTime = Date.now();
-
-    // ── Check if Native Electron FFmpeg Engine is available ──────────────────
-    if (window.electronAPI?.videoExport?.start) {
-      const unbindProgress = window.electronAPI.videoExport.onProgress((data) => {
-        if (!abortControllerRef.current) {
-          const pct = Math.min(99, Math.max(1, Math.round(data.percent || 0)));
-          setProgress(pct);
-          setPhase(data.phase || `جاري التصدير عبر محرك FFmpeg (${pct}%)...`);
-          const elapsedWallSec = (Date.now() - startWallTime) / 1000;
-          setElapsedSeconds(Math.round(elapsedWallSec));
-          if (pct > 0) {
-            const totalEstSec = elapsedWallSec / (pct / 100);
-            setEstimatedSecondsRemaining(Math.max(0, Math.round(totalEstSec - elapsedWallSec)));
-          }
-        }
-      });
-
-      try {
-        let targetSavePath: string | null = null;
-        if (window.electronAPI?.dialog?.saveFile) {
-          targetSavePath = await window.electronAPI.dialog.saveFile({
-            defaultPath: `${projectName.replace(/[/\\?%*:|"<>]/g, '-')}.mp4`,
-            filters: [{ name: 'فيديو MP4', extensions: ['mp4', 'mkv'] }],
-          });
-          if (!targetSavePath) {
-            unbindProgress();
-            setStatus('idle');
-            return;
-          }
-        }
-
-        setPhase('جاري التصدير عبر محرك FFmpeg فائق السرعة 🚀...');
-
-        const validAyahs = ayahs.filter((a) => a && a.text && a.text.trim().length > 0);
-        const exportAyahs = validAyahs.map((a) => {
-          const sTime =
-            a.startTimeMs !== undefined && a.startTimeMs >= 0
-              ? a.startTimeMs / 1000
-              : a.words?.[0]?.startTime || 0;
-          const eTime =
-            a.endTimeMs !== undefined && a.endTimeMs > 0
-              ? a.endTimeMs / 1000
-              : a.words?.[a.words.length - 1]?.endTime || a.duration || 6;
-
-          return {
-            text: a.text,
-            startTime: sTime,
-            endTime: eTime,
-            numberInSurah: a.numberInSurah,
-            translationText: a.translationText,
-            words: a.words,
-            chunks: a.chunks,
-          };
-        });
-
-        const resolvedAudioUrls = await Promise.all(
-          (audioUrls || []).filter(Boolean).map(async (u) => {
-            if (typeof u === 'string' && u.startsWith('blob:')) {
-              try {
-                const res = await fetch(u);
-                const blob = await res.blob();
-                return new Promise<string>((resolve) => {
-                  const reader = new FileReader();
-                  reader.onloadend = () => resolve(reader.result as string);
-                  reader.onerror = () => resolve(u);
-                  reader.readAsDataURL(blob);
-                });
-              } catch {
-                return u;
-              }
-            }
-            return u;
-          })
-        );
-
-        const exportResult = await window.electronAPI.videoExport.start({
-          outputPath: targetSavePath || undefined,
-          projectName,
-          aspectRatio: activePreset.aspect,
-          quality:
-            activePreset.bitrate > 10_000_000
-              ? 'premium'
-              : activePreset.bitrate > 5_000_000
-                ? 'high'
-                : 'standard',
-          ayahs: exportAyahs,
-          audioUrls: resolvedAudioUrls.filter(Boolean) as string[],
-          backgroundPath,
-          bgOpacity,
-          watermark,
-          textColor,
-          fontFamily,
-          transition,
-          videoEffect,
-          textSettings,
-          audioSettings,
-          showTranslation,
-          showTafsir,
-          surahName,
-        });
-
-        unbindProgress();
-
-        if (exportResult?.success && exportResult.outputPath) {
-          setOutputPath(exportResult.outputPath);
-          setStatus('done');
-          setProgress(100);
-          setPhase('اكتمل التصدير بنجاح عبر محرك FFmpeg ✅');
-          return;
-        } else if (exportResult && !exportResult.success) {
-          throw new Error(exportResult.error || 'فشل التصدير عبر محرك FFmpeg');
-        }
-      } catch (nativeErr: any) {
-        unbindProgress();
-        console.warn(
-          '[ExportModal] Native FFmpeg export error, attempting Web Canvas fallback:',
-          nativeErr
-        );
-        if (abortControllerRef.current) {
-          setStatus('idle');
-          return;
-        }
-        // Fall through to Web Canvas exporter if native failed
-      }
-    }
+    // Estimated size calculation: (bitrate * seconds) / 8 / 1024 / 1024
+    const totalDurationSec = totalDuration || ayahs.reduce((sum, a) => sum + (a.duration || 6), 0) || 15;
+    const estMb =
+      Math.round((((activePreset.bitrate + 192_000) * totalDurationSec) / (8 * 1024 * 1024)) * 10) / 10;
+    setEstimatedSizeMb(estMb);
 
     try {
-      const dimensions = { width: activePreset.width, height: activePreset.height };
-      const fps = activePreset.fps;
-      const targetBitrate = activePreset.bitrate;
-
-      // 1. Offscreen High-Performance Canvas setup
-      const canvas = document.createElement('canvas');
-      canvas.width = dimensions.width;
-      canvas.height = dimensions.height;
-      const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
-      if (!ctx) throw new Error('فشل إنشاء سياق Canvas للتصدير');
-
-      // Pre-load background image or video and multi-scene backgrounds
-      let bgImg: HTMLImageElement | null = null;
-      let bgVideo: HTMLVideoElement | null = null;
-      const sceneBgImages: Record<number, HTMLImageElement> = {};
-
-      if (backgroundPath) {
-        const isVideo = isVideoMedia(backgroundPath);
-        if (isVideo) {
-          bgVideo = document.createElement('video');
-          bgVideo.crossOrigin = 'anonymous';
-          bgVideo.src = backgroundPath;
-          bgVideo.muted = true;
-          bgVideo.loop = true;
-          await new Promise((resolve) => {
-            if (!bgVideo) return resolve(null);
-            bgVideo.onloadeddata = () => {
-              bgVideo?.play().catch(() => {});
-              resolve(null);
-            };
-            bgVideo.onerror = () => {
-              console.warn(
-                '[ExportModal] Failed to load background video, proceeding with dark backdrop'
-              );
-              resolve(null);
-            };
-          });
-        } else {
-          bgImg = new Image();
-          bgImg.crossOrigin = 'anonymous';
-          await new Promise((resolve) => {
-            if (!bgImg) return resolve(null);
-            bgImg.onload = () => resolve(null);
-            bgImg.onerror = () => {
-              console.warn(
-                '[ExportModal] Failed to load background image, using fallback backdrop'
-              );
-              resolve(null);
-            };
-            bgImg.src = backgroundPath;
-          });
-        }
-      }
-
-      // Pre-load all scene backgrounds if multi-scene is enabled
-      if (textSettings?.sceneBackgrounds && Object.keys(textSettings.sceneBackgrounds).length > 0) {
-        const entries = Object.entries(textSettings.sceneBackgrounds);
-        await Promise.all(
-          entries.map(async ([idxStr, sceneUrl]) => {
-            if (!sceneUrl) return;
-            try {
-              const img = new Image();
-              img.crossOrigin = 'anonymous';
-              await new Promise((resolve) => {
-                img.onload = () => resolve(null);
-                img.onerror = () => resolve(null);
-                img.src = sceneUrl;
-              });
-              sceneBgImages[Number(idxStr)] = img;
-            } catch (e) {
-              console.warn('[ExportModal] Failed to preload scene background:', sceneUrl, e);
-            }
-          })
-        );
-      }
-
-      // 2. Audio setup with Web Audio API
-      setPhase('جاري معالجة الصوت والمؤثرات ودمج التلاوة...');
-      const AudioCtxClass =
-        window.AudioContext ||
-        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      const audioCtx = new AudioCtxClass();
-      if (audioCtx.state === 'suspended') {
-        await audioCtx.resume();
-      }
-      const dest = audioCtx.createMediaStreamDestination();
-
-      // Inaudible carrier
-      const carrierOsc = audioCtx.createOscillator();
-      const carrierGain = audioCtx.createGain();
-      carrierGain.gain.value = 0.0001;
-      carrierOsc.connect(carrierGain);
-      carrierGain.connect(dest);
-      carrierOsc.start();
-
-      // Load all Ayah audio buffers and stitch them
-      const validAudioUrls = audioUrls.filter(Boolean);
-      const loadedBuffers: AudioBuffer[] = [];
-
-      for (let i = 0; i < validAudioUrls.length; i++) {
-        setPhase(`جاري تحميل وقراءة الصوت (${i + 1}/${validAudioUrls.length})...`);
-        const buf = await fetchAndDecodeAudio(audioCtx, validAudioUrls[i]);
-        if (!buf) {
-          throw new Error(
-            `تعذر تحميل وقراءة صوت الآية (${i + 1} من ${validAudioUrls.length}). يرجى التحقق من اتصال الإنترنت والمحاولة مجدداً.`
-          );
-        }
-        loadedBuffers.push(buf);
-      }
-
-      let masterBuffer: AudioBuffer | null = null;
-      let activeBufferSource: AudioBufferSourceNode | null = null;
-      let activeAudioEl: HTMLAudioElement | null = null;
-
-      if (loadedBuffers.length > 0) {
-        masterBuffer = concatenateAudioBuffers(audioCtx, loadedBuffers);
-
-        // Apply 8D Binaural Spatial Audio Rendering if enabled
-        if (audioSettings?.enable8DAudio && masterBuffer) {
-          setPhase('جاري معالجة الصوت المكاني 8D ومعايرة المدار 360° 🎧...');
-          try {
-            masterBuffer = await render8DSpatialBuffer(audioCtx, masterBuffer, {
-              speedHz: audioSettings.eightDSpeed ?? 0.12,
-              depth: (audioSettings.eightDDepth ?? 85) / 100,
-              style: audioSettings.eightDStyle ?? 'orbit360',
-            });
-          } catch (e8d) {
-            console.warn('[ExportModal] 8D rendering fallback:', e8d);
+      const result = await exportProject({
+        projectName,
+        surahName,
+        reciterName,
+        aspectRatio: activePreset.aspect,
+        width: activePreset.width,
+        height: activePreset.height,
+        fps: activePreset.fps,
+        bitrate: activePreset.bitrate,
+        backgroundPath,
+        backgroundOpacity: bgOpacity,
+        audioUrls,
+        ayahs,
+        textSettings,
+        audioSettings,
+        watermark,
+        showTranslation,
+        showTafsir,
+        totalDuration,
+        signal: abortControllerRef.current.signal,
+        onProgress: (evt) => {
+          setProgress(evt.percent);
+          setPhase(evt.phase);
+          if (evt.currentFrame !== undefined) setCurrentFrameNumber(evt.currentFrame);
+          if (evt.totalFrames !== undefined) setTotalFrameCount(evt.totalFrames);
+          if (evt.fps !== undefined) setRealtimeFps(evt.fps);
+          if (evt.currentAyah !== undefined) setCurrentAyahNumber(evt.currentAyah);
+          if (evt.elapsedSeconds !== undefined) setElapsedSeconds(evt.elapsedSeconds);
+          if (evt.estimatedSecondsRemaining !== undefined) {
+            setEstimatedSecondsRemaining(evt.estimatedSecondsRemaining);
           }
-        }
-
-        if (masterBuffer) {
-          activeBufferSource = audioCtx.createBufferSource();
-          activeBufferSource.buffer = masterBuffer;
-          const masterGain = audioCtx.createGain();
-          masterGain.gain.value = 1.0;
-          activeBufferSource.connect(masterGain);
-          masterGain.connect(dest);
-        }
-      } else if (validAudioUrls.length > 0) {
-        try {
-          activeAudioEl = new Audio(validAudioUrls[0]);
-          activeAudioEl.crossOrigin = 'anonymous';
-          const mediaSource = audioCtx.createMediaElementSource(activeAudioEl);
-          const voiceGain = audioCtx.createGain();
-          voiceGain.gain.value = 1.0;
-          mediaSource.connect(voiceGain);
-
-          if (audioSettings?.enable8DAudio) {
-            const spatial8D = new Spatial8DAudioProcessor(audioCtx);
-            spatial8D.configure({
-              speedHz: audioSettings.eightDSpeed ?? 0.12,
-              depth: (audioSettings.eightDDepth ?? 85) / 100,
-              style: audioSettings.eightDStyle ?? 'orbit360',
-            });
-            spatial8D.setEnabled(true);
-            voiceGain.connect(spatial8D.getInput());
-            spatial8D.getOutput().connect(dest);
-          } else {
-            voiceGain.connect(dest);
-          }
-        } catch (audioErr) {
-          console.warn('[ExportModal] Fallback audio play error:', audioErr);
-        }
-      }
-
-      // Compute precise per-ayah timing ranges
-      let cumulativeTime = 0;
-      const validAyahs = ayahs.filter((a) => a && a.text && a.text.trim().length > 0);
-      const isSingleContinuousAudio = validAudioUrls.length === 1 && validAyahs.length > 1;
-
-      const ayahTimeRanges = validAyahs.map((a, idx) => {
-        let start = cumulativeTime;
-        let end = cumulativeTime;
-        let dur = a.duration || 6;
-
-        if (isSingleContinuousAudio && a.startTimeMs !== undefined && a.endTimeMs !== undefined) {
-          start = a.startTimeMs / 1000;
-          end = a.endTimeMs / 1000;
-          dur = Math.max(0.1, end - start);
-          cumulativeTime = end;
-        } else {
-          const bufDur = loadedBuffers[idx]?.duration;
-          dur =
-            bufDur && !isNaN(bufDur) && bufDur > 0
-              ? bufDur
-              : a.duration && !isNaN(a.duration) && a.duration > 0
-                ? a.duration
-                : totalDuration
-                  ? totalDuration / Math.max(1, validAyahs.length)
-                  : 6;
-          start = cumulativeTime;
-          cumulativeTime += dur;
-          end = cumulativeTime;
-        }
-
-        return {
-          start,
-          end,
-          duration: dur,
-          ayah: { ...a, duration: dur },
-          ayahIndex: idx + 1,
-        };
+        },
       });
 
-      const totalDurationSec =
-        masterBuffer?.duration ||
-        (cumulativeTime > 0
-          ? cumulativeTime
-          : activeAudioEl?.duration && !isNaN(activeAudioEl.duration)
-            ? activeAudioEl.duration
-            : totalDuration || 15);
-
-      // Estimated size calculation: (bitrate * seconds) / 8 / 1024 / 1024
-      const estMb =
-        Math.round((((targetBitrate + 192_000) * totalDurationSec) / (8 * 1024 * 1024)) * 10) / 10;
-      setEstimatedSizeMb(estMb);
-
-      // 3. WebCodecs Ultra-Fast MP4 Export Engine (5x-10x Faster than Realtime)
-      const canUseWebCodecs = await isWebCodecsExportSupported();
-      if (canUseWebCodecs) {
-        setPhase(`جاري التصدير فائق السرعة عبر محرك WebCodecs (MP4)...`);
-
-        const mp4Blob = await exportVideoWithWebCodecs({
-          width: activePreset.width,
-          height: activePreset.height,
-          fps,
-          bitrate: targetBitrate,
-          ayahs: validAyahs,
-          timeline: ayahTimeRanges,
-          totalDurationSec,
-          masterAudioBuffer: masterBuffer,
-          audioUrls: validAyahs.map((a) => a.audioUrl).filter(Boolean),
-          bgImage: bgImg,
-          sceneBgImages,
-          bgOpacity: bgOpacity ?? 0.6,
-          textSettings,
-          audioSettings,
-          watermark,
-          projectName,
-          surahName,
-          reciterName,
-          showTranslation: !!showTranslation,
-          onProgress: ({ percent, currentFrame, totalFrames: tFrames, fps: renderFps }) => {
-            setProgress(percent);
-            setCurrentFrameNumber(currentFrame);
-            setTotalFrameCount(tFrames);
-            setRealtimeFps(renderFps);
-            const nowWall = performance.now();
-            const elapsedWallSec = (nowWall - startWallTime) / 1000;
-            setElapsedSeconds(Math.round(elapsedWallSec));
-            if (percent > 0) {
-              const totalEstSec = elapsedWallSec / (percent / 100);
-              const remainingSec = Math.max(0, Math.round(totalEstSec - elapsedWallSec));
-              setEstimatedSecondsRemaining(remainingSec);
-            }
-            setPhase(`تصدير فائق السرعة عبر WebCodecs (${percent}% - ${renderFps} FPS)...`);
-          },
-        });
-
-        const url = URL.createObjectURL(mp4Blob);
-        setDownloadBlobUrl(url);
-        const cleanProjectName = projectName.replace(/[/\\?%*:|"<>]/g, '-');
-        setOutputPath(`${cleanProjectName}.mp4`);
+      if (result.success) {
+        if (result.blobUrl) {
+          setDownloadBlobUrl(result.blobUrl);
+        }
+        if (result.outputPath) {
+          setOutputPath(result.outputPath);
+        }
         setStatus('done');
         setProgress(100);
-        setPhase('اكتمل التصدير بنجاح وبأعلى سرعة وبصيغة MP4 القياسية ✅');
+        setPhase('اكتمل التصدير بنجاح وبأعلى جودة ✅');
+      } else {
+        throw new Error(result.error || 'فشلت عملية تصدير الفيديو');
+      }
+    } catch (err: unknown) {
+      if (abortControllerRef.current?.signal.aborted) {
+        setStatus('idle');
+        setProgress(0);
+        setPhase('');
         return;
       }
-
-      // 4. Fallback: Setup MediaRecorder with platform bitrate (Legacy Browser Mode)
-      const canvasStream = canvas.captureStream(fps);
-      const combinedStream = new MediaStream([
-        ...canvasStream.getVideoTracks(),
-        ...dest.stream.getAudioTracks(),
-      ]);
-
-      let selectedMime = 'video/webm;codecs=vp9,opus';
-      if (!MediaRecorder.isTypeSupported(selectedMime)) {
-        selectedMime = 'video/webm;codecs=vp8,opus';
-      }
-      if (!MediaRecorder.isTypeSupported(selectedMime)) {
-        selectedMime = 'video/webm';
-      }
-      if (!MediaRecorder.isTypeSupported(selectedMime)) {
-        selectedMime = 'video/mp4';
-      }
-
-      const recorder = new MediaRecorder(combinedStream, {
-        mimeType: MediaRecorder.isTypeSupported(selectedMime) ? selectedMime : undefined,
-        videoBitsPerSecond: targetBitrate,
-      });
-
-      const chunks: Blob[] = [];
-      recorder.ondataavailable = (e) => {
-        if (e.data && e.data.size > 0) chunks.push(e.data);
-      };
-
-      recorder.start(100);
-
-      // Start Audio Playback synced to Web Audio timeline
-      const exportStartTime = audioCtx.currentTime;
-      if (activeBufferSource) {
-        activeBufferSource.start(exportStartTime);
-      } else if (activeAudioEl) {
-        try {
-          await activeAudioEl.play();
-        } catch {
-          // ignore error
-        }
-      }
-
-      // 4. Render Video Frames locked to Audio Clock with 5.2 📊 Smart Progress Metrics
-      const totalFrames = Math.max(fps * 3, Math.round(fps * totalDurationSec));
-      setTotalFrameCount(totalFrames);
-      setRealtimeFps(fps);
-
-      await new Promise<void>((resolve) => {
-        let lastUiUpdateWallTime = 0;
-        let lastReportedPercent = -1;
-
-        const renderLoop = () => {
-          if (abortControllerRef.current) {
-            resolve();
-            return;
-          }
-
-          const elapsedAudioTime = audioCtx.currentTime - exportStartTime;
-
-          if (elapsedAudioTime >= totalDurationSec) {
-            resolve();
-            return;
-          }
-
-          const activeRange =
-            ayahTimeRanges.find((r) => elapsedAudioTime >= r.start && elapsedAudioTime < r.end) ||
-            ayahTimeRanges[ayahTimeRanges.length - 1];
-
-          const localAyahTime = Math.max(0, elapsedAudioTime - activeRange.start);
-          const currentProg = Math.min(1, elapsedAudioTime / totalDurationSec);
-          const currentFrame = Math.floor(elapsedAudioTime * fps);
-
-          renderVideoExportFrame({
-            ctx,
-            width: dimensions.width,
-            height: dimensions.height,
-            frame: currentFrame,
-            totalFrames,
-            currentTimeSec: localAyahTime,
-            bgImage: bgImg,
-            bgVideo: bgVideo,
-            bgOpacity,
-            currentAyah: activeRange.ayah,
-            textSettings,
-            watermark,
-            projectName,
-            surahName: activeRange.ayah.surahName || surahName,
-            reciterName,
-            showTranslation,
-            isCustomContent: !surahName || surahName.length === 0,
-          });
-
-          // 5.2 📊 Smart Throttled UI Progress Updates (every 250ms or when integer percent changes)
-          const percent = Math.min(99, Math.round(currentProg * 100));
-          const nowWall = Date.now();
-
-          if (nowWall - lastUiUpdateWallTime >= 250 || percent !== lastReportedPercent) {
-            lastUiUpdateWallTime = nowWall;
-            lastReportedPercent = percent;
-
-            setProgress(percent);
-            setCurrentFrameNumber(currentFrame);
-            setCurrentAyahNumber(activeRange.ayahIndex);
-
-            const elapsedWallSec = (nowWall - startWallTime) / 1000;
-            setElapsedSeconds(Math.round(elapsedWallSec));
-
-            if (percent > 0) {
-              const totalEstSec = elapsedWallSec / (percent / 100);
-              const remainingSec = Math.max(0, Math.round(totalEstSec - elapsedWallSec));
-              setEstimatedSecondsRemaining(remainingSec);
-            }
-
-            setPhase(`جاري تصدير الفيديو لمنصة «${activePreset.name}» (${percent}%)...`);
-          }
-
-          requestAnimationFrame(renderLoop);
-        };
-
-        requestAnimationFrame(renderLoop);
-      });
-
-      setPhase('جاري حفظ ملف الفيديو وتجهيز الرابط النهائي...');
-
-      try {
-        if (recorder.state === 'recording') {
-          recorder.requestData();
-        }
-      } catch {
-        // ignore
-      }
-
-      await new Promise((resolve) => {
-        recorder.onstop = () => {
-          if (carrierOsc) {
-            try {
-              carrierOsc.stop();
-            } catch {
-              /* ignore */
-            }
-          }
-          if (activeBufferSource) {
-            try {
-              activeBufferSource.stop();
-            } catch {
-              /* ignore */
-            }
-          }
-          if (activeAudioEl) {
-            activeAudioEl.pause();
-            activeAudioEl.src = '';
-          }
-          if (bgVideo) {
-            bgVideo.pause();
-            bgVideo.src = '';
-          }
-          audioCtx.close().catch(() => {});
-
-          const blob = new Blob(chunks, { type: selectedMime });
-          const url = URL.createObjectURL(blob);
-          setDownloadBlobUrl(url);
-          const extension = selectedMime.includes('mp4') ? '.mp4' : '.webm';
-          const cleanProjectName = projectName.replace(/[/\\?%*:|"<>]/g, '-');
-          setOutputPath(`${cleanProjectName}${extension}`);
-          setStatus('done');
-          setProgress(100);
-          setPhase('اكتمل التصدير بنجاح وبأعلى جودة ✅');
-          resolve(null);
-        };
-
-        if (recorder.state === 'recording') {
-          recorder.stop();
-        }
-      });
-    } catch (err: unknown) {
       console.error('[ExportModal] Export failed:', err);
       const errMsg = err instanceof Error ? err.message : 'حدث خطأ أثناء تصدير الفيديو';
       setError(errMsg);
@@ -973,7 +322,9 @@ export const ExportModal: React.FC<ExportModalProps> = ({
   };
 
   const handleCancelExport = () => {
-    abortControllerRef.current = true;
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
     if (window.electronAPI?.videoExport?.cancel) {
       try {
         window.electronAPI.videoExport.cancel();
