@@ -33,6 +33,7 @@ import {
   isWebCodecsExportSupported,
   exportVideoWithWebCodecs,
 } from '../../services/webCodecsExportService';
+import { getCachedCanvasTextWidth } from '../../services/videoFrameRenderer';
 
 // ==================== Canvas Video Export Engine ====================
 interface ExportConfig {
@@ -214,10 +215,10 @@ function renderFrame(
     lines.forEach((line, lineIdx) => {
       const lineY = textCenterY - totalTextHeight / 2 + lineIdx * lineHeight + lineHeight / 2;
       const lineWords = line.split(' ').filter(Boolean);
-      const spaceWidth = ctx.measureText(' ').width;
+      const spaceWidth = getCachedCanvasTextWidth(ctx, ' ', ctx.font);
 
       // Calculate total line width to center/align
-      const wordMetrics = lineWords.map((w) => ({ word: w, width: ctx.measureText(w).width }));
+      const wordMetrics = lineWords.map((w) => ({ word: w, width: getCachedCanvasTextWidth(ctx, w, ctx.font) }));
       const totalLineWidth =
         wordMetrics.reduce((sum, m) => sum + m.width, 0) + (lineWords.length - 1) * spaceWidth;
 
@@ -232,7 +233,7 @@ function renderFrame(
         const currentGlobalWordIdx = globalWordCounter;
         globalWordCounter++;
         const isCurrentActive = activeWordIdx === currentGlobalWordIdx;
-        const wordWidth = ctx.measureText(wordStr).width;
+        const wordWidth = getCachedCanvasTextWidth(ctx, wordStr, ctx.font);
 
         ctx.save();
         if (isCurrentActive) {
@@ -513,8 +514,8 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
 
   for (const word of words) {
     const testLine = currentLine ? currentLine + ' ' + word : word;
-    const metrics = ctx.measureText(testLine);
-    if (metrics.width > maxWidth && currentLine) {
+    const testWidth = getCachedCanvasTextWidth(ctx, testLine, ctx.font);
+    if (testWidth > maxWidth && currentLine) {
       lines.push(currentLine);
       currentLine = word;
     } else {

@@ -187,6 +187,8 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
   const audioSourceRef = useRef<AudioBufferSourceNode | null>(null);
   const startTimeRef = useRef<number>(0);
   const pauseTimeRef = useRef<number>(0);
+  const currentTimeRef = useRef<number>(0);
+  const lastStateUpdateRef = useRef<number>(0);
   const animFrameRef = useRef<number | null>(null);
 
   // Determine active audio URL
@@ -460,6 +462,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
       const loop = () => {
         if (!audioSourceRef.current) return;
         const elapsed = (ctx.currentTime - startTimeRef.current) * playbackSpeed;
+        currentTimeRef.current = elapsed;
 
         if (endLimitSec && elapsed >= endLimitSec) {
           if (isLoopingWord) {
@@ -478,19 +481,24 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
           return;
         }
 
-        setCurrentTime(elapsed);
+        // Throttle React state updates (~30fps) to eliminate 60fps component thrashing
+        const now = performance.now();
+        if (now - lastStateUpdateRef.current >= 33) {
+          lastStateUpdateRef.current = now;
+          setCurrentTime(elapsed);
+        }
         animFrameRef.current = requestAnimationFrame(loop);
       };
 
       animFrameRef.current = requestAnimationFrame(loop);
 
       source.onended = () => {
-        if (!endLimitSec || currentTime >= endLimitSec - 0.05) {
+        if (!endLimitSec || currentTimeRef.current >= endLimitSec - 0.05) {
           stopAudioPlayback();
         }
       };
     },
-    [audioBuffer, audioDuration, playbackSpeed, isLoopingWord, currentTime, stopAudioPlayback]
+    [audioBuffer, audioDuration, playbackSpeed, isLoopingWord, stopAudioPlayback]
   );
 
   const toggleGlobalPlay = () => {

@@ -60,6 +60,26 @@ interface CachedTextLayout {
   totalTextH: number;
 }
 
+// Fast Text Measurement Cache (eliminates repeated per-word measureText overhead across frames)
+const textMeasurementCache = new Map<string, number>();
+
+export function getCachedCanvasTextWidth(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  font: string
+): number {
+  const key = `${font}__${text}`;
+  let w = textMeasurementCache.get(key);
+  if (w === undefined) {
+    if (textMeasurementCache.size > 2500) {
+      textMeasurementCache.clear();
+    }
+    w = ctx.measureText(text).width;
+    textMeasurementCache.set(key, w);
+  }
+  return w;
+}
+
 // LRU-style layout cache (Key: ayahId + chunkIndex + width + fontSize + fontFamily)
 const layoutCache = new Map<string, CachedTextLayout>();
 const MAX_LAYOUT_CACHE_SIZE = 100;
@@ -431,7 +451,7 @@ export function renderVideoExportFrame(opts: FrameRenderOptions): void {
     let currentLineWidth = 0;
 
     for (const wt of wordTokens) {
-      const wordW = ctx.measureText(wt.text + ' ').width + wordSpacingExtra;
+      const wordW = getCachedCanvasTextWidth(ctx, wt.text + ' ', ctx.font) + wordSpacingExtra;
       if (currentLineWidth + wordW > maxCardWidth * 0.9 && currentLine.length > 0) {
         lines.push(currentLine);
         currentLine = [wt];
@@ -459,7 +479,7 @@ export function renderVideoExportFrame(opts: FrameRenderOptions): void {
     const computedLines: LineLayout[] = lines.map((lineWords, lineIdx) => {
       const lineY = startTextY + lineIdx * calculatedLineHeight;
       const wordWidths = lineWords.map(
-        (w) => ctx.measureText(w.text + ' ').width + wordSpacingExtra
+        (w) => getCachedCanvasTextWidth(ctx, w.text + ' ', ctx.font) + wordSpacingExtra
       );
       const lineTotalW = wordWidths.reduce((a, b) => a + b, 0);
       let curX =
@@ -881,7 +901,10 @@ export function renderVideoExportFrame(opts: FrameRenderOptions): void {
 
     for (const w of words) {
       const testLine = currentLine ? `${currentLine} ${w}` : w;
-      if (ctx.measureText(testLine).width > maxLineWidth && currentLine !== '') {
+      if (
+        getCachedCanvasTextWidth(ctx, testLine, ctx.font) > maxLineWidth &&
+        currentLine !== ''
+      ) {
         lines.push(currentLine);
         currentLine = w;
       } else {
@@ -899,7 +922,7 @@ export function renderVideoExportFrame(opts: FrameRenderOptions): void {
     // Render elegant subtle glass pill background for max contrast & legibility
     const maxLineW = Math.min(
       maxLineWidth,
-      Math.max(...lines.map((l) => ctx.measureText(l).width))
+      Math.max(...lines.map((l) => getCachedCanvasTextWidth(ctx, l, ctx.font)))
     );
     const pillW = Math.min(width * 0.92, maxLineW + Math.round(width * 0.06));
     const pillH = totalHeight + Math.round(height * 0.02);

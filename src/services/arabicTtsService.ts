@@ -79,8 +79,43 @@ export const ARABIC_AI_VOICES: ArabicVoice[] = [
   },
 ];
 
-// In-memory audio blob cache
+// In-memory audio blob cache with LRU eviction and memory leak prevention
+const MAX_TTS_CACHE_ENTRIES = 25;
 const ttsAudioCache = new Map<string, { blob: Blob; audioUrl: string; duration: number }>();
+
+function setTtsCache(key: string, value: { blob: Blob; audioUrl: string; duration: number }) {
+  if (ttsAudioCache.has(key)) {
+    const old = ttsAudioCache.get(key);
+    if (old?.audioUrl && old.audioUrl.startsWith('blob:') && old.audioUrl !== value.audioUrl) {
+      try {
+        URL.revokeObjectURL(old.audioUrl);
+      } catch {}
+    }
+  } else if (ttsAudioCache.size >= MAX_TTS_CACHE_ENTRIES) {
+    const firstKey = ttsAudioCache.keys().next().value;
+    if (firstKey) {
+      const old = ttsAudioCache.get(firstKey);
+      if (old?.audioUrl && old.audioUrl.startsWith('blob:')) {
+        try {
+          URL.revokeObjectURL(old.audioUrl);
+        } catch {}
+      }
+      ttsAudioCache.delete(firstKey);
+    }
+  }
+  ttsAudioCache.set(key, value);
+}
+
+export function clearTtsAudioCache(): void {
+  ttsAudioCache.forEach((entry) => {
+    if (entry.audioUrl && entry.audioUrl.startsWith('blob:')) {
+      try {
+        URL.revokeObjectURL(entry.audioUrl);
+      } catch {}
+    }
+  });
+  ttsAudioCache.clear();
+}
 
 /**
  * Clean decorative brackets while strictly preserving Tashkeel
@@ -133,7 +168,7 @@ export async function synthesizeArabicSpeech(
         const audioUrl = URL.createObjectURL(blob);
         const duration = await getAudioDuration(audioUrl);
         const result = { blob, audioUrl, duration };
-        ttsAudioCache.set(cacheKey, result);
+        setTtsCache(cacheKey, result);
         return result;
       }
     } catch (ipcErr) {
@@ -151,7 +186,7 @@ export async function synthesizeArabicSpeech(
         const audioUrl = URL.createObjectURL(blob);
         const duration = await getAudioDuration(audioUrl);
         const result = { blob, audioUrl, duration };
-        ttsAudioCache.set(cacheKey, result);
+        setTtsCache(cacheKey, result);
         return result;
       }
     }
@@ -162,7 +197,7 @@ export async function synthesizeArabicSpeech(
   // 3. Try Direct Google Arabic Speech stream
   try {
     const googleResult = await synthesizeGoogleTts(clean);
-    ttsAudioCache.set(cacheKey, googleResult);
+    setTtsCache(cacheKey, googleResult);
     return googleResult;
   } catch (gErr) {
     console.warn('[ArabicTTS] Google TTS stream failed:', gErr);

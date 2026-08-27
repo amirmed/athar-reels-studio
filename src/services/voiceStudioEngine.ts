@@ -29,8 +29,38 @@ export class VoiceStudioEngine {
   private isPlayingPreview: boolean = false;
   private spatial8DProcessor: Spatial8DAudioProcessor | null = null;
   private impulseCache = new Map<string, AudioBuffer>();
+  private activeUrls = new Set<string>();
 
   private constructor() {}
+
+  private registerUrl(url: string): string {
+    // Keep at most 10 active URLs in memory per engine instance
+    if (this.activeUrls.size >= 10) {
+      const first = this.activeUrls.values().next().value;
+      if (first) {
+        try {
+          URL.revokeObjectURL(first);
+        } catch {}
+        this.activeUrls.delete(first);
+      }
+    }
+    this.activeUrls.add(url);
+    return url;
+  }
+
+  public cleanup(): void {
+    this.activeUrls.forEach((url) => {
+      try {
+        URL.revokeObjectURL(url);
+      } catch {}
+    });
+    this.activeUrls.clear();
+    this.impulseCache.clear();
+    if (this.audioCtx && this.audioCtx.state !== 'closed') {
+      this.audioCtx.close().catch(() => {});
+      this.audioCtx = null;
+    }
+  }
 
   public static getInstance(): VoiceStudioEngine {
     if (!VoiceStudioEngine.instance) {
@@ -125,7 +155,7 @@ export class VoiceStudioEngine {
         const blob = new Blob(this.recordedChunks, {
           type: this.mediaRecorder?.mimeType || 'audio/webm',
         });
-        const url = URL.createObjectURL(blob);
+        const url = this.registerUrl(URL.createObjectURL(blob));
 
         try {
           const ctx = this.getAudioContext();
@@ -150,7 +180,7 @@ export class VoiceStudioEngine {
     const ctx = this.getAudioContext();
     const arrayBuffer = await file.arrayBuffer();
     this.currentBuffer = await ctx.decodeAudioData(arrayBuffer.slice(0));
-    const url = URL.createObjectURL(file);
+    const url = this.registerUrl(URL.createObjectURL(file));
     return { blob: file, url, duration: this.currentBuffer.duration };
   }
 
@@ -161,7 +191,7 @@ export class VoiceStudioEngine {
     const ctx = this.getAudioContext();
     const arrayBuffer = await blob.arrayBuffer();
     this.currentBuffer = await ctx.decodeAudioData(arrayBuffer.slice(0));
-    const url = URL.createObjectURL(blob);
+    const url = this.registerUrl(URL.createObjectURL(blob));
     return { blob, url, duration: this.currentBuffer.duration };
   }
 

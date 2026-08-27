@@ -101,68 +101,77 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = React.memo(
     const position = textSettings?.position || 'center';
     const fontFamily = textSettings?.fontFamily || 'Amiri';
 
-    // Determine what text to show
-    const isSynced = ayahs.length > 0;
-    const currentAyah = isSynced && currentAyahIndex >= 0 ? ayahs[currentAyahIndex] : null;
-    const currentTranslation =
-      isSynced && currentAyahIndex >= 0 ? translations[currentAyahIndex] : null;
+    // Determine what text to show (Memoized)
+    const displayInfo = React.useMemo(() => {
+      const isSynced = ayahs.length > 0;
+      const currentAyah = isSynced && currentAyahIndex >= 0 ? ayahs[currentAyahIndex] : null;
+      const currentTranslation =
+        isSynced && currentAyahIndex >= 0 ? translations[currentAyahIndex] : null;
 
-    let displayText = ayahText;
-    let displayTranslation = translationText || '';
-    let displayAyahNumber = '';
+      let displayText = ayahText;
+      let displayTranslation = translationText || '';
+      let displayAyahNumber = '';
 
-    if (isSynced) {
-      if (isPlaying && currentAyah) {
-        displayText = currentAyah.text;
-        displayTranslation = currentTranslation?.text || '';
-        displayAyahNumber = `﴿ ${currentAyah.numberInSurah} ﴾`;
-      } else if (!isPlaying && ayahs.length > 0) {
-        displayText = ayahs[0].text;
-        displayTranslation = translations[0]?.text || '';
-        displayAyahNumber = `﴿ ${ayahs[0].numberInSurah} ﴾`;
+      if (isSynced) {
+        if (isPlaying && currentAyah) {
+          displayText = currentAyah.text;
+          displayTranslation = currentTranslation?.text || '';
+          displayAyahNumber = `﴿ ${currentAyah.numberInSurah} ﴾`;
+        } else if (!isPlaying && ayahs.length > 0) {
+          displayText = ayahs[0].text;
+          displayTranslation = translations[0]?.text || '';
+          displayAyahNumber = `﴿ ${ayahs[0].numberInSurah} ﴾`;
+        }
       }
-    }
+      return { isSynced, currentAyah, currentTranslation, displayText, displayTranslation, displayAyahNumber };
+    }, [ayahs, currentAyahIndex, translations, isPlaying, ayahText, translationText]);
 
-    // Cinematic transition variants
-    const transitionVariants: Record<string, { initial: any; animate: any; exit: any }> = {
-      fadeScale: {
-        initial: { opacity: 0, scale: isPerf ? 1 : 0.92 },
-        animate: { opacity: 1, scale: 1 },
-        exit: { opacity: 0, scale: isPerf ? 1 : 1.06 },
-      },
-      slideUp: {
-        initial: { opacity: 0, y: isPerf ? 20 : 60 },
-        animate: { opacity: 1, y: 0 },
-        exit: { opacity: 0, y: isPerf ? -20 : -60 },
-      },
-      slideRight: {
-        initial: { opacity: 0, x: isPerf ? -30 : -80 },
-        animate: { opacity: 1, x: 0 },
-        exit: { opacity: 0, x: isPerf ? 30 : 80 },
-      },
-      zoomIn: {
-        initial: { opacity: 0, scale: isPerf ? 0.8 : 0.5 },
-        animate: { opacity: 1, scale: 1 },
-        exit: { opacity: 0, scale: isPerf ? 1.1 : 1.5 },
-      },
-      flip: {
-        initial: { opacity: 0, rotateX: isPerf ? 0 : 90 },
-        animate: { opacity: 1, rotateX: 0 },
-        exit: { opacity: 0, rotateX: isPerf ? 0 : -90 },
-      },
-      blur: {
-        initial: { opacity: 0, filter: isPerf ? 'none' : 'blur(20px)' },
-        animate: { opacity: 1, filter: 'blur(0px)' },
-        exit: { opacity: 0, filter: isPerf ? 'none' : 'blur(20px)' },
-      },
-    };
+    const { isSynced, currentAyah, currentTranslation, displayText, displayTranslation, displayAyahNumber } = displayInfo;
 
-    const activeVariant = transitionVariants[transition] || transitionVariants.fadeScale;
+    // Cinematic transition variants (Memoized)
+    const activeVariant = React.useMemo(() => {
+      const variants: Record<string, { initial: any; animate: any; exit: any }> = {
+        fadeScale: {
+          initial: { opacity: 0, scale: isPerf ? 1 : 0.92 },
+          animate: { opacity: 1, scale: 1 },
+          exit: { opacity: 0, scale: isPerf ? 1 : 1.06 },
+        },
+        slideUp: {
+          initial: { opacity: 0, y: isPerf ? 20 : 60 },
+          animate: { opacity: 1, y: 0 },
+          exit: { opacity: 0, y: isPerf ? -20 : -60 },
+        },
+        slideRight: {
+          initial: { opacity: 0, x: isPerf ? -30 : -80 },
+          animate: { opacity: 1, x: 0 },
+          exit: { opacity: 0, x: isPerf ? 30 : 80 },
+        },
+        zoomIn: {
+          initial: { opacity: 0, scale: isPerf ? 0.8 : 0.5 },
+          animate: { opacity: 1, scale: 1 },
+          exit: { opacity: 0, scale: isPerf ? 1.1 : 1.5 },
+        },
+        flip: {
+          initial: { opacity: 0, rotateX: isPerf ? 0 : 90 },
+          animate: { opacity: 1, rotateX: 0 },
+          exit: { opacity: 0, rotateX: isPerf ? 0 : -90 },
+        },
+        blur: {
+          initial: { opacity: 0, filter: isPerf ? 'none' : 'blur(20px)' },
+          animate: { opacity: 1, filter: 'blur(0px)' },
+          exit: { opacity: 0, filter: isPerf ? 'none' : 'blur(20px)' },
+        },
+      };
+      return variants[transition] || variants.fadeScale;
+    }, [transition, isPerf]);
 
-    const activeBackgroundUrl =
-      textSettings?.sceneBackgrounds?.[currentAyahIndex] ||
-      backgroundUrl ||
-      CURATED_SCENE_FALLBACKS[Math.max(0, currentAyahIndex) % CURATED_SCENE_FALLBACKS.length];
+    const activeBackgroundUrl = React.useMemo(() => {
+      return (
+        textSettings?.sceneBackgrounds?.[currentAyahIndex] ||
+        backgroundUrl ||
+        CURATED_SCENE_FALLBACKS[Math.max(0, currentAyahIndex) % CURATED_SCENE_FALLBACKS.length]
+      );
+    }, [textSettings?.sceneBackgrounds, currentAyahIndex, backgroundUrl]);
 
     return (
       <motion.div
