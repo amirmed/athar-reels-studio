@@ -9,7 +9,7 @@ import {
   clearAllProjectThumbnails,
 } from '../../services/persistentThumbnailStorage';
 
-const isElectron = () => typeof window !== 'undefined' && !!(window as any).electronAPI;
+const isElectron = () => typeof window !== 'undefined' && !!window.electronAPI;
 const STORAGE_KEY_PROJECTS = 'ayahStudio_projects';
 
 function generateUniqueId(prefix = 'proj'): string {

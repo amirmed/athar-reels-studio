@@ -16,23 +16,23 @@ const electronAPI = {
   },
   projects: {
     loadAll: () => ipcRenderer.invoke('projects:loadAll'),
-    save: (project: any) => ipcRenderer.invoke('projects:save', project),
-    saveAll: (projects: any[]) => ipcRenderer.invoke('projects:saveAll', projects),
+    save: (project: unknown) => ipcRenderer.invoke('projects:save', project),
+    saveAll: (projects: unknown[]) => ipcRenderer.invoke('projects:saveAll', projects),
     delete: (projectId: string) => ipcRenderer.invoke('projects:delete', projectId),
     deleteAll: () => ipcRenderer.invoke('projects:deleteAll'),
   },
   settings: {
     load: () => ipcRenderer.invoke('settings:load'),
-    save: (settings: any) => ipcRenderer.invoke('settings:save', settings),
+    save: (settings: unknown) => ipcRenderer.invoke('settings:save', settings),
   },
   exports: {
     loadAll: () => ipcRenderer.invoke('exports:loadAll'),
-    save: (jobs: any[]) => ipcRenderer.invoke('exports:save', jobs),
+    save: (jobs: unknown[]) => ipcRenderer.invoke('exports:save', jobs),
   },
   fs: {
     readFile: (filePath: string) => ipcRenderer.invoke('fs:readFile', filePath),
     writeFile: (filePath: string, data: string) => ipcRenderer.invoke('fs:writeFile', filePath, data),
-    writeBinaryFile: (filePath: string, base64Data: string) => ipcRenderer.invoke('fs:writeBinaryFile', filePath, base64Data),
+    writeBinaryFile: (filePath: string, data: string | Uint8Array | ArrayBuffer) => ipcRenderer.invoke('fs:writeBinaryFile', filePath, data),
     exists: (filePath: string) => ipcRenderer.invoke('fs:exists', filePath),
   },
   shell: {
@@ -45,14 +45,14 @@ const electronAPI = {
     getDataPath: () => ipcRenderer.invoke('app:getDataPath'),
   },
   audio: {
-    getTTSStream: (text: string) => ipcRenderer.invoke('audio:getTTSStream', text),
+    getTTSStream: (text: string, voice?: string) => ipcRenderer.invoke('audio:getTTSStream', text, voice),
   },
   videoExport: {
-    start: (options: any) => ipcRenderer.invoke('export:start', options),
+    start: (options: unknown) => ipcRenderer.invoke('export:start', options),
     choosePath: (projectName: string) => ipcRenderer.invoke('export:choosePath', projectName),
     cancel: () => ipcRenderer.invoke('export:cancel'),
     onProgress: (cb: (data: { phase: string; percent: number; timemark?: string }) => void) => {
-      const handler = (_: any, data: any) => cb(data);
+      const handler = (_: unknown, data: { phase: string; percent: number; timemark?: string }) => cb(data);
       ipcRenderer.on('export:progress', handler);
       return () => ipcRenderer.removeListener('export:progress', handler);
     },

@@ -12,7 +12,7 @@ export const defaultSettings: AppSettings = {
   autoSaveInterval: 5,
 };
 
-const isElectron = () => typeof window !== 'undefined' && !!(window as any).electronAPI;
+const isElectron = () => typeof window !== 'undefined' && !!window.electronAPI;
 const STORAGE_KEY_SETTINGS = 'ayahStudio_settings';
 
 export function applyThemeToDom(theme: 'dark' | 'light') {

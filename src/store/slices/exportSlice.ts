@@ -1,7 +1,7 @@
 import { ExportJob } from '../../types';
 import { AppSlice, ExportSlice } from '../types';
 
-const isElectron = () => typeof window !== 'undefined' && !!(window as any).electronAPI;
+const isElectron = () => typeof window !== 'undefined' && !!window.electronAPI;
 const STORAGE_KEY_EXPORTS = 'ayahStudio_exportJobs';
 
 function loadFromLocal<T>(key: string): T | null {

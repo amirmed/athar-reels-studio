@@ -145,21 +145,9 @@ export async function synthesizeArabicSpeech(
   }
 
   // 1. Try Electron IPC if running as desktop app
-  const electronAPI = (
-    window as unknown as {
-      electronAPI?: {
-        audio?: {
-          getTTSStream?: (
-            text: string,
-            voice?: string
-          ) => Promise<{ success: boolean; base64?: string; mime?: string; error?: string }>;
-        };
-      };
-    }
-  ).electronAPI;
-  if (electronAPI?.audio?.getTTSStream) {
+  if (window.electronAPI?.audio?.getTTSStream) {
     try {
-      const res = await electronAPI.audio.getTTSStream(clean, voiceId);
+      const res = await window.electronAPI.audio.getTTSStream(clean, voiceId);
       if (res?.success && res?.base64) {
         const binary = atob(res.base64);
         const array = new Uint8Array(binary.length);

@@ -363,12 +363,12 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
   // ─── TIER 1: Native Electron FFmpeg Export ───────────────────────────────────
   const isElectronAvailable =
     typeof window !== 'undefined' &&
-    typeof (window as any).electronAPI?.videoExport?.start === 'function';
+    typeof window.electronAPI?.videoExport?.start === 'function';
 
-  if (isElectronAvailable && preferEngine !== 'webcodecs' && preferEngine !== 'mediarecorder') {
+  if (isElectronAvailable && window.electronAPI && preferEngine !== 'webcodecs' && preferEngine !== 'mediarecorder') {
     reportProgress('جاري التصدير عبر محرك FFmpeg فائق السرعة 🚀...', 5, { engine: 'ffmpeg' });
 
-    const unbindProgress = (window as any).electronAPI.videoExport.onProgress((data: any) => {
+    const unbindProgress = window.electronAPI.videoExport.onProgress((data) => {
       if (signal?.aborted) return;
       const pct = Math.min(99, Math.max(1, Math.round(data.percent || 0)));
       reportProgress(data.phase || `جاري التصدير عبر محرك FFmpeg (${pct}%)...`, pct, {
@@ -401,7 +401,7 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
         };
       });
 
-      const exportResult = await (window as any).electronAPI.videoExport.start({
+      const exportResult = await window.electronAPI.videoExport.start({
         projectName,
         aspectRatio,
         quality,
