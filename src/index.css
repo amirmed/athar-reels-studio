@@ -1,33 +1,43 @@
-/* Fallback: load remaining decorative fonts from CDN (Scheherazade, Noto Naskh, etc.) */
-@import url('https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Reem+Kufi:wght@400;700&family=Tajawal:wght@300;400;700&family=Harmattan:wght@400;700&display=swap');
-
-/* ==================== Local Font Declarations (Offline-Ready) ==================== */
-/* Cairo — Variable weight Arabic + Latin UI font */
+/* ==================== Local Font Declarations (100% Offline-Ready) ==================== */
+/* Cairo — UI & Reels Modern Font */
 @font-face {
   font-family: 'Cairo';
   font-style: normal;
-  font-weight: 300 700;
+  font-weight: 300 900;
   font-display: swap;
-  src: url('/fonts/Cairo-Arabic.woff2') format('woff2');
+  src:
+    url('/fonts/Cairo-Arabic.woff2') format('woff2'),
+    url('/fonts/Cairo-Regular.ttf') format('truetype');
   unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+FB50-FDFF, U+FE70-FEFC;
 }
 @font-face {
   font-family: 'Cairo';
   font-style: normal;
-  font-weight: 300 700;
+  font-weight: 300 900;
   font-display: swap;
-  src: url('/fonts/Cairo-Latin.woff2') format('woff2');
+  src:
+    url('/fonts/Cairo-Latin.woff2') format('woff2'),
+    url('/fonts/Cairo-Regular.ttf') format('truetype');
   unicode-range:
     U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+2000-206F, U+20AC, U+2122, U+FEFF, U+FFFD;
 }
+@font-face {
+  font-family: 'Cairo';
+  font-style: normal;
+  font-weight: 700 900;
+  font-display: swap;
+  src: url('/fonts/Cairo-Bold.ttf') format('truetype');
+}
 
-/* Amiri — Naskh-style Quran text font */
+/* Amiri — Naskh-style Quranic Typography */
 @font-face {
   font-family: 'Amiri';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/Amiri-Regular-Arabic.woff2') format('woff2');
+  src:
+    url('/fonts/Amiri-Regular-Arabic.woff2') format('woff2'),
+    url('/fonts/Amiri-Regular.ttf') format('truetype');
   unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+FB50-FDFF, U+FE70-FEFC;
 }
 @font-face {
@@ -35,7 +45,9 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/Amiri-Regular-Latin.woff2') format('woff2');
+  src:
+    url('/fonts/Amiri-Regular-Latin.woff2') format('woff2'),
+    url('/fonts/Amiri-Regular.ttf') format('truetype');
   unicode-range:
     U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+2000-206F, U+20AC, U+2122, U+FEFF, U+FFFD;
 }
@@ -44,8 +56,60 @@
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('/fonts/Amiri-Bold-Arabic.woff2') format('woff2');
+  src:
+    url('/fonts/Amiri-Bold-Arabic.woff2') format('woff2'),
+    url('/fonts/Amiri-Bold.ttf') format('truetype');
   unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+FB50-FDFF, U+FE70-FEFC;
+}
+
+/* Noto Naskh Arabic — High-Precision Quranic Text */
+@font-face {
+  font-family: 'Noto Naskh Arabic';
+  font-style: normal;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url('/fonts/NotoNaskhArabic-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Noto Naskh Arabic';
+  font-style: normal;
+  font-weight: 700 800;
+  font-display: swap;
+  src: url('/fonts/NotoNaskhArabic-Bold.ttf') format('truetype');
+}
+
+/* Scheherazade New — Historic Ottoman Quranic Script */
+@font-face {
+  font-family: 'Scheherazade New';
+  font-style: normal;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url('/fonts/ScheherazadeNew-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Scheherazade New';
+  font-style: normal;
+  font-weight: 700 800;
+  font-display: swap;
+  src: url('/fonts/ScheherazadeNew-Bold.ttf') format('truetype');
+}
+
+/* Tajawal — Modern Clean Arabesque */
+@font-face {
+  font-family: 'Tajawal';
+  font-style: normal;
+  font-weight: 300 500;
+  font-display: swap;
+  src:
+    url('/fonts/Tajawal-Regular.woff2') format('woff2'),
+    url('/fonts/Tajawal-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Tajawal';
+  font-style: normal;
+  font-weight: 700 900;
+  font-display: swap;
+  src: url('/fonts/Tajawal-Bold.ttf') format('truetype');
 }
 
 @tailwind base;
