@@ -6,6 +6,7 @@ import http from 'http';
 import type { IncomingHttpHeaders } from 'http';
 import { createWriteStream } from 'fs';
 import { spawn } from 'child_process';
+import { buildAudioFilters, ExportAudioSettings } from '../src/services/audioDspFilters';
 
 let ffmpeg: any;
 let ffmpegBinaryPath = '';
@@ -289,6 +290,7 @@ export interface ExportOptions {
   transition?: string;
   videoEffect?: string;
   textSettings?: ExportTextSettings;
+  audioSettings?: ExportAudioSettings;
   showTranslation?: boolean;
   showTafsir?: boolean;
   surahName?: string;
@@ -1108,13 +1110,18 @@ export function setupExportHandlers(tempDir: string) {
         cmd.outputOptions(videoOutputOptions);
 
         if (mergedAudio) {
-          cmd.outputOptions([
+          const audioFilters = buildAudioFilters(options.audioSettings, totalDur);
+          const audioOutputOptions = [
             '-map 0:v',
             '-map 1:a',
             '-c:a aac',
             `-b:a ${abitrate}`,
             '-max_muxing_queue_size 1024',
-          ]);
+          ];
+          if (audioFilters.length > 0) {
+            audioOutputOptions.push(`-af ${audioFilters.join(',')}`);
+          }
+          cmd.outputOptions(audioOutputOptions);
         } else {
           cmd.outputOptions(['-an']);
         }

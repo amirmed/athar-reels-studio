@@ -6,7 +6,7 @@
 
 import { Muxer, ArrayBufferTarget } from 'mp4-muxer';
 import { AyahData } from './quranApi';
-import { TextSettings } from '../types';
+import { TextSettings, AudioSettings } from '../types';
 import { renderVideoExportFrame } from './videoFrameRenderer';
 
 export interface WebCodecsExportParams {
@@ -24,6 +24,7 @@ export interface WebCodecsExportParams {
   totalDurationSec: number;
   masterAudioBuffer?: AudioBuffer | null;
   audioUrls?: string[];
+  audioSettings?: AudioSettings;
   bgImage?: HTMLImageElement | null;
   bgVideoUrl?: string | null;
   sceneBgImages?: Record<number, HTMLImageElement | HTMLVideoElement>;
@@ -82,11 +83,37 @@ export async function isWebCodecsExportSupported(): Promise<boolean> {
 }
 
 /**
- * Mix and decode all audio tracks into a master AudioBuffer using OfflineAudioContext
+ * Generate algorithmic impulse response for Mosque Reverb in OfflineAudioContext
+ */
+function generateMosqueImpulse(
+  ctx: OfflineAudioContext,
+  durationSec: number,
+  decayRate: number
+): AudioBuffer {
+  const rate = ctx.sampleRate;
+  const length = Math.floor(rate * durationSec);
+  const impulse = ctx.createBuffer(2, length, rate);
+  const left = impulse.getChannelData(0);
+  const right = impulse.getChannelData(1);
+
+  for (let i = 0; i < length; i++) {
+    const t = i / rate;
+    const envelope = Math.exp(-decayRate * t);
+    const earlyRefl = i < rate * 0.08 ? (Math.random() * 2 - 1) * 1.5 : Math.random() * 2 - 1;
+    left[i] = earlyRefl * envelope;
+    right[i] = (Math.random() * 2 - 1) * envelope;
+  }
+
+  return impulse;
+}
+
+/**
+ * Mix, decode, and process all audio tracks with full DSP (Reverb, 8D, EQ, Noise Gate) using OfflineAudioContext
  */
 async function buildMasterAudioBuffer(
   audioUrls: string[],
-  totalDurationSec: number
+  totalDurationSec: number,
+  audioSettings?: AudioSettings
 ): Promise<AudioBuffer | null> {
   if (!audioUrls || audioUrls.length === 0 || totalDurationSec <= 0) {
     return null;
@@ -95,9 +122,114 @@ async function buildMasterAudioBuffer(
   try {
     const sampleRate = 48000;
     const numberOfChannels = 2;
-    const length = Math.ceil(sampleRate * (totalDurationSec + 1));
+    const length = Math.ceil(sampleRate * (totalDurationSec + 2));
     const offlineCtx = new OfflineAudioContext(numberOfChannels, length, sampleRate);
 
+    // 1. DSP Filter Nodes (Noise Gate, Clarity, Warmth, Dynamics)
+    const highpass = offlineCtx.createBiquadFilter();
+    highpass.type = 'highpass';
+    highpass.frequency.value = audioSettings?.enableNoiseGate ? 80 : 30;
+
+    const clarity = offlineCtx.createBiquadFilter();
+    clarity.type = 'highshelf';
+    clarity.frequency.value = 3500;
+    clarity.gain.value = audioSettings?.enableStudioClarity ? 4.0 : 0;
+
+    const warmth = offlineCtx.createBiquadFilter();
+    warmth.type = 'lowshelf';
+    warmth.frequency.value = 250;
+    warmth.gain.value = audioSettings?.enableVoiceWarmth ? 3.5 : 0;
+
+    const compressor = offlineCtx.createDynamicsCompressor();
+    compressor.threshold.value = -18;
+    compressor.knee.value = 8;
+    compressor.ratio.value = 4;
+    compressor.attack.value = 0.005;
+    compressor.release.value = 0.2;
+
+    highpass.connect(clarity);
+    clarity.connect(warmth);
+    warmth.connect(compressor);
+
+    // 2. Reverb Dry / Wet Mixing
+    const dryGain = offlineCtx.createGain();
+    const wetGain = offlineCtx.createGain();
+    const subMasterGain = offlineCtx.createGain();
+
+    compressor.connect(dryGain);
+    dryGain.connect(subMasterGain);
+
+    if (audioSettings?.reverbPreset && audioSettings.reverbPreset !== 'none') {
+      const convolver = offlineCtx.createConvolver();
+      let dur = 2.5;
+      let decay = 3.0;
+      if (audioSettings.reverbPreset === 'smallRoom') {
+        dur = 1.2;
+        decay = 5.0;
+      } else if (audioSettings.reverbPreset === 'grandMosque') {
+        dur = 3.2;
+        decay = 2.2;
+      } else if (audioSettings.reverbPreset === 'makkahHaram') {
+        dur = 4.8;
+        decay = 1.5;
+      } else if (audioSettings.reverbPreset === 'celestialEcho') {
+        dur = 6.5;
+        decay = 1.1;
+      }
+
+      convolver.buffer = generateMosqueImpulse(offlineCtx, dur, decay);
+      const wetFraction = ((audioSettings.reverbLevel ?? 35) / 100) * 0.75;
+      wetGain.gain.value = wetFraction;
+      dryGain.gain.value = 1.0 - wetFraction * 0.3;
+
+      compressor.connect(convolver);
+      convolver.connect(wetGain);
+      wetGain.connect(subMasterGain);
+    } else {
+      dryGain.gain.value = 1.0;
+      wetGain.gain.value = 0;
+    }
+
+    // 3. 8D Binaural Spatial Audio Modulation
+    let postDspNode: AudioNode = subMasterGain;
+    if (audioSettings?.enable8DAudio && typeof (offlineCtx as any).createStereoPanner === 'function') {
+      const panner = (offlineCtx as any).createStereoPanner();
+      const speedHz = audioSettings.eightDSpeed ?? 0.12;
+      const depth = Math.min(1.0, (audioSettings.eightDDepth ?? 85) / 100);
+
+      const points = Math.max(100, Math.ceil(totalDurationSec * 30));
+      const curve = new Float32Array(points);
+      for (let i = 0; i < points; i++) {
+        const t = (i / points) * totalDurationSec;
+        curve[i] = Math.sin(2 * Math.PI * speedHz * t) * depth;
+      }
+      panner.pan.setValueCurveAtTime(curve, 0, totalDurationSec);
+
+      subMasterGain.connect(panner);
+      postDspNode = panner;
+    }
+
+    // 4. Master Volume & Fades
+    const masterGain = offlineCtx.createGain();
+    const baseVol = (audioSettings?.recitationVolume ?? 100) / 100;
+    masterGain.gain.setValueAtTime(baseVol, 0);
+
+    if (audioSettings?.fadeIn) {
+      const fadeDur = audioSettings.fadeDuration || 0.5;
+      masterGain.gain.setValueAtTime(0, 0);
+      masterGain.gain.linearRampToValueAtTime(baseVol, fadeDur);
+    }
+    if (audioSettings?.fadeOut && totalDurationSec > 1) {
+      const fadeDur = audioSettings.fadeDuration || 0.5;
+      const startFadeOut = Math.max(0, totalDurationSec - fadeDur);
+      masterGain.gain.setValueAtTime(baseVol, startFadeOut);
+      masterGain.gain.linearRampToValueAtTime(0, totalDurationSec);
+    }
+
+    postDspNode.connect(masterGain);
+    masterGain.connect(offlineCtx.destination);
+
+    // 5. Decode and stream all audio segments into DSP chain
     let currentOffset = 0;
     for (const url of audioUrls) {
       if (!url) continue;
@@ -109,7 +241,7 @@ async function buildMasterAudioBuffer(
 
         const source = offlineCtx.createBufferSource();
         source.buffer = decoded;
-        source.connect(offlineCtx.destination);
+        source.connect(highpass);
         source.start(currentOffset);
 
         currentOffset += decoded.duration;
@@ -120,7 +252,7 @@ async function buildMasterAudioBuffer(
 
     return await offlineCtx.startRendering();
   } catch (err) {
-    console.warn('[WebCodecsExport] Failed to build master audio buffer:', err);
+    console.warn('[WebCodecsExport] Failed to build master audio buffer with DSP:', err);
     return null;
   }
 }
@@ -152,10 +284,10 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
     throw new Error('Export aborted by user');
   }
 
-  // 1. Prepare Master AudioBuffer
+  // 1. Prepare Master AudioBuffer with full DSP chain
   let masterBuffer = params.masterAudioBuffer || null;
   if (!masterBuffer && params.audioUrls && params.audioUrls.length > 0) {
-    masterBuffer = await buildMasterAudioBuffer(params.audioUrls, totalDurationSec);
+    masterBuffer = await buildMasterAudioBuffer(params.audioUrls, totalDurationSec, params.audioSettings);
   }
 
   const sampleRate = masterBuffer ? masterBuffer.sampleRate : 48000;

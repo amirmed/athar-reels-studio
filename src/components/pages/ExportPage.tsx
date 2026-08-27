@@ -691,6 +691,7 @@ export const ExportPage: React.FC = () => {
               transition: 'fade',
               videoEffect: 'none',
               textSettings: currentProject.textSettings,
+              audioSettings: currentProject.audioSettings,
               surahName: currentProject.surah,
             });
 
@@ -826,6 +827,7 @@ export const ExportPage: React.FC = () => {
             sceneBgImages,
             bgOpacity: currentProject.backgroundOpacity ?? 0.6,
             textSettings: currentProject.textSettings,
+            audioSettings: currentProject.audioSettings,
             watermark: currentProject.watermark,
             projectName: currentProject.name,
             surahName: currentProject.surah || '',
