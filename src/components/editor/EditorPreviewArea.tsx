@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { TextSettings, Project, AudioSettings } from '../../types';
+import { TextSettings, AudioSettings } from '../../types';
 import { AyahData, TranslationData } from '../../services/quranApi';
 import { PreviewFrame } from '../ui/PreviewFrame';
 import { PlatformPreviewOverlay, PlatformOverlayType } from '../ui/PlatformPreviewOverlay';
@@ -22,77 +22,72 @@ import {
   Play,
   Pause,
   Volume2,
-  ShieldCheck,
   Zap,
-  Gauge,
   Eye,
   EyeOff,
 } from 'lucide-react';
 
 interface EditorPreviewAreaProps {
-  currentProject: Project | null;
   aspectRatio: '9:16' | '1:1' | '16:9';
   setAspectRatio: (ratio: '9:16' | '1:1' | '16:9') => void;
-  previewZoom: number;
-  setPreviewZoom: React.Dispatch<React.SetStateAction<number>>;
   ayahs: AyahData[];
-  translations: TranslationData[];
+  translations?: TranslationData[];
   currentAyahIndex: number;
   audioCurrentTime: number;
   audioDuration: number;
   isPlaying: boolean;
   textSettings: TextSettings;
   setTextSettings: React.Dispatch<React.SetStateAction<TextSettings>>;
-  showTranslation: boolean;
-  showTafsir: boolean;
-  backgroundFile?: string;
-  backgroundOpacity: number;
-  watermark: string;
-  surahName: string;
-  fromAyah: number;
-  toAyah: number;
-  transition: string;
-  videoEffect: string;
   audioSettings: AudioSettings;
-  overallProgress: number;
-  formatAudioTime: (sec: number) => string;
+  showTranslation?: boolean;
+  showTafsir?: boolean;
+  backgroundFile?: string;
+  backgroundOpacity?: number;
+  watermark?: string;
+  surahName?: string;
+  fromAyah?: number;
+  toAyah?: number;
+  transition?: string;
+  videoEffect?: string;
   togglePlay: () => void;
   seekToAyah: (idx: number) => void;
-  onOpenPresetModal: () => void;
-  onOpenThumbnailModal: () => void;
-  onOpenViralCaption: () => void;
-  onOpenFullscreen: () => void;
+  onOpenPresetModal?: () => void;
+  onOpenThumbnailModal?: () => void;
+  onOpenViralCaption?: () => void;
+  onOpenFullscreen?: () => void;
   onOpenWaveformTimingEditor?: () => void;
+}
+
+function formatAudioTime(sec: number): string {
+  if (isNaN(sec) || sec < 0) return '00:00';
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 }
 
 export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
   ({
-    currentProject,
     aspectRatio,
     setAspectRatio,
-    previewZoom,
-    setPreviewZoom,
     ayahs,
-    translations,
+    translations = [],
     currentAyahIndex,
     audioCurrentTime,
     audioDuration,
     isPlaying,
     textSettings,
     setTextSettings,
-    showTranslation,
-    showTafsir,
+    showTranslation = false,
+    showTafsir = false,
     backgroundFile,
     backgroundOpacity,
     watermark,
     surahName,
     fromAyah,
     toAyah,
-    transition,
-    videoEffect,
+    transition = 'fade',
+    videoEffect = 'none',
     audioSettings,
-    overallProgress,
-    formatAudioTime,
     togglePlay,
     seekToAyah,
     onOpenPresetModal,
@@ -101,13 +96,28 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
     onOpenFullscreen,
     onOpenWaveformTimingEditor,
   }) => {
+    // Read project & global settings directly from store
+    const currentProject = useAppStore((s) => s.currentProject);
     const settings = useAppStore((s) => s.settings);
     const updateSettings = useAppStore((s) => s.updateSettings);
     const addToast = useAppStore((s) => s.addToast);
+
+    // Internal UI state
+    const [previewZoom, setPreviewZoom] = useState<number>(100);
     const [platformOverlay, setPlatformOverlay] = useState<PlatformOverlayType>('none');
     const [showSafeZones, setShowSafeZones] = useState<boolean>(true);
 
     const currentPerfMode = settings.performanceMode || 'balanced';
+
+    // Derived metadata
+    const effectiveSurahName =
+      surahName || currentProject?.customTitle || currentProject?.surah || 'سورة الفاتحة';
+    const effectiveFromAyah = fromAyah ?? currentProject?.fromAyah ?? 1;
+    const effectiveToAyah = toAyah ?? currentProject?.toAyah ?? 7;
+    const effectiveWatermark = watermark ?? currentProject?.watermark ?? 'أَثَـر ستوديو';
+    const effectiveBgOpacity = backgroundOpacity ?? currentProject?.backgroundOpacity ?? 0.65;
+    const overallProgress =
+      audioDuration > 0 ? Math.min(100, Math.max(0, (audioCurrentTime / audioDuration) * 100)) : 0;
 
     const cyclePerformanceMode = () => {
       const modes: Array<'performance' | 'balanced' | 'quality'> = [
@@ -270,56 +280,68 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
             </button>
           </div>
 
-          <div className="w-px h-3.5 bg-white/[0.08]" />
-
           {/* 1-Click Viral Preset Styles Trigger */}
-          <button
-            type="button"
-            onClick={onOpenPresetModal}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gold-500/15 hover:bg-gold-500/25 border border-gold-400/30 text-xs font-bold text-gold-300 hover:text-gold-200 transition-all active:scale-95 shadow-sm cursor-pointer"
-            title="تطبيق قوالب سينمائية جاهزة بنقرة واحدة"
-          >
-            <Sparkles size={12} className="text-gold-400 animate-pulse" />
-            <span>القوالب 🎬</span>
-          </button>
-
-          <div className="w-px h-3.5 bg-white/[0.08]" />
+          {onOpenPresetModal && (
+            <>
+              <div className="w-px h-3.5 bg-white/[0.08]" />
+              <button
+                type="button"
+                onClick={onOpenPresetModal}
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gold-500/15 hover:bg-gold-500/25 border border-gold-400/30 text-xs font-bold text-gold-300 hover:text-gold-200 transition-all active:scale-95 shadow-sm cursor-pointer"
+                title="تطبيق قوالب سينمائية جاهزة بنقرة واحدة"
+              >
+                <Sparkles size={12} className="text-gold-400 animate-pulse" />
+                <span>القوالب 🎬</span>
+              </button>
+            </>
+          )}
 
           {/* 1-Click 4K Viral Thumbnail Cover Trigger */}
-          <button
-            type="button"
-            onClick={onOpenThumbnailModal}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 border border-sky-400/30 text-xs font-bold text-sky-300 hover:text-sky-200 transition-all active:scale-95 shadow-sm cursor-pointer"
-            title="توليد وتصدير غلاف فيديو 4K احترافي بنقرة واحدة"
-          >
-            <ImageIcon size={12} className="text-sky-400" />
-            <span>الغلاف 4K</span>
-          </button>
-
-          <div className="w-px h-3.5 bg-white/[0.08]" />
+          {onOpenThumbnailModal && (
+            <>
+              <div className="w-px h-3.5 bg-white/[0.08]" />
+              <button
+                type="button"
+                onClick={onOpenThumbnailModal}
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 border border-sky-400/30 text-xs font-bold text-sky-300 hover:text-sky-200 transition-all active:scale-95 shadow-sm cursor-pointer"
+                title="توليد وتصدير غلاف فيديو 4K احترافي بنقرة واحدة"
+              >
+                <ImageIcon size={12} className="text-sky-400" />
+                <span>الغلاف 4K</span>
+              </button>
+            </>
+          )}
 
           {/* 1-Click Viral Caption / Hashtags Generator Trigger */}
-          <button
-            type="button"
-            onClick={onOpenViralCaption}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-400/30 text-xs font-bold text-emerald-300 hover:text-emerald-200 transition-all active:scale-95 shadow-sm cursor-pointer"
-            title="توليد كابشن متصدر وهاشتاجات فيروسية للنشر على تيك توك وإنستغرام"
-          >
-            <Share2 size={12} className="text-emerald-400" />
-            <span>الكابشن 🔥</span>
-          </button>
-
-          <div className="w-px h-3.5 bg-white/[0.08]" />
+          {onOpenViralCaption && (
+            <>
+              <div className="w-px h-3.5 bg-white/[0.08]" />
+              <button
+                type="button"
+                onClick={onOpenViralCaption}
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-400/30 text-xs font-bold text-emerald-300 hover:text-emerald-200 transition-all active:scale-95 shadow-sm cursor-pointer"
+                title="توليد كابشن متصدر وهاشتاجات فيروسية للنشر على تيك توك وإنستغرام"
+              >
+                <Share2 size={12} className="text-emerald-400" />
+                <span>الكابشن 🔥</span>
+              </button>
+            </>
+          )}
 
           {/* Fullscreen Studio Preview Trigger */}
-          <button
-            type="button"
-            onClick={onOpenFullscreen}
-            className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-all active:scale-95 cursor-pointer"
-            title="معاينة بملء الشاشة (مسرح سينمائي)"
-          >
-            <Maximize2 size={13} />
-          </button>
+          {onOpenFullscreen && (
+            <>
+              <div className="w-px h-3.5 bg-white/[0.08]" />
+              <button
+                type="button"
+                onClick={onOpenFullscreen}
+                className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-all active:scale-95 cursor-pointer"
+                title="معاينة بملء الشاشة (مسرح سينمائي)"
+              >
+                <Maximize2 size={13} />
+              </button>
+            </>
+          )}
         </div>
 
         {/* Central Live Video Canvas Container */}
@@ -334,7 +356,7 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
           >
             <div className="relative rounded-2xl overflow-hidden shadow-2xl">
               <PreviewFrame
-                aspectRatio={aspectRatio as '9:16' | '16:9' | '1:1'}
+                aspectRatio={aspectRatio}
                 ayahText={
                   ayahs[currentAyahIndex]?.text ||
                   currentProject?.customText ||
@@ -345,16 +367,16 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
                 showTranslation={showTranslation}
                 showTafsir={showTafsir}
                 backgroundUrl={backgroundFile}
-                backgroundOpacity={backgroundOpacity}
-                watermark={watermark}
-                surahName={surahName}
+                backgroundOpacity={effectiveBgOpacity}
+                watermark={effectiveWatermark}
+                surahName={effectiveSurahName}
                 reciterName={
                   audioSettings.customReciterName ||
                   currentProject?.customReciterName ||
                   currentProject?.reciter ||
                   undefined
                 }
-                ayahRange={`${fromAyah} - ${toAyah}`}
+                ayahRange={`${effectiveFromAyah} - ${effectiveToAyah}`}
                 currentAyahIndex={currentAyahIndex}
                 currentTime={audioCurrentTime}
                 ayahs={ayahs}
@@ -378,8 +400,8 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
                 platform={platformOverlay}
                 showSafeZones={showSafeZones}
                 aspectRatio={aspectRatio}
-                surahName={surahName}
-                watermark={watermark}
+                surahName={effectiveSurahName}
+                watermark={effectiveWatermark}
               />
             </div>
           </div>

@@ -103,7 +103,6 @@ export const EditorPage: React.FC = () => {
   const [showExportModal, setShowExportModal] = useState(false);
   const [showAutoReelModal, setShowAutoReelModal] = useState(false);
   const [isFullscreenPreview, setIsFullscreenPreview] = useState(false);
-  const [previewZoom, setPreviewZoom] = useState<number>(100);
 
   const [audioSettings, setAudioSettings] = useState<AudioSettings>(
     currentProject?.audioSettings || {
@@ -963,18 +962,6 @@ export const EditorPage: React.FC = () => {
     return () => clearInterval(intervalTimer);
   }, [currentProject?.id, settings.autoSave, settings.autoSaveInterval]);
 
-  const formatAudioTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const overallProgress =
-    ayahs.length > 0
-      ? ((currentAyahIndex + (audioDuration > 0 ? audioCurrentTime / audioDuration : 0)) /
-          ayahs.length) *
-        100
-      : 0;
 
   return (
     <div className="h-screen w-screen flex flex-col bg-surface-950 text-white overflow-hidden">
@@ -1039,11 +1026,8 @@ export const EditorPage: React.FC = () => {
 
         {/* Left / Center Preview Area */}
         <EditorPreviewArea
-          currentProject={currentProject}
           aspectRatio={aspectRatio}
           setAspectRatio={setAspectRatio}
-          previewZoom={previewZoom}
-          setPreviewZoom={setPreviewZoom}
           ayahs={ayahs}
           translations={translations}
           currentAyahIndex={currentAyahIndex}
@@ -1063,8 +1047,6 @@ export const EditorPage: React.FC = () => {
           transition={transition}
           videoEffect={videoEffect}
           audioSettings={audioSettings}
-          overallProgress={overallProgress}
-          formatAudioTime={formatAudioTime}
           togglePlay={togglePlay}
           seekToAyah={seekToAyah}
           onOpenPresetModal={() => setIsPresetModalOpen(true)}
