@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../../store/useAppStore';
 import { AppLayout } from '../layout/AppLayout';
 import { AzkarItem, Project } from '../../types';
+import { createDefaultProject } from '../../utils/projectDefaults';
 import { azkarCategories, initialAzkarList } from '../../data/azkarHadithData';
 import {
   searchHadithsAndAzkar,
@@ -118,8 +119,7 @@ export const AzkarStudioPage: React.FC = () => {
 
   // 1-Click Convert to Video Reel Project
   const handleConvertToReel = (item: AzkarItem) => {
-    const project: Project = {
-      id: `azkar-proj-${Date.now()}`,
+    const project: Project = createDefaultProject({
       name: `${item.title} — ريل دعوي`,
       contentType: item.category === 'hadith' ? 'hadith' : 'azkar',
       customText: item.arabicText,
@@ -138,10 +138,6 @@ export const AzkarStudioPage: React.FC = () => {
         'https://images.pexels.com/photos/1529881/pexels-photo-1529881.jpeg?auto=compress&cs=tinysrgb&w=1280',
       backgroundOpacity: 0.65,
       watermark: 'atar-studio.com',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      status: 'draft',
-      exportCount: 0,
       textSettings: {
         fontSize: 27,
         fontWeight: 'bold',
@@ -173,12 +169,8 @@ export const AzkarStudioPage: React.FC = () => {
         fadeOut: true,
         fadeDuration: 2,
         backgroundVolume: 22,
-        ambientSoundId: 'none',
-        ambientSoundVolume: 0,
       },
-      translationEnabled: false,
-      tafsirEnabled: false,
-    };
+    });
 
     addProject(project);
     setCurrentProject(project);

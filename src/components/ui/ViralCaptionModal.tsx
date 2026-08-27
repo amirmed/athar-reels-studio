@@ -9,6 +9,7 @@ import {
   triggerNativeShare,
 } from '../../services/viralCaptionService';
 import { useAppStore } from '../../store/useAppStore';
+import { useHotkeys } from '../../hooks/useHotkeys';
 
 interface ViralCaptionModalProps {
   isOpen: boolean;
@@ -25,8 +26,8 @@ export const ViralCaptionModal: React.FC<ViralCaptionModalProps> = ({
   ayahs,
   translationText,
 }) => {
-  const addToast = useAppStore((s) => s.addToast);
   const [copiedType, setCopiedType] = useState<string | null>(null);
+  const addToast = useAppStore((s) => s.addToast);
 
   const captionData = useMemo(() => {
     if (!isOpen) {
@@ -58,14 +59,7 @@ export const ViralCaptionModal: React.FC<ViralCaptionModalProps> = ({
     return getSocialShareLinks(captionData.fullCaption);
   }, [isOpen, captionData.fullCaption]);
 
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  useHotkeys('Escape', onClose, { enabled: isOpen });
 
   if (!isOpen) return null;
 

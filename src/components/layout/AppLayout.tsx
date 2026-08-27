@@ -7,6 +7,8 @@ import { MotherDuaModal } from '../ui/MotherDuaModal';
 import { ToastContainer } from '../ui/Toast';
 import { InteractiveTourGuide } from '../ui/InteractiveTourGuide';
 
+import { useHotkeys } from '../../hooks/useHotkeys';
+
 interface AppLayoutProps {
   children: React.ReactNode;
   title?: string;
@@ -28,16 +30,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const [isMotherDuaOpen, setIsMotherDuaOpen] = useState(false);
 
   // Global Ctrl+K / Cmd+K listener
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        setIsSearchOpen((prev) => !prev);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  useHotkeys('ctrl+k', () => {
+    setIsSearchOpen((prev) => !prev);
+  });
 
   return (
     <div className="h-screen w-screen flex flex-col bg-surface-950 overflow-hidden">

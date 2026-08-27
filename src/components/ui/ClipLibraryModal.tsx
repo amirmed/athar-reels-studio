@@ -25,6 +25,7 @@ import {
   buildProjectFromClipTemplate,
 } from '../../data/clipLibraryData';
 import { useAppStore } from '../../store/useAppStore';
+import { useHotkeys } from '../../hooks/useHotkeys';
 
 interface ClipLibraryModalProps {
   isOpen: boolean;
@@ -36,9 +37,9 @@ export const ClipLibraryModal: React.FC<ClipLibraryModalProps> = ({ isOpen, onCl
   const addProject = useAppStore((s) => s.addProject);
   const setCurrentPage = useAppStore((s) => s.setCurrentPage);
   const addToast = useAppStore((s) => s.addToast);
-  const [selectedCategory, setSelectedCategory] = useState<ClipCategory | 'all'>('all');
+  
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [previewClip, setPreviewClip] = useState<ClipTemplate | null>(null);
 
   const filteredClips = useMemo(() => {
     return READY_CLIPS_LIBRARY.filter((clip) => {
@@ -55,7 +56,7 @@ export const ClipLibraryModal: React.FC<ClipLibraryModalProps> = ({ isOpen, onCl
     });
   }, [selectedCategory, searchQuery]);
 
-  const handleLaunchClip = (clip: ClipTemplate, directExport = false) => {
+  const handleLaunchClip = (clip: ClipTemplate) => {
     const project = buildProjectFromClipTemplate(clip);
     addProject(project);
     setCurrentProject(project);
@@ -69,14 +70,7 @@ export const ClipLibraryModal: React.FC<ClipLibraryModalProps> = ({ isOpen, onCl
     }, 200);
   };
 
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  useHotkeys('Escape', onClose, { enabled: isOpen });
 
   if (!isOpen) return null;
 

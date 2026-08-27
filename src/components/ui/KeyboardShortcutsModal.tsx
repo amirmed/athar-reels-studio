@@ -12,6 +12,8 @@ import {
   Maximize2,
 } from 'lucide-react';
 
+import { useHotkeys } from '../../hooks/useHotkeys';
+
 interface KeyboardShortcutsModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -21,14 +23,7 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  React.useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  useHotkeys('Escape', onClose, { enabled: isOpen });
 
   if (!isOpen) return null;
 

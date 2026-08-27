@@ -24,6 +24,7 @@ import {
 } from '../../services/quranApi';
 import { surahs } from '../../data/mockData';
 import { useAppStore } from '../../store/useAppStore';
+import { useHotkeys } from '../../hooks/useHotkeys';
 
 interface ReciterBrowserModalProps {
   isOpen: boolean;
@@ -204,17 +205,14 @@ export const ReciterBrowserModal: React.FC<ReciterBrowserModalProps> = ({
     },
   ];
 
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        if (audioRef.current) audioRef.current.pause();
-        onClose();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  useHotkeys(
+    'Escape',
+    () => {
+      if (audioRef.current) audioRef.current.pause();
+      onClose();
+    },
+    { enabled: isOpen }
+  );
 
   if (!isOpen) return null;
 

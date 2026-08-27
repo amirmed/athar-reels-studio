@@ -1,5 +1,6 @@
 import { Project } from '../types';
 import { autoReelThemes, AutoReelTheme } from '../data/autoReelPresets';
+import { createDefaultProject } from '../utils/projectDefaults';
 
 /**
  * Builds a ready-to-render Project instance from a selected AutoReelTheme
@@ -7,8 +8,7 @@ import { autoReelThemes, AutoReelTheme } from '../data/autoReelPresets';
 export function buildProjectFromTheme(theme: AutoReelTheme): Project {
   const isHadithOrAzkar = theme.contentType === 'hadith' || theme.contentType === 'azkar';
 
-  return {
-    id: `auto-reel-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+  return createDefaultProject({
     name: `${theme.title} — ريل تلقائي AI`,
     contentType: theme.contentType,
     // Quran fields
@@ -29,10 +29,6 @@ export function buildProjectFromTheme(theme: AutoReelTheme): Project {
     backgroundUrl: theme.backgroundUrl,
     backgroundOpacity: theme.backgroundOpacity,
     watermark: theme.watermark,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    status: 'draft',
-    exportCount: 0,
     textSettings: {
       fontSize: isHadithOrAzkar ? 27 : 32,
       fontWeight: 'bold',
@@ -67,9 +63,7 @@ export function buildProjectFromTheme(theme: AutoReelTheme): Project {
       ambientSoundId: theme.ambientSoundId,
       ambientSoundVolume: theme.ambientSoundVolume,
     },
-    translationEnabled: false,
-    tafsirEnabled: false,
-  };
+  });
 }
 
 /**

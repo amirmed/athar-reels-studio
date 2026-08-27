@@ -1,4 +1,5 @@
 import { Project } from '../types';
+import { createDefaultProject } from '../utils/projectDefaults';
 
 export interface DailyReelTemplate {
   dayIndex: number; // 0: Sun, 1: Mon, 2: Tue, 3: Wed, 4: Thu, 5: Fri, 6: Sat
@@ -185,18 +186,8 @@ export function getTodayReelTemplate(): DailyReelTemplate {
   return DAILY_REEL_SCHEDULE.find((s) => s.dayIndex === day) || DAILY_REEL_SCHEDULE[0];
 }
 
-/**
- * Instantiate a Project object from today's daily reel template
- */
-export function buildTodayDailyReelProject(): Project {
-  const tpl = getTodayReelTemplate();
-  const dateStr = new Date().toLocaleDateString('ar-SA', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-  });
-
-  return {
+export function buildDailyProjectFromSchedule(tpl: DailyReelTemplate): Project {
+  return createDefaultProject({
     id: `daily-reel-${Date.now()}`,
     name: `ريلز يوم ${tpl.dayName} • ${tpl.title}`,
     reciter: tpl.reciterName,
@@ -210,8 +201,6 @@ export function buildTodayDailyReelProject(): Project {
     backgroundUrl: tpl.backgroundUrl,
     backgroundOpacity: tpl.backgroundOpacity,
     watermark: 'atar-studio.com',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
     audioSettings: {
       recitationVolume: 88,
       fadeIn: true,
@@ -242,8 +231,12 @@ export function buildTodayDailyReelProject(): Project {
       waveformColor: '#fbbf24',
     },
     status: 'editing',
-    exportCount: 0,
-    translationEnabled: false,
-    tafsirEnabled: false,
-  };
+  });
+}
+
+/**
+ * Instantiate a Project object from today's daily reel template
+ */
+export function buildTodayDailyReelProject(): Project {
+  return buildDailyProjectFromSchedule(getTodayReelTemplate());
 }

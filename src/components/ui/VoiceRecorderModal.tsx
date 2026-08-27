@@ -21,6 +21,7 @@ import { MosqueReverbPreset, AudioSettings } from '../../types';
 import { voiceStudioEngine } from '../../services/voiceStudioEngine';
 import { savePersistentAudio } from '../../services/persistentAudioStorage';
 import { useAppStore } from '../../store/useAppStore';
+import { useHotkeys } from '../../hooks/useHotkeys';
 
 interface VoiceRecorderModalProps {
   isOpen: boolean;
@@ -74,14 +75,7 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
     }
   }, [isOpen, isRecording]);
 
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  useHotkeys('Escape', onClose, { enabled: isOpen });
 
   const handleStartRecord = async () => {
     try {

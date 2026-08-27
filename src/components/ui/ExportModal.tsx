@@ -47,6 +47,7 @@ import {
   isWebCodecsExportSupported,
   exportVideoWithWebCodecs,
 } from '../../services/webCodecsExportService';
+import { useHotkeys } from '../../hooks/useHotkeys';
 
 interface ExportModalProps {
   isOpen: boolean;
@@ -983,16 +984,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
     setPhase('');
   };
 
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && status !== 'exporting') {
-        onClose();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose, status]);
+  useHotkeys('Escape', onClose, { enabled: isOpen && status !== 'exporting' });
 
   if (!isOpen) return null;
 

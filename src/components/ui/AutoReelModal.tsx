@@ -18,6 +18,8 @@ import {
   Layers,
 } from 'lucide-react';
 
+import { useHotkeys } from '../../hooks/useHotkeys';
+
 interface AutoReelModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -67,14 +69,7 @@ export const AutoReelModal: React.FC<AutoReelModalProps> = ({ isOpen, onClose })
     setCurrentPage('editor');
   };
 
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  useHotkeys('Escape', onClose, { enabled: isOpen });
 
   if (!isOpen) return null;
 

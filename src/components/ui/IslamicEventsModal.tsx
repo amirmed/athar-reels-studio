@@ -20,6 +20,7 @@ import {
   IslamicSeasonCategory,
   getCurrentLiveOccasion,
 } from '../../data/islamicEventsData';
+import { useHotkeys } from '../../hooks/useHotkeys';
 
 interface IslamicEventsModalProps {
   isOpen: boolean;
@@ -35,14 +36,7 @@ export const IslamicEventsModal: React.FC<IslamicEventsModalProps> = ({
   const [selectedSeasonId, setSelectedSeasonId] = useState<string>('friday');
   const liveOccasion = getCurrentLiveOccasion();
 
-  React.useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  useHotkeys('Escape', onClose, { enabled: isOpen });
 
   if (!isOpen) return null;
 

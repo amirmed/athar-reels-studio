@@ -1,6 +1,7 @@
 import React from 'react';
 import { TextSettings } from '../../../types';
 import { Frame } from 'lucide-react';
+import { Slider } from '../../ui/Slider';
 
 interface OrnamentsPanelProps {
   textSettings: TextSettings;
@@ -24,29 +25,28 @@ export const OrnamentsPanel: React.FC<OrnamentsPanelProps> = ({
           onChange={(e) =>
             setTextSettings((s) => ({ ...s, showIslamicOrnaments: e.target.checked }))
           }
-          className="toggle cursor-pointer"
+          className="accent-emerald-500 rounded cursor-pointer"
         />
       </div>
 
       {textSettings.showIslamicOrnaments && (
         <>
           <div>
-            <label className="block text-white/50 mb-1.5 text-xs">شكل الإطار الإسلامي</label>
-            <div className="grid grid-cols-2 gap-1.5">
+            <label className="text-xs font-bold text-white/60 mb-2 block">نوع الإطار الملكي</label>
+            <div className="grid grid-cols-2 gap-2">
               {[
-                { id: 'royalFrame', name: 'الملكي الفاخر 👑' },
-                { id: 'geometricArabesque', name: 'أرابيسك هندسي 🕌' },
-                { id: 'floralCorners', name: 'أركان زهرية 🌿' },
-                { id: 'domeCrescent', name: 'قبة وهلال 🌙' },
+                { id: 'royalFrame', name: 'إطار ملكي ذهبي' },
+                { id: 'geometricArabesque', name: 'زخرفة هندسية' },
+                { id: 'floralCorners', name: 'أركان زهرية' },
+                { id: 'domeCrescent', name: 'قبة وهلال' },
               ].map((o) => (
                 <button
                   key={o.id}
-                  type="button"
                   onClick={() => setTextSettings((s) => ({ ...s, ornamentStyle: o.id as any }))}
-                  className={`p-2.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                  className={`p-2 rounded-lg text-xs font-bold transition-all text-center ${
                     textSettings.ornamentStyle === o.id
-                      ? 'bg-emerald-500/20 border-emerald-400 text-white shadow-sm'
-                      : 'bg-surface-800/60 border-white/[0.04] text-white/60 hover:text-white'
+                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shadow-sm'
+                      : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/5'
                   }`}
                 >
                   {o.name}
@@ -55,25 +55,16 @@ export const OrnamentsPanel: React.FC<OrnamentsPanelProps> = ({
             </div>
           </div>
 
-          <div>
-            <div className="flex items-center justify-between text-xs font-bold text-white/60 mb-1">
-              <span>شفافية الإطار</span>
-              <span className="font-mono text-emerald-400">
-                {Math.round((textSettings.ornamentOpacity ?? 0.85) * 100)}%
-              </span>
-            </div>
-            <input
-              type="range"
-              min={0.2}
-              max={1.0}
-              step={0.05}
-              value={textSettings.ornamentOpacity ?? 0.85}
-              onChange={(e) =>
-                setTextSettings((s) => ({ ...s, ornamentOpacity: Number(e.target.value) }))
-              }
-              className="w-full accent-emerald-500 cursor-pointer"
-            />
-          </div>
+          <Slider
+            label="شفافية الإطار"
+            min={0.2}
+            max={1.0}
+            step={0.05}
+            value={textSettings.ornamentOpacity ?? 0.85}
+            accentColor="emerald"
+            formatValue={(v) => `${Math.round(v * 100)}%`}
+            onChange={(val) => setTextSettings((s) => ({ ...s, ornamentOpacity: val }))}
+          />
         </>
       )}
     </div>

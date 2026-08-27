@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useAppStore } from '../../store/useAppStore';
 import { AppLayout } from '../layout/AppLayout';
 import { Project } from '../../types';
+import { createDefaultProject } from '../../utils/projectDefaults';
 import { reciters, surahs } from '../../data/mockData';
 import { studioTemplates } from '../../data/templates';
 import { AutoReelModal } from '../ui/AutoReelModal';
@@ -91,8 +92,7 @@ export const CreateProjectPage: React.FC = () => {
 
     setIsCreating(true);
 
-    const project: Project = {
-      id: `proj-${Date.now()}`,
+    const project: Project = createDefaultProject({
       name: name.trim(),
       reciter: selectedReciter?.name || '',
       reciterId,
@@ -104,10 +104,6 @@ export const CreateProjectPage: React.FC = () => {
       backgroundType: selectedTpl.backgroundUrl ? 'image' : 'none',
       backgroundUrl: selectedTpl.backgroundUrl,
       backgroundOpacity: selectedTpl.backgroundOpacity ?? 0.6,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      status: 'draft',
-      exportCount: 0,
       watermark: 'atar-studio.com',
       textSettings: {
         fontSize: 28,
@@ -130,9 +126,7 @@ export const CreateProjectPage: React.FC = () => {
         backgroundVolume: 20,
         ...selectedTpl.audioSettings,
       },
-      translationEnabled: false,
-      tafsirEnabled: false,
-    };
+    });
 
     addProject(project);
     setCurrentProject(project);

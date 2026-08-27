@@ -4,6 +4,7 @@ import { Sparkles, X, Check, Flame, Layers, Wand2 } from 'lucide-react';
 import { studioTemplates } from '../../data/templates';
 import { StudioTemplate } from '../../types';
 import { useAppStore } from '../../store/useAppStore';
+import { useHotkeys } from '../../hooks/useHotkeys';
 
 interface PresetTemplatesModalProps {
   isOpen: boolean;
@@ -21,14 +22,7 @@ export const PresetTemplatesModal: React.FC<PresetTemplatesModalProps> = ({
   const addToast = useAppStore((s) => s.addToast);
   const [selectedId, setSelectedId] = useState<string | null>(activeTemplateId || null);
 
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  useHotkeys('Escape', onClose, { enabled: isOpen });
 
   if (!isOpen) return null;
 

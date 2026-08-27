@@ -32,6 +32,7 @@ import { surahs } from '../../data/mockData';
 import { initialAzkarList } from '../../data/azkarHadithData';
 import { fetchAyahsWithAudio, AyahData } from '../../services/quranApi';
 import { MosqueReverbPreset, AudioSettings, AzkarItem, Project, Spatial8DStyle } from '../../types';
+import { createDefaultProject } from '../../utils/projectDefaults';
 import { voiceStudioEngine } from '../../services/voiceStudioEngine';
 import {
   savePersistentAudio,
@@ -469,7 +470,7 @@ export const VoiceStudioPage: React.FC = () => {
       }
     }
 
-    const newProject: Project = {
+    const newProject: Project = createDefaultProject({
       id: newProjectId,
       name: resolvedTitle,
       reciter: resolvedReciter,
@@ -484,18 +485,13 @@ export const VoiceStudioPage: React.FC = () => {
       contentType: resolvedContentType,
       customTitle: resolvedTitle,
       customText: isQuran ? undefined : resolvedText,
-      aspectRatio: '9:16' as const,
-      backgroundType: 'image' as const,
+      aspectRatio: '9:16',
+      backgroundType: 'image',
       backgroundUrl:
         'https://images.pexels.com/photos/1529881/pexels-photo-1529881.jpeg?auto=compress&cs=tinysrgb&w=1280',
       backgroundOpacity: 0.8,
       watermark: 'atar-studio.com',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      status: 'editing' as const,
-      exportCount: 0,
-      translationEnabled: false,
-      tafsirEnabled: false,
+      status: 'editing',
       audioSettings: {
         recitationVolume,
         customReciterName: resolvedReciter,
@@ -523,22 +519,22 @@ export const VoiceStudioPage: React.FC = () => {
       },
       textSettings: {
         fontSize: 26,
-        fontWeight: 'bold' as const,
-        textAlign: 'center' as const,
+        fontWeight: 'bold',
+        textAlign: 'center',
         textColor: '#ffffff',
         bgColor: '#000000',
         bgOpacity: 0.45,
-        position: 'center' as const,
+        position: 'center',
         translationFontSize: 13,
         translationColor: '#e2e8f0',
-        translationLanguage: 'en' as const,
+        translationLanguage: 'en',
         fontFamily: fontFamily,
-        displayMode: 'chunked' as const,
+        displayMode: 'chunked',
         wordHighlightEnabled: true,
-        wordHighlightStyle: 'goldGlow' as const,
+        wordHighlightStyle: 'goldGlow',
         wordHighlightColor: '#fbbf24',
         showProgressBar: true,
-        progressBarStyle: 'neonGlow' as const,
+        progressBarStyle: 'neonGlow',
         progressBarColor: '#fbbf24',
         showWaveform: true,
         waveformStyle: 'bars' as const,
@@ -549,7 +545,7 @@ export const VoiceStudioPage: React.FC = () => {
         show8DBadge: enable8DAudio && show8DBadge,
         showReciterBadge: true,
       },
-    };
+    });
 
     addProject(newProject);
     setCurrentProject(newProject);

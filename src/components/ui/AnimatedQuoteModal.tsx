@@ -10,6 +10,7 @@ import {
 } from '../../services/animatedQuoteExportService';
 import { renderQuoteToCanvas } from '../../services/imageExportService';
 import { ambientSounds } from '../../data/ambientSounds';
+import { useHotkeys } from '../../hooks/useHotkeys';
 import {
   X,
   Sparkles,
@@ -56,14 +57,7 @@ export const AnimatedQuoteModal: React.FC<AnimatedQuoteModalProps> = ({
   const baseCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const startTimeRef = useRef<number>(Date.now());
 
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  useHotkeys('Escape', onClose, { enabled: isOpen });
 
   // 1. Prepare Base Card & Run Continuous Motion Preview
   useEffect(() => {

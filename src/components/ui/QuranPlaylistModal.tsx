@@ -7,6 +7,7 @@ import {
   MoodCategory,
   QuranPlaylistItem,
 } from '../../data/quranPlaylists';
+import { useHotkeys } from '../../hooks/useHotkeys';
 
 interface QuranPlaylistModalProps {
   isOpen: boolean;
@@ -21,14 +22,7 @@ export const QuranPlaylistModal: React.FC<QuranPlaylistModalProps> = ({
 }) => {
   const [activeCategory, setActiveCategory] = useState<MoodCategory>('peace');
 
-  React.useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  useHotkeys('Escape', onClose, { enabled: isOpen });
 
   if (!isOpen) return null;
 

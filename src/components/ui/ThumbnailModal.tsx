@@ -17,6 +17,7 @@ import {
   generateViralThumbnailBlob,
   ThumbnailConfig,
 } from '../../services/thumbnailGeneratorService';
+import { useHotkeys } from '../../hooks/useHotkeys';
 
 interface ThumbnailModalProps {
   isOpen: boolean;
@@ -114,14 +115,7 @@ export const ThumbnailModal: React.FC<ThumbnailModalProps> = ({
     }
   };
 
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  useHotkeys('Escape', onClose, { enabled: isOpen });
 
   if (!isOpen) return null;
 

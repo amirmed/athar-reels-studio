@@ -20,7 +20,10 @@ import {
   ARABIC_AI_VOICES,
   synthesizeArabicSpeech,
 } from '../../services/arabicTtsService';
-import { AzkarItem, Project } from '../../types';
+import { useAppStore } from '../../store/useAppStore';
+import { Project, AzkarItem } from '../../types';
+import { createDefaultProject } from '../../utils/projectDefaults';
+import { useHotkeys } from '../../hooks/useHotkeys';
 
 interface ArabicAiVoiceModalProps {
   isOpen: boolean;
@@ -49,17 +52,14 @@ export const ArabicAiVoiceModal: React.FC<ArabicAiVoiceModalProps> = ({
 
   const [playingVoiceId, setPlayingVoiceId] = useState<string | null>(null);
 
-  React.useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        if (audioRef.current) audioRef.current.pause();
-        onClose();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  useHotkeys(
+    'Escape',
+    () => {
+      if (audioRef.current) audioRef.current.pause();
+      onClose();
+    },
+    { enabled: isOpen }
+  );
 
   const handleStopAudio = () => {
     if (audioRef.current) {
@@ -135,8 +135,7 @@ export const ArabicAiVoiceModal: React.FC<ArabicAiVoiceModalProps> = ({
     try {
       const result = await synthesizeArabicSpeech(item.arabicText, selectedVoiceId, speechRate);
 
-      const project: Project = {
-        id: `azkar-ai-voice-${Date.now()}`,
+      const project: Project = createDefaultProject({
         name: `${item.title} — صوت AI ${selectedVoice.name}`,
         contentType: item.category === 'hadith' ? 'hadith' : 'azkar',
         customText: item.arabicText,
@@ -155,10 +154,6 @@ export const ArabicAiVoiceModal: React.FC<ArabicAiVoiceModalProps> = ({
           'https://images.pexels.com/photos/1529881/pexels-photo-1529881.jpeg?auto=compress&cs=tinysrgb&w=1280',
         backgroundOpacity: 0.7,
         watermark: 'atar-studio.com',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        status: 'draft',
-        exportCount: 0,
         textSettings: {
           fontSize: 27,
           fontWeight: 'bold',
@@ -190,13 +185,9 @@ export const ArabicAiVoiceModal: React.FC<ArabicAiVoiceModalProps> = ({
           fadeOut: true,
           fadeDuration: 1.5,
           backgroundVolume: 20,
-          ambientSoundId: 'none',
-          ambientSoundVolume: 0,
           customRecordedAudioUrl: result.audioUrl,
         },
-        translationEnabled: false,
-        tafsirEnabled: false,
-      };
+      });
 
       onConfirmReel(project);
       onClose();

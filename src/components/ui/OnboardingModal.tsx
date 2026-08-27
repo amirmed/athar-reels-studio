@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Wand2, X } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { studioTemplates } from '../../data/templates';
+import { createDefaultProject } from '../../utils/projectDefaults';
+import { useHotkeys } from '../../hooks/useHotkeys';
 
 interface OnboardingModalProps {
   isOpen: boolean;
@@ -17,8 +19,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClos
 
   const handleInstantDemoReel = () => {
     const tpl = studioTemplates.find((t) => t.id === 'aesthetic_rain') || studioTemplates[0];
-    const demoProject = {
-      id: `proj-demo-${Date.now()}`,
+    const demoProject = createDefaultProject({
       name: 'ريلز تجريبي — سورة الإخلاص',
       reciter: 'مشاري راشد العفاسي',
       reciterId: 'alafasy_128',
@@ -26,30 +27,26 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClos
       surahNumber: 112,
       fromAyah: 1,
       toAyah: 4,
-      aspectRatio: '9:16' as const,
-      backgroundType: 'image' as const,
+      aspectRatio: '9:16',
+      backgroundType: 'image',
       backgroundUrl:
         tpl.backgroundUrl ||
         'https://images.pexels.com/photos/1529881/pexels-photo-1529881.jpeg?auto=compress&cs=tinysrgb&w=1280',
       backgroundOpacity: 0.7,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      status: 'draft' as const,
-      exportCount: 0,
       watermark: 'atar-studio.com',
       textSettings: {
         fontSize: 30,
-        fontWeight: 'bold' as const,
-        textAlign: 'center' as const,
+        fontWeight: 'bold',
+        textAlign: 'center',
         textColor: '#ffffff',
         bgColor: '#000000',
         bgOpacity: 0.55,
-        position: 'center' as const,
+        position: 'center',
         translationFontSize: 16,
         translationColor: '#e2e8f0',
         fontFamily: 'Amiri',
         wordHighlightEnabled: true,
-        wordHighlightStyle: 'goldGlow' as const,
+        wordHighlightStyle: 'goldGlow',
         ...tpl.textSettings,
       },
       audioSettings: {
@@ -60,9 +57,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClos
         backgroundVolume: 20,
         ...tpl.audioSettings,
       },
-      translationEnabled: false,
-      tafsirEnabled: false,
-    };
+    });
 
     addProject(demoProject);
     setCurrentProject(demoProject);
@@ -74,14 +69,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClos
     setCurrentPage('editor');
   };
 
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  useHotkeys('Escape', onClose, { enabled: isOpen });
 
   if (!isOpen) return null;
 

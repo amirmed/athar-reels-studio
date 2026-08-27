@@ -24,6 +24,7 @@ import {
   RotateCcw,
   Check,
 } from 'lucide-react';
+import { Slider } from '../../ui/Slider';
 
 interface TextStylePanelProps {
   textSettings: TextSettings;
@@ -241,22 +242,15 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
 
           {/* Font Basic Controls: Size, Weight, Alignment */}
           <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-white/[0.06] space-y-3">
-            <div>
-              <div className="flex items-center justify-between text-xs font-bold text-white/70 mb-1">
-                <span>حجم خط الآيات</span>
-                <span className="font-mono text-gold-400 font-bold">{textSettings.fontSize}px</span>
-              </div>
-              <input
-                type="range"
-                min={16}
-                max={56}
-                value={textSettings.fontSize}
-                onChange={(e) =>
-                  setTextSettings((s) => ({ ...s, fontSize: Number(e.target.value) }))
-                }
-                className="w-full accent-gold-500 cursor-pointer"
-              />
-            </div>
+            <Slider
+              label="حجم خط الآيات"
+              min={16}
+              max={56}
+              value={textSettings.fontSize}
+              accentColor="gold"
+              unit="px"
+              onChange={(val) => setTextSettings((s) => ({ ...s, fontSize: val }))}
+            />
 
             {/* Font Weight & Alignment */}
             <div className="grid grid-cols-2 gap-3 pt-2 border-t border-white/[0.06]">
@@ -379,89 +373,48 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
           </div>
 
           {/* 1. Word Spacing */}
-          <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-white/[0.06] space-y-2">
-            <div className="flex items-center justify-between text-xs font-bold text-white">
-              <div className="flex items-center gap-1.5">
-                <MoveHorizontal size={14} className="text-sky-400" />
-                <span>المسافة بين الكلمات (Word Spacing)</span>
-              </div>
-              <span className="font-mono text-sky-400 bg-sky-500/15 px-2 py-0.5 rounded-md border border-sky-400/20">
-                {textSettings.wordSpacing ?? 0}px
-              </span>
-            </div>
-            <input
-              type="range"
+          <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-white/[0.06]">
+            <Slider
+              label="المسافة بين الكلمات (Word Spacing)"
               min={-2}
               max={24}
               step={1}
               value={textSettings.wordSpacing ?? 0}
-              onChange={(e) =>
-                setTextSettings((s) => ({ ...s, wordSpacing: Number(e.target.value) }))
-              }
-              className="w-full accent-sky-400 cursor-pointer"
+              accentColor="blue"
+              unit="px"
+              hint="مضغوط (-2px) ← افتراضي (0px) ← متباعد (+24px)"
+              onChange={(val) => setTextSettings((s) => ({ ...s, wordSpacing: val }))}
             />
-            <div className="flex items-center justify-between text-[10px] text-white/40">
-              <span>مضغوط (-2px)</span>
-              <span>افتراضي (0px)</span>
-              <span>متباعد وواسع (+24px)</span>
-            </div>
           </div>
 
           {/* 2. Line Height */}
-          <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-white/[0.06] space-y-2">
-            <div className="flex items-center justify-between text-xs font-bold text-white">
-              <div className="flex items-center gap-1.5">
-                <MoveVertical size={14} className="text-emerald-400" />
-                <span>ارتفاع وتباعد الأسطر (Line Height)</span>
-              </div>
-              <span className="font-mono text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-md border border-emerald-400/20">
-                {textSettings.lineHeight ?? 2.2}
-              </span>
-            </div>
-            <input
-              type="range"
+          <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-white/[0.06]">
+            <Slider
+              label="ارتفاع وتباعد الأسطر (Line Height)"
               min={1.2}
               max={2.8}
               step={0.1}
               value={textSettings.lineHeight ?? 2.2}
-              onChange={(e) =>
-                setTextSettings((s) => ({ ...s, lineHeight: Number(e.target.value) }))
-              }
-              className="w-full accent-emerald-400 cursor-pointer"
+              accentColor="emerald"
+              formatValue={(v) => v.toFixed(1)}
+              hint="ضيق (1.2) ← مثالي (2.2) ← واسع ومريح (2.8)"
+              onChange={(val) => setTextSettings((s) => ({ ...s, lineHeight: val }))}
             />
-            <div className="flex items-center justify-between text-[10px] text-white/40">
-              <span>ضيق (1.2)</span>
-              <span>مثالي (2.2)</span>
-              <span>واسع ومريح (2.8)</span>
-            </div>
           </div>
 
           {/* 3. Letter Spacing */}
-          <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-white/[0.06] space-y-2">
-            <div className="flex items-center justify-between text-xs font-bold text-white">
-              <div className="flex items-center gap-1.5">
-                <Type size={14} className="text-purple-400" />
-                <span>المسافة بين الحروف (Letter Spacing)</span>
-              </div>
-              <span className="font-mono text-purple-400 bg-purple-500/15 px-2 py-0.5 rounded-md border border-purple-400/20">
-                {textSettings.letterSpacing ?? 0}px
-              </span>
-            </div>
-            <input
-              type="range"
+          <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-white/[0.06]">
+            <Slider
+              label="المسافة بين الحروف (Letter Spacing)"
               min={-2}
               max={10}
               step={0.5}
               value={textSettings.letterSpacing ?? 0}
-              onChange={(e) =>
-                setTextSettings((s) => ({ ...s, letterSpacing: Number(e.target.value) }))
-              }
-              className="w-full accent-purple-400 cursor-pointer"
+              accentColor="amber"
+              unit="px"
+              hint="متصل طبيعي (0px) ← متباعد (+10px)"
+              onChange={(val) => setTextSettings((s) => ({ ...s, letterSpacing: val }))}
             />
-            <div className="flex items-center justify-between text-[10px] text-white/40">
-              <span>متصل طبيعي (0px)</span>
-              <span>متباعد (+10px)</span>
-            </div>
           </div>
         </div>
       )}
@@ -518,43 +471,25 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
 
             {(textSettings.enableShadow ?? true) && (
               <div className="space-y-3 pt-2 border-t border-white/[0.04]">
-                <div>
-                  <div className="flex items-center justify-between text-xs font-bold text-white/60 mb-1">
-                    <span>شدة التمويه والانتشار (Shadow Blur)</span>
-                    <span className="font-mono text-gold-400">
-                      {textSettings.shadowBlur ?? 14}px
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min={0}
-                    max={35}
-                    value={textSettings.shadowBlur ?? 14}
-                    onChange={(e) =>
-                      setTextSettings((s) => ({ ...s, shadowBlur: Number(e.target.value) }))
-                    }
-                    className="w-full accent-gold-500 cursor-pointer"
-                  />
-                </div>
+                <Slider
+                  label="شدة التمويه والانتشار (Shadow Blur)"
+                  min={0}
+                  max={35}
+                  value={textSettings.shadowBlur ?? 14}
+                  accentColor="gold"
+                  unit="px"
+                  onChange={(val) => setTextSettings((s) => ({ ...s, shadowBlur: val }))}
+                />
 
-                <div>
-                  <div className="flex items-center justify-between text-xs font-bold text-white/60 mb-1">
-                    <span>إزاحة الظل العمودي (Offset Y)</span>
-                    <span className="font-mono text-gold-400">
-                      {textSettings.shadowOffsetY ?? 3}px
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min={-10}
-                    max={20}
-                    value={textSettings.shadowOffsetY ?? 3}
-                    onChange={(e) =>
-                      setTextSettings((s) => ({ ...s, shadowOffsetY: Number(e.target.value) }))
-                    }
-                    className="w-full accent-gold-500 cursor-pointer"
-                  />
-                </div>
+                <Slider
+                  label="إزاحة الظل العمودي (Offset Y)"
+                  min={-10}
+                  max={20}
+                  value={textSettings.shadowOffsetY ?? 3}
+                  accentColor="gold"
+                  unit="px"
+                  onChange={(val) => setTextSettings((s) => ({ ...s, shadowOffsetY: val }))}
+                />
               </div>
             )}
           </div>
@@ -612,24 +547,15 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                   </div>
                 </div>
 
-                <div>
-                  <div className="flex items-center justify-between text-xs font-bold text-white/60 mb-1">
-                    <span>شدة التوهج والبريق (Glow Intensity)</span>
-                    <span className="font-mono text-gold-400">
-                      {textSettings.glowIntensity ?? 16}px
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min={4}
-                    max={40}
-                    value={textSettings.glowIntensity ?? 16}
-                    onChange={(e) =>
-                      setTextSettings((s) => ({ ...s, glowIntensity: Number(e.target.value) }))
-                    }
-                    className="w-full accent-gold-500 cursor-pointer"
-                  />
-                </div>
+                <Slider
+                  label="شدة التوهج والبريق (Glow Intensity)"
+                  min={4}
+                  max={40}
+                  value={textSettings.glowIntensity ?? 16}
+                  accentColor="gold"
+                  unit="px"
+                  onChange={(val) => setTextSettings((s) => ({ ...s, glowIntensity: val }))}
+                />
               </div>
             )}
           </div>
@@ -660,25 +586,16 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
 
             {(textSettings.enableStroke ?? false) && (
               <div className="space-y-3 pt-2 border-t border-white/[0.04]">
-                <div>
-                  <div className="flex items-center justify-between text-xs font-bold text-white/60 mb-1">
-                    <span>سُمك الحد الخارجي (Stroke Width)</span>
-                    <span className="font-mono text-purple-400">
-                      {textSettings.strokeWidth ?? 1}px
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min={0.5}
-                    max={4.0}
-                    step={0.5}
-                    value={textSettings.strokeWidth ?? 1}
-                    onChange={(e) =>
-                      setTextSettings((s) => ({ ...s, strokeWidth: Number(e.target.value) }))
-                    }
-                    className="w-full accent-purple-500 cursor-pointer"
-                  />
-                </div>
+                <Slider
+                  label="سُمك الحد الخارجي (Stroke Width)"
+                  min={0.5}
+                  max={4.0}
+                  step={0.5}
+                  value={textSettings.strokeWidth ?? 1}
+                  accentColor="amber"
+                  unit="px"
+                  onChange={(val) => setTextSettings((s) => ({ ...s, strokeWidth: val }))}
+                />
 
                 <div>
                   <label className="block text-xs font-bold text-white/60 mb-1.5">لون الحد</label>
@@ -862,29 +779,22 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/[0.04]">
-                  <div>
-                    <div className="flex items-center justify-between text-[11px] font-bold text-white/60 mb-1">
-                      <span>عتامة باقي الكلمات</span>
-                      <span className="font-mono text-gold-400">
-                        {Math.round((textSettings.inactiveWordOpacity ?? 0.6) * 100)}%
-                      </span>
-                    </div>
-                    <input
-                      type="range"
-                      min={0.2}
-                      max={1.0}
-                      step={0.05}
-                      value={textSettings.inactiveWordOpacity ?? 0.6}
-                      onChange={(e) =>
-                        setTextSettings((s) => ({
-                          ...s,
-                          inactiveWordOpacity: Number(e.target.value),
-                        }))
-                      }
-                      className="w-full accent-gold-500 cursor-pointer"
-                    />
-                  </div>
+                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/[0.04] items-center">
+                  <Slider
+                    label="عتامة باقي الكلمات"
+                    min={0.2}
+                    max={1.0}
+                    step={0.05}
+                    value={textSettings.inactiveWordOpacity ?? 0.6}
+                    accentColor="gold"
+                    formatValue={(v) => `${Math.round(v * 100)}%`}
+                    onChange={(val) =>
+                      setTextSettings((s) => ({
+                        ...s,
+                        inactiveWordOpacity: val,
+                      }))
+                    }
+                  />
 
                   <div className="flex flex-col justify-end">
                     <label className="flex items-center gap-2 cursor-pointer p-2 rounded-xl bg-surface-950 border border-white/[0.04]">
@@ -954,27 +864,20 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                   </select>
                 </div>
 
-                <div>
-                  <div className="flex items-center justify-between text-xs font-bold text-white/60 mb-1">
-                    <span>حجم خط الترجمة</span>
-                    <span className="font-mono text-gold-400">
-                      {textSettings.translationFontSize || 13}px
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min={10}
-                    max={20}
-                    value={textSettings.translationFontSize || 13}
-                    onChange={(e) =>
-                      setTextSettings((s) => ({
-                        ...s,
-                        translationFontSize: Number(e.target.value),
-                      }))
-                    }
-                    className="w-full accent-gold-500 cursor-pointer"
-                  />
-                </div>
+                <Slider
+                  label="حجم خط الترجمة"
+                  min={10}
+                  max={20}
+                  value={textSettings.translationFontSize || 13}
+                  accentColor="gold"
+                  unit="px"
+                  onChange={(val) =>
+                    setTextSettings((s) => ({
+                      ...s,
+                      translationFontSize: val,
+                    }))
+                  }
+                />
               </div>
             )}
           </div>

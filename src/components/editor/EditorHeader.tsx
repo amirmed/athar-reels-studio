@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Project } from '../../types';
+import { useHotkeys } from '../../hooks/useHotkeys';
 import {
   ArrowRight,
   Save,
@@ -66,19 +67,16 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
         setIsToolsMenuOpen(false);
       }
     };
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsToolsMenuOpen(false);
-    };
 
     if (isToolsMenuOpen) {
       document.addEventListener('mousedown', handleClickOutside);
-      window.addEventListener('keydown', handleKeyDown);
     }
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
-      window.removeEventListener('keydown', handleKeyDown);
     };
   }, [isToolsMenuOpen]);
+
+  useHotkeys('Escape', () => setIsToolsMenuOpen(false), { enabled: isToolsMenuOpen });
 
   return (
     <header className="h-16 border-b border-white/10 bg-surface-900/90 backdrop-blur-md px-3 sm:px-4 flex items-center justify-between z-30 sticky top-0">

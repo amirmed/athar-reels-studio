@@ -13,6 +13,7 @@ import {
   BookOpen,
 } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
+import { useHotkeys } from '../../hooks/useHotkeys';
 
 interface MotherDuaModalProps {
   isOpen: boolean;
@@ -53,14 +54,7 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
     } catch {}
   }, [parentsTasbeehCount]);
 
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  useHotkeys('Escape', onClose, { enabled: isOpen });
 
   if (!isOpen) return null;
 

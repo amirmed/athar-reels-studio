@@ -6,6 +6,7 @@ import { IslamicPexelsBrowser } from '../../ui/IslamicPexelsBrowser';
 import { AiBackgroundGenerator } from '../../ui/AiBackgroundGenerator';
 import { MediaUploader } from '../../ui/MediaUploader';
 import { isVideoMedia } from '../../../utils/imageUtils';
+import { Slider } from '../../ui/Slider';
 import { Layers, Sparkles, Film, Wand2 } from 'lucide-react';
 
 interface BackgroundPanelProps {
@@ -305,18 +306,14 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
       )}
 
       <div className="pt-2 border-t border-white/[0.06]">
-        <div className="flex items-center justify-between text-xs font-bold text-white/60 mb-1">
-          <span>عتامة وتغميق الخلفية</span>
-          <span className="font-mono text-accent-400">{Math.round(backgroundOpacity * 100)}%</span>
-        </div>
-        <input
-          type="range"
+        <Slider
+          label="عتامة وتغميق الخلفية"
           min={0.1}
           max={1.0}
           step={0.05}
           value={backgroundOpacity}
-          onChange={(e) => setBackgroundOpacity(Number(e.target.value))}
-          className="w-full accent-accent-500 cursor-pointer"
+          formatValue={(v) => `${Math.round(v * 100)}%`}
+          onChange={(val) => setBackgroundOpacity(val)}
         />
       </div>
 

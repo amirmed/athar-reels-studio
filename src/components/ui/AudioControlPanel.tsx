@@ -1,5 +1,6 @@
 import React from 'react';
-import { Volume2, VolumeX, Music } from 'lucide-react';
+import { Volume2, VolumeX, Music, Clock } from 'lucide-react';
+import { Slider } from './Slider';
 
 interface AudioControlPanelProps {
   recitationVolume: number;
@@ -29,42 +30,28 @@ export const AudioControlPanel: React.FC<AudioControlPanelProps> = ({
   return (
     <div className="space-y-4">
       {/* Recitation volume */}
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <label className="text-xs text-white/50 font-medium flex items-center gap-1.5">
-            <Volume2 size={14} className="text-accent-400" />
-            مستوى صوت التلاوة
-          </label>
-          <span className="text-xs text-white/40 font-mono">{recitationVolume}%</span>
-        </div>
-        <input
-          type="range"
-          min="0"
-          max="100"
-          value={recitationVolume}
-          onChange={(e) => onRecitationVolumeChange(Number(e.target.value))}
-          className="w-full"
-        />
-      </div>
+      <Slider
+        label="مستوى صوت التلاوة"
+        icon={<Volume2 size={14} className="text-teal-400" />}
+        min={0}
+        max={100}
+        value={recitationVolume}
+        accentColor="teal"
+        unit="%"
+        onChange={onRecitationVolumeChange}
+      />
 
       {/* Background volume */}
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <label className="text-xs text-white/50 font-medium flex items-center gap-1.5">
-            <Music size={14} className="text-gold-400" />
-            صوت الخلفية
-          </label>
-          <span className="text-xs text-white/40 font-mono">{backgroundVolume}%</span>
-        </div>
-        <input
-          type="range"
-          min="0"
-          max="100"
-          value={backgroundVolume}
-          onChange={(e) => onBackgroundVolumeChange(Number(e.target.value))}
-          className="w-full"
-        />
-      </div>
+      <Slider
+        label="صوت الخلفية"
+        icon={<Music size={14} className="text-gold-400" />}
+        min={0}
+        max={100}
+        value={backgroundVolume}
+        accentColor="gold"
+        unit="%"
+        onChange={onBackgroundVolumeChange}
+      />
 
       {/* Fade controls */}
       <div className="grid grid-cols-2 gap-3">
@@ -74,7 +61,7 @@ export const AudioControlPanel: React.FC<AudioControlPanelProps> = ({
             flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-medium transition-all duration-200 border
             ${
               fadeIn
-                ? 'bg-accent-500/10 text-accent-400 border-accent-500/20'
+                ? 'bg-teal-500/10 text-teal-400 border-teal-500/20'
                 : 'bg-surface-800/40 text-white/40 border-white/[0.06] hover:bg-surface-800/60'
             }
           `}
@@ -88,7 +75,7 @@ export const AudioControlPanel: React.FC<AudioControlPanelProps> = ({
             flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-medium transition-all duration-200 border
             ${
               fadeOut
-                ? 'bg-accent-500/10 text-accent-400 border-accent-500/20'
+                ? 'bg-teal-500/10 text-teal-400 border-teal-500/20'
                 : 'bg-surface-800/40 text-white/40 border-white/[0.06] hover:bg-surface-800/60'
             }
           `}
@@ -100,21 +87,17 @@ export const AudioControlPanel: React.FC<AudioControlPanelProps> = ({
 
       {/* Fade duration */}
       {(fadeIn || fadeOut) && (
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <label className="text-xs text-white/50 font-medium">مدة التلاشي</label>
-            <span className="text-xs text-white/40  font-mono">{fadeDuration}ث</span>
-          </div>
-          <input
-            type="range"
-            min="1"
-            max="5"
-            step="0.5"
-            value={fadeDuration}
-            onChange={(e) => onFadeDurationChange(Number(e.target.value))}
-            className="w-full"
-          />
-        </div>
+        <Slider
+          label="مدة التلاشي"
+          icon={<Clock size={14} className="text-white/50" />}
+          min={1}
+          max={5}
+          step={0.5}
+          value={fadeDuration}
+          accentColor="teal"
+          unit="ث"
+          onChange={onFadeDurationChange}
+        />
       )}
     </div>
   );

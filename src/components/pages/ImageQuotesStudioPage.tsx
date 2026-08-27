@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../../store/useAppStore';
 import { AppLayout } from '../layout/AppLayout';
 import { QuoteCardSettings, QuoteAspectRatio, OrnamentStyle, Project } from '../../types';
+import { createDefaultProject } from '../../utils/projectDefaults';
 import {
   ASPECT_DIMENSIONS,
   renderQuoteToCanvas,
@@ -223,18 +224,17 @@ export const ImageQuotesStudioPage: React.FC = () => {
   };
 
   // Convert to Video Reel in Editor
-  const handleOpenInVideoEditor = () => {
-    const project: Project = {
-      id: `proj-quote-${Date.now()}`,
-      name: `${settings.title} — ريل دعوي`,
-      contentType: 'hadith',
+  const handleConvertToReelProject = () => {
+    const project = createDefaultProject({
+      name: `${settings.title || 'تصميم إسلامي'} — ريلز`,
+      contentType: 'custom',
       customText: settings.text,
       customTitle: settings.title,
       customReference: settings.reference,
       customAudioUrl: `/api/tts?text=${encodeURIComponent(settings.text)}`,
       reciter: 'الشيخ حامد (صوت وقور)',
       reciterId: 'hamed_neural',
-      surah: settings.title,
+      surah: settings.title || 'اقتباس دعوي',
       surahNumber: 0,
       fromAyah: 1,
       toAyah: 1,
@@ -244,10 +244,6 @@ export const ImageQuotesStudioPage: React.FC = () => {
       backgroundUrl: settings.backgroundUrl || CURATED_BACKGROUNDS[0].url,
       backgroundOpacity: settings.backgroundOpacity,
       watermark: settings.watermark,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      status: 'draft',
-      exportCount: 0,
       textSettings: {
         fontSize: 28,
         fontWeight: 'bold',
@@ -279,12 +275,8 @@ export const ImageQuotesStudioPage: React.FC = () => {
         fadeOut: true,
         fadeDuration: 2,
         backgroundVolume: 22,
-        ambientSoundId: 'none',
-        ambientSoundVolume: 0,
       },
-      translationEnabled: false,
-      tafsirEnabled: false,
-    };
+    });
 
     addProject(project);
     setCurrentProject(project);
@@ -496,7 +488,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
                 </button>
 
                 <button
-                  onClick={handleOpenInVideoEditor}
+                  onClick={handleConvertToReelProject}
                   className="py-3 px-4 rounded-2xl bg-gradient-to-r from-gold-500/20 to-gold-600/20 hover:from-gold-500/30 hover:to-gold-600/30 text-gold-300 text-xs font-bold flex items-center justify-center gap-2 border border-gold-500/30 transition-all cursor-pointer"
                 >
                   <Video size={15} className="text-gold-400" />

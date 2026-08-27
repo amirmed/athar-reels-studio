@@ -7,6 +7,7 @@ import { ProjectCard } from '../ui/ProjectCard';
 import { EmptyState } from '../ui/EmptyState';
 import { Modal, ConfirmDialog } from '../ui/Modal';
 import { AutoReelModal } from '../ui/AutoReelModal';
+import { createDefaultProject } from '../../utils/projectDefaults';
 import {
   FolderOpen,
   Download,
@@ -166,8 +167,7 @@ export const DashboardPage: React.FC = () => {
 
   const handleCreateDailyAyahReel = () => {
     const tpl = studioTemplates.find((t) => t.id === 'aesthetic_rain') || studioTemplates[0];
-    const newProj = {
-      id: `proj-daily-${Date.now()}`,
+    const newProj = createDefaultProject({
       name: `ريلز سورة ${dailyAyah.surahName} — ${dailyAyah.theme}`,
       reciter: dailyAyah.reciter,
       reciterId: dailyAyah.reciterId,
@@ -175,29 +175,25 @@ export const DashboardPage: React.FC = () => {
       surahNumber: dailyAyah.surahNumber,
       fromAyah: dailyAyah.fromAyah,
       toAyah: dailyAyah.toAyah,
-      aspectRatio: '9:16' as const,
-      backgroundType: 'video' as const,
+      aspectRatio: '9:16',
+      backgroundType: 'video',
       backgroundUrl:
         'https://images.pexels.com/photos/1529881/pexels-photo-1529881.jpeg?auto=compress&cs=tinysrgb&w=1280',
       backgroundOpacity: 0.7,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      status: 'draft' as const,
-      exportCount: 0,
       watermark: 'atar-studio.com',
       textSettings: {
         fontSize: 28,
-        fontWeight: 'bold' as const,
-        textAlign: 'center' as const,
+        fontWeight: 'bold',
+        textAlign: 'center',
         textColor: '#ffffff',
         bgColor: '#000000',
         bgOpacity: 0.5,
-        position: 'center' as const,
+        position: 'center',
         translationFontSize: 16,
         translationColor: '#e2e8f0',
         fontFamily: 'Amiri',
         wordHighlightEnabled: true,
-        wordHighlightStyle: 'goldGlow' as const,
+        wordHighlightStyle: 'goldGlow',
         ...tpl.textSettings,
       },
       audioSettings: {
@@ -208,9 +204,7 @@ export const DashboardPage: React.FC = () => {
         backgroundVolume: 25,
         ...tpl.audioSettings,
       },
-      translationEnabled: false,
-      tafsirEnabled: false,
-    };
+    });
     addProject(newProj);
     setCurrentProject(newProj);
     addToast({ message: 'تم تجهيز مشروع آية اليوم في المحرر بنجاح', type: 'success' });
@@ -238,8 +232,7 @@ export const DashboardPage: React.FC = () => {
     const selectedSurahObj = surahs.find((s) => s.number === templateSurahNum) || surahs[0];
     const selectedReciterObj = reciters.find((r) => r.id === templateReciterId) || reciters[0];
 
-    const newProj = {
-      id: `proj-tpl-${Date.now()}`,
+    const newProj = createDefaultProject({
       name: `ريلز ${selectedSurahObj.name} — ${tpl.name}`,
       reciter: selectedReciterObj.name,
       reciterId: selectedReciterObj.id,
@@ -247,30 +240,26 @@ export const DashboardPage: React.FC = () => {
       surahNumber: selectedSurahObj.number,
       fromAyah: templateFromAyah,
       toAyah: templateToAyah,
-      aspectRatio: '9:16' as const,
-      backgroundType: tpl.backgroundUrl?.includes('.mp4') ? ('video' as const) : ('image' as const),
+      aspectRatio: '9:16',
+      backgroundType: tpl.backgroundUrl?.includes('.mp4') ? 'video' : 'image',
       backgroundUrl:
         tpl.backgroundUrl ||
         'https://images.pexels.com/photos/1529881/pexels-photo-1529881.jpeg?auto=compress&cs=tinysrgb&w=1280',
       backgroundOpacity: tpl.backgroundOpacity ?? 0.65,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      status: 'draft' as const,
-      exportCount: 0,
       watermark: 'atar-studio.com',
       textSettings: {
         fontSize: 28,
-        fontWeight: 'bold' as const,
-        textAlign: 'center' as const,
+        fontWeight: 'bold',
+        textAlign: 'center',
         textColor: '#ffffff',
         bgColor: '#000000',
         bgOpacity: 0.5,
-        position: 'center' as const,
+        position: 'center',
         translationFontSize: 16,
         translationColor: '#e2e8f0',
         fontFamily: 'Amiri',
         wordHighlightEnabled: true,
-        wordHighlightStyle: 'goldGlow' as const,
+        wordHighlightStyle: 'goldGlow',
         ...tpl.textSettings,
       },
       audioSettings: {
@@ -281,9 +270,7 @@ export const DashboardPage: React.FC = () => {
         backgroundVolume: 22,
         ...tpl.audioSettings,
       },
-      translationEnabled: false,
-      tafsirEnabled: false,
-    };
+    });
     addProject(newProj);
     setCurrentProject(newProj);
     setSelectedTemplateForConfirm(null);

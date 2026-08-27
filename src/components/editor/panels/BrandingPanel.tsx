@@ -3,6 +3,7 @@ import { TextSettings, Project } from '../../../types';
 import { AyahData, TranslationData } from '../../../services/quranApi';
 import { ViralCaptionGenerator } from '../../ui/ViralCaptionGenerator';
 import { Sparkles } from 'lucide-react';
+import { Slider } from '../../ui/Slider';
 
 interface BrandingPanelProps {
   currentProject: Project | null;
@@ -128,50 +129,36 @@ export const BrandingPanel: React.FC<BrandingPanelProps> = ({
             </div>
 
             {/* Opacity & Size Sliders */}
-            <div className="space-y-2 pt-1 border-t border-white/[0.04]">
-              <div>
-                <div className="flex items-center justify-between text-xs font-bold text-white/60 mb-1">
-                  <span>شفافية العلامة المائية</span>
-                  <span className="font-mono text-gold-400">
-                    {Math.round((textSettings.watermarkOpacity ?? 0.55) * 100)}%
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min={10}
-                  max={100}
-                  value={Math.round((textSettings.watermarkOpacity ?? 0.55) * 100)}
-                  onChange={(e) =>
-                    setTextSettings((s) => ({
-                      ...s,
-                      watermarkOpacity: Number(e.target.value) / 100,
-                    }))
-                  }
-                  className="w-full accent-gold-400 cursor-pointer"
-                />
-              </div>
+            <div className="space-y-2.5 pt-1 border-t border-white/[0.04]">
+              <Slider
+                label="شفافية العلامة المائية"
+                min={10}
+                max={100}
+                value={Math.round((textSettings.watermarkOpacity ?? 0.55) * 100)}
+                accentColor="gold"
+                unit="%"
+                onChange={(val) =>
+                  setTextSettings((s) => ({
+                    ...s,
+                    watermarkOpacity: val / 100,
+                  }))
+                }
+              />
 
-              <div>
-                <div className="flex items-center justify-between text-xs font-bold text-white/60 mb-1">
-                  <span>حجم خط العلامة المائية</span>
-                  <span className="font-mono text-gold-400">
-                    {textSettings.watermarkFontSize || 11}px
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min={8}
-                  max={24}
-                  value={textSettings.watermarkFontSize || 11}
-                  onChange={(e) =>
-                    setTextSettings((s) => ({
-                      ...s,
-                      watermarkFontSize: Number(e.target.value),
-                    }))
-                  }
-                  className="w-full accent-gold-400 cursor-pointer"
-                />
-              </div>
+              <Slider
+                label="حجم خط العلامة المائية"
+                min={8}
+                max={24}
+                value={textSettings.watermarkFontSize || 11}
+                accentColor="gold"
+                unit="px"
+                onChange={(val) =>
+                  setTextSettings((s) => ({
+                    ...s,
+                    watermarkFontSize: val,
+                  }))
+                }
+              />
             </div>
 
             {/* Watermark Color Preset */}
