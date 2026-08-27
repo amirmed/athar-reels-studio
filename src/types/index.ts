@@ -46,7 +46,21 @@ export type WaveformStyle = 'bars' | 'wave' | 'dots' | 'pulse';
 export type TranslationLanguage = 'en' | 'fr' | 'ur' | 'tr' | 'es' | 'id';
 
 export type ColorGradingFilter =
-  'none' | 'royalGold' | 'andalusianTwilight' | 'dawnMist' | 'matteSilver' | 'emeraldNoor';
+  | 'none'
+  | 'royalGold'
+  | 'andalusianTwilight'
+  | 'dawnMist'
+  | 'matteSilver'
+  | 'emeraldNoor'
+  | 'meccaGold'
+  | 'fajrBlue'
+  | 'sunsetWarmth'
+  | 'celestialGlow'
+  | 'rawdahGreen'
+  | 'emeraldGreen'
+  | 'madinaAmber'
+  | 'vintageWarm'
+  | 'royalNight';
 
 export type CameraMotionEffect = 'none' | 'slowZoom' | 'panRight' | 'panLeft' | 'subtle3D';
 
@@ -101,7 +115,7 @@ export interface TextSettings {
   enableStroke?: boolean;
   strokeColor?: string;
   strokeWidth?: number; // 0.5 to 5 px
-  textGradient?: 'none' | 'gold' | 'silver' | 'emerald' | 'amber' | 'celestial';
+  textGradient?: 'none' | 'gold' | 'silver' | 'emerald' | 'amber' | 'celestial' | 'sunset' | 'royal';
   // Text Animation & Motion
   textAnimation?:
     'none' | 'wordByWord' | 'lineByLine' | 'fadeIn' | 'typewriter' | 'scaleBounce' | 'glowPulse';

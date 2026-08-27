@@ -72,10 +72,12 @@ const App: React.FC = () => {
       setTimeout(() => {
         try {
           loader.remove();
-        } catch (e) {}
+        } catch (err) {
+          console.debug('[App] Loader removal error:', err);
+        }
       }, 400);
     }
-  }, []);
+  }, [initializeApp]);
 
   // Synchronize documentElement theme classes
   useEffect(() => {

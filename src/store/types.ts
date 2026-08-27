@@ -4,7 +4,7 @@ import { Page, Project, AppSettings, ExportJob, QuoteCardSettings } from '../typ
 export interface Toast {
   id: string;
   message: string;
-  type: 'success' | 'error' | 'info' | 'warning';
+  type?: 'success' | 'error' | 'info' | 'warning';
   duration?: number;
   action?: {
     label: string;
@@ -46,7 +46,7 @@ export interface UiSlice {
 
   // Modals with typed payloads
   activeModal: string | null;
-  modalData: DeleteProjectModalData | Record<string, any> | any;
+  modalData: DeleteProjectModalData | Record<string, unknown> | unknown;
   openModal: <T = unknown>(name: string, data?: T) => void;
   closeModal: () => void;
 

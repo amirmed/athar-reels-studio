@@ -40,7 +40,9 @@ export class VoiceStudioEngine {
       if (first) {
         try {
           URL.revokeObjectURL(first);
-        } catch {}
+        } catch (err) {
+          console.debug('[VoiceStudioEngine] URL revoke error:', err);
+        }
         this.activeUrls.delete(first);
       }
     }
@@ -52,12 +54,16 @@ export class VoiceStudioEngine {
     this.activeUrls.forEach((url) => {
       try {
         URL.revokeObjectURL(url);
-      } catch {}
+      } catch (err) {
+        console.debug('[VoiceStudioEngine] URL revoke error:', err);
+      }
     });
     this.activeUrls.clear();
     this.impulseCache.clear();
     if (this.audioCtx && this.audioCtx.state !== 'closed') {
-      this.audioCtx.close().catch(() => {});
+      this.audioCtx.close().catch((err) => {
+        console.debug('[VoiceStudioEngine] AudioContext close error:', err);
+      });
       this.audioCtx = null;
     }
   }
@@ -71,11 +77,15 @@ export class VoiceStudioEngine {
 
   private getAudioContext(): AudioContext {
     if (!this.audioCtx || this.audioCtx.state === 'closed') {
-      const AudioCtxClass = window.AudioContext || (window as any).webkitAudioContext;
+      const AudioCtxClass =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       this.audioCtx = new AudioCtxClass();
     }
     if (this.audioCtx.state === 'suspended') {
-      this.audioCtx.resume().catch(() => {});
+      this.audioCtx.resume().catch((err) => {
+        console.debug('[VoiceStudioEngine] AudioContext resume error:', err);
+      });
     }
     return this.audioCtx;
   }
@@ -86,7 +96,9 @@ export class VoiceStudioEngine {
   public async startRecording(onVolumeLevel?: (vol: number) => void): Promise<void> {
     const ctx = this.getAudioContext();
     if (ctx.state === 'suspended') {
-      await ctx.resume().catch(() => {});
+      await ctx.resume().catch((err) => {
+        console.debug('[VoiceStudioEngine] ctx.resume error:', err);
+      });
     }
     this.recordedChunks = [];
 

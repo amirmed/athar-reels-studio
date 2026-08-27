@@ -21,7 +21,7 @@ interface BackgroundPanelProps {
   setTextSettings: React.Dispatch<React.SetStateAction<TextSettings>>;
   aspectRatio: string;
   addToast: (
-    toast: { message: string; type?: 'success' | 'error' | 'info' | 'warning' } | any
+    toast: { message: string; type?: 'success' | 'error' | 'info' | 'warning' }
   ) => void;
 }
 
@@ -211,7 +211,7 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
                 دفعة واحدة.
               </p>
               <div className="flex items-center gap-1.5 overflow-x-auto pb-1 custom-scrollbar">
-                {ayahs.map((a, aIdx) => {
+                {ayahs.map((_a, aIdx) => {
                   const hasCustomBg = Boolean(textSettings.sceneBackgrounds?.[aIdx]);
                   return (
                     <button
@@ -377,7 +377,7 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
               key={motionItem.id}
               type="button"
               onClick={() => {
-                setTextSettings((s) => ({ ...s, cameraMotion: motionItem.id as any }));
+                setTextSettings((s) => ({ ...s, cameraMotion: motionItem.id as TextSettings['cameraMotion'] }));
                 addToast({ message: `تم تفعيل ${motionItem.label} 🎬`, type: 'success' });
               }}
               className={`p-2 rounded-xl border text-right transition-all cursor-pointer flex items-center gap-2 ${

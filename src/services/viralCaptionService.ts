@@ -41,7 +41,7 @@ export interface ViralCaptionResult {
   hashtagTiers: HashtagTier[];
 }
 
-const VIRAL_HOOKS = [
+export const VIRAL_HOOKS = [
   'تلاوة خاشعة تلامس شغاف القلوب وتريح البال 🌿✨',
   'آيات تشرح الصدور وتزيل الهموم والأحزان 🤍🌧️',
   'استمع بقلبك.. راحة نفسية وطمأنينة لا توصف 🕊️📖',

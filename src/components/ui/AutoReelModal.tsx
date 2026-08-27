@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../../store/useAppStore';
 import { autoReelThemes, AutoReelTheme } from '../../data/autoReelPresets';
@@ -8,14 +8,9 @@ import {
   Wand2,
   X,
   Play,
-  Check,
   Flame,
-  Volume2,
-  Image as ImageIcon,
   Zap,
-  ArrowLeft,
   Loader2,
-  Layers,
 } from 'lucide-react';
 
 import { useHotkeys } from '../../hooks/useHotkeys';

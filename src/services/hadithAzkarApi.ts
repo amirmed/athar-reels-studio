@@ -24,14 +24,6 @@ export async function searchHadithsAndAzkar(query: string): Promise<AzkarItem[]>
 // Global active audio reference
 let activeAudio: HTMLAudioElement | null = null;
 
-// Clean decorative brackets for speech while PRESERVING complete Tashkeel for accurate pronunciation
-function cleanArabicForSpeech(text: string): string {
-  return text
-    .replace(/[«»*﴿﴾]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
 import { synthesizeArabicSpeech } from './arabicTtsService';
 
 /**
@@ -105,12 +97,16 @@ export function stopAzkarAudio() {
       activeAudio.pause();
       activeAudio.removeAttribute('src');
       activeAudio.load();
-    } catch {}
+    } catch (err) {
+      console.debug('[HadithAzkarApi] Audio cleanup error:', err);
+    }
     activeAudio = null;
   }
   if ('speechSynthesis' in window) {
     try {
       window.speechSynthesis.cancel();
-    } catch {}
+    } catch (err) {
+      console.debug('[HadithAzkarApi] SpeechSynthesis cancel error:', err);
+    }
   }
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Sparkles, BookOpen, Play, Heart, Moon, Zap, Check } from 'lucide-react';
+import { X, Sparkles, BookOpen, Play } from 'lucide-react';
 import {
   MOOD_CATEGORIES,
   QURAN_PLAYLISTS,

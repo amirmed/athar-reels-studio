@@ -1,10 +1,9 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import { AyahData } from '../../services/quranApi';
 import { AudioSettings } from '../../types';
 import { ambientSounds } from '../../data/ambientSounds';
 import {
   Clock,
-  Layers,
   ZoomIn,
   ZoomOut,
   Volume2,
@@ -32,7 +31,7 @@ export const EditorTimeline: React.FC<EditorTimelineProps> = React.memo(
     currentAyahIndex,
     audioCurrentTime,
     audioDuration,
-    isPlaying,
+    isPlaying: _isPlaying,
     audioSettings,
     onSeekToAyah,
     formatAudioTime,

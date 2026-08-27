@@ -6,15 +6,11 @@ import {
   Play,
   Pause,
   Upload,
-  Volume2,
   Sparkles,
   X,
-  Check,
   Radio,
   Sliders,
-  RotateCcw,
   Zap,
-  Music,
   Flame,
 } from 'lucide-react';
 import { MosqueReverbPreset, AudioSettings } from '../../types';
@@ -56,7 +52,7 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
   const [enableWarmth, setEnableWarmth] = useState<boolean>(true);
   const [enablePitchPolish, setEnablePitchPolish] = useState<boolean>(true);
   const [pitchPolishLevel, setPitchPolishLevel] = useState<number>(55);
-  const [recitationVolume, setRecitationVolume] = useState<number>(90);
+  const [recitationVolume] = useState<number>(90);
 
   const timerRef = useRef<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -68,7 +64,9 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
       voiceStudioEngine.stopPreview();
       setIsPlaying(false);
       if (isRecording) {
-        voiceStudioEngine.stopRecording().catch(() => {});
+        voiceStudioEngine.stopRecording().catch((err) => {
+          console.debug('[VoiceRecorderModal] stopRecording error:', err);
+        });
         setIsRecording(false);
       }
       if (timerRef.current) clearInterval(timerRef.current);

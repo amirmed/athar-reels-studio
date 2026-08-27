@@ -3,26 +3,18 @@ import { TextSettings } from '../../../types';
 import {
   ARABIC_FONTS,
   TYPOGRAPHY_PRESETS,
-  ArabicFontInfo,
   TypographyPreset,
 } from '../../../data/arabicFontsData';
 import {
   Sparkles,
-  Type,
-  Maximize2,
   Sliders,
-  Flame,
   Palette,
   AlignRight,
   AlignCenter,
   AlignLeft,
-  MoveHorizontal,
-  MoveVertical,
-  Layers,
   Wand2,
   Play,
   RotateCcw,
-  Check,
 } from 'lucide-react';
 import { Slider } from '../../ui/Slider';
 
@@ -33,7 +25,7 @@ interface TextStylePanelProps {
   setShowTranslation: (val: boolean) => void;
   currentAyahText?: string;
   addToast: (
-    toast: { message: string; type?: 'success' | 'error' | 'info' | 'warning' } | any
+    toast: { message: string; type?: 'success' | 'error' | 'info' | 'warning' }
   ) => void;
 }
 
@@ -110,7 +102,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
           <button
             key={tab.id}
             type="button"
-            onClick={() => setActiveSubTab(tab.id as any)}
+            onClick={() => setActiveSubTab(tab.id as 'font' | 'spacing' | 'fx' | 'motion' | 'translation')}
             className={`py-2 rounded-xl transition-all cursor-pointer flex flex-col items-center gap-0.5 ${
               activeSubTab === tab.id
                 ? 'bg-gradient-to-b from-gold-500 to-amber-500 text-surface-950 font-black shadow-sm'
@@ -145,7 +137,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                   <button
                     key={m.id}
                     type="button"
-                    onClick={() => setTextSettings((s) => ({ ...s, displayMode: m.id as any }))}
+                    onClick={() => setTextSettings((s) => ({ ...s, displayMode: m.id as 'chunked' | 'single_ayah' }))}
                     className={`p-2 rounded-xl border text-center transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
                       isSelected
                         ? 'bg-gold-500/20 border-gold-400 text-white font-bold shadow-sm'
@@ -267,7 +259,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                     <button
                       key={w.id}
                       type="button"
-                      onClick={() => setTextSettings((s) => ({ ...s, fontWeight: w.id as any }))}
+                      onClick={() => setTextSettings((s) => ({ ...s, fontWeight: w.id as 'normal' | 'bold' }))}
                       title={`سُمك الخط: ${w.label}`}
                       aria-label={`سُمك الخط: ${w.label}`}
                       className={`py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
@@ -295,7 +287,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                       <button
                         key={a.id}
                         type="button"
-                        onClick={() => setTextSettings((s) => ({ ...s, textAlign: a.id as any }))}
+                        onClick={() => setTextSettings((s) => ({ ...s, textAlign: a.id as 'right' | 'center' | 'left' }))}
                         title={a.name}
                         aria-label={a.name}
                         className={`py-1.5 rounded-lg text-xs flex items-center justify-center transition-all cursor-pointer ${
@@ -643,7 +635,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                 <button
                   key={grad.id}
                   type="button"
-                  onClick={() => setTextSettings((s) => ({ ...s, textGradient: grad.id as any }))}
+                  onClick={() => setTextSettings((s) => ({ ...s, textGradient: grad.id as 'none' | 'gold' | 'emerald' | 'sunset' | 'royal' | 'amber' | 'celestial' }))}
                   className={`p-2 rounded-xl border text-center text-[11px] font-bold transition-all cursor-pointer ${
                     (textSettings.textGradient || 'none') === grad.id
                       ? 'bg-gold-500/20 border-gold-400 text-white shadow-md'
@@ -703,7 +695,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                   onClick={() => {
                     setTextSettings((s) => ({
                       ...s,
-                      textAnimation: anim.id as any,
+                      textAnimation: anim.id as TextSettings['textAnimation'],
                       wordHighlightEnabled:
                         anim.id === 'wordByWord' ? true : s.wordHighlightEnabled,
                     }));
@@ -725,14 +717,19 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
             </div>
           </div>
 
-          {/* Word-by-Word Karaoke Highlight Details */}
+          {/* Karaoke Word Highlight Settings */}
           <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-gold-500/20 space-y-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <Sparkles size={14} className="text-gold-400" />
-                <span className="font-bold text-white text-xs">
-                  تظليل الكلمات المتزامن (Karaoke Highlight)
-                </span>
+              <div className="flex items-center gap-2">
+                <Sparkles size={16} className="text-gold-400" />
+                <div>
+                  <span className="font-bold text-white text-xs block">
+                    إبراز الكلمة المتلوّة (كاريوكي ذكي)
+                  </span>
+                  <span className="text-[11px] text-white/40">
+                    تلوين وتكبير الكلمة لحظة نطقها من القارئ
+                  </span>
+                </div>
               </div>
               <input
                 type="checkbox"
@@ -744,13 +741,14 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
               />
             </div>
 
-            {(textSettings.wordHighlightEnabled ?? true) && (
+            {textSettings.wordHighlightEnabled && (
               <div className="space-y-3 pt-2 border-t border-white/[0.04]">
                 <div>
-                  <label className="block text-white/50 text-xs mb-1.5">نمط التوهج والبريق</label>
+                  <label className="block text-xs font-bold text-white/60 mb-1.5">
+                    تأثير إبراز الكلمة
+                  </label>
                   <div className="grid grid-cols-2 gap-1.5">
                     {[
-                      { id: 'goldGlow', name: 'توهج ذهبي 👑', color: '#fbbf24' },
                       { id: 'emeraldGlow', name: 'زمردي 🌿', color: '#10b981' },
                       { id: 'radiantWhite', name: 'أبيض ناصع ⚪', color: '#ffffff' },
                       { id: 'amberEmber', name: 'عنبر دافئ 🔥', color: '#f97316' },
@@ -763,7 +761,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                         onClick={() =>
                           setTextSettings((s) => ({
                             ...s,
-                            wordHighlightStyle: h.id as any,
+                            wordHighlightStyle: h.id as TextSettings['wordHighlightStyle'],
                             wordHighlightColor: h.color,
                           }))
                         }
@@ -851,7 +849,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                   <select
                     value={textSettings.translationLanguage || 'en'}
                     onChange={(e) =>
-                      setTextSettings((s) => ({ ...s, translationLanguage: e.target.value as any }))
+                      setTextSettings((s) => ({ ...s, translationLanguage: e.target.value as 'en' | 'fr' | 'ur' | 'tr' | 'es' | 'id' }))
                     }
                     className="glass-input w-full p-2 rounded-xl text-xs bg-surface-950 border border-white/10"
                   >

@@ -14,7 +14,6 @@ import {
   Square,
   RotateCcw,
   Play,
-  ExternalLink,
   Share2,
 } from 'lucide-react';
 

@@ -172,7 +172,9 @@ export async function renderQuoteToCanvas(
   if (typeof document !== 'undefined' && document.fonts) {
     try {
       await document.fonts.ready;
-    } catch {}
+    } catch (err) {
+      console.debug('[ImageExportService] Font ready error:', err);
+    }
   }
 
   const dims = ASPECT_DIMENSIONS[settings.aspectRatio] || ASPECT_DIMENSIONS['1:1'];

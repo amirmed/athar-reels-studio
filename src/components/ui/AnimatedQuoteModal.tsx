@@ -16,16 +16,9 @@ import {
   Sparkles,
   Download,
   Film,
-  Play,
   Volume2,
   Clock,
   Wand2,
-  Check,
-  Flame,
-  Radio,
-  Sliders,
-  Layers,
-  Share2,
 } from 'lucide-react';
 
 interface AnimatedQuoteModalProps {
@@ -49,7 +42,7 @@ export const AnimatedQuoteModal: React.FC<AnimatedQuoteModalProps> = ({
   // Render & Export State
   const [isExporting, setIsExporting] = useState<boolean>(false);
   const [exportProgress, setExportProgress] = useState<number>(0);
-  const [exportedVideoUrl, setExportedVideoUrl] = useState<string | null>(null);
+  const [_exportedVideoUrl, setExportedVideoUrl] = useState<string | null>(null);
 
   // Preview Canvas Refs
   const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);

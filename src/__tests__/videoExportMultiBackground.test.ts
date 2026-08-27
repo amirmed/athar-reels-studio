@@ -34,7 +34,7 @@ describe('Video Frame Renderer - Multi-Scene Backgrounds', () => {
   };
 
   function createMockCanvasContext() {
-    const drawnImages: any[] = [];
+    const drawnImages: (CanvasImageSource & { id?: string })[] = [];
     const ctx = {
       fillStyle: '',
       strokeStyle: '',
@@ -110,7 +110,7 @@ describe('Video Frame Renderer - Multi-Scene Backgrounds', () => {
     expect(ctx.fillRect).toHaveBeenCalled();
     expect(drawnImages.length).toBeGreaterThan(0);
     // Should have drawn scene_1_bg for currentAyahIndex: 1
-    expect((drawnImages[0] as any).id).toBe('scene_1_bg');
+    expect((drawnImages[0] as { id?: string }).id).toBe('scene_1_bg');
   });
 
   it('falls back to default bgImage if scene index is not in sceneBgImages', () => {
@@ -141,7 +141,7 @@ describe('Video Frame Renderer - Multi-Scene Backgrounds', () => {
 
     expect(drawnImages.length).toBeGreaterThan(0);
     // Should fallback to main_bg
-    expect((drawnImages[0] as any).id).toBe('main_bg');
+    expect((drawnImages[0] as { id?: string }).id).toBe('main_bg');
   });
 
   const createDummyTextSettings = (overrides: Partial<import('../types').TextSettings> = {}): import('../types').TextSettings => ({

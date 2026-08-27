@@ -9,9 +9,6 @@ import {
   MoreVertical,
   ThumbsUp,
   ThumbsDown,
-  Sparkles,
-  ShieldCheck,
-  Smartphone,
 } from 'lucide-react';
 
 export type PlatformOverlayType = 'none' | 'tiktok' | 'reels' | 'shorts' | 'whatsapp';

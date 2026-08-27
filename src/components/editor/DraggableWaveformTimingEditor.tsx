@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AyahData, splitAyahIntoWaqfChunks } from '../../services/quranApi';
-import { QuranWord } from '../../types';
+import { QuranWord, AyahChunk } from '../../types';
 import {
   Play,
   Pause,
@@ -12,20 +12,12 @@ import {
   Sparkles,
   Check,
   X,
-  Sliders,
   ChevronLeft,
   ChevronRight,
-  MoveHorizontal,
-  Clock,
   Repeat,
-  FastForward,
-  Rewind,
   Wand2,
-  Info,
-  Maximize2,
   Scissors,
   Trash2,
-  Split,
   Layers,
   FileText,
   Magnet,
@@ -55,7 +47,7 @@ export interface DraggableWaveformTimingEditorProps {
   onSaveWords?: (
     ayahIndex: number,
     updatedWords: QuranWord[],
-    updatedChunks: any[],
+    updatedChunks: AyahChunk[],
     updatedText?: string
   ) => void;
   // Backwards compatibility props:
@@ -125,8 +117,8 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
   onSaveWords,
   ayah: legacyAyah,
   ayahIndex: legacyAyahIndex = 0,
-  totalAyahsCount: legacyTotalAyahsCount = 1,
-  onNavigateAyah,
+  totalAyahsCount: _legacyTotalAyahsCount = 1,
+  onNavigateAyah: _onNavigateAyah,
 }) => {
   // Normalize ayahs list
   const effectiveAyahs: AyahData[] =
@@ -163,7 +155,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
   // Audio & Waveform State
   const [audioBuffer, setAudioBuffer] = useState<AudioBuffer | null>(null);
   const [wavePeaks, setWavePeaks] = useState<number[]>([]);
-  const [isLoadingAudio, setIsLoadingAudio] = useState<boolean>(false);
+  const [_isLoadingAudio, setIsLoadingAudio] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [audioDuration, setAudioDuration] = useState<number>(explicitDuration || 10);
@@ -348,6 +340,24 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
     setSelectedWordIndex(0);
   }, [effectiveAyahs.length, explicitDuration]);
 
+  // Audio playback controls
+  const stopAudioPlayback = useCallback(() => {
+    if (audioSourceRef.current) {
+      try {
+        audioSourceRef.current.stop();
+        audioSourceRef.current.disconnect();
+      } catch (err) {
+        console.debug('[WaveformTimingEditor] AudioSource stop error:', err);
+      }
+      audioSourceRef.current = null;
+    }
+    if (animFrameRef.current) {
+      cancelAnimationFrame(animFrameRef.current);
+      animFrameRef.current = null;
+    }
+    setIsPlaying(false);
+  }, []);
+
   // 2. Decode Full Audio Buffer & Calculate Acoustic Waveform Peaks
   useEffect(() => {
     if (!isOpen || !resolvedAudioUrl) return;
@@ -355,7 +365,9 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
     let isMounted = true;
     setIsLoadingAudio(true);
 
-    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+    const AudioCtx =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     const ctx = new AudioCtx();
     audioContextRef.current = ctx;
 
@@ -408,32 +420,18 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
       if (ctx.state !== 'closed') {
         try {
           ctx.close();
-        } catch {}
+        } catch (err) {
+          console.debug('[WaveformTimingEditor] AudioContext close error:', err);
+        }
       }
     };
-  }, [isOpen, resolvedAudioUrl]);
+  }, [isOpen, resolvedAudioUrl, stopAudioPlayback]);
 
   // Active displayed words depending on viewMode
   const displayedWords =
     viewMode === 'all'
       ? unifiedWords
       : unifiedWords.filter((w) => w.ayahIdx === activeAyahFocusIdx);
-
-  // Audio playback controls
-  const stopAudioPlayback = useCallback(() => {
-    if (audioSourceRef.current) {
-      try {
-        audioSourceRef.current.stop();
-        audioSourceRef.current.disconnect();
-      } catch {}
-      audioSourceRef.current = null;
-    }
-    if (animFrameRef.current) {
-      cancelAnimationFrame(animFrameRef.current);
-      animFrameRef.current = null;
-    }
-    setIsPlaying(false);
-  }, []);
 
   const playFromTime = useCallback(
     async (startSec: number, endLimitSec?: number) => {
@@ -444,7 +442,9 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
       if (ctx.state === 'suspended') {
         try {
           await ctx.resume();
-        } catch {}
+        } catch (err) {
+          console.debug('[WaveformTimingEditor] AudioContext resume error:', err);
+        }
       }
 
       const source = ctx.createBufferSource();
@@ -624,7 +624,6 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
 
         const current = { ...next[realIndex] };
         const prevWord = next[realIndex - 1];
-        const nextWord = next[realIndex + 1];
 
         const minDuration = 0.08; // 80ms minimum duration
 

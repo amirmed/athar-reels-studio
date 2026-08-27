@@ -1,4 +1,4 @@
-import { Project, WordHighlightStyle, OrnamentStyle } from '../types';
+import { WordHighlightStyle, OrnamentStyle } from '../types';
 
 export interface AutoReelTheme {
   id: string;

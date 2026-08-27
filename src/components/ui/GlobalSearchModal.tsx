@@ -11,12 +11,9 @@ import {
   Sparkles,
   BookHeart,
   Image as ImageIcon,
-  Flame,
   Home,
   Sun,
   Moon,
-  Heart,
-  ArrowRight,
 } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { surahs } from '../../data/mockData';
@@ -32,7 +29,7 @@ interface GlobalSearchModalProps {
 export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
   isOpen,
   onClose,
-  onOpenMotherDua,
+  onOpenMotherDua: _onOpenMotherDua,
 }) => {
   const setCurrentPage = useAppStore((s) => s.setCurrentPage);
   const projects = useAppStore((s) => s.projects);
@@ -164,11 +161,11 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
     });
 
     // 3. Surahs (All 114 Surahs)
-    surahs.forEach((s: any) => {
+    surahs.forEach((s) => {
       results.push({
         id: `surah-${s.number}`,
         title: `سورة ${s.name} (${s.englishName})`,
-        subtitle: `رقم ${s.number} • ${s.numberOfAyahs} آية • ${s.revelationType === 'Meccan' ? 'مكية' : 'مدنية'}`,
+        subtitle: `رقم ${s.number} • ${s.ayahCount} آية • ${s.revelationType}`,
         category: 'سور قرآنية',
         icon: <BookOpen size={16} className="text-emerald-400" />,
         action: () => {

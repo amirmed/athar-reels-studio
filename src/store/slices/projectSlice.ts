@@ -17,7 +17,9 @@ function generateUniqueId(prefix = 'proj'): string {
     if (typeof crypto !== 'undefined' && crypto.randomUUID) {
       return `${prefix}_${crypto.randomUUID()}`;
     }
-  } catch {}
+  } catch (err) {
+    console.debug('[ProjectSlice] crypto.randomUUID fallback:', err);
+  }
   return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 9)}`;
 }
 
@@ -70,10 +72,16 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
   },
 
   deleteProject: (id: string) => {
-    deletePersistentAudio(id).catch(() => {});
-    deleteProjectThumbnail(id).catch(() => {});
+    deletePersistentAudio(id).catch((err) => {
+      console.warn(`[ProjectSlice] Failed to delete audio for project ${id}:`, err);
+    });
+    deleteProjectThumbnail(id).catch((err) => {
+      console.warn(`[ProjectSlice] Failed to delete thumbnail for project ${id}:`, err);
+    });
     if (window.electronAPI?.projects?.delete) {
-      window.electronAPI.projects.delete(id).catch(() => {});
+      window.electronAPI.projects.delete(id).catch((err) => {
+        console.error(`[ProjectSlice] Electron IPC project deletion failed for ${id}:`, err);
+      });
     }
     set((state) => ({
       projects: state.projects.filter((p) => p.id !== id),
@@ -83,11 +91,17 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
   },
 
   deleteProjects: (ids: string[]) => {
-    deleteProjectThumbnails(ids).catch(() => {});
+    deleteProjectThumbnails(ids).catch((err) => {
+      console.warn('[ProjectSlice] Failed to batch delete thumbnails:', err);
+    });
     ids.forEach((id) => {
-      deletePersistentAudio(id).catch(() => {});
+      deletePersistentAudio(id).catch((err) => {
+        console.warn(`[ProjectSlice] Failed to delete audio for project ${id}:`, err);
+      });
       if (window.electronAPI?.projects?.delete) {
-        window.electronAPI.projects.delete(id).catch(() => {});
+        window.electronAPI.projects.delete(id).catch((err) => {
+          console.error(`[ProjectSlice] Electron IPC project deletion failed for ${id}:`, err);
+        });
       }
     });
     set((state) => ({
@@ -99,14 +113,24 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
   },
 
   deleteAllProjects: () => {
-    clearAllProjectThumbnails().catch(() => {});
-    get().projects.forEach((p) => deletePersistentAudio(p.id).catch(() => {}));
+    clearAllProjectThumbnails().catch((err) => {
+      console.warn('[ProjectSlice] Failed to clear all thumbnails:', err);
+    });
+    get().projects.forEach((p) => {
+      deletePersistentAudio(p.id).catch((err) => {
+        console.warn(`[ProjectSlice] Failed to delete audio for project ${p.id}:`, err);
+      });
+    });
     if (window.electronAPI?.projects?.deleteAll) {
-      window.electronAPI.projects.deleteAll().catch(() => {});
+      window.electronAPI.projects.deleteAll().catch((err) => {
+        console.error('[ProjectSlice] Electron IPC deleteAll failed:', err);
+      });
     } else {
       get().projects.forEach((p) => {
         if (window.electronAPI?.projects?.delete) {
-          window.electronAPI.projects.delete(p.id).catch(() => {});
+          window.electronAPI.projects.delete(p.id).catch((err) => {
+            console.error(`[ProjectSlice] Electron IPC delete failed for ${p.id}:`, err);
+          });
         }
       });
     }
@@ -172,7 +196,9 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
       // 1. Offload heavy base64 data URLs to IndexedDB
       projects.forEach((p) => {
         if (p.thumbnail && p.thumbnail.startsWith('data:image/')) {
-          saveProjectThumbnail(p.id, p.thumbnail).catch(() => {});
+          saveProjectThumbnail(p.id, p.thumbnail).catch((err) => {
+            console.warn(`[ProjectSlice] Failed to persist thumbnail for ${p.id}:`, err);
+          });
         }
       });
 

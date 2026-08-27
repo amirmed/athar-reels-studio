@@ -255,7 +255,7 @@ export const SettingsPage: React.FC = () => {
           <SettingRow label={t('export.quality', 'الجودة الافتراضية')}>
             <select
               value={settings.defaultExportQuality}
-              onChange={(e) => updateSettings({ defaultExportQuality: e.target.value as any })}
+              onChange={(e) => updateSettings({ defaultExportQuality: e.target.value as 'standard' | 'high' | 'premium' })}
               className="glass-select text-sm w-36"
             >
               <option value="standard">{t('export.qualityStandard', 'قياسية (720p)')}</option>
@@ -267,7 +267,7 @@ export const SettingsPage: React.FC = () => {
           <SettingRow label={t('export.aspectRatio', 'المقاس الافتراضي')}>
             <select
               value={settings.defaultAspectRatio}
-              onChange={(e) => updateSettings({ defaultAspectRatio: e.target.value as any })}
+              onChange={(e) => updateSettings({ defaultAspectRatio: e.target.value as '9:16' | '16:9' | '1:1' })}
               className="glass-select text-sm w-44"
             >
               <option value="9:16">{t('export.ratioReels', '9:16 ريلز / تيك توك')}</option>
@@ -295,7 +295,9 @@ export const SettingsPage: React.FC = () => {
                 onChange={(e) => {
                   try {
                     localStorage.setItem('athar_pexels_key', e.target.value.trim());
-                  } catch {}
+                  } catch (err) {
+                    console.debug('[SettingsPage] Save pexels key error:', err);
+                  }
                 }}
                 className="glass-input text-xs w-56 font-mono"
               />
@@ -330,7 +332,7 @@ export const SettingsPage: React.FC = () => {
           >
             <select
               value={settings.performanceMode}
-              onChange={(e) => updateSettings({ performanceMode: e.target.value as any })}
+              onChange={(e) => updateSettings({ performanceMode: e.target.value as 'performance' | 'balanced' | 'quality' })}
               className="glass-select text-sm w-44"
             >
               <option value="performance">

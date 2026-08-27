@@ -6,7 +6,9 @@ function generateUniqueId(prefix = 'id'): string {
     if (typeof crypto !== 'undefined' && crypto.randomUUID) {
       return `${prefix}_${crypto.randomUUID()}`;
     }
-  } catch {}
+  } catch (err) {
+    console.debug('[UiSlice] crypto.randomUUID fallback:', err);
+  }
   return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 9)}`;
 }
 
@@ -14,7 +16,8 @@ const getInitialPage = (): Page => {
   try {
     const hasOnboarded = typeof localStorage !== 'undefined' ? localStorage.getItem('athar_has_onboarded') : null;
     return hasOnboarded === 'true' ? 'dashboard' : 'welcome';
-  } catch {
+  } catch (err) {
+    console.debug('[UiSlice] getInitialPage fallback:', err);
     return 'welcome';
   }
 };

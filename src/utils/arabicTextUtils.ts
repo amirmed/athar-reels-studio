@@ -8,7 +8,7 @@ const QURANIC_MARKS_REGEX =
   /[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06DC\u06DF-\u06E8\u06EA-\u06ED]/g;
 
 // Standard Arabic Diacritics (Fatha, Damma, Kasra, Tanween, Sukun, Shaddah)
-const TASHKEEL_REGEX = /[\u064B-\u0652\u0670]/g;
+export const TASHKEEL_REGEX = /[\u064B-\u0652\u0670]/g;
 
 /**
  * Remove all Quranic punctuation, stops, and vowel marks

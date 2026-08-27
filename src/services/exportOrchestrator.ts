@@ -8,7 +8,7 @@ import { AyahData } from './quranApi';
 import { TextSettings, AudioSettings, AspectRatio } from '../types';
 import { renderVideoExportFrame } from './videoFrameRenderer';
 import { isWebCodecsExportSupported, exportVideoWithWebCodecs } from './webCodecsExportService';
-import { render8DSpatialBuffer, Spatial8DAudioProcessor } from './spatial8DAudioEngine';
+import { render8DSpatialBuffer } from './spatial8DAudioEngine';
 import { isVideoMedia } from '../utils/imageUtils';
 
 export interface PlatformPreset {
@@ -303,7 +303,7 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
     audioSettings,
     watermark,
     showTranslation = false,
-    showTafsir = false,
+    showTafsir: _showTafsir = false,
     totalDuration,
     preferEngine = 'auto',
     signal,
@@ -626,7 +626,9 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
     await new Promise((resolve) => {
       if (!bgVideo) return resolve(null);
       bgVideo.onloadeddata = () => {
-        bgVideo?.play().catch(() => {});
+        bgVideo?.play().catch((err) => {
+          console.debug('[ExportOrchestrator] bgVideo play error:', err);
+        });
         resolve(null);
       };
       bgVideo.onerror = () => resolve(null);

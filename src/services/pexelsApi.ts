@@ -60,6 +60,8 @@ export interface PexelsVideo {
   }>;
 }
 
+export type PexelsVideoFile = PexelsVideo['video_files'][number];
+
 export interface PexelsPhotosResponse {
   total_results: number;
   page: number;
@@ -74,7 +76,7 @@ export interface PexelsVideosResponse {
   videos: PexelsVideo[];
 }
 
-async function pexelsFetch(endpoint: string): Promise<any> {
+async function pexelsFetch<T = unknown>(endpoint: string): Promise<T> {
   const key = getPexelsApiKey();
   if (!key || key === 'YOUR_PEXELS_API_KEY') {
     throw new Error('يرجى إدخال مفتاح Pexels API المجاني في الإعدادات لتصفح وتنزيل وسائط Pexels.');

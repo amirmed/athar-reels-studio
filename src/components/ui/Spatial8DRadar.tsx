@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Headphones, Radio, Sparkles } from 'lucide-react';
+import { Headphones, Sparkles } from 'lucide-react';
 import { Spatial8DStyle } from '../../types';
 
 interface Spatial8DRadarProps {

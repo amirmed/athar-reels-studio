@@ -149,7 +149,7 @@ function mediaKindFromFile(filePath: string): BackgroundKind | undefined {
     return undefined;
   } finally {
     if (fd !== undefined) {
-      try { fs.closeSync(fd); } catch {}
+      try { fs.closeSync(fd); } catch (e) { console.debug('[MediaKind] close error:', e); }
     }
   }
   return undefined;
@@ -586,9 +586,9 @@ function generateAssSubtitleFile(
       }
 
       // Generate Dialogue events for each word highlight in each chunk
-      wordChunks.forEach((chunk, cIdx) => {
+      wordChunks.forEach((chunk) => {
         if (chunk.length === 0) return;
-        const chunkStart = chunk[0].startTime;
+        const _chunkStart = chunk[0].startTime;
         const chunkEnd = chunk[chunk.length - 1].endTime;
 
         for (let wIdx = 0; wIdx < chunk.length; wIdx++) {
@@ -755,7 +755,7 @@ function addPreviewOverlayFilters(
   const surahFontSize = Math.round(w * 0.03);
   const watermarkFontSize = Math.round(w * 0.034);
   const quranLineHeight = Math.round(quranFontSize * 1.55);
-  const boxPaddingX = Math.round(w * 0.08);
+  const _boxPaddingX = Math.round(w * 0.08);
   const boxPaddingY = Math.round(w * 0.045);
   const maxTextWidth = Math.round(w * 0.78);
   const maxChars = Math.max(14, Math.floor(maxTextWidth / (quranFontSize * 0.48)));
@@ -1143,13 +1143,13 @@ export function setupExportHandlers(tempDir: string) {
           })
           .on('end', () => {
             activeFfmpegCmd = null;
-            tmpFiles.forEach(f => { try { fs.unlinkSync(f); } catch {} });
+            tmpFiles.forEach(f => { try { fs.unlinkSync(f); } catch (e) { console.debug('[Cleanup] unlink error:', e); } });
             safeSendProgress(_event.sender, { phase: 'اكتمل التصدير ✅', percent: 100 });
             resolve({ success: true, outputPath: options.outputPath });
           })
           .on('error', (err: any) => {
             activeFfmpegCmd = null;
-            tmpFiles.forEach(f => { try { fs.unlinkSync(f); } catch {} });
+            tmpFiles.forEach(f => { try { fs.unlinkSync(f); } catch (e) { console.debug('[Cleanup] unlink error:', e); } });
             console.error('[FFmpeg Error]', err.message);
             resolve({ success: false, error: err.message });
           })
@@ -1157,7 +1157,7 @@ export function setupExportHandlers(tempDir: string) {
       });
 
     } catch (err: any) {
-      tmpFiles.forEach(f => { try { fs.unlinkSync(f); } catch {} });
+      tmpFiles.forEach(f => { try { fs.unlinkSync(f); } catch (e) { console.debug('[Cleanup] unlink error:', e); } });
       return { success: false, error: err.message };
     }
   });

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Search, Image, Film, Loader2, X, ChevronLeft, ChevronRight, Key } from 'lucide-react';
+import { Search, Image, Film, Loader2, ChevronLeft, ChevronRight, Key } from 'lucide-react';
 import {
   PexelsPhoto,
   PexelsVideo,
@@ -31,7 +31,7 @@ export const PexelsMediaBrowser: React.FC<PexelsMediaBrowserProps> = ({
 }) => {
   const [tab, setTab] = useState<'photos' | 'videos'>('photos');
   const [query, setQuery] = useState('');
-  const [apiKey, setApiKey] = useState(() => getPexelsApiKey());
+  const [_apiKey, setApiKey] = useState(() => getPexelsApiKey());
   const [showKeyInput, setShowKeyInput] = useState(!hasPexelsApiKey());
   const [photos, setPhotos] = useState<PexelsPhoto[]>([]);
   const [videos, setVideos] = useState<PexelsVideo[]>([]);
@@ -78,8 +78,8 @@ export const PexelsMediaBrowser: React.FC<PexelsMediaBrowserProps> = ({
           setVideos(data.videos || []);
           setTotalResults(data.total_results || 0);
         }
-      } catch (e: any) {
-        setError(e.message || 'خطأ في التحميل');
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : 'خطأ في التحميل');
       } finally {
         setLoading(false);
       }

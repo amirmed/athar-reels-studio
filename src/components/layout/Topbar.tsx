@@ -9,7 +9,6 @@ import {
   User,
   ChevronDown,
   CheckCircle2,
-  Heart,
   HelpCircle,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -27,13 +26,12 @@ export const Topbar: React.FC<TopbarProps> = ({
   subtitle,
   actions,
   onOpenSearch,
-  onOpenMotherDua,
+  onOpenMotherDua: _onOpenMotherDua,
 }) => {
   const theme = useAppStore((s) => s.theme);
   const toggleTheme = useAppStore((s) => s.toggleTheme);
   const exportJobs = useAppStore((s) => s.exportJobs);
   const setCurrentPage = useAppStore((s) => s.setCurrentPage);
-  const addToast = useAppStore((s) => s.addToast);
   const startTour = useAppStore((s) => s.startTour);
   const { t } = useTranslation();
 
@@ -54,7 +52,9 @@ export const Topbar: React.FC<TopbarProps> = ({
     setSeenIds(updated);
     try {
       localStorage.setItem('athar_seen_notifications', JSON.stringify(updated));
-    } catch {}
+    } catch (err) {
+      console.debug('[Topbar] Save seen notifications error:', err);
+    }
   };
 
   const markSingleAsSeen = (id: string) => {
@@ -62,7 +62,9 @@ export const Topbar: React.FC<TopbarProps> = ({
     setSeenIds(updated);
     try {
       localStorage.setItem('athar_seen_notifications', JSON.stringify(updated));
-    } catch {}
+    } catch (err) {
+      console.debug('[Topbar] Save seen notification error:', err);
+    }
   };
 
   // Consider recently completed exports as notifications

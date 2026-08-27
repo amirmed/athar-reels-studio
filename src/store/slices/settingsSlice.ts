@@ -30,7 +30,9 @@ export function applyThemeToDom(theme: 'dark' | 'light') {
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem('athar_theme', theme);
     }
-  } catch {}
+  } catch (err) {
+    console.debug('[SettingsSlice] localStorage theme save failed:', err);
+  }
 }
 
 export const getInitialTheme = (): 'dark' | 'light' => {
@@ -42,7 +44,9 @@ export const getInitialTheme = (): 'dark' | 'light' => {
         return saved;
       }
     }
-  } catch {}
+  } catch (err) {
+    console.debug('[SettingsSlice] localStorage theme read failed:', err);
+  }
   applyThemeToDom('dark');
   return 'dark';
 };

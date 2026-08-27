@@ -18,8 +18,6 @@ import {
   PlusCircle,
   Sparkles,
   HelpCircle,
-  Sliders,
-  Check,
   BookHeart,
   Image as ImageIcon,
   Mic,
@@ -53,7 +51,7 @@ export const DashboardPage: React.FC = () => {
   const deleteProject = useAppStore((s) => s.deleteProject);
   const addToast = useAppStore((s) => s.addToast);
   const startTour = useAppStore((s) => s.startTour);
-  const { t, language } = useTranslation();
+  const { t } = useTranslation();
 
   // Trigger Onboarding on first visit
   useEffect(() => {
@@ -74,8 +72,9 @@ export const DashboardPage: React.FC = () => {
   const recentProjects = projects.slice(0, 4);
 
   const handleDeleteConfirm = () => {
-    if (modalData?.projectId) {
-      deleteProject(modalData.projectId);
+    const data = modalData as { projectId?: string; projectName?: string } | undefined;
+    if (data?.projectId) {
+      deleteProject(data.projectId);
       addToast({ message: 'تم حذف المشروع بنجاح', type: 'success' });
       closeModal();
     }
@@ -784,7 +783,7 @@ export const DashboardPage: React.FC = () => {
         onClose={closeModal}
         onConfirm={handleDeleteConfirm}
         title="حذف المشروع"
-        message={`هل أنت متأكد من حذف المشروع "${modalData?.projectName || ''}"؟ لا يمكن التراجع عن هذا الإجراء.`}
+        message={`هل أنت متأكد من حذف المشروع "${(modalData as { projectName?: string })?.projectName || ''}"؟ لا يمكن التراجع عن هذا الإجراء.`}
         confirmLabel="حذف"
         cancelLabel="إلغاء"
         variant="danger"

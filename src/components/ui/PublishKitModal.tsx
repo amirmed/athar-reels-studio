@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState } from 'react';
 import { Modal } from './Modal';
 import { ViralCaptionGenerator } from './ViralCaptionGenerator';
 import { useAppStore } from '../../store/useAppStore';
@@ -7,17 +6,11 @@ import { Project } from '../../types';
 import {
   Share2,
   ExternalLink,
-  Copy,
-  Check,
   Folder,
   Calendar,
   Trash2,
-  Sparkles,
   Flame,
-  CheckCircle2,
-  Clock,
   History,
-  Send,
 } from 'lucide-react';
 
 export interface PublishLogItem {
@@ -118,7 +111,9 @@ export const PublishKitModal: React.FC<PublishKitModalProps> = ({
     setPublishLogs(newLogs);
     try {
       localStorage.setItem('athar_publish_logs', JSON.stringify(newLogs));
-    } catch {}
+    } catch (err) {
+      console.debug('[PublishKitModal] localStorage save error:', err);
+    }
   };
 
   const handleOpenPlatform = async (

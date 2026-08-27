@@ -1,11 +1,9 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Search,
-  Sparkles,
   Image as ImageIcon,
   Film,
   Play,
-  Pause,
   Check,
   Key,
   ExternalLink,
@@ -24,7 +22,13 @@ import {
   ISLAMIC_VIDEO_CATEGORIES,
   CURATED_ISLAMIC_VIDEOS,
 } from '../../data/islamicVideos';
-import { getPexelsApiKey, setPexelsApiKey } from '../../services/pexelsApi';
+import {
+  getPexelsApiKey,
+  setPexelsApiKey,
+  PexelsPhoto,
+  PexelsVideo,
+  PexelsVideoFile,
+} from '../../services/pexelsApi';
 
 export type { IslamicWallpaper, IslamicVideo };
 
@@ -53,8 +57,8 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
   const [selectedPhotoCategory, setSelectedPhotoCategory] = useState<string>('all');
   const [selectedVideoCategory, setSelectedVideoCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [livePhotos, setLivePhotos] = useState<any[]>([]);
-  const [liveVideos, setLiveVideos] = useState<any[]>([]);
+  const [livePhotos, setLivePhotos] = useState<PexelsPhoto[]>([]);
+  const [liveVideos, setLiveVideos] = useState<PexelsVideo[]>([]);
   const [isSearchingLive, setIsSearchingLive] = useState(false);
   const [apiKey, setApiKey] = useState(() => getPexelsApiKey());
   const [showKeyModal, setShowKeyModal] = useState(false);
@@ -381,8 +385,8 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
                   // Extract highest quality MP4 link
                   const videoFiles = vid.video_files || [];
                   const bestFile =
-                    videoFiles.find((f: any) => f.height >= 1080 && f.file_type === 'video/mp4') ||
-                    videoFiles.find((f: any) => f.height >= 720 && f.file_type === 'video/mp4') ||
+                    videoFiles.find((f: PexelsVideoFile) => f.height >= 1080 && f.file_type === 'video/mp4') ||
+                    videoFiles.find((f: PexelsVideoFile) => f.height >= 720 && f.file_type === 'video/mp4') ||
                     videoFiles[0];
                   const videoUrl = bestFile?.link || '';
                   const isSelected = isCurrentUrl(videoUrl);

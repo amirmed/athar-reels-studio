@@ -42,7 +42,7 @@ export const OrnamentsPanel: React.FC<OrnamentsPanelProps> = ({
               ].map((o) => (
                 <button
                   key={o.id}
-                  onClick={() => setTextSettings((s) => ({ ...s, ornamentStyle: o.id as any }))}
+                  onClick={() => setTextSettings((s) => ({ ...s, ornamentStyle: o.id as TextSettings['ornamentStyle'] }))}
                   className={`p-2 rounded-lg text-xs font-bold transition-all text-center ${
                     textSettings.ornamentStyle === o.id
                       ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shadow-sm'

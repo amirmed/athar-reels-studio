@@ -22,10 +22,7 @@ import {
   Crown,
   Play,
   Info,
-  Loader2,
   X,
-  Save,
-  Sparkles,
 } from 'lucide-react';
 
 import { ViralCaptionGenerator } from '../ui/ViralCaptionGenerator';
@@ -47,7 +44,7 @@ export const ExportPage: React.FC = () => {
   );
   const [quality, setQuality] = useState<'standard' | 'high' | 'premium'>('high');
   const [isExporting, setIsExporting] = useState(false);
-  const [exportProgress, setExportProgress] = useState(0);
+  const [_exportProgress, setExportProgress] = useState(0);
   const [activePublishJob, setActivePublishJob] = useState<ExportJob | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -201,14 +198,15 @@ export const ExportPage: React.FC = () => {
         } else {
           throw new Error(result.error || 'فشلت عملية تصدير الفيديو');
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         if (abortControllerRef.current?.signal.aborted) {
           updateExportJob(jobId, { status: 'failed', progress: 0 });
           return;
         }
         console.error('Export failed:', error);
         updateExportJob(jobId, { status: 'failed', progress: 0 });
-        addToast({ message: `فشل التصدير: ${error.message || 'خطأ غير معروف'}`, type: 'error' });
+        const errMsg = error instanceof Error ? error.message : 'خطأ غير معروف';
+        addToast({ message: `فشل التصدير: ${errMsg}`, type: 'error' });
       } finally {
         setIsExporting(false);
       }
@@ -251,7 +249,9 @@ export const ExportPage: React.FC = () => {
     if (window.electronAPI?.videoExport?.cancel) {
       try {
         window.electronAPI.videoExport.cancel();
-      } catch {}
+      } catch (err) {
+        console.debug('[ExportPage] Cancel error:', err);
+      }
     }
     setIsExporting(false);
     addToast({ message: 'تم إلغاء التصدير', type: 'warning' });
@@ -578,7 +578,7 @@ async function saveVideoBlob(
       if (savePath) {
         const arrayBuffer = await blob.arrayBuffer();
         const bytes = new Uint8Array(arrayBuffer);
-        await window.electronAPI.fs.writeBinaryFile(savePath, bytes as any);
+        await window.electronAPI.fs.writeBinaryFile(savePath, bytes);
 
         // Open the folder containing the file
         window.electronAPI.shell.showItemInFolder(savePath);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../../store/useAppStore';
-import { TextSettings, QuranWord, StudioTemplate, AudioSettings } from '../../types';
+import { TextSettings, QuranWord, AyahChunk, StudioTemplate, AudioSettings } from '../../types';
 import { PreviewFrame } from '../ui/PreviewFrame';
 import { ExportModal } from '../ui/ExportModal';
 import { AutoReelModal } from '../ui/AutoReelModal';
@@ -148,7 +148,7 @@ export const EditorPage: React.FC = () => {
   const [isWaveformTimingModalOpen, setIsWaveformTimingModalOpen] = useState(false);
   const [activeTemplateId, setActiveTemplateId] = useState<string | undefined>();
   const [aspectRatio, setAspectRatio] = useState<'9:16' | '1:1' | '16:9'>(
-    (currentProject?.aspectRatio as any) || '9:16'
+    (currentProject?.aspectRatio as '9:16' | '1:1' | '16:9') || '9:16'
   );
 
   // Real data state
@@ -240,7 +240,7 @@ export const EditorPage: React.FC = () => {
       if (currentProject.fromAyah !== undefined) setFromAyah(currentProject.fromAyah);
       if (currentProject.toAyah !== undefined) setToAyah(currentProject.toAyah);
       if (currentProject.reciterId) setReciterId(currentProject.reciterId);
-      if (currentProject.aspectRatio) setAspectRatio(currentProject.aspectRatio as any);
+      if (currentProject.aspectRatio) setAspectRatio(currentProject.aspectRatio as '9:16' | '1:1' | '16:9');
       if (currentProject.backgroundUrl !== undefined)
         setBackgroundFile(currentProject.backgroundUrl);
       if (currentProject.backgroundOpacity !== undefined)
@@ -296,7 +296,7 @@ export const EditorPage: React.FC = () => {
 
   // Waveform Timing Editor Word Save Handler
   const handleSaveWords = useCallback(
-    (ayahIdx: number, updatedWords: QuranWord[], updatedChunks: any[], updatedText?: string) => {
+    (ayahIdx: number, updatedWords: QuranWord[], updatedChunks: AyahChunk[], updatedText?: string) => {
       setAyahs((prevAyahs) => {
         const next = [...prevAyahs];
         if (next[ayahIdx]) {
@@ -558,7 +558,7 @@ export const EditorPage: React.FC = () => {
       lastLoadedKeyRef.current = requestKey;
       setAyahs(ayahData);
       setTranslations(translationData);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setLoadError('فشل في تحميل الآيات. جاري استخدام الكاش المحلي...');
       console.error(err);
     } finally {
@@ -645,7 +645,7 @@ export const EditorPage: React.FC = () => {
       }
     });
 
-    const unsubError = unifiedAudioEngine.onError((errorMsg) => {
+    const unsubError = unifiedAudioEngine.onError((_errorMsg) => {
       addToast({
         message:
           'تعذر تشغيل تلاوة القارئ. قد يكون هناك انقطاع في الاتصال أو عدم توفر السورة لهذا القارئ 🎙️',
@@ -1344,7 +1344,7 @@ export const EditorPage: React.FC = () => {
                 : reciters.find((r) => r.id === reciterId)?.name || currentProject.reciter,
             customReciterName: audioSettings.customReciterName || currentProject.customReciterName,
             backgroundUrl: backgroundFile,
-            aspectRatio: aspectRatio as any,
+            aspectRatio: aspectRatio,
             textSettings: textSettings,
             fromAyah: fromAyah,
             toAyah: toAyah,

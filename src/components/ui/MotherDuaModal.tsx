@@ -31,7 +31,7 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
   const [parentType, setParentType] = useState<ParentType>('mother');
   const [lifeStatus, setLifeStatus] = useState<LifeStatus>('alive');
   const [customName, setCustomName] = useState('');
-  const [customDuaNote, setCustomDuaNote] = useState('');
+  const [customDuaNote, _setCustomDuaNote] = useState('');
   const [copied, setCopied] = useState(false);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
@@ -51,7 +51,9 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
   useEffect(() => {
     try {
       localStorage.setItem('athar_parents_tasbeeh_count', String(parentsTasbeehCount));
-    } catch {}
+    } catch (err) {
+      console.debug('[MotherDuaModal] localStorage save error:', err);
+    }
   }, [parentsTasbeehCount]);
 
   useHotkeys('Escape', onClose, { enabled: isOpen });

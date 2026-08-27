@@ -28,7 +28,7 @@ interface UseEditorHistoryProps {
 export function useEditorHistory({ onApplySnapshot, enabled = true }: UseEditorHistoryProps) {
   const historyRef = useRef<EditorSnapshot[]>([]);
   const currentIndexRef = useRef<number>(-1);
-  const debounceTimerRef = useRef<any>(null);
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isUndoingRedoingRef = useRef<boolean>(false);
 
   const [canUndo, setCanUndo] = useState(false);

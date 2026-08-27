@@ -7,7 +7,7 @@
  * 4. Full Real-Time 8D Binaural Spatial Audio, Mosque Reverb & Studio Mastering DSP.
  */
 
-import { QuranWord, AudioSettings, MosqueReverbPreset, Spatial8DStyle } from '../types';
+import { QuranWord, AudioSettings } from '../types';
 import { Spatial8DAudioProcessor } from './spatial8DAudioEngine';
 import { quranCacheService } from './quranCacheService';
 
@@ -109,11 +109,15 @@ export class UnifiedStudioAudioEngine {
    */
   private getAudioContext(): AudioContext {
     if (!this.audioCtx || this.audioCtx.state === 'closed') {
-      const AudioCtxClass = window.AudioContext || (window as any).webkitAudioContext;
+      const AudioCtxClass =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       this.audioCtx = new AudioCtxClass();
     }
     if (this.audioCtx.state === 'suspended') {
-      this.audioCtx.resume().catch(() => {});
+      this.audioCtx.resume().catch((err) => {
+        console.debug('[UnifiedAudioEngine] AudioContext resume error:', err);
+      });
     }
     return this.audioCtx;
   }
@@ -529,13 +533,7 @@ export class UnifiedStudioAudioEngine {
         audio.load();
       }
 
-      const wordCount = (item.text || '').split(/\s+/).filter(Boolean).length;
-      const defaultDuration = Math.max(item.duration || wordCount * 0.75, 4);
       const startSec = isFullSurah && item.startTimeMs !== undefined ? item.startTimeMs / 1000 : 0;
-      const endSec =
-        isFullSurah && item.endTimeMs !== undefined
-          ? item.endTimeMs / 1000
-          : startSec + defaultDuration;
 
       let isResolved = false;
       const safeResolve = (val: boolean) => {
@@ -558,7 +556,9 @@ export class UnifiedStudioAudioEngine {
         if (isFullSurah && startSec >= 0) {
           try {
             audio.currentTime = startSec;
-          } catch {}
+          } catch (err) {
+            console.debug('[UnifiedAudioEngine] Set currentTime error:', err);
+          }
         }
 
         audio
@@ -599,7 +599,9 @@ export class UnifiedStudioAudioEngine {
           if (isFullSurah && startSec >= 0) {
             try {
               audio.currentTime = startSec;
-            } catch {}
+            } catch (err) {
+              console.debug('[UnifiedAudioEngine] Set currentTime error:', err);
+            }
           }
         };
 

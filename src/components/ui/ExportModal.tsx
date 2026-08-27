@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import {
   X,
   Download,
@@ -7,28 +7,17 @@ import {
   AlertCircle,
   Loader2,
   Film,
-  Music,
-  FileVideo,
   Settings,
   FolderOpen,
-  Sparkles,
   Image as ImageIcon,
-  Zap,
   Share2,
-  MessageCircle,
-  Send,
   Play,
   Pause,
   RotateCcw,
   Eye,
-  Smartphone,
-  Monitor,
-  Square,
 } from 'lucide-react';
-import { ViralCaptionGenerator } from './ViralCaptionGenerator';
 import { ThumbnailModal } from './ThumbnailModal';
 import { PublishKitModal } from './PublishKitModal';
-import { getSocialShareLinks, triggerNativeShare } from '../../services/viralCaptionService';
 import { renderVideoExportFrame } from '../../services/videoFrameRenderer';
 import { AyahData } from '../../services/quranApi';
 import {
@@ -42,7 +31,6 @@ import { isVideoMedia } from '../../utils/imageUtils';
 import { useHotkeys } from '../../hooks/useHotkeys';
 import {
   PLATFORM_PRESETS,
-  PlatformPreset,
   exportProject,
 } from '../../services/exportOrchestrator';
 
@@ -78,14 +66,14 @@ export const ExportModal: React.FC<ExportModalProps> = ({
   backgroundPath,
   audioUrls = [],
   ayahs,
-  aspectRatio,
+  aspectRatio: _aspectRatio,
   watermark,
-  textColor = '#ffffff',
+  textColor: _textColor = '#ffffff',
   bgOpacity = 0.6,
-  fontFamily = 'Amiri',
+  fontFamily: _fontFamily = 'Amiri',
   totalDuration,
-  transition = 'fadeScale',
-  videoEffect = 'none',
+  transition: _transition = 'fadeScale',
+  videoEffect: _videoEffect = 'none',
   textSettings,
   audioSettings,
   showTranslation = false,
@@ -166,7 +154,9 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         bgVideoEl.muted = true;
         bgVideoEl.loop = true;
         bgVideoEl.playsInline = true;
-        bgVideoEl.play().catch(() => {});
+        bgVideoEl.play().catch((err) => {
+          console.debug('[ExportModal] Video play error:', err);
+        });
       } else {
         bgImgEl = new Image();
         bgImgEl.crossOrigin = 'anonymous';
@@ -328,7 +318,9 @@ export const ExportModal: React.FC<ExportModalProps> = ({
     if (window.electronAPI?.videoExport?.cancel) {
       try {
         window.electronAPI.videoExport.cancel();
-      } catch {}
+      } catch (err) {
+        console.debug('[ExportModal] Cancel error:', err);
+      }
     }
     setStatus('idle');
     setProgress(0);
@@ -612,7 +604,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                           const arrayBuffer = await res.arrayBuffer();
                           await window.electronAPI.fs.writeBinaryFile(
                             savePath,
-                            new Uint8Array(arrayBuffer) as any
+                            new Uint8Array(arrayBuffer)
                           );
                           window.electronAPI.shell?.showItemInFolder(savePath);
                           return;

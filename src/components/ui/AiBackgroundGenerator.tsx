@@ -33,7 +33,7 @@ export const AiBackgroundGenerator: React.FC<AiBackgroundGeneratorProps> = ({
   const [elapsedSec, setElapsedSec] = useState(0);
 
   const activeRequestIdRef = useRef<number>(0);
-  const timerRef = useRef<any>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Timer counter during generation
   useEffect(() => {

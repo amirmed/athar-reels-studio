@@ -9,12 +9,9 @@ import {
   Copy,
   Trash2,
   Download,
-  MoreHorizontal,
   Film,
   Clock,
   User,
-  CheckSquare,
-  Square,
   Check,
 } from 'lucide-react';
 

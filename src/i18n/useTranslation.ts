@@ -7,13 +7,13 @@ export type TranslationKey = string;
  * Helper to retrieve nested keys from translations dictionary
  * e.g. getNested(translations.ar, 'nav.dashboard')
  */
-function getNestedValue(obj: any, path: string): string | undefined {
+function getNestedValue(obj: Record<string, unknown> | unknown, path: string): string | undefined {
   if (!obj || !path) return undefined;
   const keys = path.split('.');
-  let current = obj;
+  let current: unknown = obj;
   for (const k of keys) {
     if (current && typeof current === 'object' && k in current) {
-      current = current[k];
+      current = (current as Record<string, unknown>)[k];
     } else {
       return undefined;
     }

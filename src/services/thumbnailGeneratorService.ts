@@ -1,5 +1,4 @@
-import { Project, ColorGradingFilter } from '../types';
-import { AyahData } from './quranApi';
+import { ColorGradingFilter } from '../types';
 import { loadImage } from '../utils/imageUtils';
 
 export interface ThumbnailConfig {

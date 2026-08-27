@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Smartphone, Monitor, Square, Maximize2, Sparkles, Move, Headphones } from 'lucide-react';
+import { Smartphone, Monitor, Square, Sparkles, Move, Headphones } from 'lucide-react';
 import { AyahData } from '../../services/quranApi';
-import { TextSettings, WordHighlightStyle, QuranWord } from '../../types';
+import { TextSettings, QuranWord } from '../../types';
 import { AudioWaveformBar } from './AudioWaveformBar';
 import { isVideoMedia } from '../../utils/imageUtils';
 
@@ -82,7 +82,6 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = React.memo(
     onWatermarkDragEnd,
   }) => {
     const isPerf = performanceMode === 'performance';
-    const isHighQ = performanceMode === 'quality';
 
     const baseDims = aspectDimensions[aspectRatio] || aspectDimensions['9:16'];
     const scaleFactor = size === 'fullscreen' ? 1.55 : 1.0;
@@ -105,7 +104,7 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = React.memo(
     const displayInfo = React.useMemo(() => {
       const isSynced = ayahs.length > 0;
       const currentAyah = isSynced && currentAyahIndex >= 0 ? ayahs[currentAyahIndex] : null;
-      const currentTranslation =
+      const currentTrans =
         isSynced && currentAyahIndex >= 0 ? translations[currentAyahIndex] : null;
 
       let displayText = ayahText;
@@ -115,7 +114,7 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = React.memo(
       if (isSynced) {
         if (isPlaying && currentAyah) {
           displayText = currentAyah.text;
-          displayTranslation = currentTranslation?.text || '';
+          displayTranslation = currentTrans?.text || '';
           displayAyahNumber = `﴿ ${currentAyah.numberInSurah} ﴾`;
         } else if (!isPlaying && ayahs.length > 0) {
           displayText = ayahs[0].text;
@@ -123,14 +122,14 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = React.memo(
           displayAyahNumber = `﴿ ${ayahs[0].numberInSurah} ﴾`;
         }
       }
-      return { isSynced, currentAyah, currentTranslation, displayText, displayTranslation, displayAyahNumber };
+      return { isSynced, currentAyah, displayText, displayTranslation, displayAyahNumber };
     }, [ayahs, currentAyahIndex, translations, isPlaying, ayahText, translationText]);
 
-    const { isSynced, currentAyah, currentTranslation, displayText, displayTranslation, displayAyahNumber } = displayInfo;
+    const { isSynced, currentAyah, displayText, displayTranslation, displayAyahNumber } = displayInfo;
 
     // Cinematic transition variants (Memoized)
     const activeVariant = React.useMemo(() => {
-      const variants: Record<string, { initial: any; animate: any; exit: any }> = {
+      const variants: Record<string, { initial: Record<string, number | string>; animate: Record<string, number | string>; exit: Record<string, number | string> }> = {
         fadeScale: {
           initial: { opacity: 0, scale: isPerf ? 1 : 0.92 },
           animate: { opacity: 1, scale: 1 },
@@ -467,7 +466,7 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = React.memo(
                                   : 500,
                             fontFamily: fontFamily,
                             direction: 'rtl',
-                            textAlign: textAlign as any,
+                            textAlign: (textAlign as React.CSSProperties['textAlign']) || 'center',
                           }}
                         >
                           {ayahs.map((a, aIdx) => {
@@ -655,7 +654,7 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = React.memo(
                                   : 500,
                             fontFamily: fontFamily,
                             direction: 'rtl',
-                            textAlign: textAlign as any,
+                            textAlign: (textAlign as React.CSSProperties['textAlign']) || 'center',
                             lineHeight: baseLineHeight,
                             wordSpacing: baseWordSpacing,
                             letterSpacing: baseLetterSpacing,
@@ -666,7 +665,6 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = React.memo(
                           {wordsToDisplay.map((word, wIdx) => {
                             const actualIdx = displayOffset + wIdx;
                             const isCurrent = isPlaying && activeWordIdx === actualIdx;
-                            const isPassed = isPlaying && activeWordIdx > actualIdx;
 
                             // Dynamic style for active word
                             let wordStyle: React.CSSProperties = {
@@ -685,8 +683,8 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = React.memo(
 
                             if (activeGrad && !isCurrent) {
                               wordStyle.backgroundImage = activeGrad;
-                              (wordStyle as any).WebkitBackgroundClip = 'text';
-                              (wordStyle as any).WebkitTextFillColor = 'transparent';
+                              wordStyle.WebkitBackgroundClip = 'text';
+                              (wordStyle as React.CSSProperties & { WebkitTextFillColor?: string }).WebkitTextFillColor = 'transparent';
                             }
 
                             if (isCurrent) {
@@ -798,7 +796,7 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = React.memo(
                                 ? 300
                                 : 500,
                           color: textSettings?.textColor || '#ffffff',
-                          textAlign: (textSettings?.textAlign as any) || 'center',
+                          textAlign: (textSettings?.textAlign as React.CSSProperties['textAlign']) || 'center',
                           fontFamily: fontFamily,
                           lineHeight: baseLineHeight,
                           wordSpacing: baseWordSpacing,

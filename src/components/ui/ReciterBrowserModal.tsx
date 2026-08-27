@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search,
@@ -292,7 +292,7 @@ export const ReciterBrowserModal: React.FC<ReciterBrowserModalProps> = ({
               {filterButtons.map((fb) => (
                 <button
                   key={fb.id}
-                  onClick={() => setFilterCategory(fb.id as any)}
+                  onClick={() => setFilterCategory(fb.id as 'all' | 'viral' | 'imams' | 'legends' | 'full' | 'warsh' | 'mujawwad')}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 border cursor-pointer ${
                     filterCategory === fb.id
                       ? 'bg-accent-500 text-white border-accent-400 shadow-md shadow-accent-500/20'

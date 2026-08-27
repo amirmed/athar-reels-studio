@@ -1,12 +1,9 @@
 import React, { useCallback, useState, useRef } from 'react';
 import {
   Upload,
-  Image,
-  Video,
   X,
   RefreshCw,
   Search,
-  Globe,
   Link,
   Loader2,
   Download,
@@ -71,7 +68,7 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
       setIsReadingFile(true);
       try {
         // If Electron provides native file path
-        const electronPath = (file as any).path;
+        const electronPath = (file as File & { path?: string }).path;
         if (electronPath && typeof electronPath === 'string' && electronPath.length > 3) {
           onUpload(electronPath);
           addToast({ message: `تم تحميل ملف "${file.name}" بنجاح 📁✨`, type: 'success' });

@@ -33,7 +33,7 @@ interface ReciterPanelProps {
   stopAudio: () => void;
   updateProject: (id: string, updates: Partial<Project>) => void;
   addToast: (
-    toast: { message: string; type?: 'success' | 'error' | 'info' | 'warning' } | any
+    toast: { message: string; type?: 'success' | 'error' | 'info' | 'warning' }
   ) => void;
 }
 

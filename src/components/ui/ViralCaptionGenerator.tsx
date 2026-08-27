@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
 import {
   Copy,
   Check,
@@ -7,9 +6,6 @@ import {
   RefreshCw,
   Hash,
   FileText,
-  Globe,
-  Heart,
-  MessageSquare,
 } from 'lucide-react';
 import { generateViralCaption, CaptionTone } from '../../services/captionGeneratorService';
 import { useAppStore } from '../../store/useAppStore';

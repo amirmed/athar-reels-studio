@@ -109,7 +109,7 @@ export const BrandingPanel: React.FC<BrandingPanelProps> = ({
                     onClick={() =>
                       setTextSettings((s) => ({
                         ...s,
-                        watermarkPosition: pos.id as any,
+                        watermarkPosition: pos.id as TextSettings['watermarkPosition'],
                         watermarkX: 0,
                         watermarkY: 0,
                       }))

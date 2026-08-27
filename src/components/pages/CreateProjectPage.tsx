@@ -12,7 +12,6 @@ import { ClipLibraryModal } from '../ui/ClipLibraryModal';
 import {
   getAvailableSurahsForReciter,
   isSurahAvailableForReciter,
-  everyAyahReciters,
 } from '../../services/quranApi';
 import {
   FileText,
@@ -26,11 +25,9 @@ import {
   Loader2,
   Wand2,
   AlertTriangle,
-  RotateCcw,
   Film,
   BookHeart,
   Image as ImageIcon,
-  Headphones,
 } from 'lucide-react';
 
 export const CreateProjectPage: React.FC = () => {

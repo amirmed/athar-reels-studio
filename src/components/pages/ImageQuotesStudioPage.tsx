@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import { useAppStore } from '../../store/useAppStore';
 import { AppLayout } from '../layout/AppLayout';
-import { QuoteCardSettings, QuoteAspectRatio, OrnamentStyle, Project } from '../../types';
+import { QuoteCardSettings, QuoteAspectRatio, OrnamentStyle } from '../../types';
 import { createDefaultProject } from '../../utils/projectDefaults';
 import {
   ASPECT_DIMENSIONS,
@@ -11,12 +11,10 @@ import {
   copyQuoteImageToClipboard,
 } from '../../services/imageExportService';
 import { quotePresetTemplates } from '../../data/quoteTemplates';
-import { initialAzkarList } from '../../data/azkarHadithData';
 import { CURATED_QUOTES, CuratedQuoteItem } from '../../data/curatedQuotesData';
 import { AiBackgroundGenerator } from '../ui/AiBackgroundGenerator';
 import { IslamicPexelsBrowser } from '../ui/IslamicPexelsBrowser';
 import { MediaUploader } from '../ui/MediaUploader';
-import { SectionAccordion } from '../ui/SectionAccordion';
 import {
   Download,
   Copy,
@@ -26,16 +24,12 @@ import {
   Upload,
   Type,
   Frame,
-  Share2,
   Video,
   Square,
   Smartphone,
   Monitor,
-  Layers,
   Wand2,
-  RotateCcw,
   Palette,
-  Eye,
   Hash,
   BookOpen,
   Move,
@@ -89,7 +83,6 @@ export const ImageQuotesStudioPage: React.FC = () => {
   const setCurrentProject = useAppStore((s) => s.setCurrentProject);
   const addToast = useAppStore((s) => s.addToast);
   const activeQuoteDraft = useAppStore((s) => s.activeQuoteDraft);
-  const setActiveQuoteDraft = useAppStore((s) => s.setActiveQuoteDraft);
 
   const [settings, setSettings] = useState<QuoteCardSettings>({
     title: activeQuoteDraft?.title || 'إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ',
@@ -171,17 +164,6 @@ export const ImageQuotesStudioPage: React.FC = () => {
       backgroundUrl: item.suggestedBgUrl || prev.backgroundUrl,
     }));
     addToast({ message: `تم اختيار «${item.title}» وتطبيق الخلفية المناسبة ✨`, type: 'success' });
-  };
-
-  // Populate from Azkar / Hadith
-  const handleSelectAzkar = (item: (typeof initialAzkarList)[0]) => {
-    setSettings((prev) => ({
-      ...prev,
-      title: item.title,
-      text: item.arabicText,
-      reference: item.reference,
-    }));
-    addToast({ message: `تم اختيار "${item.title}" ✨`, type: 'info' });
   };
 
   // Download High-Res Image
@@ -512,7 +494,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
               ].map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
+                  onClick={() => setActiveTab(tab.id as 'style' | 'content' | 'upload' | 'ornaments' | 'pexels' | 'ai')}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
                     activeTab === tab.id
                       ? 'bg-accent-500 text-white shadow-md shadow-accent-500/20'
@@ -589,7 +571,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
                       <button
                         key={cat.id}
                         type="button"
-                        onClick={() => setQuoteCategoryFilter(cat.id as any)}
+                        onClick={() => setQuoteCategoryFilter(cat.id as 'hadith' | 'all' | 'quran_peace' | 'dua' | 'dhikr')}
                         className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all shrink-0 cursor-pointer ${
                           quoteCategoryFilter === cat.id
                             ? 'bg-gold-500/20 text-gold-300 border border-gold-400/40'
@@ -844,7 +826,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
                               onClick={() =>
                                 setSettings((s) => ({
                                   ...s,
-                                  watermarkPosition: pos.id as any,
+                                  watermarkPosition: pos.id as QuoteCardSettings['watermarkPosition'],
                                   watermarkX: 0,
                                   watermarkY: 0,
                                 }))

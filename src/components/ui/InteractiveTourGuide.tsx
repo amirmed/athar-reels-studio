@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useAppStore } from '../../store/useAppStore';
 import {
   Sparkles,
@@ -7,7 +7,6 @@ import {
   ArrowLeft,
   X,
   CheckCircle2,
-  HelpCircle,
   Lightbulb,
   Layers,
   Wand2,

@@ -1,4 +1,4 @@
-import { Project } from '../types';
+import { Project, ColorGradingFilter } from '../types';
 
 export interface AtharInspirationItem {
   id: string;
@@ -12,7 +12,7 @@ export interface AtharInspirationItem {
   theme: string;
   spiritualMeaning: string;
   backgroundUrl: string;
-  colorGrading: any;
+  colorGrading: ColorGradingFilter;
   ambientSoundId: string;
 }
 

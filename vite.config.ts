@@ -5,11 +5,11 @@ import renderer from 'vite-plugin-electron-renderer';
 import path from 'path';
 import https from 'https';
 
-function ttsProxyPlugin() {
+function ttsProxyPlugin(): import('vite').Plugin {
   return {
     name: 'tts-proxy-plugin',
-    configureServer(server: any) {
-      server.middlewares.use('/api/tts', async (req: any, res: any) => {
+    configureServer(server) {
+      server.middlewares.use('/api/tts', async (req, res) => {
         const urlObj = new URL(req.url, 'http://localhost');
         const text = urlObj.searchParams.get('text');
         const voice = urlObj.searchParams.get('voice') || 'ar-SA-HamedNeural';

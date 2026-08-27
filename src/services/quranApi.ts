@@ -575,7 +575,7 @@ export function getEveryAyahAudioUrl(
   surahNumber: number,
   ayahNumber: number,
   serverUrl?: string,
-  reciterId?: string
+  _reciterId?: string
 ): string {
   const s = String(surahNumber).padStart(3, '0');
   const a = String(ayahNumber).padStart(3, '0');
@@ -817,8 +817,60 @@ export interface SurahMetadata {
   revelationType: string;
 }
 
+export interface QuranApiAyahItem {
+  number: number;
+  text: string;
+  numberInSurah: number;
+  juz: number;
+  page: number;
+}
+
+export interface QuranApiSurahPayload {
+  number: number;
+  name: string;
+  englishName: string;
+  englishNameTranslation?: string;
+  numberOfAyahs: number;
+  revelationType?: string;
+  ayahs: QuranApiAyahItem[];
+}
+
+export interface QuranComWordItem {
+  id?: number;
+  position?: number;
+  text_uthmani?: string;
+  text?: string;
+  char_type_name?: string;
+  translation?: { text?: string };
+  transliteration?: { text?: string };
+}
+
+export interface QuranComTimestampsPayload {
+  audio_file?: {
+    timestamps?: Array<{
+      verse_key: string;
+      timestamp_from: number;
+      timestamp_to: number;
+      duration?: number;
+      segments?: Array<[number, number, number]>;
+    }>;
+  };
+}
+
+export interface QuranComVersesPayload {
+  verses?: Array<{
+    id: number;
+    verse_number: number;
+    verse_key: string;
+    juz_number: number;
+    page_number: number;
+    text_uthmani?: string;
+    words?: QuranComWordItem[];
+  }>;
+}
+
 // ==================== Cache ====================
-const cache = new Map<string, { data: any; timestamp: number }>();
+const cache = new Map<string, { data: unknown; timestamp: number }>();
 const CACHE_TTL = 30 * 60 * 1000; // 30 minutes
 
 import { quranCacheService } from './quranCacheService';
@@ -831,7 +883,7 @@ function getCached<T>(key: string): T | null {
   return null;
 }
 
-function setCache(key: string, data: any) {
+function setCache(key: string, data: unknown) {
   cache.set(key, { data, timestamp: Date.now() });
 }
 
@@ -870,7 +922,9 @@ async function fetchTextApi<T>(endpoint: string): Promise<T> {
 
     setCache(cacheKey, json.data);
     if (surahMatch && sNum > 0) {
-      quranCacheService.setCachedAyahs(sNum, json.data, edition).catch(() => {});
+      quranCacheService.setCachedAyahs(sNum, json.data, edition).catch((err) => {
+        console.debug('[QuranApi] setCachedAyahs error:', err);
+      });
     }
     return json.data as T;
   } catch (primaryErr) {
@@ -882,7 +936,7 @@ async function fetchTextApi<T>(endpoint: string): Promise<T> {
     // Fallback: try fetching from Quran.com API v4 directly for Arabic text
     if (surahMatch && sNum > 0 && (edition.includes('ar') || edition.includes('uthmani'))) {
       try {
-        const qdcData = await fetchQuranCom<any>(
+        const qdcData = await fetchQuranCom<QuranComVersesPayload>(
           `/verses/by_chapter/${sNum}?language=ar&words=true&word_fields=text_uthmani,location,verse_key&per_page=300`
         );
         if (qdcData?.verses) {
@@ -891,11 +945,11 @@ async function fetchTextApi<T>(endpoint: string): Promise<T> {
             name: '',
             englishName: '',
             numberOfAyahs: qdcData.verses.length,
-            ayahs: qdcData.verses.map((v: any) => ({
+            ayahs: qdcData.verses.map((v) => ({
               number: v.id,
               text:
                 v.text_uthmani ||
-                v.words?.map((w: any) => w.text_uthmani || w.text).join(' ') ||
+                v.words?.map((w) => w.text_uthmani || w.text).join(' ') ||
                 '',
               numberInSurah: v.verse_number,
               juz: v.juz_number,
@@ -903,7 +957,9 @@ async function fetchTextApi<T>(endpoint: string): Promise<T> {
             })),
           };
           setCache(cacheKey, transformed);
-          quranCacheService.setCachedAyahs(sNum, transformed, edition).catch(() => {});
+          quranCacheService.setCachedAyahs(sNum, transformed, edition).catch((err) => {
+            console.debug('[QuranApi] setCachedAyahs fallback error:', err);
+          });
           return transformed as unknown as T;
         }
       } catch (fallbackErr) {
@@ -961,12 +1017,12 @@ export async function fetchQuranComTimestamps(
   }
 
   try {
-    const data = await fetchQuranCom<any>(
+    const data = await fetchQuranCom<QuranComTimestampsPayload>(
       `/chapter_recitations/${qdcReciterId}/${surahNumber}?segments=true`
     );
     const timestamps = data?.audio_file?.timestamps || [];
     for (const item of timestamps) {
-      if (item.verse_key) {
+      if (item.verse_key && item.timestamp_from !== undefined && item.timestamp_to !== undefined) {
         map.set(item.verse_key, {
           timestampFrom: item.timestamp_from,
           timestampTo: item.timestamp_to,
@@ -984,10 +1040,12 @@ export async function fetchQuranComTimestamps(
 /**
  * Fetch verses with words from Quran.com API v4
  */
-export async function fetchQuranComWords(surahNumber: number): Promise<Map<string, any[]>> {
-  const map = new Map<string, any[]>();
+export async function fetchQuranComWords(
+  surahNumber: number
+): Promise<Map<string, QuranComWordItem[]>> {
+  const map = new Map<string, QuranComWordItem[]>();
   try {
-    const data = await fetchQuranCom<any>(
+    const data = await fetchQuranCom<QuranComVersesPayload>(
       `/verses/by_chapter/${surahNumber}?language=ar&words=true&word_fields=text_uthmani,location,verse_key&per_page=300`
     );
     const verses = data?.verses || [];
@@ -1014,23 +1072,27 @@ export async function fetchAyahsWithAudio(
 ): Promise<AyahData[]> {
   try {
     const [surahData, wordsMap, timestampsMap] = await Promise.all([
-      fetchTextApi<any>(`/surah/${surahNumber}/quran-uthmani`),
-      fetchQuranComWords(surahNumber).catch(() => new Map()),
-      fetchQuranComTimestamps(reciterId, surahNumber).catch(() => new Map()),
+      fetchTextApi<QuranApiSurahPayload>(`/surah/${surahNumber}/quran-uthmani`),
+      fetchQuranComWords(surahNumber).catch(() => new Map<string, QuranComWordItem[]>()),
+      fetchQuranComTimestamps(reciterId, surahNumber).catch(
+        () =>
+          new Map<
+            string,
+            { timestampFrom: number; timestampTo: number; duration: number; segments: number[][] }
+          >()
+      ),
     ]);
 
     const reciter = everyAyahReciters.find((r) => r.id === reciterId);
     const subfolder = reciter?.subfolder || 'Alafasy_128kbps';
 
     const ayahs: AyahData[] = surahData.ayahs
-      .filter((a: any) => a.numberInSurah >= fromAyah && a.numberInSurah <= toAyah)
-      .map((a: any) => {
+      .filter((a) => a.numberInSurah >= fromAyah && a.numberInSurah <= toAyah)
+      .map((a) => {
         const verseKey = `${surahNumber}:${a.numberInSurah}`;
         const rawWords = wordsMap.get(verseKey) || [];
         const timing = timestampsMap.get(verseKey);
 
-        const sPadded = String(surahNumber).padStart(3, '0');
-        const aPadded = String(a.numberInSurah).padStart(3, '0');
         const primaryAudioUrl = getEveryAyahAudioUrl(
           subfolder,
           surahNumber,
@@ -1068,11 +1130,11 @@ export async function fetchAyahsWithAudio(
           const verseStartMs = timing?.timestampFrom || 0;
 
           // Filter out or handle end marker words
-          const contentWords = rawWords.filter((w: any) => w.char_type_name !== 'end');
+          const contentWords = rawWords.filter((w) => w.char_type_name !== 'end');
 
           if (segments.length > 0) {
             // Exact segments from Quran.com
-            words = contentWords.map((w: any, idx: number) => {
+            words = contentWords.map((w, idx: number) => {
               const seg = segments[idx] || segments.find((s: number[]) => s[0] === w.position);
               let startSec = 0;
               let endSec = 0;
@@ -1100,7 +1162,7 @@ export async function fetchAyahsWithAudio(
             });
           } else {
             // Intelligent phonetic length weighting fallback
-            const wordWeights = contentWords.map((w: any) => {
+            const wordWeights = contentWords.map((w) => {
               const clean = cleanAyahTextForDuration(w.text_uthmani || w.text || '');
               const madds = (clean.match(/[آأإاويةىٰـ]/g) || []).length;
               return Math.max(1, clean.length + madds * 1.5);
@@ -1108,7 +1170,7 @@ export async function fetchAyahsWithAudio(
             const totalWeight = wordWeights.reduce((sum: number, wt: number) => sum + wt, 0);
 
             let accumulatedTime = 0;
-            words = contentWords.map((w: any, idx: number) => {
+            words = contentWords.map((w, idx: number) => {
               const wordDuration = (wordWeights[idx] / totalWeight) * durationSeconds;
               const start = accumulatedTime;
               const end = start + wordDuration;
@@ -1191,10 +1253,10 @@ export async function fetchAyahs(
   toAyah: number
 ): Promise<AyahData[]> {
   try {
-    const surahData = await fetchTextApi<any>(`/surah/${surahNumber}`);
+    const surahData = await fetchTextApi<QuranApiSurahPayload>(`/surah/${surahNumber}`);
     const ayahs: AyahData[] = surahData.ayahs
-      .filter((a: any) => a.numberInSurah >= fromAyah && a.numberInSurah <= toAyah)
-      .map((a: any) => ({
+      .filter((a) => a.numberInSurah >= fromAyah && a.numberInSurah <= toAyah)
+      .map((a) => ({
         number: a.number,
         numberInSurah: a.numberInSurah,
         text: a.text,
@@ -1264,10 +1326,10 @@ export async function fetchTranslation(
 ): Promise<TranslationData[]> {
   try {
     const edition = TRANSLATION_EDITIONS[languageOrEdition]?.id || languageOrEdition || 'en.sahih';
-    const surahData = await fetchTextApi<any>(`/surah/${surahNumber}/${edition}`);
+    const surahData = await fetchTextApi<QuranApiSurahPayload>(`/surah/${surahNumber}/${edition}`);
     return surahData.ayahs
-      .filter((a: any) => a.numberInSurah >= fromAyah && a.numberInSurah <= toAyah)
-      .map((a: any) => ({
+      .filter((a) => a.numberInSurah >= fromAyah && a.numberInSurah <= toAyah)
+      .map((a) => ({
         numberInSurah: a.numberInSurah,
         text: a.text,
       }));
@@ -1282,8 +1344,8 @@ export async function fetchTranslation(
  */
 export async function fetchAllSurahs(): Promise<SurahMetadata[]> {
   try {
-    const data = await fetchTextApi<any[]>('/surah');
-    return data.map((s: any) => ({
+    const data = await fetchTextApi<SurahMetadata[]>('/surah');
+    return data.map((s) => ({
       number: s.number,
       name: s.name,
       englishName: s.englishName,

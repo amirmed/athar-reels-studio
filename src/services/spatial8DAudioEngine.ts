@@ -232,7 +232,7 @@ export class Spatial8DAudioProcessor {
  * Used during video export to guarantee sample-accurate 8D audio in MP4 files.
  */
 export async function render8DSpatialBuffer(
-  audioCtx: AudioContext,
+  _audioCtx: AudioContext,
   sourceBuffer: AudioBuffer,
   options: {
     speedHz?: number;
@@ -298,24 +298,19 @@ export async function render8DSpatialBuffer(
     const phase = time * speedHz * Math.PI * 2;
 
     let panX = 0;
-    let depthZ = 1;
 
     switch (style) {
       case 'orbit360':
         panX = Math.cos(phase) * depth;
-        depthZ = Math.sin(phase) * depth;
         break;
       case 'makkahDome':
         panX = Math.sin(phase) * depth;
-        depthZ = Math.cos(phase) * depth;
         break;
       case 'pendulum':
         panX = Math.sin(phase) * depth;
-        depthZ = Math.abs(Math.cos(phase)) * depth * 0.6;
         break;
       case 'floatingClouds':
         panX = Math.cos(phase) * Math.sin(phase * 0.3) * depth;
-        depthZ = Math.sin(phase) * depth;
         break;
     }
 

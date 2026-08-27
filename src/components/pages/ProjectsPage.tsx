@@ -14,9 +14,7 @@ import {
   Trash2,
   CheckSquare,
   Square,
-  Check,
   X,
-  AlertTriangle,
 } from 'lucide-react';
 
 export const ProjectsPage: React.FC = () => {
@@ -76,12 +74,13 @@ export const ProjectsPage: React.FC = () => {
   };
 
   const handleDeleteSingleConfirm = () => {
-    if (modalData?.projectId) {
-      const projectToDelete = projects.find((p) => p.id === modalData.projectId);
-      deleteProject(modalData.projectId);
+    const data = modalData as { projectId?: string; projectName?: string } | undefined;
+    if (data?.projectId) {
+      const projectToDelete = projects.find((p) => p.id === data.projectId);
+      deleteProject(data.projectId);
       setSelectedIds((prev) => {
         const next = new Set(prev);
-        next.delete(modalData.projectId);
+        if (data.projectId) next.delete(data.projectId);
         return next;
       });
 
@@ -355,7 +354,7 @@ export const ProjectsPage: React.FC = () => {
         onClose={closeModal}
         onConfirm={handleDeleteSingleConfirm}
         title="حذف المشروع"
-        message={`هل أنت متأكد من حذف المشروع "${modalData?.projectName || ''}"؟ لا يمكن التراجع عن هذا الإجراء.`}
+        message={`هل أنت متأكد من حذف المشروع "${(modalData as { projectName?: string })?.projectName || ''}"؟ لا يمكن التراجع عن هذا الإجراء.`}
         confirmLabel="حذف"
         cancelLabel="إلغاء"
         variant="danger"

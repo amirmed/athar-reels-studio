@@ -7,7 +7,6 @@ import {
   Flame,
   Mic,
   Languages,
-  Layers,
   Headphones,
   Video,
   Heart,

@@ -6,7 +6,6 @@ import {
   Square,
   Play,
   Pause,
-  Upload,
   Volume2,
   Sparkles,
   Sliders,
@@ -16,22 +15,16 @@ import {
   BookOpen,
   BookHeart,
   FileText,
-  ChevronDown,
   Download,
-  Settings,
   Flame,
   Radio,
-  Share2,
-  Maximize2,
-  FastForward,
-  Rewind,
-  Eye,
   FlipHorizontal,
+  Trash2,
 } from 'lucide-react';
 import { surahs } from '../../data/mockData';
 import { initialAzkarList } from '../../data/azkarHadithData';
 import { fetchAyahsWithAudio, AyahData } from '../../services/quranApi';
-import { MosqueReverbPreset, AudioSettings, AzkarItem, Project, Spatial8DStyle } from '../../types';
+import { MosqueReverbPreset, AzkarItem, Project, Spatial8DStyle } from '../../types';
 import { createDefaultProject } from '../../utils/projectDefaults';
 import { voiceStudioEngine } from '../../services/voiceStudioEngine';
 import {
@@ -69,7 +62,7 @@ export const VoiceStudioPage: React.FC = () => {
 
   // Teleprompter Visual Controls
   const [fontSize, setFontSize] = useState<number>(36);
-  const [fontFamily, setFontFamily] = useState<string>('Amiri');
+  const [fontFamily, _setFontFamily] = useState<string>('Amiri');
   const [prompterTheme, setPrompterTheme] = useState<PrompterTheme>('obsidian');
   const [isAutoScrolling, setIsAutoScrolling] = useState<boolean>(false);
   const [scrollSpeed, setScrollSpeed] = useState<number>(0.45); // Calm natural recitation tempo
@@ -94,15 +87,15 @@ export const VoiceStudioPage: React.FC = () => {
   // 8D Binaural Spatial Audio State
   const [enable8DAudio, setEnable8DAudio] = useState<boolean>(false);
   const [eightDSpeed, setEightDSpeed] = useState<number>(0.12);
-  const [eightDDepth, setEightDDepth] = useState<number>(85);
+  const [eightDDepth, _setEightDDepth] = useState<number>(85);
   const [eightDStyle, setEightDStyle] = useState<Spatial8DStyle>('orbit360');
   const [show8DBadge, setShow8DBadge] = useState<boolean>(true);
 
-  const [recitationVolume, setRecitationVolume] = useState<number>(90);
+  const [recitationVolume, _setRecitationVolume] = useState<number>(90);
   const [customReciterName, setCustomReciterName] = useState<string>('تلاوتي الخاصة 🎙️');
   const [ambientSoundId, setAmbientSoundId] = useState<string>('none');
   const [ambientVolume, setAmbientVolume] = useState<number>(0);
-  const [isTestingAmbient, setIsTestingAmbient] = useState<boolean>(false);
+  const [_isTestingAmbient, _setIsTestingAmbient] = useState<boolean>(false);
 
   // Refs
   const prompterContainerRef = useRef<HTMLDivElement | null>(null);
@@ -143,7 +136,9 @@ export const VoiceStudioPage: React.FC = () => {
   // Audio tone synthesizer for countdown with guaranteed context disposal
   const playCountdownChime = (freq = 520, duration = 0.15) => {
     try {
-      const AudioCtxClass = window.AudioContext || (window as any).webkitAudioContext;
+      const AudioCtxClass =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       const ctx = new AudioCtxClass();
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
@@ -160,11 +155,15 @@ export const VoiceStudioPage: React.FC = () => {
         () => {
           try {
             ctx.close();
-          } catch {}
+          } catch (err) {
+            console.debug('[VoiceStudio] ctx close error:', err);
+          }
         },
         (duration + 0.1) * 1000
       );
-    } catch {}
+    } catch (err) {
+      console.debug('[VoiceStudio] playCountdownBeep error:', err);
+    }
   };
 
   // Clean up audio preview, stream & timers on unmount (keep audioBlobUrl alive for project usage)
@@ -200,11 +199,15 @@ export const VoiceStudioPage: React.FC = () => {
               if (meta.customText) setCustomText(meta.customText);
               if (meta.selectedZikrId) setSelectedZikrId(meta.selectedZikrId);
               if (meta.customReciterName) setCustomReciterName(meta.customReciterName);
-            } catch {}
+            } catch (err) {
+              console.warn('[VoiceStudio] Draft meta parse error:', err);
+            }
           }
         }
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.warn('[VoiceStudio] Failed to restore draft audio:', err);
+      });
     return () => {
       isMounted = false;
     };
@@ -327,7 +330,9 @@ export const VoiceStudioPage: React.FC = () => {
             duration: result.duration,
           })
         );
-        quranCacheService.cacheAudioBlob(result.url, result.blob).catch(() => {});
+        quranCacheService.cacheAudioBlob(result.url, result.blob).catch((err) => {
+          console.debug('[VoiceStudio] Cache blob error:', err);
+        });
       }
       addToast({
         message: 'تم حفظ تسجيلك الصوتي بنجاح! يمكنك الآن تجربة صدى المسجد وفلاتر الاستوديو ✨',
@@ -352,7 +357,9 @@ export const VoiceStudioPage: React.FC = () => {
       setAudioDuration(result.duration);
       if (result.blob) {
         savePersistentAudio('athar_voice_studio_draft', result.blob, result.duration).catch(
-          () => {}
+          (err) => {
+            console.warn('[VoiceStudio] Save draft error:', err);
+          }
         );
         localStorage.setItem(
           'athar_voice_studio_draft_meta',
@@ -368,7 +375,9 @@ export const VoiceStudioPage: React.FC = () => {
           })
         );
       }
-      quranCacheService.cacheAudioBlob(result.url, file).catch(() => {});
+      quranCacheService.cacheAudioBlob(result.url, file).catch((err) => {
+        console.debug('[VoiceStudio] Cache file error:', err);
+      });
       addToast({ message: `تم رفع ملف «${file.name}» بنجاح! 🎵`, type: 'success' });
     } catch {
       addToast({ message: 'تعذر تحميل الملف الصوتي، يرجى اختيار ملف MP3 أو WAV', type: 'error' });
@@ -424,7 +433,6 @@ export const VoiceStudioPage: React.FC = () => {
     const isQuran = prompterMode === 'quran';
     const isHadith = prompterMode === 'hadith';
     const isDua = prompterMode === 'dua';
-    const isCustom = prompterMode === 'custom';
 
     let resolvedTitle = 'تسجيل صوتي خاص';
     let resolvedText: string | undefined = undefined;
@@ -549,7 +557,9 @@ export const VoiceStudioPage: React.FC = () => {
 
     addProject(newProject);
     setCurrentProject(newProject);
-    deletePersistentAudio('athar_voice_studio_draft').catch(() => {});
+    deletePersistentAudio('athar_voice_studio_draft').catch((err) => {
+      console.warn('[VoiceStudio] Failed to delete draft audio:', err);
+    });
     localStorage.removeItem('athar_voice_studio_draft_meta');
     addToast({
       message: 'تم تحويل تسجيلك الصوتي بنجاح إلى مشروع ريلز احترافي! 🚀✨',
@@ -567,7 +577,9 @@ export const VoiceStudioPage: React.FC = () => {
     setAudioBlobUrl(null);
     setAudioDuration(0);
     currentAudioBlobRef.current = null;
-    await deletePersistentAudio('athar_voice_studio_draft').catch(() => {});
+    await deletePersistentAudio('athar_voice_studio_draft').catch((err) => {
+      console.warn('[VoiceStudio] Failed to delete draft audio:', err);
+    });
     localStorage.removeItem('athar_voice_studio_draft_meta');
     addToast({ message: 'تم مسح التسجيل المسودة والبدء من جديد ✨', type: 'info' });
   };
@@ -637,6 +649,16 @@ export const VoiceStudioPage: React.FC = () => {
         <div className="flex items-center gap-2">
           {audioBlobUrl && (
             <>
+              <button
+                type="button"
+                onClick={handleClearDraft}
+                className="px-3 py-1.5 rounded-xl bg-surface-900 hover:bg-red-500/20 text-white/70 hover:text-red-300 text-xs font-bold flex items-center gap-1.5 border border-white/[0.08] hover:border-red-500/30 transition-all cursor-pointer"
+                title="مسح التسجيل والبدء من جديد"
+              >
+                <Trash2 size={14} />
+                <span className="hidden sm:inline">مسح المسودة</span>
+              </button>
+
               <button
                 type="button"
                 onClick={handleDownloadAudio}
@@ -1275,10 +1297,10 @@ export const VoiceStudioPage: React.FC = () => {
                     key={rev.id}
                     type="button"
                     onClick={() => {
-                      setReverbPreset(rev.id as any);
+                      setReverbPreset(rev.id as MosqueReverbPreset);
                       if (isPlayingPreview) {
                         voiceStudioEngine.playPreview({
-                          reverbPreset: rev.id as any,
+                          reverbPreset: rev.id as MosqueReverbPreset,
                           reverbLevel,
                           enableNoiseGate,
                           enableClarity,
@@ -1464,7 +1486,7 @@ export const VoiceStudioPage: React.FC = () => {
                       <button
                         key={st.id}
                         type="button"
-                        onClick={() => setEightDStyle(st.id as any)}
+                        onClick={() => setEightDStyle(st.id as Spatial8DStyle)}
                         className={`p-2 rounded-xl text-xs font-bold border transition-all text-right cursor-pointer ${
                           eightDStyle === st.id
                             ? 'bg-gold-500/20 border-gold-400 text-white shadow-sm'

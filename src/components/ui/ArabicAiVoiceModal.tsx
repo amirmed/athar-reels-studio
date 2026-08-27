@@ -4,15 +4,11 @@ import {
   X,
   Sparkles,
   Volume2,
-  Play,
   Pause,
   Sliders,
   Check,
   Zap,
-  ArrowRight,
-  Radio,
   Loader2,
-  Headphones,
   FileText,
 } from 'lucide-react';
 import {
@@ -20,7 +16,6 @@ import {
   ARABIC_AI_VOICES,
   synthesizeArabicSpeech,
 } from '../../services/arabicTtsService';
-import { useAppStore } from '../../store/useAppStore';
 import { Project, AzkarItem } from '../../types';
 import { createDefaultProject } from '../../utils/projectDefaults';
 import { useHotkeys } from '../../hooks/useHotkeys';
@@ -44,7 +39,7 @@ export const ArabicAiVoiceModal: React.FC<ArabicAiVoiceModalProps> = ({
   const [speechRate, setSpeechRate] = useState<string>('+0%');
   const [isPlayingPreview, setIsPlayingPreview] = useState(false);
   const [isSynthesizing, setIsSynthesizing] = useState(false);
-  const [previewAudioUrl, setPreviewAudioUrl] = useState<string | null>(null);
+  const [_previewAudioUrl, setPreviewAudioUrl] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const selectedVoice =

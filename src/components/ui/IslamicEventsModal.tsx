@@ -2,22 +2,14 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
-  Sparkles,
   Calendar,
   Clock,
-  Play,
   ArrowRight,
-  Flame,
-  Check,
-  Moon,
-  Sun,
-  Shield,
   Zap,
 } from 'lucide-react';
 import {
   ISLAMIC_SEASONS_DATA,
   IslamicEventItem,
-  IslamicSeasonCategory,
   getCurrentLiveOccasion,
 } from '../../data/islamicEventsData';
 import { useHotkeys } from '../../hooks/useHotkeys';

@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RotateCcw, Home, Copy, Check, Terminal } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 

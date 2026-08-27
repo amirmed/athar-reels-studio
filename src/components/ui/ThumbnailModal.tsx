@@ -9,9 +9,8 @@ import {
   Image as ImageIcon,
   Loader2,
   RefreshCw,
-  Share2,
 } from 'lucide-react';
-import { Project, ColorGradingFilter, AspectRatio } from '../../types';
+import { Project, AspectRatio } from '../../types';
 import { AyahData } from '../../services/quranApi';
 import {
   generateViralThumbnailBlob,

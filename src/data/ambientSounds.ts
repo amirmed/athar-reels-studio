@@ -145,7 +145,9 @@ class RobustAmbientAudioPlayer {
         this.audioElement.pause();
         this.audioElement.src = '';
         this.audioElement.load();
-      } catch {}
+      } catch (err) {
+        console.debug('[AmbientSoundPlayer] stop error:', err);
+      }
       this.audioElement = null;
     }
     this.isPlaying = false;
@@ -158,6 +160,10 @@ class RobustAmbientAudioPlayer {
 
   public getCurrentSoundId(): string {
     return this.currentSoundId;
+  }
+
+  public getVolume(): number {
+    return this.currentVolume;
   }
 }
 

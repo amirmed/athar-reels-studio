@@ -187,7 +187,7 @@ export function renderVideoExportFrame(opts: FrameRenderOptions): void {
 
     try {
       ctx.drawImage(bgSource, drawX, drawY, drawW, drawH);
-    } catch (drawErr) {
+    } catch (_drawErr) {
       // Fallback placeholder pattern if image is tainted or video frame unready
       ctx.fillStyle = '#0f172a';
       ctx.fillRect(0, 0, width, height);

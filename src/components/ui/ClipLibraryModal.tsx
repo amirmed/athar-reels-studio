@@ -1,27 +1,20 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Film,
   Search,
-  Sparkles,
-  Play,
   Volume2,
   Clock,
   Mic,
   BookOpen,
-  ArrowLeft,
   X,
   Zap,
   CheckCircle2,
-  Layers,
-  ChevronRight,
-  Flame,
 } from 'lucide-react';
 import {
   READY_CLIPS_LIBRARY,
   CLIP_CATEGORIES,
   ClipTemplate,
-  ClipCategory,
   buildProjectFromClipTemplate,
 } from '../../data/clipLibraryData';
 import { useAppStore } from '../../store/useAppStore';

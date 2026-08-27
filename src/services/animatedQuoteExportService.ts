@@ -1,5 +1,5 @@
 import { QuoteCardSettings } from '../types';
-import { renderQuoteToCanvas, ASPECT_DIMENSIONS } from './imageExportService';
+import { renderQuoteToCanvas } from './imageExportService';
 import { ambientSounds } from '../data/ambientSounds';
 
 export type MotionStyle = 'stardust' | 'breathingZoom' | 'celestialRays' | 'gentleRain';
@@ -235,11 +235,16 @@ export async function exportAnimatedQuoteVideo(
   const totalFrames = Math.round(totalDuration * fps);
 
   // 3. Setup Audio Stream (Ambient Sound or Silent Track)
-  const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+  const AudioCtxClass =
+    window.AudioContext ||
+    (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+  const audioCtx = new AudioCtxClass();
   if (audioCtx.state === 'suspended') {
     try {
       await audioCtx.resume();
-    } catch {}
+    } catch (err) {
+      console.debug('[AnimatedQuote] audioCtx resume error:', err);
+    }
   }
   const destNode = audioCtx.createMediaStreamDestination();
 
@@ -308,7 +313,9 @@ export async function exportAnimatedQuoteVideo(
         ambientAudioEl.pause();
         ambientAudioEl.src = '';
       }
-      audioCtx.close().catch(() => {});
+      audioCtx.close().catch((err) => {
+        console.debug('[AnimatedQuote] audioCtx close error:', err);
+      });
 
       const finalBlob = new Blob(chunks, { type: mimeType });
       const url = URL.createObjectURL(finalBlob);

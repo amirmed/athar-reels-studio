@@ -1,5 +1,5 @@
 import React from 'react';
-import { Volume2, VolumeX, Music, Clock } from 'lucide-react';
+import { Volume2, Music, Clock } from 'lucide-react';
 import { Slider } from './Slider';
 
 interface AudioControlPanelProps {

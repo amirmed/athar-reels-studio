@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, X, Check, Flame, Layers, Wand2 } from 'lucide-react';
+import { Sparkles, X, Check, Wand2 } from 'lucide-react';
 import { studioTemplates } from '../../data/templates';
 import { StudioTemplate } from '../../types';
 import { useAppStore } from '../../store/useAppStore';

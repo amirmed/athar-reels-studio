@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, Sparkles } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 
 interface CharityRibbonFooterProps {

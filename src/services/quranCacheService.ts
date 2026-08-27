@@ -24,7 +24,7 @@ class QuranCacheService {
     return new Promise((resolve, reject) => {
       try {
         const req = indexedDB.open(DB_NAME, DB_VERSION);
-        req.onupgradeneeded = (e: any) => {
+        req.onupgradeneeded = () => {
           const db = req.result;
           if (!db.objectStoreNames.contains(STORE_AYAHS)) {
             db.createObjectStore(STORE_AYAHS, { keyPath: 'key' });
@@ -44,19 +44,35 @@ class QuranCacheService {
     });
   }
 
+  private getDB(): Promise<IDBDatabase> | null {
+    if (!this.dbPromise && typeof window !== 'undefined' && 'indexedDB' in window) {
+      this.dbPromise = this.initDB();
+    }
+    return this.dbPromise;
+  }
+
   // =================== AYAHS CACHE ===================
-  async getCachedAyahs(
+  async getCachedAyahs<T = unknown>(
     surahNumber: number,
     edition: string = 'quran-uthmani'
-  ): Promise<any | null> {
+  ): Promise<T | null> {
     const storageKey = `surah_${surahNumber}_${edition}`;
     const isArabicRequested = edition.includes('ar') || edition.includes('uthmani');
 
-    const validateData = (data: any): boolean => {
-      if (!data || !Array.isArray(data.ayahs) || data.ayahs.length === 0) return false;
+    const validateData = (data: unknown): boolean => {
+      if (
+        !data ||
+        typeof data !== 'object' ||
+        !('ayahs' in data) ||
+        !Array.isArray((data as { ayahs: unknown[] }).ayahs) ||
+        (data as { ayahs: unknown[] }).ayahs.length === 0
+      ) {
+        return false;
+      }
       if (isArabicRequested) {
         // Strict Arabic verification: First ayah must contain Arabic script
-        const sampleText = data.ayahs[0]?.text || '';
+        const ayahsList = (data as { ayahs: Array<{ text?: string }> }).ayahs;
+        const sampleText = ayahsList[0]?.text || '';
         const hasArabic = /[\u0600-\u06FF]/.test(sampleText);
         if (!hasArabic) {
           console.warn(
@@ -68,13 +84,14 @@ class QuranCacheService {
       return true;
     };
 
-    if (!this.dbPromise) {
+    const dbP = this.getDB();
+    if (!dbP) {
       const fallback = this.getFallbackLocalStorage(storageKey);
-      return validateData(fallback) ? fallback : null;
+      return validateData(fallback) ? (fallback as T) : null;
     }
 
     try {
-      const db = await this.dbPromise;
+      const db = await dbP;
       return new Promise((resolve) => {
         const tx = db.transaction(STORE_AYAHS, 'readonly');
         const store = tx.objectStore(STORE_AYAHS);
@@ -82,7 +99,7 @@ class QuranCacheService {
         req.onsuccess = () => {
           const result = req.result?.data;
           if (validateData(result)) {
-            resolve(result);
+            resolve(result as T);
           } else {
             resolve(null);
           }
@@ -91,20 +108,21 @@ class QuranCacheService {
       });
     } catch {
       const fallback = this.getFallbackLocalStorage(storageKey);
-      return validateData(fallback) ? fallback : null;
+      return validateData(fallback) ? (fallback as T) : null;
     }
   }
 
   async setCachedAyahs(
     surahNumber: number,
-    data: any,
+    data: unknown,
     edition: string = 'quran-uthmani'
   ): Promise<void> {
     const storageKey = `surah_${surahNumber}_${edition}`;
     this.setFallbackLocalStorage(storageKey, data);
-    if (!this.dbPromise) return;
+    const dbP = this.getDB();
+    if (!dbP) return;
     try {
-      const db = await this.dbPromise;
+      const db = await dbP;
       const tx = db.transaction(STORE_AYAHS, 'readwrite');
       const store = tx.objectStore(STORE_AYAHS);
       store.put({ key: storageKey, data, timestamp: Date.now() });
@@ -114,15 +132,16 @@ class QuranCacheService {
   }
 
   // =================== WORD TIMINGS CACHE ===================
-  async getCachedTimings(reciterId: string, surahNumber: number): Promise<any | null> {
-    if (!this.dbPromise) return null;
+  async getCachedTimings<T = unknown>(reciterId: string, surahNumber: number): Promise<T | null> {
+    const dbP = this.getDB();
+    if (!dbP) return null;
     try {
-      const db = await this.dbPromise;
+      const db = await dbP;
       return new Promise((resolve) => {
         const tx = db.transaction(STORE_TIMINGS, 'readonly');
         const store = tx.objectStore(STORE_TIMINGS);
         const req = store.get(`timing_${reciterId}_${surahNumber}`);
-        req.onsuccess = () => resolve(req.result?.data || null);
+        req.onsuccess = () => resolve((req.result?.data as T) || null);
         req.onerror = () => resolve(null);
       });
     } catch {
@@ -130,10 +149,11 @@ class QuranCacheService {
     }
   }
 
-  async setCachedTimings(reciterId: string, surahNumber: number, data: any): Promise<void> {
-    if (!this.dbPromise) return;
+  async setCachedTimings(reciterId: string, surahNumber: number, data: unknown): Promise<void> {
+    const dbP = this.getDB();
+    if (!dbP) return;
     try {
-      const db = await this.dbPromise;
+      const db = await dbP;
       const tx = db.transaction(STORE_TIMINGS, 'readwrite');
       const store = tx.objectStore(STORE_TIMINGS);
       store.put({ key: `timing_${reciterId}_${surahNumber}`, data, timestamp: Date.now() });
@@ -160,7 +180,9 @@ class QuranCacheService {
             if (oldUrl) {
               try {
                 URL.revokeObjectURL(oldUrl);
-              } catch {}
+              } catch (err) {
+                console.debug('[QuranCache] URL revoke error:', err);
+              }
             }
             const blobUrl = URL.createObjectURL(req.result.blob);
             this.activeBlobUrls.set(audioUrl, blobUrl);
@@ -177,9 +199,10 @@ class QuranCacheService {
   }
 
   async cacheAudioBlob(audioUrl: string, blob: Blob): Promise<void> {
-    if (!this.dbPromise) return;
+    const dbP = this.getDB();
+    if (!dbP) return;
     try {
-      const db = await this.dbPromise;
+      const db = await dbP;
       const tx = db.transaction(STORE_AUDIO, 'readwrite');
       const store = tx.objectStore(STORE_AUDIO);
       store.put({ key: audioUrl, blob, timestamp: Date.now() });
@@ -189,20 +212,20 @@ class QuranCacheService {
   }
 
   // =================== FALLBACK LOCALSTORAGE ===================
-  private getFallbackLocalStorage(key: string): any | null {
+  private getFallbackLocalStorage<T = unknown>(key: string): T | null {
     try {
       const raw = localStorage.getItem(`quran_cache_${key}`);
-      return raw ? JSON.parse(raw) : null;
+      return raw ? (JSON.parse(raw) as T) : null;
     } catch {
       return null;
     }
   }
 
-  private setFallbackLocalStorage(key: string, data: any): void {
+  private setFallbackLocalStorage(key: string, data: unknown): void {
     try {
       localStorage.setItem(`quran_cache_${key}`, JSON.stringify(data));
     } catch (e) {
-      // Storage might be full, ignore silently
+      console.warn('[QuranCache] localStorage quota exceeded:', e);
     }
   }
 
@@ -215,7 +238,9 @@ class QuranCacheService {
           localStorage.removeItem(k);
         }
       }
-    } catch {}
+    } catch (err) {
+      console.warn('[QuranCache] clearCorruptedLocalStorage error:', err);
+    }
   }
 }
 

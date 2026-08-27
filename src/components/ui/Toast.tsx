@@ -32,10 +32,10 @@ const ToastItem: React.FC<ToastItemProps> = React.memo(({ toast }) => {
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
       className={`
         flex items-center gap-3 px-4 py-3 rounded-xl backdrop-blur-xl border shadow-xl
-        ${bgMap[toast.type]}
+        ${bgMap[toast.type || 'info']}
       `}
     >
-      {iconMap[toast.type]}
+      {iconMap[toast.type || 'info']}
       <p className="text-sm text-white/90 font-medium flex-1">{toast.message}</p>
       {toast.action && (
         <button

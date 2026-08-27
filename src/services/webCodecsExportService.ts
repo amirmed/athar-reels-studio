@@ -50,8 +50,8 @@ export interface WebCodecsExportParams {
 export async function isWebCodecsExportSupported(): Promise<boolean> {
   if (
     typeof window === 'undefined' ||
-    typeof (window as any).VideoEncoder === 'undefined' ||
-    typeof (window as any).VideoFrame === 'undefined'
+    typeof window.VideoEncoder === 'undefined' ||
+    typeof window.VideoFrame === 'undefined'
   ) {
     return false;
   }
@@ -192,8 +192,8 @@ async function buildMasterAudioBuffer(
 
     // 3. 8D Binaural Spatial Audio Modulation
     let postDspNode: AudioNode = subMasterGain;
-    if (audioSettings?.enable8DAudio && typeof (offlineCtx as any).createStereoPanner === 'function') {
-      const panner = (offlineCtx as any).createStereoPanner();
+    if (audioSettings?.enable8DAudio && 'createStereoPanner' in offlineCtx) {
+      const panner = offlineCtx.createStereoPanner();
       const speedHz = audioSettings.eightDSpeed ?? 0.12;
       const depth = Math.min(1.0, (audioSettings.eightDDepth ?? 85) / 100);
 
@@ -337,7 +337,7 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
     output: (chunk, meta) => {
       try {
         muxer.addVideoChunk(chunk, meta);
-      } catch (err: any) {
+      } catch (err) {
         console.warn('[WebCodecsExport] Error adding video chunk:', err);
       }
     },
@@ -371,7 +371,7 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
           output: (chunk, meta) => {
             try {
               muxer.addAudioChunk(chunk, meta);
-            } catch (err: any) {
+            } catch (err) {
               console.warn('[WebCodecsExport] Error adding audio chunk:', err);
             }
           },

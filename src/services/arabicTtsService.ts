@@ -89,7 +89,9 @@ function setTtsCache(key: string, value: { blob: Blob; audioUrl: string; duratio
     if (old?.audioUrl && old.audioUrl.startsWith('blob:') && old.audioUrl !== value.audioUrl) {
       try {
         URL.revokeObjectURL(old.audioUrl);
-      } catch {}
+      } catch (err) {
+        console.debug('[ArabicTTS] URL revoke error:', err);
+      }
     }
   } else if (ttsAudioCache.size >= MAX_TTS_CACHE_ENTRIES) {
     const firstKey = ttsAudioCache.keys().next().value;
@@ -98,7 +100,9 @@ function setTtsCache(key: string, value: { blob: Blob; audioUrl: string; duratio
       if (old?.audioUrl && old.audioUrl.startsWith('blob:')) {
         try {
           URL.revokeObjectURL(old.audioUrl);
-        } catch {}
+        } catch (err) {
+          console.debug('[ArabicTTS] URL revoke error:', err);
+        }
       }
       ttsAudioCache.delete(firstKey);
     }
@@ -111,7 +115,9 @@ export function clearTtsAudioCache(): void {
     if (entry.audioUrl && entry.audioUrl.startsWith('blob:')) {
       try {
         URL.revokeObjectURL(entry.audioUrl);
-      } catch {}
+      } catch (err) {
+        console.debug('[ArabicTTS] URL revoke error:', err);
+      }
     }
   });
   ttsAudioCache.clear();
@@ -245,13 +251,17 @@ export function playArabicSpeechDirect(
       try {
         activeAudio.pause();
         activeAudio.removeAttribute('src');
-      } catch {}
+      } catch (err) {
+        console.debug('[ArabicTTS] Audio cleanup error:', err);
+      }
       activeAudio = null;
     }
     if ('speechSynthesis' in window) {
       try {
         window.speechSynthesis.cancel();
-      } catch {}
+      } catch (err) {
+        console.debug('[ArabicTTS] SpeechSynthesis cancel error:', err);
+      }
     }
   };
 }
@@ -343,7 +353,7 @@ async function synthesizeGoogleTts(
 /**
  * Web Speech AudioBuffer Generator Fallback
  */
-async function synthesizeWebSpeechFallback(
+export async function synthesizeWebSpeechFallback(
   text: string
 ): Promise<{ blob: Blob; audioUrl: string; duration: number }> {
   const estDuration = Math.max(3, Math.round(text.length * 0.08));

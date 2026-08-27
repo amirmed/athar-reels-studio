@@ -115,7 +115,9 @@ function createWindow() {
       if (['http:', 'https:', 'mailto:'].includes(parsed.protocol)) {
         shell.openExternal(url);
       }
-    } catch {}
+    } catch (err) {
+      console.debug('[WindowOpenHandler] URL parse error:', err);
+    }
     return { action: 'deny' };
   });
 

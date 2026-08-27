@@ -1,4 +1,4 @@
-import { Project } from '../types';
+import { Project, ColorGradingFilter } from '../types';
 
 export type ClipCategory = 'azkar_daily' | 'friday_special' | 'quranic_duas' | 'virtues_occasions';
 
@@ -18,7 +18,7 @@ export interface ClipTemplate {
   reciterId: string;
   backgroundUrl: string;
   ambientSoundId: string;
-  colorGrading: string;
+  colorGrading: ColorGradingFilter;
   aspectRatio: '9:16' | '1:1' | '16:9';
   fontFamily: string;
   wordHighlightStyle: 'goldGlow' | 'radiantWhite' | 'amberEmber' | 'emeraldGlow' | 'pillBadge';
@@ -470,7 +470,7 @@ export function buildProjectFromClipTemplate(clip: ClipTemplate): Project {
       showWaveform: true,
       waveformStyle: 'bars',
       waveformColor: '#fbbf24',
-      colorGrading: clip.colorGrading as any,
+      colorGrading: clip.colorGrading,
     },
   };
 }

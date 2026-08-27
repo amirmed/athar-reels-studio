@@ -108,7 +108,9 @@ export async function savePersistentAudio(
     if (oldUrl && oldUrl.startsWith('blob:')) {
       try {
         URL.revokeObjectURL(oldUrl);
-      } catch {}
+      } catch (err) {
+        console.debug('[PersistentAudioStorage] URL revoke error:', err);
+      }
     }
 
     const newUrl = URL.createObjectURL(blob);
@@ -159,7 +161,9 @@ export async function getPersistentAudioUrl(key: string): Promise<string | null>
     try {
       const res = await fetch(cachedUrl, { method: 'HEAD' });
       if (res.ok) return cachedUrl;
-    } catch {}
+    } catch (err) {
+      console.debug('[PersistentAudioStorage] Cached URL test error:', err);
+    }
   }
 
   const blob = await getPersistentAudioBlob(key);
@@ -196,7 +200,8 @@ export async function resolveValidAudioUrl(
       if (testRes.ok) {
         return currentUrl;
       }
-    } catch {
+    } catch (err) {
+      console.debug('[PersistentAudioStorage] Blob verification failed:', err);
       // Blob is stale/dead -> needs restoration from IndexedDB!
     }
   }
@@ -223,7 +228,9 @@ export async function deletePersistentAudio(key: string): Promise<void> {
     if (oldUrl) {
       try {
         URL.revokeObjectURL(oldUrl);
-      } catch {}
+      } catch (err) {
+        console.debug('[PersistentAudioStorage] URL revoke error:', err);
+      }
       activeObjectUrls.delete(key);
     }
 
@@ -235,5 +242,7 @@ export async function deletePersistentAudio(key: string): Promise<void> {
       req.onsuccess = () => resolve();
       req.onerror = () => resolve();
     });
-  } catch {}
+  } catch (err) {
+    console.warn(`[PersistentAudioStorage] Delete error for key ${key}:`, err);
+  }
 }
