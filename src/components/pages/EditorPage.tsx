@@ -747,6 +747,45 @@ export const EditorPage: React.FC = () => {
     }, 15);
   };
 
+  const handleSave = useCallback(() => {
+    if (currentProject) {
+      updateProject(currentProject.id, {
+        textSettings,
+        audioSettings,
+        translationEnabled: showTranslation,
+        tafsirEnabled: showTafsir,
+        backgroundUrl: backgroundFile,
+        backgroundOpacity,
+        watermark,
+        reciterId,
+        surahNumber,
+        fromAyah,
+        toAyah,
+        aspectRatio,
+        updatedAt: new Date().toISOString(),
+        status: 'editing',
+      });
+      setSaveStatus('saved');
+    }
+    addToast({ message: 'تم حفظ التغييرات بنجاح ✓', type: 'success' });
+  }, [
+    currentProject,
+    updateProject,
+    textSettings,
+    audioSettings,
+    showTranslation,
+    showTafsir,
+    backgroundFile,
+    backgroundOpacity,
+    watermark,
+    reciterId,
+    surahNumber,
+    fromAyah,
+    toAyah,
+    aspectRatio,
+    addToast,
+  ]);
+
   // Global Pro Keyboard Shortcuts Studio
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -780,23 +819,6 @@ export const EditorPage: React.FC = () => {
         if (currentAyahIndex > 0) {
           playFromIndex(currentAyahIndex - 1);
         }
-        return;
-      }
-
-      // Ctrl + Z -> Undo
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey) {
-        e.preventDefault();
-        if (canUndo) undo();
-        return;
-      }
-
-      // Ctrl + Y or Ctrl + Shift + Z -> Redo
-      if (
-        (e.ctrlKey || e.metaKey) &&
-        (e.key.toLowerCase() === 'y' || (e.shiftKey && e.key.toLowerCase() === 'z'))
-      ) {
-        e.preventDefault();
-        if (canRedo) redo();
         return;
       }
 
@@ -843,12 +865,10 @@ export const EditorPage: React.FC = () => {
     isPlaying,
     currentAyahIndex,
     ayahs.length,
-    canUndo,
-    canRedo,
-    undo,
-    redo,
     togglePlay,
     playFromIndex,
+    handleSave,
+    addToast,
   ]);
 
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('saved');
@@ -942,29 +962,6 @@ export const EditorPage: React.FC = () => {
 
     return () => clearInterval(intervalTimer);
   }, [currentProject?.id, settings.autoSave, settings.autoSaveInterval]);
-
-  const handleSave = () => {
-    if (currentProject) {
-      updateProject(currentProject.id, {
-        textSettings: textSettings,
-        audioSettings,
-        translationEnabled: showTranslation,
-        tafsirEnabled: showTafsir,
-        backgroundUrl: backgroundFile,
-        backgroundOpacity,
-        watermark,
-        reciterId,
-        surahNumber,
-        fromAyah,
-        toAyah,
-        aspectRatio: aspectRatio,
-        updatedAt: new Date().toISOString(),
-        status: 'editing',
-      });
-      setSaveStatus('saved');
-    }
-    addToast({ message: 'تم حفظ التغييرات بنجاح ✓', type: 'success' });
-  };
 
   const formatAudioTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
