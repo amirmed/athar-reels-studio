@@ -40,14 +40,33 @@ describe('Video Frame Renderer - Multi-Scene Backgrounds', () => {
       strokeStyle: '',
       lineWidth: 1,
       globalAlpha: 1,
+      shadowColor: '',
+      shadowBlur: 0,
+      font: '',
+      textAlign: 'center',
+      textBaseline: 'middle',
       fillRect: vi.fn(),
       strokeRect: vi.fn(),
       save: vi.fn(),
       restore: vi.fn(),
+      setLineDash: vi.fn(),
+      beginPath: vi.fn(),
+      closePath: vi.fn(),
+      moveTo: vi.fn(),
+      lineTo: vi.fn(),
+      arc: vi.fn(),
+      roundRect: vi.fn(),
+      fill: vi.fn(),
+      stroke: vi.fn(),
+      fillText: vi.fn(),
+      strokeText: vi.fn(),
       drawImage: vi.fn((img) => {
         drawnImages.push(img);
       }),
       createRadialGradient: vi.fn(() => ({
+        addColorStop: vi.fn(),
+      })),
+      createLinearGradient: vi.fn(() => ({
         addColorStop: vi.fn(),
       })),
       measureText: vi.fn((text: string) => ({
@@ -55,12 +74,6 @@ describe('Video Frame Renderer - Multi-Scene Backgrounds', () => {
         actualBoundingBoxAscent: 10,
         actualBoundingBoxDescent: 2,
       })),
-      fillText: vi.fn(),
-      strokeText: vi.fn(),
-      beginPath: vi.fn(),
-      roundRect: vi.fn(),
-      fill: vi.fn(),
-      stroke: vi.fn(),
     } as unknown as CanvasRenderingContext2D;
 
     return { ctx, drawnImages };
@@ -129,5 +142,77 @@ describe('Video Frame Renderer - Multi-Scene Backgrounds', () => {
     expect(drawnImages.length).toBeGreaterThan(0);
     // Should fallback to main_bg
     expect((drawnImages[0] as any).id).toBe('main_bg');
+  });
+
+  const createDummyTextSettings = (overrides: Partial<import('../types').TextSettings> = {}): import('../types').TextSettings => ({
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    textColor: '#ffffff',
+    bgColor: '#000000',
+    bgOpacity: 0.5,
+    fontFamily: 'Amiri',
+    position: 'center',
+    translationFontSize: 16,
+    translationColor: '#ffffff',
+    ...overrides,
+  });
+
+  it('renders Islamic ornaments without errors (royalFrame, geometricArabesque, domeCrescent, floralCorners)', () => {
+    const styles: Array<'royalFrame' | 'geometricArabesque' | 'domeCrescent' | 'floralCorners'> = [
+      'royalFrame',
+      'geometricArabesque',
+      'domeCrescent',
+      'floralCorners',
+    ];
+
+    for (const ornamentStyle of styles) {
+      const { ctx } = createMockCanvasContext();
+      const renderOpts: FrameRenderOptions = {
+        ctx,
+        width: 1080,
+        height: 1920,
+        frame: 0,
+        totalFrames: 30,
+        currentTimeSec: 0.5,
+        bgOpacity: 0.8,
+        currentAyah: dummyAyah1,
+        projectName: 'Test Project',
+        surahName: 'الفاتحة',
+        textSettings: createDummyTextSettings({
+          showIslamicOrnaments: true,
+          ornamentStyle,
+          ornamentColor: '#fbbf24',
+          ornamentOpacity: 0.8,
+        }),
+      };
+
+      expect(() => renderVideoExportFrame(renderOpts)).not.toThrow();
+    }
+  });
+
+  it('renders word highlight styles and text gradients accurately (pillBadge, underlineWave, gold, dots)', () => {
+    const { ctx } = createMockCanvasContext();
+    const renderOpts: FrameRenderOptions = {
+      ctx,
+      width: 1080,
+      height: 1920,
+      frame: 10,
+      totalFrames: 30,
+      currentTimeSec: 0.5,
+      bgOpacity: 0.8,
+      currentAyah: dummyAyah1,
+      projectName: 'Test Project',
+      surahName: 'الفاتحة',
+      textSettings: createDummyTextSettings({
+        wordHighlightStyle: 'pillBadge',
+        wordHighlightColor: '#fbbf24',
+        textGradient: 'gold',
+        showProgressBar: true,
+        progressBarStyle: 'dots',
+      }),
+    };
+
+    expect(() => renderVideoExportFrame(renderOpts)).not.toThrow();
   });
 });

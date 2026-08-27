@@ -508,6 +508,190 @@ export function renderVideoExportFrame(opts: FrameRenderOptions): void {
     layoutCache.set(cacheKey, layout);
   }
 
+  // Helper: Draw Islamic Ornaments Overlay
+  if (textSettings?.showIslamicOrnaments !== false && textSettings?.ornamentStyle && textSettings.ornamentStyle !== 'none') {
+    const style = textSettings.ornamentStyle;
+    const oColor = textSettings.ornamentColor || '#fbbf24';
+    const oOpacity = textSettings.ornamentOpacity ?? 0.75;
+
+    ctx.save();
+    ctx.globalAlpha = oOpacity;
+
+    if (style === 'royalFrame') {
+      const margin = Math.round(width * 0.035);
+      const frameW = width - margin * 2;
+      const frameH = height - margin * 2;
+      const radius = Math.round(width * 0.03);
+
+      ctx.strokeStyle = `${oColor}66`;
+      ctx.lineWidth = Math.max(1.5, Math.round(width * 0.0025));
+      ctx.setLineDash([Math.round(width * 0.015), Math.round(width * 0.01)]);
+      ctx.beginPath();
+      ctx.roundRect(margin, margin, frameW, frameH, radius);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      const topY = margin + Math.round(height * 0.035);
+      const cx = width / 2;
+      const wingLen = Math.round(width * 0.16);
+
+      // Top flourish left gradient line
+      const leftGrad = ctx.createLinearGradient(cx - wingLen - 20, topY, cx - 20, topY);
+      leftGrad.addColorStop(0, 'rgba(0,0,0,0)');
+      leftGrad.addColorStop(1, oColor);
+      ctx.strokeStyle = leftGrad;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(cx - wingLen - 20, topY);
+      ctx.lineTo(cx - 20, topY);
+      ctx.stroke();
+
+      // Top flourish right gradient line
+      const rightGrad = ctx.createLinearGradient(cx + 20, topY, cx + wingLen + 20, topY);
+      rightGrad.addColorStop(0, oColor);
+      rightGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.strokeStyle = rightGrad;
+      ctx.beginPath();
+      ctx.moveTo(cx + 20, topY);
+      ctx.lineTo(cx + wingLen + 20, topY);
+      ctx.stroke();
+
+      // 8-Point Star
+      ctx.fillStyle = oColor;
+      ctx.shadowColor = oColor;
+      ctx.shadowBlur = 10;
+      const starR = Math.round(width * 0.022);
+      ctx.beginPath();
+      for (let i = 0; i < 8; i++) {
+        const angle = (i * Math.PI) / 4;
+        const r = i % 2 === 0 ? starR : starR * 0.45;
+        const sx = cx + Math.cos(angle) * r;
+        const sy = topY + Math.sin(angle) * r;
+        if (i === 0) ctx.moveTo(sx, sy);
+        else ctx.lineTo(sx, sy);
+      }
+      ctx.closePath();
+      ctx.fill();
+
+      // Bottom flourish
+      const botY = height - margin - Math.round(height * 0.035);
+      const leftBotGrad = ctx.createLinearGradient(cx - wingLen - 20, botY, cx - 20, botY);
+      leftBotGrad.addColorStop(0, 'rgba(0,0,0,0)');
+      leftBotGrad.addColorStop(1, oColor);
+      ctx.strokeStyle = leftBotGrad;
+      ctx.beginPath();
+      ctx.moveTo(cx - wingLen - 20, botY);
+      ctx.lineTo(cx - 20, botY);
+      ctx.stroke();
+
+      const rightBotGrad = ctx.createLinearGradient(cx + 20, botY, cx + wingLen + 20, botY);
+      rightBotGrad.addColorStop(0, oColor);
+      rightBotGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.strokeStyle = rightBotGrad;
+      ctx.beginPath();
+      ctx.moveTo(cx + 20, botY);
+      ctx.lineTo(cx + wingLen + 20, botY);
+      ctx.stroke();
+
+      ctx.strokeStyle = oColor;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(cx, botY, Math.round(starR * 0.75), 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx, botY - starR * 0.45);
+      ctx.lineTo(cx, botY + starR * 0.45);
+      ctx.moveTo(cx - starR * 0.45, botY);
+      ctx.lineTo(cx + starR * 0.45, botY);
+      ctx.stroke();
+    } else if (style === 'geometricArabesque') {
+      const topY = Math.round(height * 0.075);
+      const cx = width / 2;
+      const span = Math.round(width * 0.36);
+
+      ctx.strokeStyle = oColor;
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(cx - span, topY);
+      ctx.lineTo(cx - Math.round(width * 0.07), topY);
+      ctx.moveTo(cx + Math.round(width * 0.07), topY);
+      ctx.lineTo(cx + span, topY);
+      ctx.stroke();
+
+      const dSize = Math.round(width * 0.03);
+      ctx.fillStyle = `${oColor}44`;
+      ctx.beginPath();
+      ctx.moveTo(cx - dSize, topY);
+      ctx.lineTo(cx, topY - dSize);
+      ctx.lineTo(cx + dSize, topY);
+      ctx.lineTo(cx, topY + dSize);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = oColor;
+      ctx.beginPath();
+      ctx.arc(cx, topY, Math.round(width * 0.007), 0, Math.PI * 2);
+      ctx.arc(cx - Math.round(width * 0.05), topY, Math.round(width * 0.0045), 0, Math.PI * 2);
+      ctx.arc(cx + Math.round(width * 0.05), topY, Math.round(width * 0.0045), 0, Math.PI * 2);
+      ctx.fill();
+    } else if (style === 'domeCrescent') {
+      const cx = width / 2;
+      const topY = Math.round(height * 0.055);
+      const domeR = Math.round(width * 0.04);
+
+      ctx.fillStyle = oColor;
+      ctx.shadowColor = oColor;
+      ctx.shadowBlur = 10;
+      ctx.beginPath();
+      ctx.arc(cx, topY, domeR, Math.PI, 0, false);
+      ctx.lineTo(cx + domeR, topY + domeR * 0.5);
+      ctx.lineTo(cx - domeR, topY + domeR * 0.5);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(cx, topY - domeR * 0.7, domeR * 0.35, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (style === 'floralCorners') {
+      const pad = Math.round(width * 0.035);
+      const len = Math.round(width * 0.075);
+      ctx.strokeStyle = oColor;
+      ctx.lineWidth = Math.max(1.5, Math.round(width * 0.0035));
+
+      const drawCorner = (x: number, y: number, dx: number, dy: number) => {
+        ctx.beginPath();
+        ctx.moveTo(x, y + dy * len);
+        ctx.lineTo(x, y);
+        ctx.lineTo(x + dx * len, y);
+        ctx.stroke();
+
+        ctx.save();
+        ctx.setLineDash([3, 3]);
+        ctx.lineWidth = 1;
+        const off = Math.round(width * 0.015);
+        ctx.beginPath();
+        ctx.moveTo(x + dx * off, y + dy * len);
+        ctx.lineTo(x + dx * off, y + dy * off);
+        ctx.lineTo(x + dx * len, y + dy * off);
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.fillStyle = `${oColor}55`;
+        ctx.beginPath();
+        ctx.arc(x + dx * off * 2, y + dy * off * 2, Math.round(width * 0.007), 0, Math.PI * 2);
+        ctx.fill();
+      };
+
+      drawCorner(pad, pad, 1, 1);
+      drawCorner(width - pad, pad, -1, 1);
+      drawCorner(pad, height - pad, 1, -1);
+      drawCorner(width - pad, height - pad, -1, -1);
+    }
+
+    ctx.restore();
+  }
+
   // Draw Glassmorphic Card Container
   const bgOpacitySetting = textSettings?.bgOpacity ?? 0.45;
   if (bgOpacitySetting > 0.05) {
@@ -526,10 +710,50 @@ export function renderVideoExportFrame(opts: FrameRenderOptions): void {
 
   // Draw Words with Active Karaoke Glow & Typography Effects
   const highlightColor = textSettings?.wordHighlightColor || '#fbbf24';
+  const highlightStyle = textSettings?.wordHighlightStyle || 'goldGlow';
   const inactiveOpacity = textSettings?.inactiveWordOpacity ?? 0.6;
   const enableStroke = textSettings?.enableStroke;
   const strokeColor = textSettings?.strokeColor || '#000000';
   const strokeWidth = textSettings?.strokeWidth || 1.5;
+
+  // Build Text Gradient if configured
+  let baseTextFill: string | CanvasGradient = textSettings?.textColor || '#ffffff';
+  if (textSettings?.textGradient && textSettings.textGradient !== 'none') {
+    const tg = ctx.createLinearGradient(
+      layout.cardX,
+      layout.cardY,
+      layout.cardX + layout.cardW,
+      layout.cardY + layout.cardH
+    );
+    switch (textSettings.textGradient) {
+      case 'gold':
+        tg.addColorStop(0, '#fef08a');
+        tg.addColorStop(0.5, '#fbbf24');
+        tg.addColorStop(1, '#d97706');
+        break;
+      case 'silver':
+        tg.addColorStop(0, '#ffffff');
+        tg.addColorStop(0.5, '#cbd5e1');
+        tg.addColorStop(1, '#64748b');
+        break;
+      case 'emerald':
+        tg.addColorStop(0, '#a7f3d0');
+        tg.addColorStop(0.5, '#34d399');
+        tg.addColorStop(1, '#059669');
+        break;
+      case 'amber':
+        tg.addColorStop(0, '#fed7aa');
+        tg.addColorStop(0.5, '#f97316');
+        tg.addColorStop(1, '#c2410c');
+        break;
+      case 'celestial':
+        tg.addColorStop(0, '#bae6fd');
+        tg.addColorStop(0.5, '#38bdf8');
+        tg.addColorStop(1, '#6366f1');
+        break;
+    }
+    baseTextFill = tg;
+  }
 
   ctx.save();
   ctx.textAlign = 'center';
@@ -545,12 +769,73 @@ export function renderVideoExportFrame(opts: FrameRenderOptions): void {
 
       const activeWordWeight = fontWeight === 'light' ? '500' : '800';
       if (isWordActive) {
-        ctx.fillStyle = highlightColor;
-        ctx.shadowColor = highlightColor;
-        ctx.shadowBlur = 22;
-        ctx.font = `${activeWordWeight} ${Math.round(layout.baseFontSize * 1.06)}px "${fontFamily}", "Amiri", "Cairo", sans-serif`;
+        if (highlightStyle === 'pillBadge') {
+          // Pill Badge Background
+          const pillPaddingX = Math.round(layout.baseFontSize * 0.35);
+          const pillW = wLayout.width + pillPaddingX * 2;
+          const pillH = Math.round(layout.baseFontSize * 1.35);
+          const pillX = wLayout.centerX - pillW / 2;
+          const pillY = line.y - pillH / 2;
+
+          ctx.save();
+          ctx.fillStyle = `${highlightColor}33`;
+          ctx.strokeStyle = `${highlightColor}88`;
+          ctx.lineWidth = 1.5;
+          ctx.shadowColor = `${highlightColor}55`;
+          ctx.shadowBlur = 16;
+          ctx.beginPath();
+          ctx.roundRect(pillX, pillY, pillW, pillH, 8);
+          ctx.fill();
+          ctx.stroke();
+          ctx.restore();
+
+          ctx.fillStyle = '#ffffff';
+          ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
+          ctx.shadowBlur = 6;
+          ctx.font = `${activeWordWeight} ${Math.round(layout.baseFontSize * 1.05)}px "${fontFamily}", "Amiri", "Cairo", sans-serif`;
+        } else if (highlightStyle === 'underlineWave') {
+          ctx.fillStyle = highlightColor;
+          ctx.shadowColor = `${highlightColor}99`;
+          ctx.shadowBlur = 14;
+          ctx.font = `${activeWordWeight} ${Math.round(layout.baseFontSize * 1.06)}px "${fontFamily}", "Amiri", "Cairo", sans-serif`;
+
+          // Underline Wave beneath word
+          const underY = line.y + Math.round(layout.baseFontSize * 0.58);
+          const underHalfW = wLayout.width * 0.48;
+          ctx.save();
+          ctx.strokeStyle = highlightColor;
+          ctx.lineWidth = 3.5;
+          ctx.shadowColor = highlightColor;
+          ctx.shadowBlur = 12;
+          ctx.beginPath();
+          ctx.moveTo(wLayout.centerX - underHalfW, underY);
+          ctx.lineTo(wLayout.centerX + underHalfW, underY);
+          ctx.stroke();
+          ctx.restore();
+        } else if (highlightStyle === 'radiantWhite') {
+          ctx.fillStyle = '#ffffff';
+          ctx.shadowColor = 'rgba(56, 189, 248, 0.95)';
+          ctx.shadowBlur = 28;
+          ctx.font = `${activeWordWeight} ${Math.round(layout.baseFontSize * 1.08)}px "${fontFamily}", "Amiri", "Cairo", sans-serif`;
+        } else if (highlightStyle === 'amberEmber') {
+          ctx.fillStyle = highlightColor;
+          ctx.shadowColor = 'rgba(234, 88, 12, 0.95)';
+          ctx.shadowBlur = 26;
+          ctx.font = `${activeWordWeight} ${Math.round(layout.baseFontSize * 1.08)}px "${fontFamily}", "Amiri", "Cairo", sans-serif`;
+        } else if (highlightStyle === 'emeraldGlow') {
+          ctx.fillStyle = highlightColor;
+          ctx.shadowColor = 'rgba(16, 185, 129, 0.95)';
+          ctx.shadowBlur = 26;
+          ctx.font = `${activeWordWeight} ${Math.round(layout.baseFontSize * 1.08)}px "${fontFamily}", "Amiri", "Cairo", sans-serif`;
+        } else {
+          // Default goldGlow
+          ctx.fillStyle = highlightColor;
+          ctx.shadowColor = highlightColor;
+          ctx.shadowBlur = 24;
+          ctx.font = `${activeWordWeight} ${Math.round(layout.baseFontSize * 1.08)}px "${fontFamily}", "Amiri", "Cairo", sans-serif`;
+        }
       } else {
-        ctx.fillStyle = textSettings?.textColor || '#ffffff';
+        ctx.fillStyle = baseTextFill;
         ctx.shadowColor = textSettings?.enableShadow
           ? textSettings.shadowColor || '#000000'
           : '#000000';
@@ -746,11 +1031,62 @@ export function renderVideoExportFrame(opts: FrameRenderOptions): void {
     ctx.restore();
   }
 
-  // 10. Glowing Bottom Progress Bar
-  ctx.save();
-  ctx.fillStyle = textSettings?.progressBarColor || '#fbbf24';
-  ctx.shadowColor = textSettings?.progressBarColor || '#fbbf24';
-  ctx.shadowBlur = 12;
-  ctx.fillRect(0, height - 8, width * currentProg, 8);
-  ctx.restore();
+  // 10. Glowing Bottom Progress Bar with Full Style Parity
+  if (textSettings?.showProgressBar !== false) {
+    const barStyle = textSettings?.progressBarStyle || 'neonGlow';
+    const barColor = textSettings?.progressBarColor || '#fbbf24';
+    const barHeight = Math.max(4, Math.round((textSettings?.progressBarHeight || 4) * (width / 270) * 0.5));
+
+    ctx.save();
+    if (barStyle === 'dots') {
+      const dotCount = 5;
+      const totalDotsW = width * 0.35;
+      const dotSpacing = totalDotsW / Math.max(1, dotCount - 1);
+      const startDotX = (width - totalDotsW) / 2;
+      const dotY = height - Math.round(height * 0.025);
+
+      for (let d = 0; d < dotCount; d++) {
+        const dotProg = d / (dotCount - 1);
+        const isPassed = currentProg >= dotProg;
+        const isCurrent = Math.abs(currentProg - dotProg) < 1 / dotCount;
+        const dx = startDotX + d * dotSpacing;
+
+        ctx.fillStyle = isPassed || isCurrent ? barColor : 'rgba(255, 255, 255, 0.25)';
+        if (isCurrent) {
+          ctx.shadowColor = barColor;
+          ctx.shadowBlur = 12;
+          ctx.beginPath();
+          ctx.roundRect(dx - 12, dotY - 3, 24, 6, 3);
+          ctx.fill();
+        } else {
+          ctx.beginPath();
+          ctx.arc(dx, dotY, 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    } else {
+      // Backdrop bar
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+      ctx.fillRect(0, height - barHeight, width, barHeight);
+
+      // Active progress
+      if (barStyle === 'gradientWave') {
+        const grad = ctx.createLinearGradient(0, height - barHeight, width, height - barHeight);
+        grad.addColorStop(0, '#10b981');
+        grad.addColorStop(0.5, '#fbbf24');
+        grad.addColorStop(1, '#38bdf8');
+        ctx.fillStyle = grad;
+      } else {
+        ctx.fillStyle = barColor;
+      }
+
+      if (barStyle === 'neonGlow') {
+        ctx.shadowColor = barColor;
+        ctx.shadowBlur = 18;
+      }
+
+      ctx.fillRect(0, height - barHeight, width * currentProg, barHeight);
+    }
+    ctx.restore();
+  }
 }
