@@ -952,7 +952,13 @@ export async function fetchQuranComTimestamps(
     string,
     { timestampFrom: number; timestampTo: number; duration: number; segments: number[][] }
   >();
-  const qdcReciterId = EVERYAYAH_TO_QURANCOM_RECITERS[reciterId] || 7; // default to Alafasy
+
+  // Only query Quran.com if this reciter has an authentic, verified Quran.com recitation mapping
+  const qdcReciterId = EVERYAYAH_TO_QURANCOM_RECITERS[reciterId];
+  if (!qdcReciterId) {
+    // Return empty map so unmapped reciters use accurate phonetic syllable-weighted timing rather than Alafasy's mismatched rhythm!
+    return map;
+  }
 
   try {
     const data = await fetchQuranCom<any>(

@@ -14,4 +14,10 @@ describe('Quran API & Audio Multi-CDN Service', () => {
     expect(yasser).toBeDefined();
     expect(yasser?.isCompleteQuran).toBe(true);
   });
+
+  it('should return empty map for unmapped reciters without falling back to Alafasy', async () => {
+    const { fetchQuranComTimestamps } = await import('../services/quranApi');
+    const result = await fetchQuranComTimestamps('unmapped_reciter_custom_xyz', 1);
+    expect(result.size).toBe(0);
+  });
 });
