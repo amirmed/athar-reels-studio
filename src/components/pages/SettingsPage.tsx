@@ -22,6 +22,10 @@ import {
   pruneOrphanAudioRecords,
   StorageStats,
 } from '../../services/persistentAudioStorage';
+import {
+  quranCacheService,
+  QuranStorageStats,
+} from '../../services/quranCacheService';
 
 interface SettingGroupProps {
   title: string;
@@ -74,12 +78,18 @@ export const SettingsPage: React.FC = () => {
   const { t, language } = useTranslation();
 
   const [audioStorageStats, setAudioStorageStats] = useState<StorageStats | null>(null);
+  const [quranStorageStats, setQuranStorageStats] = useState<QuranStorageStats | null>(null);
   const [isCleaningStorage, setIsCleaningStorage] = useState(false);
+  const [isCleaningQuranCache, setIsCleaningQuranCache] = useState(false);
 
   const loadStorageStats = useCallback(async () => {
     try {
-      const stats = await getAudioStorageStats();
+      const [stats, quranStats] = await Promise.all([
+        getAudioStorageStats(),
+        quranCacheService.getAudioStorageStats(),
+      ]);
       setAudioStorageStats(stats);
+      setQuranStorageStats(quranStats);
     } catch (err) {
       console.debug('[SettingsPage] Error loading storage stats:', err);
     }
@@ -119,6 +129,23 @@ export const SettingsPage: React.FC = () => {
       addToast({ message: 'حدث خطأ أثناء تنظيف التخزين', type: 'error' });
     } finally {
       setIsCleaningStorage(false);
+    }
+  };
+
+  const handleClearQuranCache = async () => {
+    setIsCleaningQuranCache(true);
+    try {
+      await quranCacheService.clearAllAudioCache();
+      await loadStorageStats();
+      addToast({
+        message: 'تم تفريغ ذاكرة التلاوات القرآنية بنجاح 🧹',
+        type: 'success',
+      });
+    } catch (err) {
+      console.warn('[SettingsPage] Clear Quran cache error:', err);
+      addToast({ message: 'حدث خطأ أثناء تفريغ كاش القرآن', type: 'error' });
+    } finally {
+      setIsCleaningQuranCache(false);
     }
   };
 
@@ -316,7 +343,8 @@ export const SettingsPage: React.FC = () => {
                 type="button"
                 onClick={loadStorageStats}
                 title="تحديث البيانات"
-                className="p-2 rounded-xl bg-surface-800/60 hover:bg-surface-700 text-white/60 hover:text-white transition-all cursor-pointer border border-white/[0.04]"
+                aria-label="تحديث بيانات ذاكرة التسجيلات الصوتية"
+                className="p-2 rounded-xl bg-surface-800/60 hover:bg-surface-700 text-surface-400 hover:text-surface-50 transition-all cursor-pointer border border-surface-700/40"
               >
                 <RefreshCw size={13} />
               </button>
@@ -328,6 +356,37 @@ export const SettingsPage: React.FC = () => {
               >
                 <Trash2 size={13} />
                 <span>{isCleaningStorage ? 'جاري التنظيف...' : 'تنظيف المهملات 🧹'}</span>
+              </button>
+            </div>
+          </SettingRow>
+
+          {/* IndexedDB Quran Audio Cache Quota & Eviction */}
+          <SettingRow
+            label="ذاكرة التلاوات القرآنية (Quran Audio Cache)"
+            description={
+              quranStorageStats
+                ? `${quranStorageStats.totalCount} تلاوة مخزنة محلياً • الحجم: ${quranStorageStats.formattedSize} / 120 MB (إخلاء LRU تلقائي)`
+                : 'إدارة وتفريغ كاش التلاوات والآيات الصوتية المحملة مسبقاً'
+            }
+          >
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={loadStorageStats}
+                title="تحديث البيانات"
+                aria-label="تحديث بيانات ذاكرة التلاوات القرآنية"
+                className="p-2 rounded-xl bg-surface-800/60 hover:bg-surface-700 text-surface-400 hover:text-surface-50 transition-all cursor-pointer border border-surface-700/40"
+              >
+                <RefreshCw size={13} />
+              </button>
+              <button
+                type="button"
+                onClick={handleClearQuranCache}
+                disabled={isCleaningQuranCache || !quranStorageStats || quranStorageStats.totalCount === 0}
+                className="glass-button text-xs py-1.5 px-3 flex items-center gap-1.5 hover:border-accent-500/40 text-accent-300 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <Trash2 size={13} />
+                <span>{isCleaningQuranCache ? 'جاري التفريغ...' : 'تفريغ الكاش 🧹'}</span>
               </button>
             </div>
           </SettingRow>
