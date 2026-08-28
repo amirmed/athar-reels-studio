@@ -206,7 +206,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.96 }}
                 transition={{ duration: 0.15 }}
-                className="absolute left-0 sm:right-auto mt-2 w-56 bg-surface-900/95 backdrop-blur-xl border border-gold-500/30 rounded-2xl p-2 shadow-2xl z-50 space-y-1 text-right"
+                className="absolute start-0 sm:end-auto mt-2 w-56 bg-surface-900/95 backdrop-blur-xl border border-gold-500/30 rounded-2xl p-2 shadow-2xl z-50 space-y-1 text-start"
               >
                 <div className="px-3 py-1.5 border-b border-white/10 text-[11px] font-bold text-white/40">
                   استوديوهات وأدوات إضافية:
@@ -218,7 +218,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                     setIsToolsMenuOpen(false);
                     onOpenPlaylists();
                   }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-gold-300 hover:bg-gold-500/15 transition-all text-right cursor-pointer"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-gold-300 hover:bg-gold-500/15 transition-all text-start cursor-pointer"
                 >
                   <BookOpen size={15} className="text-gold-400" />
                   <span>مزاجات وقوائم قرآنية 🎧</span>
@@ -230,7 +230,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                     setIsToolsMenuOpen(false);
                     onOpenEvents();
                   }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-emerald-300 hover:bg-emerald-500/15 transition-all text-right cursor-pointer"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-emerald-300 hover:bg-emerald-500/15 transition-all text-start cursor-pointer"
                 >
                   <Crown size={15} className="text-emerald-400" />
                   <span>مواسم ومناسبات إسلامية 🌙</span>
@@ -243,7 +243,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                       setIsToolsMenuOpen(false);
                       onOpenQuotes();
                     }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-sky-300 hover:bg-sky-500/15 transition-all text-right cursor-pointer"
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-sky-300 hover:bg-sky-500/15 transition-all text-start cursor-pointer"
                   >
                     <ImageIcon size={15} className="text-sky-400" />
                     <span>تصميم بوست وبطاقة صورة 🖼️</span>
@@ -256,7 +256,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                     setIsToolsMenuOpen(false);
                     onOpenVoiceRecorder();
                   }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-amber-300 hover:bg-amber-500/15 transition-all text-right cursor-pointer"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-amber-300 hover:bg-amber-500/15 transition-all text-start cursor-pointer"
                 >
                   <Mic size={15} className="text-amber-400" />
                   <span>تسجيل صوتك وتلاوتك 🎙️</span>
@@ -269,7 +269,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                       setIsToolsMenuOpen(false);
                       onOpenKeyboardShortcuts();
                     }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-white/70 hover:bg-white/10 hover:text-white transition-all text-right cursor-pointer border-t border-white/5 pt-2"
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-white/70 hover:bg-white/10 hover:text-white transition-all text-start cursor-pointer border-t border-white/5 pt-2"
                   >
                     <Keyboard size={15} className="text-white/50" />
                     <span>اختصارات لوحة المفاتيح ⌨️</span>

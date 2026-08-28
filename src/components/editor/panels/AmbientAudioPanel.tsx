@@ -2,7 +2,7 @@ import React from 'react';
 import { AudioSettings, TextSettings } from '../../../types';
 import { ambientSounds, proceduralAmbientEngine } from '../../../data/ambientSounds';
 import { Spatial8DRadar } from '../../ui/Spatial8DRadar';
-import { Sparkles, Mic, Sliders, Headphones, Activity } from 'lucide-react';
+import { Sparkles, Mic, Sliders, Headphones, Activity, Volume2, Square, Play } from 'lucide-react';
 
 interface AmbientAudioPanelProps {
   audioSettings: AudioSettings;
@@ -133,7 +133,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
               key={preset.id}
               type="button"
               onClick={() => applyAudioPreset(preset.id)}
-              className="p-2 rounded-xl text-right border border-white/[0.06] bg-surface-950/60 hover:bg-gold-500/10 hover:border-gold-500/30 transition-all cursor-pointer group"
+              className="p-2 rounded-xl text-start border border-white/[0.06] bg-surface-950/60 hover:bg-gold-500/10 hover:border-gold-500/30 transition-all cursor-pointer group"
             >
               <div className="text-xs font-bold text-white group-hover:text-gold-300">
                 {preset.name}
@@ -145,39 +145,46 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
           ))}
         </div>
       </div>
-      {/* Nature Ambient Sounds */}
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <label className="block text-white/70 font-bold text-xs">
-            صوت الطبيعة في الخلفية (Ambient) 🌿
+
+      {/* 🌿 Procedural Layer 1: Ambient Islamic Nature & Masjid Atmosphere */}
+      <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-purple-500/20 space-y-3">
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-bold text-white flex items-center gap-1.5">
+            <Volume2 size={14} className="text-purple-400" />
+            <span>أجواء الطبيعة والسكينة (Ambient Atmosphere) 🌿</span>
           </label>
-          {audioSettings.ambientSoundId && audioSettings.ambientSoundId !== 'none' && (
+          <div className="flex items-center gap-1">
             <button
               type="button"
               onClick={() => {
                 if (isTestingAmbient) {
                   proceduralAmbientEngine.stop();
                   setIsTestingAmbient(false);
-                } else {
+                } else if (audioSettings.ambientSoundId && audioSettings.ambientSoundId !== 'none') {
                   proceduralAmbientEngine.play(
-                    audioSettings.ambientSoundId || 'gentle_rain',
+                    audioSettings.ambientSoundId,
                     audioSettings.ambientSoundVolume ?? 28
                   );
                   setIsTestingAmbient(true);
                 }
               }}
-              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-all active:scale-95 flex items-center gap-1 cursor-pointer ${
-                isTestingAmbient
-                  ? 'bg-rose-500/20 border-rose-400 text-rose-300 animate-pulse'
-                  : 'bg-purple-500/20 border-purple-400/40 text-purple-300 hover:bg-purple-500/30'
-              }`}
+              className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-400/30 hover:bg-purple-500/30 transition-all flex items-center gap-1 cursor-pointer"
             >
-              <span>{isTestingAmbient ? '⏹️ إيقاف التجربة' : '🎧 تجربة الصوت الآن'}</span>
+              {isTestingAmbient ? (
+                <>
+                  <Square size={9} /> إيقاف
+                </>
+              ) : (
+                <>
+                  <Play size={9} /> استماع
+                </>
+              )}
             </button>
-          )}
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-2">
+        {/* Ambient Nature Sound Grid */}
+        <div className="grid grid-cols-2 gap-1.5">
           {ambientSounds.map((sound) => {
             const isSelected = (audioSettings.ambientSoundId || 'none') === sound.id;
             return (
@@ -193,7 +200,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
                     setIsTestingAmbient(false);
                   }
                 }}
-                className={`p-2.5 rounded-xl text-right text-xs font-bold border transition-all cursor-pointer ${
+                className={`p-2.5 rounded-xl text-start text-xs font-bold border transition-all cursor-pointer ${
                   isSelected
                     ? 'bg-purple-500/25 border-purple-400 text-white shadow-md shadow-purple-500/10 ring-1 ring-purple-400/30'
                     : 'bg-surface-800/60 border-white/[0.04] text-white/60 hover:text-white hover:bg-surface-800'
@@ -203,9 +210,6 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
                   <span>{sound.icon}</span>
                   <span>{sound.name}</span>
                 </div>
-                <p className="text-[11px] text-white/40 font-normal truncate">
-                  {sound.description}
-                </p>
               </button>
             );
           })}
@@ -293,7 +297,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
                 key={rev.id}
                 type="button"
                 onClick={() => setAudioSettings((s) => ({ ...s, reverbPreset: rev.id }))}
-                className={`p-2 rounded-xl text-right transition-all cursor-pointer border flex items-center gap-1.5 ${
+                className={`p-2 rounded-xl text-start transition-all cursor-pointer border flex items-center gap-1.5 ${
                   isSelected
                     ? 'bg-purple-500/20 border-purple-400 text-white font-bold shadow-sm'
                     : 'bg-surface-950/60 border-white/[0.04] text-white/60 hover:text-white'
@@ -443,7 +447,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
                     key={st.id}
                     type="button"
                     onClick={() => setAudioSettings((s) => ({ ...s, eightDStyle: st.id }))}
-                    className={`p-2 rounded-xl text-xs font-bold border transition-all text-right cursor-pointer ${
+                    className={`p-2 rounded-xl text-xs font-bold border transition-all text-start cursor-pointer ${
                       (audioSettings.eightDStyle || 'orbit360') === st.id
                         ? 'bg-gold-500/20 border-gold-400 text-white shadow-sm'
                         : 'bg-surface-950/60 border-white/[0.04] text-white/60 hover:text-white'
@@ -519,7 +523,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
                     key={wf.id}
                     type="button"
                     onClick={() => setTextSettings((s) => ({ ...s, waveformStyle: wf.id }))}
-                    className={`p-2 rounded-xl text-xs font-bold border transition-all text-right cursor-pointer ${
+                    className={`p-2 rounded-xl text-xs font-bold border transition-all text-start cursor-pointer ${
                       (textSettings.waveformStyle || 'bars') === wf.id
                         ? 'bg-gold-500/20 border-gold-400 text-white shadow-sm'
                         : 'bg-surface-800/60 border-white/[0.04] text-white/60 hover:text-white'

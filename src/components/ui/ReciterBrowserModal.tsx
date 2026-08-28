@@ -227,9 +227,9 @@ export const ReciterBrowserModal: React.FC<ReciterBrowserModalProps> = ({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="ابحث بالاسم: عبد الرحمن مسعد، شريف مصطفى، إسلام صبحي، ياسر الدوسري، عبد الباسط..."
-                className="glass-input w-full pr-10 pl-4 py-2.5 text-xs rounded-xl no-drag select-text cursor-text"
+                className="glass-input w-full ps-10 pe-4 py-2.5 text-xs rounded-xl no-drag select-text cursor-text"
               />
-              <Search size={16} className="absolute right-3 top-3 text-white/40" />
+              <Search size={16} className="absolute start-3 top-3 text-white/40" />
             </div>
 
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1">

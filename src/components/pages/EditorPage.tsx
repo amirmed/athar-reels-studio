@@ -1243,7 +1243,7 @@ export const EditorPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsFullscreenPreview(false)}
-              className="absolute top-6 left-6 p-3 rounded-full bg-surface-800/80 hover:bg-surface-700 text-white transition-all shadow-2xl z-50 cursor-pointer"
+              className="absolute top-6 start-6 p-3 rounded-full bg-surface-800/80 hover:bg-surface-700 text-white transition-all shadow-2xl z-50 cursor-pointer"
             >
               <X size={20} />
             </button>

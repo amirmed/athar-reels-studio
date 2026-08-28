@@ -46,7 +46,7 @@ export const EditorDockNav: React.FC<EditorDockNavProps> = ({
   const visibleTabs = isProMode ? ALL_TABS : ALL_TABS.filter((t) => !t.isPro);
 
   return (
-    <aside className="w-20 border-r border-white/10 bg-surface-900 flex flex-col items-center py-3 gap-2 shrink-0 z-20">
+    <aside className="w-20 border-e border-white/10 bg-surface-900 flex flex-col items-center py-3 gap-2 shrink-0 z-20">
       <div className="flex-1 flex flex-col gap-2 w-full px-2">
         {visibleTabs.map((tab) => {
           const Icon = tab.icon;
@@ -69,7 +69,7 @@ export const EditorDockNav: React.FC<EditorDockNavProps> = ({
               <Icon size={19} />
               <span className="text-xs font-bold tracking-tight">{tab.label}</span>
               {tab.isPro && (
-                <span className="absolute -top-1 -right-1 text-[10px] px-1.5 py-0.2 rounded-full bg-purple-500/30 text-purple-300 font-bold">
+                <span className="absolute -top-1 -end-1 text-[10px] px-1.5 py-0.2 rounded-full bg-purple-500/30 text-purple-300 font-bold">
                   PRO
                 </span>
               )}

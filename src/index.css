@@ -407,11 +407,11 @@ html.light [class*='bg-black/95'] {
   }
 
   .glass-dock {
-    @apply bg-surface-950 border-l border-white/[0.05];
+    @apply bg-surface-950 border-s border-white/[0.05];
   }
 
   .glass-inspector {
-    @apply bg-surface-900 border-l border-white/[0.06] shadow-2xl;
+    @apply bg-surface-900 border-s border-white/[0.06] shadow-2xl;
   }
 
   .floating-toolbar {
@@ -490,7 +490,7 @@ html.light [class*='bg-black/95'] {
   }
 
   .nav-item.active {
-    @apply bg-accent-500/10 text-accent-400 border-r-2 border-accent-500;
+    @apply bg-accent-500/10 text-accent-400 border-s-2 border-accent-500;
   }
 
   /* Separator */
@@ -558,7 +558,7 @@ html.light [class*='bg-black/95'] {
   letter-spacing: 0.02em;
 }
 
-/* Toggle switch */
+/* Toggle switch - 100% Logical RTL/LTR Aware */
 .toggle-switch {
   @apply relative inline-flex items-center h-6 w-11 rounded-full cursor-pointer transition-colors duration-200;
 }
@@ -566,7 +566,7 @@ html.light [class*='bg-black/95'] {
 .toggle-switch::after {
   content: '';
   @apply absolute w-4 h-4 bg-white rounded-full transition-all duration-200 shadow-md;
-  right: 2px;
+  inset-inline-start: 2px;
 }
 
 .toggle-switch.active {
@@ -574,7 +574,7 @@ html.light [class*='bg-black/95'] {
 }
 
 .toggle-switch.active::after {
-  right: calc(100% - 18px);
+  inset-inline-start: calc(100% - 18px);
 }
 
 .toggle-switch:not(.active) {

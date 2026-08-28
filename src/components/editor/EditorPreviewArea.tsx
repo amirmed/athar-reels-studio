@@ -427,7 +427,7 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
           {/* Overall Progress bar */}
           <div className="relative h-1.5 rounded-full bg-white/[0.08] overflow-hidden cursor-pointer">
             <motion.div
-              className="absolute top-0 bottom-0 left-0 bg-gradient-to-r from-accent-500 to-gold-400 rounded-full"
+              className="absolute top-0 bottom-0 start-0 bg-gradient-to-r from-accent-500 to-gold-400 rounded-full"
               style={{ width: `${overallProgress}%` }}
             />
           </div>

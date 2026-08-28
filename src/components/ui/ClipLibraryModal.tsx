@@ -80,11 +80,11 @@ export const ClipLibraryModal: React.FC<ClipLibraryModalProps> = ({ isOpen, onCl
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="ابحث باسم المقطع، السورة، القارئ، أو الموضوع..."
-              className="glass-input w-full pr-11 text-xs"
+              className="glass-input w-full ps-11 text-xs"
             />
             <Search
               size={18}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"
+              className="absolute start-3.5 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"
             />
           </div>
 
@@ -111,7 +111,7 @@ export const ClipLibraryModal: React.FC<ClipLibraryModalProps> = ({ isOpen, onCl
         </div>
 
         {/* Clips Grid */}
-        <div className="overflow-y-auto max-h-[55vh] custom-scrollbar pr-1">
+        <div className="overflow-y-auto max-h-[55vh] custom-scrollbar pe-1">
           {filteredClips.length === 0 ? (
             <div className="py-16 text-center text-white/40 space-y-2">
               <Film size={36} className="mx-auto opacity-30" />
@@ -135,13 +135,13 @@ export const ClipLibraryModal: React.FC<ClipLibraryModalProps> = ({ isOpen, onCl
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-surface-950 via-surface-950/40 to-transparent" />
 
-                    <div className="absolute top-2.5 right-2.5">
+                    <div className="absolute top-2.5 end-2.5">
                       <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-surface-950/80 backdrop-blur-md text-gold-300 border border-gold-400/30">
                         {clip.badge}
                       </span>
                     </div>
 
-                    <div className="absolute bottom-2.5 right-3 left-3 flex items-center justify-between text-white">
+                    <div className="absolute bottom-2.5 inset-x-3 flex items-center justify-between text-white">
                       <div className="flex items-center gap-1.5 text-xs font-black drop-shadow-md">
                         <BookOpen size={13} className="text-gold-400" />
                         <span>سورة {clip.surahName}</span>

@@ -103,7 +103,7 @@ export const Sidebar: React.FC = React.memo(() => {
       initial={false}
       animate={{ width: sidebarCollapsed ? 72 : 240 }}
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-      className="h-full bg-surface-950/50 backdrop-blur-xl border-l border-white/[0.04] flex flex-col shrink-0 relative z-30"
+      className="h-full bg-surface-950/50 backdrop-blur-xl border-e border-white/[0.04] flex flex-col shrink-0 relative z-30"
     >
       {/* Logo area */}
       <div className="p-4 flex items-center gap-3 border-b border-white/[0.04]">

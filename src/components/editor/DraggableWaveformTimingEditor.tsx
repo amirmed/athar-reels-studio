@@ -1114,7 +1114,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
       aria-modal="true"
       aria-label="محرر التوقيت والموجة الصوتية للكلمات"
     >
-      <div className="relative w-full max-w-5xl bg-surface-900 border border-gold-500/30 rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4 text-right flex flex-col max-h-[92vh] overflow-hidden">
+      <div className="relative w-full max-w-5xl bg-surface-900 border border-gold-500/30 rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4 text-start flex flex-col max-h-[92vh] overflow-hidden">
         {/* Floating Action Flash Notification */}
         <AnimatePresence>
           {flashNotification && (
@@ -1553,7 +1553,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                       {/* Left Resize Handle (Start Time: Left Grip ◄) */}
                       <div
                         onMouseDown={(e) => !isLocked && handleDragStart(e, idx, 'resize-start')}
-                        className={`w-3.5 h-full rounded-l-lg flex items-center justify-center transition-all z-40 group-hover:opacity-100 opacity-75 ${
+                        className={`w-3.5 h-full rounded-s-lg flex items-center justify-center transition-all z-40 group-hover:opacity-100 opacity-75 ${
                           isLocked ? 'cursor-not-allowed opacity-30' : 'cursor-ew-resize'
                         } ${theme.handleStart}`}
                         title={isLocked ? 'هذه الكلمة مثبتة 🔒' : 'اسحب لتعديل بداية الكلمة ◀'}
@@ -1582,7 +1582,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                       {/* Right Resize Handle (End Time: Right Grip ►) */}
                       <div
                         onMouseDown={(e) => !isLocked && handleDragStart(e, idx, 'resize-end')}
-                        className={`w-3.5 h-full rounded-r-lg flex items-center justify-center transition-all z-40 group-hover:opacity-100 opacity-75 ${
+                        className={`w-3.5 h-full rounded-e-lg flex items-center justify-center transition-all z-40 group-hover:opacity-100 opacity-75 ${
                           isLocked ? 'cursor-not-allowed opacity-30' : 'cursor-ew-resize'
                         } ${theme.handleEnd}`}
                         title={isLocked ? 'هذه الكلمة مثبتة 🔒' : 'اسحب لتعديل نهاية الكلمة ▶'}

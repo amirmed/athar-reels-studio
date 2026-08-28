@@ -9,6 +9,7 @@ import { studioTemplates } from '../../data/templates';
 import { AutoReelModal } from '../ui/AutoReelModal';
 import { ReciterBrowserModal } from '../ui/ReciterBrowserModal';
 import { ClipLibraryModal } from '../ui/ClipLibraryModal';
+import { PresetTemplatesModal } from '../ui/PresetTemplatesModal';
 import {
   getAvailableSurahsForReciter,
   isSurahAvailableForReciter,
@@ -38,6 +39,7 @@ export const CreateProjectPage: React.FC = () => {
   const [isAutoReelModalOpen, setIsAutoReelModalOpen] = useState(false);
   const [isReciterModalOpen, setIsReciterModalOpen] = useState(false);
   const [isClipLibraryOpen, setIsClipLibraryOpen] = useState(false);
+  const [isTemplatesModalOpen, setIsTemplatesModalOpen] = useState(false);
 
   const [name, setName] = useState('');
   const [reciterId, setReciterId] = useState('yasser_128');
@@ -247,7 +249,7 @@ export const CreateProjectPage: React.FC = () => {
                     else if (fmt.id === 'quotes') setCurrentPage('quotes');
                     else if (fmt.id === 'voice') setCurrentPage('voice-studio');
                   }}
-                  className={`p-4 rounded-3xl border text-right transition-all duration-300 cursor-pointer flex flex-col justify-between group relative overflow-hidden bg-gradient-to-b ${
+                  className={`p-4 rounded-3xl border text-start transition-all duration-300 cursor-pointer flex flex-col justify-between group relative overflow-hidden bg-gradient-to-b ${
                     isSelected
                       ? fmt.activeClass
                       : 'bg-surface-950/70 border-white/[0.08] hover:border-white/25 hover:bg-surface-900/80 hover:scale-[1.02]'
@@ -299,69 +301,68 @@ export const CreateProjectPage: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           className="relative rounded-3xl bg-gradient-to-r from-accent-600/30 via-gold-500/20 to-purple-600/30 border border-accent-400/40 p-6 shadow-2xl overflow-hidden group hover:border-gold-400/70 transition-all duration-300"
         >
-          <div className="absolute -left-10 -bottom-10 w-48 h-48 bg-accent-500/20 rounded-full blur-3xl group-hover:scale-125 transition-transform" />
+          <div className="absolute -start-10 -bottom-10 w-48 h-48 bg-accent-500/20 rounded-full blur-3xl group-hover:scale-125 transition-transform" />
           <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3.5 text-center sm:text-right">
+            <div className="flex items-center gap-3.5 text-center sm:text-start">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent-500 to-gold-500 text-white flex items-center justify-center shadow-lg shrink-0">
                 <Wand2 size={24} />
               </div>
               <div>
                 <div className="flex items-center justify-center sm:justify-start gap-2 mb-0.5">
                   <h3 className="text-sm font-bold text-white group-hover:text-gold-300 transition-colors">
-                    صانع الريلز التلقائي بضغطة زر (AI Auto-Reel)
+                    توليد ريلز قرآني تلقائي ذكي (1-Click Auto Reel) ⚡
                   </h3>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-gold-400/20 text-gold-300 font-bold border border-gold-400/40 animate-pulse">
-                    سريع ⚡
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-gold-400/20 text-gold-300 font-extrabold border border-gold-400/30 animate-pulse">
+                    AI Auto
                   </span>
                 </div>
-                <p className="text-xs text-white/75">
-                  توليد ريل متكامل جاهز للتصدير: اختيار آية مؤثرة + خلفية سينمائية متناسقة + صوت
-                  طبيعة + تظليل الكلمات!
+                <p className="text-xs text-white/70 max-w-xl">
+                  اختر سورة، وسيقوم الذكاء الاصطناعي بجلب تلاوة الشيخ عبدالباسط، الآيات، التوقيت،
+                  والخلفيات فوراً دون عناء!
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap justify-center">
-              <button
-                type="button"
-                onClick={() => setIsClipLibraryOpen(true)}
-                className="py-2.5 px-4 rounded-xl bg-surface-950/80 hover:bg-surface-800 border border-gold-400/40 text-gold-300 font-bold text-xs flex items-center gap-1.5 shadow-md shadow-black/40 hover:scale-105 transition-all cursor-pointer"
-              >
-                <Film size={14} className="text-gold-400" />
-                <span>المقاطع الجاهزة</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setIsAutoReelModalOpen(true)}
-                className="py-2.5 px-4 rounded-xl bg-gradient-to-r from-gold-400 to-accent-500 hover:from-gold-300 hover:to-accent-400 text-black font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-gold-500/20 shrink-0 hover:scale-105 transition-all cursor-pointer"
-              >
-                <Sparkles size={14} />
-                <span>توليد تلقائي فوري</span>
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => setIsAutoReelModalOpen(true)}
+              className="py-3 px-5 rounded-2xl bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-black font-bold text-xs flex items-center gap-2 shadow-lg shadow-gold-500/20 active:scale-95 transition-all shrink-0 cursor-pointer"
+            >
+              <Sparkles size={16} />
+              <span>توليد تلقائي الآن</span>
+            </button>
           </div>
         </motion.div>
 
-        {/* Templates Selection Shelf */}
-        <div className="space-y-2.5">
+        {/* Video Presets Catalog */}
+        <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <span>اختر قالباً جاهزاً كنقطة انطلاق:</span>
-            </h3>
-            <span className="text-xs text-gold-400 font-medium">تصاميم سينمائية جاهزة</span>
+            <h2 className="text-sm font-bold text-white/80 flex items-center gap-2">
+              <Sparkles size={16} className="text-gold-400" />
+              <span>قوالب وتصاميم جاهزة للاستخدام السريع</span>
+            </h2>
+            <button
+              type="button"
+              onClick={() => setIsTemplatesModalOpen(true)}
+              className="text-xs text-gold-400 hover:text-gold-300 font-bold transition-colors cursor-pointer"
+            >
+              تصفح مكتبة القوالب الكاملة ➔
+            </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-            {studioTemplates.slice(0, 4).map((tpl) => {
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            {studioTemplates.slice(0, 6).map((tpl) => {
               const isSelected = selectedTemplateId === tpl.id;
               return (
                 <div
                   key={tpl.id}
-                  onClick={() => setSelectedTemplateId(tpl.id)}
-                  className={`p-3.5 rounded-2xl border transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between ${
+                  onClick={() => {
+                    setSelectedTemplateId(tpl.id);
+                    addToast({ message: `تم اختيار قالب «${tpl.name}» 🎨`, type: 'info' });
+                  }}
+                  className={`relative p-3 rounded-2xl border transition-all cursor-pointer group ${
                     isSelected
-                      ? 'bg-gold-500/15 border-gold-400 shadow-md shadow-gold-500/10'
+                      ? 'bg-gold-500/15 border-gold-400 shadow-md shadow-gold-500/10 ring-1 ring-gold-400/50'
                       : 'bg-surface-900 border-white/[0.08] hover:border-white/20'
                   }`}
                 >
@@ -373,7 +374,7 @@ export const CreateProjectPage: React.FC = () => {
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                      <span className="absolute bottom-1.5 right-2 text-xs font-bold text-white">
+                      <span className="absolute bottom-1.5 end-2 text-xs font-bold text-white">
                         {tpl.name}
                       </span>
                     </div>
@@ -601,7 +602,7 @@ export const CreateProjectPage: React.FC = () => {
                   type="button"
                   onClick={() => setSelectedTemplateId(tpl.id)}
                   className={`
-                    p-3 rounded-xl border text-right transition-all flex flex-col justify-between relative overflow-hidden group
+                    p-3 rounded-xl border text-start transition-all flex flex-col justify-between relative overflow-hidden group
                     ${
                       selectedTemplateId === tpl.id
                         ? 'bg-accent-500/15 border-accent-500/40 shadow-lg shadow-accent-500/10'
@@ -610,7 +611,7 @@ export const CreateProjectPage: React.FC = () => {
                   `}
                 >
                   {selectedTemplateId === tpl.id && (
-                    <div className="absolute top-2 left-2 w-4 h-4 bg-accent-500 rounded-full flex items-center justify-center">
+                    <div className="absolute top-2 start-2 w-4 h-4 bg-accent-500 rounded-full flex items-center justify-center">
                       <Check size={10} className="text-white" />
                     </div>
                   )}
@@ -650,7 +651,7 @@ export const CreateProjectPage: React.FC = () => {
                   `}
                 >
                   {aspectRatio === opt.value && (
-                    <div className="absolute top-2 left-2 w-5 h-5 bg-accent-500 rounded-full flex items-center justify-center">
+                    <div className="absolute top-2 start-2 w-5 h-5 bg-accent-500 rounded-full flex items-center justify-center">
                       <Check size={12} className="text-white" />
                     </div>
                   )}
@@ -700,6 +701,14 @@ export const CreateProjectPage: React.FC = () => {
 
       {/* Clip Library Modal */}
       <ClipLibraryModal isOpen={isClipLibraryOpen} onClose={() => setIsClipLibraryOpen(false)} />
+
+      {/* Preset Templates Catalog Modal */}
+      <PresetTemplatesModal
+        isOpen={isTemplatesModalOpen}
+        onClose={() => setIsTemplatesModalOpen(false)}
+        activeTemplateId={selectedTemplateId}
+        onApplyTemplate={(tpl) => setSelectedTemplateId(tpl.id)}
+      />
     </AppLayout>
   );
 };

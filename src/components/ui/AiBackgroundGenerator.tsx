@@ -160,13 +160,13 @@ export const AiBackgroundGenerator: React.FC<AiBackgroundGeneratorProps> = ({
       {/* Preset Chips */}
       <div>
         <label className="text-[11px] text-white/40 mb-1.5 block">اقتراحات سريعة بضغطة زر:</label>
-        <div className="grid grid-cols-2 gap-1.5 max-h-36 overflow-y-auto pr-0.5">
+        <div className="grid grid-cols-2 gap-1.5 max-h-36 overflow-y-auto pe-0.5">
           {aiPromptPresets.map((p) => (
             <button
               key={p.id}
               onClick={() => handleSelectPreset(p.id)}
               disabled={isGenerating}
-              className={`p-2 rounded-xl border text-right transition-all flex items-center gap-2 ${
+              className={`p-2 rounded-xl border text-start transition-all flex items-center gap-2 ${
                 selectedPresetId === p.id
                   ? 'bg-accent-500/20 border-accent-500/40 text-white shadow-sm'
                   : 'bg-surface-800/40 border-white/[0.04] text-white/60 hover:bg-surface-800/70 hover:text-white'
@@ -193,13 +193,13 @@ export const AiBackgroundGenerator: React.FC<AiBackgroundGeneratorProps> = ({
               setSelectedPresetId(null);
             }}
             placeholder="مثال: محراب مسجد رخامي مع إضاءة شمس ذهبية وأقواس أندلسية..."
-            className="glass-input w-full text-xs resize-none pr-3 pl-10 rounded-xl"
+            className="glass-input w-full text-xs resize-none ps-3 pe-10 rounded-xl"
             disabled={isGenerating}
           />
           <button
             onClick={() => handleGenerate()}
             disabled={isGenerating}
-            className="absolute left-2 top-2 p-2 rounded-lg bg-accent-500 hover:bg-accent-400 text-white transition-all disabled:opacity-50"
+            className="absolute end-2 top-2 p-2 rounded-lg bg-accent-500 hover:bg-accent-400 text-white transition-all disabled:opacity-50"
             title="توليد الصورة"
           >
             {isGenerating ? <Loader2 size={14} className="animate-spin" /> : <Wand2 size={14} />}
@@ -274,7 +274,7 @@ export const AiBackgroundGenerator: React.FC<AiBackgroundGeneratorProps> = ({
                 className="p-2 rounded-xl bg-surface-800/80 hover:bg-surface-700 text-white/70 hover:text-white border border-white/[0.06] transition-all flex items-center gap-1"
               >
                 <RefreshCw size={14} />
-                <span className="text-[11px] font-bold pr-0.5">مرة أخرى</span>
+                <span className="text-[11px] font-bold pe-0.5">مرة أخرى</span>
               </button>
               <a
                 href={generatedUrl}

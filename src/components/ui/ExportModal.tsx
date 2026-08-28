@@ -338,7 +338,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
       aria-modal="true"
       aria-label="تصدير الفيديو الذكي عالي الجودة"
     >
-      <div className="relative w-full max-w-2xl bg-surface-900/95 border border-gold-500/30 rounded-3xl p-6 shadow-2xl space-y-5 text-right overflow-hidden">
+      <div className="relative w-full max-w-2xl bg-surface-900/95 border border-gold-500/30 rounded-3xl p-6 shadow-2xl space-y-5 text-start overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-white/10 pb-4">
           <button
@@ -402,7 +402,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                         key={preset.id}
                         type="button"
                         onClick={() => setSelectedPlatformPreset(preset.id)}
-                        className={`p-3 rounded-2xl text-right border transition-all cursor-pointer flex flex-col justify-between ${
+                        className={`p-3 rounded-2xl text-start border transition-all cursor-pointer flex flex-col justify-between ${
                           isSelected
                             ? 'bg-gold-500/15 border-gold-400 text-white ring-1 ring-gold-400/40 shadow-lg shadow-gold-500/10'
                             : 'bg-surface-950/60 border-white/[0.04] text-white/60 hover:text-white hover:bg-surface-950'
@@ -437,7 +437,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                       <div className="text-[11px] text-white/50">{activePreset.desc}</div>
                     </div>
                   </div>
-                  <div className="text-left font-mono text-xs text-gold-300">
+                  <div className="text-end font-mono text-xs text-gold-300">
                     <div>{activePreset.fps} FPS</div>
                     <div>{activePreset.bitrateLabel}</div>
                   </div>
@@ -450,7 +450,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               <div className="space-y-3 flex flex-col items-center">
                 <div className="relative rounded-2xl overflow-hidden border border-gold-500/40 shadow-2xl bg-black flex items-center justify-center max-h-[280px]">
                   <canvas ref={previewCanvasRef} className="max-h-[280px] w-auto object-contain" />
-                  <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-black/70 backdrop-blur-md border border-white/10 text-[11px] text-gold-300 font-bold">
+                  <div className="absolute top-2 end-2 px-2 py-0.5 rounded-full bg-black/70 backdrop-blur-md border border-white/10 text-[11px] text-gold-300 font-bold">
                     معاينة حية 1:1 🎬
                   </div>
                 </div>

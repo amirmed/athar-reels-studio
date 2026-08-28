@@ -173,7 +173,7 @@ export const PexelsMediaBrowser: React.FC<PexelsMediaBrowserProps> = ({
         <div className="relative flex-1">
           <Search
             size={12}
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none"
+            className="absolute start-2.5 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none"
           />
           <input
             type="text"
@@ -181,7 +181,7 @@ export const PexelsMediaBrowser: React.FC<PexelsMediaBrowserProps> = ({
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
             placeholder="ابحث... مثال: mosque"
-            className="glass-input w-full text-xs pr-8"
+            className="glass-input w-full text-xs ps-8"
             dir="ltr"
           />
         </div>
@@ -281,7 +281,7 @@ export const PexelsMediaBrowser: React.FC<PexelsMediaBrowserProps> = ({
                   اختر
                 </span>
               </div>
-              <div className="absolute bottom-1 right-1 bg-black/60 rounded text-[8px] text-white px-1">
+              <div className="absolute bottom-1 end-1 bg-black/60 rounded text-[8px] text-white px-1">
                 {Math.round(video.duration)}ث
               </div>
             </button>

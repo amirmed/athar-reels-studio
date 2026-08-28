@@ -26,7 +26,7 @@ export const SectionAccordion: React.FC<SectionAccordionProps> = ({
         className="w-full flex items-center gap-3 px-4 py-3.5 bg-surface-800/30 hover:bg-surface-800/50 transition-colors"
       >
         {icon && <span className="text-accent-400">{icon}</span>}
-        <span className="text-sm font-semibold text-white/80 flex-1 text-right">{title}</span>
+        <span className="text-sm font-semibold text-white/80 flex-1 text-start">{title}</span>
         {badge && (
           <span className="text-[11px] bg-accent-500/15 text-accent-400 px-2 py-0.5 rounded-md font-medium">
             {badge}

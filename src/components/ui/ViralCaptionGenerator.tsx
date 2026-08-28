@@ -108,7 +108,7 @@ export const ViralCaptionGenerator: React.FC<ViralCaptionGeneratorProps> = ({
               setTone(t.id);
               setCustomizedText('');
             }}
-            className={`p-2 rounded-xl text-xs font-bold border transition-all text-right flex items-center gap-1.5 ${
+            className={`p-2 rounded-xl text-xs font-bold border transition-all text-start flex items-center gap-1.5 ${
               tone === t.id
                 ? 'bg-gold-500/20 border-gold-400 text-white shadow-sm'
                 : 'bg-surface-900/60 border-white/[0.04] text-white/60 hover:text-white'

@@ -83,7 +83,7 @@ export const IslamicEventsModal: React.FC<IslamicEventsModalProps> = ({
                 key={cat.id}
                 type="button"
                 onClick={() => setSelectedSeasonId(cat.id)}
-                className={`p-3 rounded-2xl text-right transition-all cursor-pointer flex flex-col justify-between border ${
+                className={`p-3 rounded-2xl text-start transition-all cursor-pointer flex flex-col justify-between border ${
                   isSelected
                     ? `${cat.borderColor} bg-surface-900 shadow-md`
                     : 'border-white/[0.06] bg-surface-900/40 text-white/60 hover:text-white hover:bg-surface-900/70'
@@ -140,13 +140,13 @@ export const IslamicEventsModal: React.FC<IslamicEventsModalProps> = ({
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-surface-950 via-surface-950/40 to-transparent" />
 
-                <div className="absolute top-2 right-2">
+                <div className="absolute top-2 end-2">
                   <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-surface-950/80 backdrop-blur-md text-gold-300 border border-gold-400/30">
                     {item.seasonBadge}
                   </span>
                 </div>
 
-                <div className="absolute bottom-2 right-2 left-2">
+                <div className="absolute bottom-2 inset-x-2">
                   <span className="text-xs font-bold text-white truncate block">
                     سورة {item.surahName} • الآيات ({item.fromAyah} - {item.toAyah})
                   </span>

@@ -37,7 +37,7 @@ export const PlatformPreviewOverlay: React.FC<PlatformPreviewOverlayProps> = ({
       {/* 1. Safe Zone Outline Lines */}
       {showSafeZones && (
         <div className="absolute inset-0 border border-dashed border-sky-400/40 m-3 rounded-2xl pointer-events-none">
-          <div className="absolute top-1 left-2 text-[8px] font-mono text-sky-300 bg-sky-950/80 px-1 rounded">
+          <div className="absolute top-1 start-2 text-[8px] font-mono text-sky-300 bg-sky-950/80 px-1 rounded">
             Safe Zone (منطقة الأمان)
           </div>
         </div>
@@ -59,7 +59,7 @@ export const PlatformPreviewOverlay: React.FC<PlatformPreviewOverlayProps> = ({
           {/* Right Action Bar & Bottom Caption */}
           <div className="flex items-end justify-between p-3">
             {/* Bottom Caption & User Handle */}
-            <div className="space-y-1 max-w-[70%] text-right" dir="rtl">
+            <div className="space-y-1 max-w-[70%] text-start" dir="rtl">
               <div className="font-bold text-xs text-white flex items-center gap-1">
                 <span>{watermark || '@athar_studio'}</span>
                 <span className="text-[10px] px-1 rounded bg-rose-500 text-white font-bold">
@@ -124,7 +124,7 @@ export const PlatformPreviewOverlay: React.FC<PlatformPreviewOverlayProps> = ({
           {/* Bottom & Right Reels Action Bar */}
           <div className="flex items-end justify-between p-3">
             {/* Profile & Audio */}
-            <div className="space-y-1.5 max-w-[70%] text-right" dir="rtl">
+            <div className="space-y-1.5 max-w-[70%] text-start" dir="rtl">
               <div className="flex items-center gap-1.5">
                 <div className="w-6 h-6 rounded-full bg-gold-400 text-surface-950 font-bold text-[10px] flex items-center justify-center">
                   📖
@@ -172,7 +172,7 @@ export const PlatformPreviewOverlay: React.FC<PlatformPreviewOverlayProps> = ({
           </div>
 
           <div className="flex items-end justify-between p-3">
-            <div className="space-y-1.5 max-w-[70%] text-right" dir="rtl">
+            <div className="space-y-1.5 max-w-[70%] text-start" dir="rtl">
               <div className="flex items-center gap-1.5">
                 <div className="w-6 h-6 rounded-full bg-red-600 text-white font-bold text-[10px] flex items-center justify-center">
                   ▶

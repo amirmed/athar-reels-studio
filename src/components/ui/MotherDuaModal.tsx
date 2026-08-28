@@ -309,7 +309,7 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
   return (
     <AnimatePresence>
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 text-right select-none"
+        className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 text-start select-none"
         role="dialog"
         aria-modal="true"
         aria-label="ركن بر الوالدين وبطاقات الإهداء"
@@ -336,7 +336,7 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="absolute left-4 top-4 w-9 h-9 rounded-full bg-surface-800/80 hover:bg-surface-700 text-white/60 hover:text-white flex items-center justify-center transition-all border border-white/[0.06] cursor-pointer"
+              className="absolute start-4 top-4 w-9 h-9 rounded-full bg-surface-800/80 hover:bg-surface-700 text-white/60 hover:text-white flex items-center justify-center transition-all border border-white/[0.06] cursor-pointer"
             >
               <X size={18} />
             </button>
@@ -463,7 +463,7 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
 
                 {/* 2. Live Luxury 4K Card Preview with Large Prominent Centered Dua */}
                 <div className="relative p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-[#103023] via-[#081811] to-[#030a07] border-2 border-gold-400/40 shadow-2xl text-center space-y-4 overflow-hidden">
-                  <div className="absolute top-2 right-2 text-gold-400/20 font-amiri text-6xl select-none pointer-events-none">
+                  <div className="absolute top-2 end-2 text-gold-400/20 font-amiri text-6xl select-none pointer-events-none">
                     ﷽
                   </div>
 
@@ -526,7 +526,7 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
 
                 {/* 4. Interactive Daily Parents Tasbeeh Counter */}
                 <div className="p-4 rounded-2xl bg-surface-950/80 border border-emerald-500/25 flex flex-col sm:flex-row items-center justify-between gap-3">
-                  <div className="text-right">
+                  <div className="text-start">
                     <div className="font-bold text-xs sm:text-sm text-emerald-300 flex items-center gap-1.5">
                       <Award size={15} />
                       <span>مسبحة بر الوالدين اليومية:</span>
@@ -558,7 +558,7 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
               // ==================== TAB 2: TIJANI AISHA UNIVERSAL REVERENCE DEDICATION (LARGE CLEAR TEXT) ====================
               <div className="space-y-4">
                 {/* Hadith Banner: Ameen Wa Laka Bi Mithl */}
-                <div className="p-5 rounded-2xl bg-gradient-to-r from-amber-500/20 via-surface-950 to-gold-500/20 border-2 border-gold-400/40 text-right space-y-2">
+                <div className="p-5 rounded-2xl bg-gradient-to-r from-amber-500/20 via-surface-950 to-gold-500/20 border-2 border-gold-400/40 text-start space-y-2">
                   <div className="font-black text-sm sm:text-base text-gold-300 flex items-center gap-2">
                     <Sparkles size={16} className="text-gold-400" />
                     <span>بشارة نبوية شريفة (الملائكة تدعو لك ولوالديك):</span>
@@ -584,7 +584,7 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.08 * i }}
-                    className="p-5 sm:p-6 rounded-2xl bg-surface-950/90 border border-white/[0.12] hover:border-gold-400/40 transition-all text-right space-y-2.5 shadow-md"
+                    className="p-5 sm:p-6 rounded-2xl bg-surface-950/90 border border-white/[0.12] hover:border-gold-400/40 transition-all text-start space-y-2.5 shadow-md"
                   >
                     <div className="flex items-center gap-2">
                       <span className="w-2.5 h-2.5 rounded-full bg-gold-400"></span>

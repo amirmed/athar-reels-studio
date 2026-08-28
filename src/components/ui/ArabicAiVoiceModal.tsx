@@ -218,7 +218,7 @@ export const ArabicAiVoiceModal: React.FC<ArabicAiVoiceModalProps> = ({
             </span>
             <span>{item.reference}</span>
           </div>
-          <p className="text-sm font-arabic font-semibold text-white/90 leading-relaxed text-right line-clamp-3">
+          <p className="text-sm font-arabic font-semibold text-white/90 leading-relaxed text-start line-clamp-3">
             « {item.arabicText} »
           </p>
         </div>

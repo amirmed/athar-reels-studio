@@ -306,7 +306,7 @@ export const DashboardPage: React.FC = () => {
           className="relative rounded-3xl bg-surface-900 border border-gold-500/25 p-6 sm:p-7 shadow-xl overflow-hidden group hover:border-gold-400/40 transition-all duration-300 min-h-[175px] flex flex-col justify-center"
         >
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="space-y-2.5 text-center md:text-right max-w-2xl">
+            <div className="space-y-2.5 text-start max-w-2xl">
               <div className="flex items-center justify-center md:justify-start gap-2.5 flex-wrap">
                 <span className="text-xs px-3 py-1 rounded-full bg-gold-400/15 text-gold-300 font-bold border border-gold-400/25">
                   آية اليوم المختارة
@@ -353,7 +353,7 @@ export const DashboardPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setCurrentPage('create')}
-              className="p-4 rounded-3xl bg-gradient-to-br from-gold-500/15 via-surface-900 to-surface-950 border border-gold-500/30 hover:border-gold-400 hover:shadow-xl hover:shadow-gold-500/10 hover:scale-[1.02] transition-all text-right group cursor-pointer flex flex-col justify-between"
+              className="p-4 rounded-3xl bg-gradient-to-br from-gold-500/15 via-surface-900 to-surface-950 border border-gold-500/30 hover:border-gold-400 hover:shadow-xl hover:shadow-gold-500/10 hover:scale-[1.02] transition-all text-start group cursor-pointer flex flex-col justify-between"
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="p-2.5 rounded-2xl bg-gold-400/15 text-gold-300 border border-gold-400/30 shadow-md group-hover:scale-110 transition-transform">
@@ -381,7 +381,7 @@ export const DashboardPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setCurrentPage('azkar')}
-              className="p-4 rounded-3xl bg-gradient-to-br from-emerald-500/15 via-surface-900 to-surface-950 border border-emerald-500/30 hover:border-emerald-400 hover:shadow-xl hover:shadow-emerald-500/10 hover:scale-[1.02] transition-all text-right group cursor-pointer flex flex-col justify-between"
+              className="p-4 rounded-3xl bg-gradient-to-br from-emerald-500/15 via-surface-900 to-surface-950 border border-emerald-500/30 hover:border-emerald-400 hover:shadow-xl hover:shadow-emerald-500/10 hover:scale-[1.02] transition-all text-start group cursor-pointer flex flex-col justify-between"
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="p-2.5 rounded-2xl bg-emerald-400/15 text-emerald-300 border border-emerald-400/30 shadow-md group-hover:scale-110 transition-transform">
@@ -409,7 +409,7 @@ export const DashboardPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setCurrentPage('quotes')}
-              className="p-4 rounded-3xl bg-gradient-to-br from-sky-500/15 via-surface-900 to-surface-950 border border-sky-500/30 hover:border-sky-400 hover:shadow-xl hover:shadow-sky-500/10 hover:scale-[1.02] transition-all text-right group cursor-pointer flex flex-col justify-between"
+              className="p-4 rounded-3xl bg-gradient-to-br from-sky-500/15 via-surface-900 to-surface-950 border border-sky-500/30 hover:border-sky-400 hover:shadow-xl hover:shadow-sky-500/10 hover:scale-[1.02] transition-all text-start group cursor-pointer flex flex-col justify-between"
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="p-2.5 rounded-2xl bg-sky-400/15 text-sky-300 border border-sky-400/30 shadow-md group-hover:scale-110 transition-transform">
@@ -437,7 +437,7 @@ export const DashboardPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setCurrentPage('voice-studio')}
-              className="p-4 rounded-3xl bg-gradient-to-br from-purple-500/15 via-surface-900 to-surface-950 border border-purple-500/30 hover:border-purple-400 hover:shadow-xl hover:shadow-purple-500/10 hover:scale-[1.02] transition-all text-right group cursor-pointer flex flex-col justify-between"
+              className="p-4 rounded-3xl bg-gradient-to-br from-purple-500/15 via-surface-900 to-surface-950 border border-purple-500/30 hover:border-purple-400 hover:shadow-xl hover:shadow-purple-500/10 hover:scale-[1.02] transition-all text-start group cursor-pointer flex flex-col justify-between"
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="p-2.5 rounded-2xl bg-purple-400/15 text-purple-300 border border-purple-400/30 shadow-md group-hover:scale-110 transition-transform">
@@ -502,7 +502,7 @@ export const DashboardPage: React.FC = () => {
                 key={tpl.id}
                 onClick={() => handleOpenTemplateModal(tpl)}
                 aria-label={`استخدام وتخصيص قالب ${tpl.name}`}
-                className="group relative rounded-2xl bg-surface-900 border border-white/[0.08] hover:border-gold-400/40 p-3.5 transition-all duration-300 cursor-pointer shadow-md hover:shadow-gold-500/10 flex flex-col justify-between text-right w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-400"
+                className="group relative rounded-2xl bg-surface-900 border border-white/[0.08] hover:border-gold-400/40 p-3.5 transition-all duration-300 cursor-pointer shadow-md hover:shadow-gold-500/10 flex flex-col justify-between text-start w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-400"
               >
                 {tpl.backgroundUrl && (
                   <div className="h-28 rounded-xl overflow-hidden mb-3 relative w-full">
@@ -512,7 +512,7 @@ export const DashboardPage: React.FC = () => {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                    <span className="absolute bottom-2 right-2.5 text-xs font-bold text-white">
+                    <span className="absolute bottom-2 end-2.5 text-xs font-bold text-white">
                       {tpl.name}
                     </span>
                   </div>
@@ -642,7 +642,7 @@ export const DashboardPage: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 + i * 0.08 }}
               onClick={item.action}
-              className="glass-card p-5 text-right hover:border-white/[0.12] transition-all duration-300 group cursor-pointer"
+              className="glass-card p-5 text-start hover:border-white/[0.12] transition-all duration-300 group cursor-pointer"
             >
               <div
                 className={`w-11 h-11 rounded-xl mb-3 flex items-center justify-center transition-transform duration-300 group-hover:scale-105 ${
@@ -678,7 +678,7 @@ export const DashboardPage: React.FC = () => {
           title={`تخصيص القالب — ${selectedTemplateForConfirm.name} 🎬`}
           size="md"
         >
-          <div className="space-y-4 text-right">
+          <div className="space-y-4 text-start">
             <div className="relative h-28 rounded-2xl overflow-hidden border border-white/10 shadow-md">
               <img
                 src={selectedTemplateForConfirm.backgroundUrl}

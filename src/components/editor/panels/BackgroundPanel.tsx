@@ -111,8 +111,8 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
           <span>مطابقة تلقائية لسياق الآية ✨</span>
         </button>
 
-        <div className="text-right">
-          <div className="text-xs font-bold text-white flex items-center justify-end gap-1">
+        <div className="text-start">
+          <div className="text-xs font-bold text-white flex items-center justify-start gap-1">
             <span>الذكاء القرآني للسياق</span>
             <Sparkles size={13} className="text-gold-400" />
           </div>
@@ -380,7 +380,7 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
                 setTextSettings((s) => ({ ...s, cameraMotion: motionItem.id as TextSettings['cameraMotion'] }));
                 addToast({ message: `تم تفعيل ${motionItem.label} 🎬`, type: 'success' });
               }}
-              className={`p-2 rounded-xl border text-right transition-all cursor-pointer flex items-center gap-2 ${
+              className={`p-2 rounded-xl border text-start transition-all cursor-pointer flex items-center gap-2 ${
                 (textSettings.cameraMotion ?? 'none') === motionItem.id
                   ? 'bg-sky-500/20 border-sky-400 shadow-md shadow-sky-500/10 text-white font-bold'
                   : 'bg-surface-900/80 border-white/[0.06] text-white/50 hover:text-white hover:bg-surface-800/60'

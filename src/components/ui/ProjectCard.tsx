@@ -161,7 +161,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = React.memo(
         onClick={isSelectionMode ? handleCardClick : undefined}
       >
         {/* Selection Checkbox (always visible when selected or in selection mode, visible on hover otherwise) */}
-        <div className="absolute top-3 right-3 z-30">
+        <div className="absolute top-3 end-3 z-30">
           <button
             type="button"
             onClick={(e) => {
@@ -223,7 +223,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = React.memo(
           <div className="absolute inset-0 bg-gradient-to-t from-surface-900/90 via-transparent to-transparent pointer-events-none" />
 
           {/* Status badge */}
-          <div className="absolute top-3 left-3 z-10">
+          <div className="absolute top-3 start-3 z-10">
             <span
               className={`text-[11px] px-2.5 py-1 rounded-lg font-medium backdrop-blur-sm shadow-sm ${getStatusColor(project.status)}`}
             >

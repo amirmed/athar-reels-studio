@@ -291,7 +291,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
       <div className="p-6 max-w-7xl mx-auto space-y-6">
         {/* Top Preset Templates Carousel */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-          <span className="text-xs font-bold text-white/50 shrink-0 ml-2">القوالب الجاهزة:</span>
+          <span className="text-xs font-bold text-white/50 shrink-0 ms-2">القوالب الجاهزة:</span>
           {quotePresetTemplates.map((tpl) => (
             <button
               key={tpl.id}
@@ -583,7 +583,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
                   </div>
 
                   {/* List of Quotes */}
-                  <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1 custom-scrollbar">
+                  <div className="space-y-1.5 max-h-56 overflow-y-auto pe-1 custom-scrollbar">
                     {CURATED_QUOTES.filter(
                       (q) => quoteCategoryFilter === 'all' || q.category === quoteCategoryFilter
                     ).map((item) => (
@@ -964,7 +964,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
                             onClick={() =>
                               setSettings((s) => ({ ...s, ornamentStyle: orn.id as OrnamentStyle }))
                             }
-                            className={`p-3 rounded-xl text-xs font-bold text-right border transition-all ${
+                            className={`p-3 rounded-xl text-xs font-bold text-start border transition-all ${
                               settings.ornamentStyle === orn.id
                                 ? 'bg-accent-500/20 border-accent-400 text-white'
                                 : 'bg-surface-800/60 border-white/[0.04] text-white/60 hover:text-white'

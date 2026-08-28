@@ -42,7 +42,7 @@ export const QuranPlaylistModal: React.FC<QuranPlaylistModalProps> = ({
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`p-3 rounded-2xl border text-right transition-all flex flex-col justify-between cursor-pointer ${
+              className={`p-3 rounded-2xl border text-start transition-all flex flex-col justify-between cursor-pointer ${
                 activeCategory === cat.id
                   ? 'bg-surface-800 border-gold-400/60 shadow-lg shadow-gold-500/10 -translate-y-0.5'
                   : 'bg-surface-950/60 border-white/[0.06] text-white/50 hover:text-white hover:bg-surface-800/50'
@@ -74,13 +74,13 @@ export const QuranPlaylistModal: React.FC<QuranPlaylistModalProps> = ({
         {/* Category Description Banner */}
         <div className="p-3 rounded-xl bg-surface-950/70 border border-white/[0.06] flex items-center justify-between text-xs text-white/60">
           <span>{currentCategoryMeta.description}</span>
-          <span className="font-bold text-gold-400 shrink-0 mr-2">
+          <span className="font-bold text-gold-400 shrink-0 ms-2">
             {filteredPlaylists.length} مقاطع مختارة ✦
           </span>
         </div>
 
         {/* Playlist Cards List */}
-        <div className="max-h-[50vh] overflow-y-auto space-y-2.5 pr-1 custom-scrollbar">
+        <div className="max-h-[50vh] overflow-y-auto space-y-2.5 pe-1 custom-scrollbar">
           {filteredPlaylists.map((item) => (
             <motion.div
               key={item.id}

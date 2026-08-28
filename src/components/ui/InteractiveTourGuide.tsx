@@ -266,7 +266,7 @@ export const InteractiveTourGuide: React.FC = () => {
         exit={{ opacity: 0, scale: 0.92, y: 8 }}
         transition={{ duration: 0.25 }}
         style={getTooltipStyle()}
-        className="w-[360px] max-w-[calc(100vw-32px)] rounded-3xl bg-surface-900/98 border border-gold-500/40 p-5 shadow-2xl backdrop-blur-2xl text-right z-20 pointer-events-auto"
+        className="w-[360px] max-w-[calc(100vw-32px)] rounded-3xl bg-surface-900/98 border border-gold-500/40 p-5 shadow-2xl backdrop-blur-2xl text-start z-20 pointer-events-auto"
       >
         {/* Header: Icon & Step Indicator & Close */}
         <div className="flex items-center justify-between mb-3">

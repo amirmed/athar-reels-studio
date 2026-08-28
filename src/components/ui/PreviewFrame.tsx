@@ -445,9 +445,9 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = React.memo(
                     const textAlign = textSettings?.textAlign || 'center';
                     const justifyClass =
                       textAlign === 'right'
-                        ? 'justify-start text-right'
+                        ? 'justify-start text-start'
                         : textAlign === 'left'
-                          ? 'justify-end text-left'
+                          ? 'justify-end text-end'
                           : 'justify-center text-center';
 
                     if (displayMode === 'continuous' && isSynced && ayahs.length > 1) {
@@ -481,7 +481,7 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = React.memo(
                                 }`}
                               >
                                 {a.text}
-                                <span className="text-[11px] text-gold-400/80 mr-1.5 font-sans">
+                                <span className="text-[11px] text-gold-400/80 ms-1.5 font-sans">
                                   ﴿{a.numberInSurah}﴾
                                 </span>
                               </span>
@@ -956,7 +956,7 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = React.memo(
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="absolute top-3 left-3 flex items-center gap-1"
+              className="absolute top-3 start-3 flex items-center gap-1"
             >
               <div className="flex items-end gap-[2px] h-3">
                 {[0, 1, 2].map((i) => (
@@ -1171,7 +1171,7 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = React.memo(
                   style={{ height: `${barHeight}px` }}
                 >
                   <div
-                    className="h-full transition-all duration-150 ease-linear rounded-r-full"
+                    className="h-full transition-all duration-150 ease-linear rounded-e-full"
                     style={{
                       width: `${Math.min(100, Math.max(0, overallProgress))}%`,
                       background:
@@ -1209,18 +1209,18 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = React.memo(
             <div
               className={`absolute z-30 flex pointer-events-none transition-all duration-300 ${
                 textSettings?.watermarkPosition === 'topLeft'
-                  ? 'top-3 left-4 justify-start text-left'
+                  ? 'top-3 start-4 justify-start text-start'
                   : textSettings?.watermarkPosition === 'top'
-                    ? 'top-3 left-0 right-0 justify-center text-center'
+                    ? 'top-3 inset-x-0 justify-center text-center'
                     : textSettings?.watermarkPosition === 'topRight'
-                      ? 'top-3 right-4 justify-end text-right'
+                      ? 'top-3 end-4 justify-end text-end'
                       : textSettings?.watermarkPosition === 'bottomLeft'
-                        ? 'bottom-3 left-4 justify-start text-left'
+                        ? 'bottom-3 start-4 justify-start text-start'
                         : textSettings?.watermarkPosition === 'bottomRight'
-                          ? 'bottom-3 right-4 justify-end text-right'
+                          ? 'bottom-3 end-4 justify-end text-end'
                           : textSettings?.watermarkPosition === 'center'
-                            ? 'top-1/2 left-0 right-0 -translate-y-1/2 justify-center text-center'
-                            : 'bottom-3 left-0 right-0 justify-center text-center'
+                            ? 'top-1/2 inset-x-0 -translate-y-1/2 justify-center text-center'
+                            : 'bottom-3 inset-x-0 justify-center text-center'
               }`}
             >
               <motion.div

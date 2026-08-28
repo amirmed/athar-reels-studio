@@ -67,14 +67,14 @@ export const PresetTemplatesModal: React.FC<PresetTemplatesModalProps> = ({
                   <div className="absolute inset-0 bg-gradient-to-t from-surface-950 via-surface-950/30 to-transparent" />
 
                   {/* Tag Badge */}
-                  <div className="absolute top-2.5 right-2.5">
+                  <div className="absolute top-2.5 end-2.5">
                     <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white shadow-sm">
                       {tpl.tag}
                     </span>
                   </div>
 
                   {/* Icon */}
-                  <div className="absolute bottom-2 right-3 text-2xl drop-shadow-md">
+                  <div className="absolute bottom-2 start-3 text-2xl drop-shadow-md">
                     {tpl.icon}
                   </div>
                 </div>

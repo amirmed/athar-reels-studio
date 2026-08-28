@@ -187,7 +187,7 @@ export const AnimatedQuoteModal: React.FC<AnimatedQuoteModalProps> = ({
               />
 
               {/* Live Preview Badge */}
-              <div className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full bg-black/70 backdrop-blur-md border border-white/10 text-[10px] font-bold text-gold-300 flex items-center gap-1">
+              <div className="absolute top-2.5 end-2.5 px-2 py-0.5 rounded-full bg-black/70 backdrop-blur-md border border-white/10 text-[10px] font-bold text-gold-300 flex items-center gap-1">
                 <Sparkles size={10} className="text-gold-400 animate-pulse" />
                 <span>معاينة حية 60 FPS</span>
               </div>
@@ -214,7 +214,7 @@ export const AnimatedQuoteModal: React.FC<AnimatedQuoteModalProps> = ({
                       key={st.id}
                       type="button"
                       onClick={() => setMotionStyle(st.id)}
-                      className={`p-3 rounded-2xl border text-right transition-all flex flex-col justify-between ${
+                      className={`p-3 rounded-2xl border text-start transition-all flex flex-col justify-between ${
                         isSelected
                           ? 'bg-gradient-to-r from-gold-500/20 to-amber-500/20 border-gold-400 shadow-md shadow-gold-500/10'
                           : 'bg-surface-950/60 border-white/[0.08] hover:border-white/20'

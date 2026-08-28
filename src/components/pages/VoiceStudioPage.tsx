@@ -775,7 +775,7 @@ export const VoiceStudioPage: React.FC = () => {
                   step={0.05}
                   value={scrollSpeed}
                   onChange={(e) => setScrollSpeed(Number(e.target.value))}
-                  className="w-16 accent-gold-400 cursor-pointer ml-1"
+                  className="w-16 accent-gold-400 cursor-pointer ms-1"
                   title={`السرعة: ${Math.round(scrollSpeed * 100)}%`}
                 />
               </div>
@@ -1117,7 +1117,7 @@ export const VoiceStudioPage: React.FC = () => {
         {/* ======================================================== */}
         {/* RIGHT COLUMN: استوديو التسجيل وهندسة الصوت (Audio Control Deck) */}
         {/* ======================================================== */}
-        <div className="w-full lg:w-[420px] h-full max-h-full flex flex-col gap-3 shrink-0 overflow-y-auto custom-scrollbar pb-16 pr-1">
+        <div className="w-full lg:w-[420px] h-full max-h-full flex flex-col gap-3 shrink-0 overflow-y-auto custom-scrollbar pb-16 pe-1">
           {/* 1. Live Recording & VU Deck */}
           <div className="p-5 rounded-3xl bg-surface-900/95 border border-gold-500/30 shadow-2xl relative overflow-hidden text-center space-y-3 shrink-0">
             <div className="flex items-center justify-between text-xs font-bold text-white/70">
@@ -1230,7 +1230,7 @@ export const VoiceStudioPage: React.FC = () => {
                   onClick={handleTogglePreview}
                   className="w-10 h-10 rounded-xl bg-gradient-to-r from-gold-400 to-amber-500 text-surface-950 flex items-center justify-center font-bold shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer shrink-0"
                 >
-                  {isPlayingPreview ? <Pause size={18} /> : <Play size={18} className="mr-0.5" />}
+                  {isPlayingPreview ? <Pause size={18} /> : <Play size={18} className="me-0.5" />}
                 </button>
 
                 <div className="flex-1 min-w-0">
@@ -1309,7 +1309,7 @@ export const VoiceStudioPage: React.FC = () => {
                         });
                       }
                     }}
-                    className={`p-2 rounded-xl text-right transition-all cursor-pointer border flex items-center gap-1.5 ${
+                    className={`p-2 rounded-xl text-start transition-all cursor-pointer border flex items-center gap-1.5 ${
                       isSelected
                         ? 'bg-purple-500/20 border-purple-400 text-white font-bold shadow-sm'
                         : 'bg-surface-950/60 border-white/[0.04] text-white/60 hover:text-white'
@@ -1487,7 +1487,7 @@ export const VoiceStudioPage: React.FC = () => {
                         key={st.id}
                         type="button"
                         onClick={() => setEightDStyle(st.id as Spatial8DStyle)}
-                        className={`p-2 rounded-xl text-xs font-bold border transition-all text-right cursor-pointer ${
+                        className={`p-2 rounded-xl text-xs font-bold border transition-all text-start cursor-pointer ${
                           eightDStyle === st.id
                             ? 'bg-gold-500/20 border-gold-400 text-white shadow-sm'
                             : 'bg-surface-950/60 border-white/[0.04] text-white/60 hover:text-white'
@@ -1555,13 +1555,13 @@ export const VoiceStudioPage: React.FC = () => {
                         proceduralAmbientEngine.stop();
                       }
                     }}
-                    className={`p-2 rounded-xl text-right text-xs font-bold border transition-all cursor-pointer ${
+                    className={`p-2 rounded-xl text-start text-xs font-bold border transition-all cursor-pointer ${
                       isSelected
                         ? 'bg-sky-500/20 border-sky-400 text-white'
                         : 'bg-surface-950/60 border-white/[0.04] text-white/60 hover:text-white'
                     }`}
                   >
-                    <span className="mr-1">{snd.icon}</span>
+                    <span className="me-1">{snd.icon}</span>
                     <span>{snd.name}</span>
                   </button>
                 );

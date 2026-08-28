@@ -215,8 +215,8 @@ export const AzkarStudioPage: React.FC = () => {
       <div className="p-6 max-w-7xl mx-auto space-y-6">
         {/* Search & Hero Header */}
         <div className="relative rounded-3xl bg-gradient-to-r from-surface-900 via-surface-800 to-surface-900 border border-white/[0.08] p-6 shadow-2xl overflow-hidden">
-          <div className="absolute -top-12 -left-12 w-64 h-64 bg-accent-500/10 rounded-full blur-[80px]" />
-          <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-gold-500/10 rounded-full blur-[80px]" />
+          <div className="absolute -top-12 -start-12 w-64 h-64 bg-accent-500/10 rounded-full blur-[80px]" />
+          <div className="absolute -bottom-12 -end-12 w-64 h-64 bg-gold-500/10 rounded-full blur-[80px]" />
 
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-4">
             <div>
@@ -242,9 +242,9 @@ export const AzkarStudioPage: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
                 placeholder="ابحث عن دعاء، حديث، أو ذكر..."
-                className="glass-input w-full pr-10 pl-4 py-2.5 text-xs rounded-xl"
+                className="glass-input w-full ps-10 pe-4 py-2.5 text-xs rounded-xl"
               />
-              <Search size={16} className="absolute right-3 top-3 text-white/40" />
+              <Search size={16} className="absolute start-3 top-3 text-white/40" />
             </div>
           </div>
         </div>
@@ -316,7 +316,7 @@ export const AzkarStudioPage: React.FC = () => {
                     </div>
 
                     {/* Arabic Text */}
-                    <div className="p-4 rounded-xl bg-surface-950/60 border border-white/[0.03] mb-3 text-right">
+                    <div className="p-4 rounded-xl bg-surface-950/60 border border-white/[0.03] mb-3 text-start">
                       <p className="quran-text text-lg leading-[2.2] text-white/95 font-medium select-text">
                         {item.arabicText}
                       </p>

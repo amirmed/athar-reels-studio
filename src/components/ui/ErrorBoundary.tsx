@@ -73,7 +73,7 @@ ${errorInfo?.componentStack || 'No component stack'}
 
       return (
         <div
-          className="min-h-screen w-screen flex items-center justify-center bg-surface-950 p-6 text-right select-none font-sans"
+          className="min-h-screen w-screen flex items-center justify-center bg-surface-950 p-6 text-start select-none font-sans"
           dir="rtl"
         >
           {/* Ambient Glow */}

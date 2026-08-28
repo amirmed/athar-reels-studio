@@ -86,7 +86,7 @@ export const WelcomePage: React.FC = () => {
   ];
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-surface-950 overflow-y-auto text-right select-none">
+    <div className="h-screen w-screen flex flex-col bg-surface-950 overflow-y-auto text-start select-none">
       {/* Background Ambient Atmosphere */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-gradient-to-b from-accent-500/10 via-surface-900/10 to-transparent rounded-full blur-[90px]" />
@@ -243,7 +243,7 @@ export const WelcomePage: React.FC = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="mt-6 p-5 rounded-2xl bg-surface-900 border border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-right"
+          className="mt-6 p-5 rounded-2xl bg-surface-900 border border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-start"
         >
           <div>
             <h4 className="text-sm font-bold text-white">جاهز لنشر آيات الله وإحياء أثرك؟</h4>

@@ -102,7 +102,7 @@ export const Topbar: React.FC<TopbarProps> = ({
             type="button"
             onClick={onOpenSearch}
             aria-label={t('topbar.globalSearch', 'فتح البحث في السور والقراء')}
-            className="flex items-center gap-2 bg-surface-800/40 border border-white/[0.06] hover:border-gold-400/40 rounded-xl px-3 py-2 w-56 hover:bg-surface-800/70 transition-all cursor-pointer group shadow-sm active:scale-95 text-right"
+            className="flex items-center gap-2 bg-surface-800/40 border border-white/[0.06] hover:border-gold-400/40 rounded-xl px-3 py-2 w-56 hover:bg-surface-800/70 transition-all cursor-pointer group shadow-sm active:scale-95 text-start"
           >
             <Search
               size={15}
@@ -111,7 +111,7 @@ export const Topbar: React.FC<TopbarProps> = ({
             <span className="text-xs text-white/50 group-hover:text-white/80 transition-colors font-medium truncate">
               {t('topbar.searchPlaceholder', 'بحث في السور، القراء...')}
             </span>
-            <div className="mr-auto flex items-center gap-1 bg-surface-700/60 border border-white/[0.08] rounded-md px-1.5 py-0.5 shrink-0">
+            <div className="ms-auto flex items-center gap-1 bg-surface-700/60 border border-white/[0.08] rounded-md px-1.5 py-0.5 shrink-0">
               <span className="text-[11px] text-white/50 font-bold">Ctrl+K</span>
             </div>
           </button>
@@ -168,7 +168,7 @@ export const Topbar: React.FC<TopbarProps> = ({
           >
             <Bell size={16} />
             {unreadExportsCount > 0 && (
-              <span className="absolute -top-0.5 -left-0.5 w-2.5 h-2.5 bg-accent-500 rounded-full border-2 border-surface-950 animate-pulse" />
+              <span className="absolute -top-0.5 -start-0.5 w-2.5 h-2.5 bg-accent-500 rounded-full border-2 border-surface-950 animate-pulse" />
             )}
           </button>
 
@@ -180,7 +180,7 @@ export const Topbar: React.FC<TopbarProps> = ({
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  className="absolute left-0 top-full mt-2 w-80 bg-surface-900 border border-white/[0.08] rounded-2xl shadow-2xl z-50 overflow-hidden text-right"
+                  className="absolute start-0 top-full mt-2 w-80 bg-surface-900 border border-white/[0.08] rounded-2xl shadow-2xl z-50 overflow-hidden text-start"
                 >
                   <div className="p-3.5 border-b border-white/[0.06] flex items-center justify-between">
                     <h3 className="text-xs font-bold text-white/90">الإشعارات والتنبيهات 🔔</h3>

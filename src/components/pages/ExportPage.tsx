@@ -366,7 +366,7 @@ export const ExportPage: React.FC = () => {
                       `}
                     >
                       {aspectRatio === opt.value && (
-                        <div className="absolute top-2 left-2 w-4 h-4 bg-accent-500 rounded-full flex items-center justify-center">
+                        <div className="absolute top-2 start-2 w-4 h-4 bg-accent-500 rounded-full flex items-center justify-center">
                           <Check size={10} className="text-white" />
                         </div>
                       )}
@@ -396,7 +396,7 @@ export const ExportPage: React.FC = () => {
                       onClick={() => setQuality(opt.value)}
                       disabled={isExporting}
                       className={`
-                        w-full flex items-center gap-3 p-3.5 rounded-xl border text-right transition-all duration-200 cursor-pointer
+                        w-full flex items-center gap-3 p-3.5 rounded-xl border text-start transition-all duration-200 cursor-pointer
                         ${
                           quality === opt.value
                             ? 'bg-accent-500/10 border-accent-500/30'
@@ -419,7 +419,7 @@ export const ExportPage: React.FC = () => {
                           className={`text-sm font-bold block ${quality === opt.value ? 'text-accent-400' : 'text-white/80'}`}
                         >
                           {opt.label}
-                          <span className="text-xs text-white/40 mr-2">{opt.sublabel}</span>
+                          <span className="text-xs text-white/40 me-2">{opt.sublabel}</span>
                         </span>
                         <span className="text-xs text-white/50 block mt-0.5">{opt.desc}</span>
                       </div>

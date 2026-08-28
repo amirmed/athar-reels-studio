@@ -281,13 +281,13 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
                 ? 'ابحث عن فيديو: مكة، طواف، مطر، نجوم، بحر، شلال، rain, stars, mecca...'
                 : 'ابحث عن صورة: مساجد، مكة، كعبة، مطر، هلال، mosque، moon...'
             }
-            className="glass-input w-full pr-9 pl-8 py-2 text-xs rounded-xl no-drag select-text cursor-text relative z-10"
+            className="glass-input w-full ps-9 pe-8 py-2 text-xs rounded-xl no-drag select-text cursor-text relative z-10"
           />
-          <Search size={14} className="absolute right-3 top-2.5 text-white/40" />
+          <Search size={14} className="absolute start-3 top-2.5 text-white/40" />
           {searchQuery && (
             <button
               onClick={handleClearSearch}
-              className="absolute left-2.5 top-2.5 text-white/40 hover:text-white cursor-pointer z-20"
+              className="absolute end-2.5 top-2.5 text-white/40 hover:text-white cursor-pointer z-20"
               title="مسح البحث"
             >
               <X size={13} />
@@ -362,7 +362,7 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
       </div>
 
       {/* Media Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[380px] overflow-y-auto pr-1">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[380px] overflow-y-auto pe-1">
         {isSearchingLive
           ? Array.from({ length: 6 }).map((_, idx) => (
               <div

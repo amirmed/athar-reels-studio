@@ -238,7 +238,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
   return (
     <AnimatePresence>
       <div
-        className="fixed inset-0 z-50 flex items-start justify-center pt-20 p-4 text-right select-none"
+        className="fixed inset-0 z-50 flex items-start justify-center pt-20 p-4 text-start select-none"
         role="dialog"
         aria-modal="true"
         aria-label="البحث الشامل والأوامر السريعة"
@@ -301,7 +301,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
                     key={item.id}
                     onClick={item.action}
                     onMouseEnter={() => setSelectedIndex(idx)}
-                    className={`w-full flex items-center justify-between p-3 rounded-2xl transition-all text-right ${
+                    className={`w-full flex items-center justify-between p-3 rounded-2xl transition-all text-start ${
                       isSelected
                         ? 'bg-gold-500/15 border border-gold-400/40 text-white shadow-sm'
                         : 'hover:bg-white/[0.04] border border-transparent text-white/80'

@@ -73,7 +73,7 @@ export const AutoReelModal: React.FC<AutoReelModalProps> = ({ isOpen, onClose })
       <div className="space-y-5">
         {/* Instant 1-Click Generator Hero Card */}
         <div className="p-5 rounded-2xl bg-gradient-to-r from-accent-500/20 via-surface-900 to-gold-500/20 border border-gold-400/30 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg shadow-black/40">
-          <div className="flex items-center gap-3.5 text-right">
+          <div className="flex items-center gap-3.5 text-start">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-gold-400 to-amber-500 flex items-center justify-center text-surface-950 shadow-md shadow-gold-500/20 shrink-0">
               <Zap size={24} />
             </div>
@@ -121,7 +121,7 @@ export const AutoReelModal: React.FC<AutoReelModalProps> = ({ isOpen, onClose })
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 max-h-[50vh] overflow-y-auto custom-scrollbar pr-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 max-h-[50vh] overflow-y-auto custom-scrollbar pe-1">
             {autoReelThemes.map((theme) => {
               const isGeneratingThis = generatingThemeId === theme.id;
 
@@ -142,13 +142,13 @@ export const AutoReelModal: React.FC<AutoReelModalProps> = ({ isOpen, onClose })
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
                     {/* Badges */}
-                    <div className="absolute top-2 right-2">
+                    <div className="absolute top-2 end-2">
                       <span className="text-[10px] px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-sm text-white/90 font-bold border border-white/[0.1]">
                         {theme.badge}
                       </span>
                     </div>
 
-                    <div className="absolute bottom-2 right-2 left-2 flex items-center justify-between">
+                    <div className="absolute bottom-2 inset-x-2 flex items-center justify-between">
                       <span className="text-xl">{theme.icon}</span>
                       <span className="text-[10px] px-1.5 py-0.5 rounded bg-black/70 text-gold-300 font-mono">
                         {theme.contentType === 'quran' ? theme.surahName : theme.customTitle}

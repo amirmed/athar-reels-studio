@@ -175,7 +175,7 @@ export const PublishKitModal: React.FC<PublishKitModalProps> = ({
       title="عدة النشر السريع وسجل القناة (Publish Kit) 🚀"
       size="lg"
     >
-      <div className="space-y-5 text-right font-sans" dir="rtl">
+      <div className="space-y-5 text-start font-sans" dir="rtl">
         {/* Navigation Tabs */}
         <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
           <div className="flex items-center gap-2">
@@ -234,7 +234,7 @@ export const PublishKitModal: React.FC<PublishKitModalProps> = ({
                     key={p.id}
                     type="button"
                     onClick={() => handleOpenPlatform(p.id, p.url, p.name)}
-                    className={`p-3 rounded-2xl bg-gradient-to-br ${p.color} border transition-all text-right group cursor-pointer hover:scale-[1.02] shadow-sm flex items-center justify-between`}
+                    className={`p-3 rounded-2xl bg-gradient-to-br ${p.color} border transition-all text-start group cursor-pointer hover:scale-[1.02] shadow-sm flex items-center justify-between`}
                   >
                     <div className="flex items-center gap-2.5">
                       <span className="text-xl shrink-0">{p.icon}</span>

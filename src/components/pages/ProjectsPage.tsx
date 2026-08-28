@@ -188,14 +188,14 @@ export const ProjectsPage: React.FC = () => {
             <div className="relative">
               <Search
                 size={15}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30"
+                className="absolute start-3 top-1/2 -translate-y-1/2 text-white/30"
               />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="بحث في المشاريع..."
-                className="glass-input pr-9 w-64 text-sm"
+                className="glass-input ps-9 w-64 text-sm"
               />
             </div>
 

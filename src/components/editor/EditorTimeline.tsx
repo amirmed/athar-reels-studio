@@ -211,7 +211,7 @@ export const EditorTimeline: React.FC<EditorTimelineProps> = React.memo(
 
                       {/* Word segments mini progress bar inside active block */}
                       {isActive && (
-                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gold-400/20">
+                        <div className="absolute bottom-0 inset-x-0 h-1 bg-gold-400/20">
                           <div
                             style={{ width: `${(audioCurrentTime / (seg.duration || 1)) * 100}%` }}
                             className="h-full bg-gold-400 rounded-full transition-all duration-75"

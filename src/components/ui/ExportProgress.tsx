@@ -128,7 +128,7 @@ export const ExportProgress: React.FC<ExportProgressProps> = ({
                   }`}
                 />
               </div>
-              <p className="text-[11px] text-white/30 mt-1 text-left font-mono">{job.progress}%</p>
+              <p className="text-[11px] text-white/30 mt-1 text-end font-mono">{job.progress}%</p>
             </div>
           )}
 

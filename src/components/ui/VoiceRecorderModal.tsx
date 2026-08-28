@@ -353,7 +353,7 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
                       onClick={handleTogglePreview}
                       className="w-10 h-10 rounded-xl bg-gradient-to-r from-gold-400 to-amber-500 text-surface-950 flex items-center justify-center font-bold shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer shrink-0"
                     >
-                      {isPlaying ? <Pause size={18} /> : <Play size={18} className="mr-0.5" />}
+                      {isPlaying ? <Pause size={18} /> : <Play size={18} className="me-0.5" />}
                     </button>
                     <div>
                       <span className="text-xs font-bold text-white block">
@@ -402,7 +402,7 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
                               });
                             }
                           }}
-                          className={`p-2.5 rounded-xl border text-right transition-all cursor-pointer flex flex-col justify-between ${
+                          className={`p-2.5 rounded-xl border text-start transition-all cursor-pointer flex flex-col justify-between ${
                             isSelected
                               ? 'bg-gold-500/20 border-gold-400 text-white shadow-md'
                               : 'bg-surface-950/60 border-white/[0.06] text-white/60 hover:text-white'
@@ -453,7 +453,7 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
                     <button
                       type="button"
                       onClick={() => setEnableNoiseGate(!enableNoiseGate)}
-                      className={`p-2.5 rounded-xl border text-right transition-all cursor-pointer flex items-center justify-between ${
+                      className={`p-2.5 rounded-xl border text-start transition-all cursor-pointer flex items-center justify-between ${
                         enableNoiseGate
                           ? 'bg-emerald-500/20 border-emerald-400 text-white'
                           : 'bg-surface-950/60 border-white/[0.06] text-white/40'
@@ -470,7 +470,7 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
                     <button
                       type="button"
                       onClick={() => setEnableClarity(!enableClarity)}
-                      className={`p-2.5 rounded-xl border text-right transition-all cursor-pointer flex items-center justify-between ${
+                      className={`p-2.5 rounded-xl border text-start transition-all cursor-pointer flex items-center justify-between ${
                         enableClarity
                           ? 'bg-emerald-500/20 border-emerald-400 text-white'
                           : 'bg-surface-950/60 border-white/[0.06] text-white/40'
@@ -487,7 +487,7 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
                     <button
                       type="button"
                       onClick={() => setEnableWarmth(!enableWarmth)}
-                      className={`p-2.5 rounded-xl border text-right transition-all cursor-pointer flex items-center justify-between ${
+                      className={`p-2.5 rounded-xl border text-start transition-all cursor-pointer flex items-center justify-between ${
                         enableWarmth
                           ? 'bg-emerald-500/20 border-emerald-400 text-white'
                           : 'bg-surface-950/60 border-white/[0.06] text-white/40'

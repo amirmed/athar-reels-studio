@@ -185,7 +185,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
             </div>
 
             {/* Live Font Cards Grid */}
-            <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
+            <div className="space-y-2 max-h-[300px] overflow-y-auto pe-1 custom-scrollbar">
               {filteredFonts.map((font) => {
                 const isSelected = (textSettings.fontFamily || 'Amiri') === font.id;
                 return (
@@ -214,7 +214,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                     </div>
 
                     <div
-                      className="text-right text-base leading-relaxed py-1 transition-all select-none"
+                      className="text-start text-base leading-relaxed py-1 transition-all select-none"
                       style={{
                         fontFamily: font.googleFontFamily,
                         color: isSelected ? '#fbbf24' : '#e2e8f0',
@@ -431,7 +431,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                   key={p.id}
                   type="button"
                   onClick={() => applyPreset(p)}
-                  className="p-2 rounded-xl bg-surface-950/80 hover:bg-surface-800 border border-white/[0.06] hover:border-gold-400/40 text-right transition-all cursor-pointer flex items-center gap-2 group"
+                  className="p-2 rounded-xl bg-surface-950/80 hover:bg-surface-800 border border-white/[0.06] hover:border-gold-400/40 text-start transition-all cursor-pointer flex items-center gap-2 group"
                 >
                   <span className="text-base shrink-0">{p.icon}</span>
                   <div className="min-w-0 flex-1">
@@ -710,7 +710,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                     }));
                     addToast({ message: `تم تفعيل تأثير «${anim.label}» 🎬`, type: 'info' });
                   }}
-                  className={`p-2.5 rounded-xl border text-right transition-all cursor-pointer flex items-start gap-2 ${
+                  className={`p-2.5 rounded-xl border text-start transition-all cursor-pointer flex items-start gap-2 ${
                     (textSettings.textAnimation || 'wordByWord') === anim.id
                       ? 'bg-sky-500/20 border-sky-400 text-white font-bold shadow-md'
                       : 'bg-surface-950 border-white/[0.06] text-white/50 hover:text-white'
