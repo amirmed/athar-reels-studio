@@ -63,6 +63,7 @@ export const EditorPage: React.FC = () => {
   const updateProject = useAppStore((s) => s.updateProject);
   const addToast = useAppStore((s) => s.addToast);
   const settings = useAppStore((s) => s.settings);
+  const activeModal = useAppStore((s) => s.activeModal);
 
   // Active Tool Dock Tab & Inspector visibility
   const [activeDockTab, setActiveDockTab] = useState<DockTabType>('reciter');
@@ -188,9 +189,23 @@ export const EditorPage: React.FC = () => {
     }
   }, []);
 
+  const isAnyModalOpen = Boolean(
+    activeModal ||
+      isReciterModalOpen ||
+      isPresetModalOpen ||
+      isViralCaptionOpen ||
+      isThumbnailModalOpen ||
+      isPlaylistModalOpen ||
+      isIslamicEventsModalOpen ||
+      isVoiceRecorderOpen ||
+      isClipLibraryOpen ||
+      isKeyboardModalOpen ||
+      isWaveformTimingModalOpen
+  );
+
   const { pushState, undo, redo, canUndo, canRedo } = useEditorHistory({
     onApplySnapshot: handleApplySnapshot,
-    enabled: true,
+    enabled: !isAnyModalOpen,
   });
 
   // Push state snapshot on changes

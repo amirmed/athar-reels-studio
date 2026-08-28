@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AyahData, splitAyahIntoWaqfChunks } from '../../services/quranApi';
 import { QuranWord, AyahChunk } from '../../types';
+import { useHotkeys } from '../../hooks/useHotkeys';
 import {
   Play,
   Pause,
@@ -233,36 +234,9 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
   }, [historyIndex, history]);
 
   // Global Keyboard Shortcuts (Ctrl+Z / Ctrl+Y / Space)
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't trigger if typing in an input
-      if (
-        (e.target as HTMLElement)?.tagName === 'INPUT' ||
-        (e.target as HTMLElement)?.tagName === 'TEXTAREA'
-      ) {
-        return;
-      }
-
-      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === 'z') {
-        e.preventDefault();
-        handleUndo();
-      } else if (
-        ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') ||
-        ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'z')
-      ) {
-        e.preventDefault();
-        handleRedo();
-      } else if (e.code === 'Space') {
-        e.preventDefault();
-        toggleGlobalPlay();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, handleUndo, handleRedo, isPlaying, currentTime, audioDuration]);
+  useHotkeys(['ctrl+z', 'meta+z'], handleUndo, { enabled: isOpen });
+  useHotkeys(['ctrl+y', 'meta+y', 'ctrl+shift+z', 'meta+shift+z'], handleRedo, { enabled: isOpen });
+  useHotkeys('Space', () => toggleGlobalPlay(), { enabled: isOpen });
 
   // Toggle Lock on a word
   const handleToggleLockWord = (wordId: number) => {

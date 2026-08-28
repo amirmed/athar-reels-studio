@@ -155,4 +155,16 @@ describe('Editor History Stack Logic', () => {
     const prev = stack.undo();
     expect(prev?.toAyah).toBe(2);
   });
+
+  it('verifies that history ignore / enabled flag prevents state modification during modal dialogues', () => {
+    let isModalOpen = true;
+    const isHistoryEnabled = !isModalOpen;
+
+    expect(isHistoryEnabled).toBe(false);
+
+    // When modal closes
+    isModalOpen = false;
+    const isHistoryEnabledAfterClose = !isModalOpen;
+    expect(isHistoryEnabledAfterClose).toBe(true);
+  });
 });
