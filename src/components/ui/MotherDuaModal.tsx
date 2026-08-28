@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   Heart,
   X,
@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { useHotkeys } from '../../hooks/useHotkeys';
+import { Modal } from './Modal';
 
 interface MotherDuaModalProps {
   isOpen: boolean;
@@ -307,39 +308,24 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
   };
 
   return (
-    <AnimatePresence>
-      <div
-        className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 text-start select-none"
-        role="dialog"
-        aria-modal="true"
-        aria-label="ركن بر الوالدين وبطاقات الإهداء"
-      >
-        {/* Backdrop */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="lg"
+      className="border border-gold-400/35 rounded-3xl shadow-2xl shadow-gold-500/10 overflow-hidden"
+      bodyClassName="p-0 flex flex-col max-h-[92vh]"
+    >
+      {/* Header & Tabs */}
+      <div className="relative px-5 pt-5 pb-3 bg-gradient-to-b from-gold-500/20 via-surface-900 to-surface-900 border-b border-gold-400/20 text-center">
+        {/* Close Button */}
+        <button
+          type="button"
           onClick={onClose}
-          className="absolute inset-0 bg-black/85 backdrop-blur-md"
-        />
-
-        {/* Modal Window */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.94, y: 15 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.94, y: 15 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="relative w-full max-w-2xl bg-surface-900 border border-gold-400/35 rounded-3xl shadow-2xl shadow-gold-500/10 overflow-hidden flex flex-col max-h-[92vh]"
+          aria-label="إغلاق النافذة"
+          className="absolute start-4 top-4 w-9 h-9 rounded-full bg-surface-800/80 hover:bg-surface-700 text-white/60 hover:text-white flex items-center justify-center transition-all border border-white/[0.06] cursor-pointer"
         >
-          {/* Header & Tabs */}
-          <div className="relative px-5 pt-5 pb-3 bg-gradient-to-b from-gold-500/20 via-surface-900 to-surface-900 border-b border-gold-400/20 text-center">
-            {/* Close Button */}
-            <button
-              onClick={onClose}
-              className="absolute start-4 top-4 w-9 h-9 rounded-full bg-surface-800/80 hover:bg-surface-700 text-white/60 hover:text-white flex items-center justify-center transition-all border border-white/[0.06] cursor-pointer"
-            >
-              <X size={18} />
-            </button>
+          <X size={18} />
+        </button>
 
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-gold-500/30 to-amber-400/20 border border-gold-400/40 flex items-center justify-center mx-auto mb-2 shadow-md">
               <Heart size={24} className="text-rose-400 fill-rose-400/30 animate-pulse" />
@@ -625,8 +611,6 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
               </div>
             )}
           </div>
-        </motion.div>
-      </div>
-    </AnimatePresence>
+    </Modal>
   );
 };

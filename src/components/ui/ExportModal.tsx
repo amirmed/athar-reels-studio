@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import {
-  X,
   Download,
   CheckCircle2,
   AlertCircle,
@@ -16,6 +15,7 @@ import {
   RotateCcw,
   Eye,
 } from 'lucide-react';
+import { Modal } from './Modal';
 import { ThumbnailModal } from './ThumbnailModal';
 import { PublishKitModal } from './PublishKitModal';
 import { renderVideoExportFrame } from '../../services/videoFrameRenderer';
@@ -329,33 +329,17 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
   useHotkeys('Escape', onClose, { enabled: isOpen && status !== 'exporting' });
 
-  if (!isOpen) return null;
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in"
-      role="dialog"
-      aria-modal="true"
-      aria-label="تصدير الفيديو الذكي عالي الجودة"
-    >
-      <div className="relative w-full max-w-2xl bg-surface-900/95 border border-gold-500/30 rounded-3xl p-6 shadow-2xl space-y-5 text-start overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-white/10 pb-4">
-          <button
-            onClick={status === 'exporting' ? handleCancelExport : onClose}
-            className="p-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-all cursor-pointer"
-          >
-            <X size={18} />
-          </button>
-          <div className="flex items-center gap-2.5">
-            <h3 className="text-base font-bold text-white">
-              🚀 تصدير الفيديو الذكي (Studio Export)
-            </h3>
-            <div className="p-2 rounded-xl bg-gold-500/10 border border-gold-500/20 text-gold-400">
-              <Film size={18} />
-            </div>
-          </div>
-        </div>
+    <>
+      <Modal
+        isOpen={isOpen}
+        onClose={status === 'exporting' ? handleCancelExport : onClose}
+        size="lg"
+        title="🚀 تصدير الفيديو الذكي (Studio Export)"
+        headerIcon={<Film size={18} />}
+        closeOnBackdropClick={status !== 'exporting'}
+        bodyClassName="space-y-5 text-start"
+      >
 
         {/* Status === 'idle' (Platform Presets & 5.1 Live Preview) */}
         {status === 'idle' && (
@@ -687,7 +671,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             </button>
           </div>
         )}
-      </div>
+      </Modal>
 
       {showThumbnailModal && (
         <ThumbnailModal
@@ -750,6 +734,6 @@ export const ExportModal: React.FC<ExportModalProps> = ({
           ayahText={ayahs.map((a) => a.text).join(' ')}
         />
       )}
-    </div>
+    </>
   );
 };
