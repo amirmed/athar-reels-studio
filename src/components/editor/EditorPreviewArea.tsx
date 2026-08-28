@@ -471,7 +471,7 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
                 {isPlaying ? (
                   <Pause size={18} className="fill-black" />
                 ) : (
-                  <Play size={18} className="fill-black mr-[-2px]" />
+                  <Play size={18} className="fill-black -scale-x-100 ms-0.5" />
                 )}
               </button>
 

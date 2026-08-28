@@ -239,7 +239,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = React.memo(
                 className="w-12 h-12 rounded-full bg-accent-500/95 flex items-center justify-center shadow-xl shadow-accent-500/30 hover:scale-110 transition-transform duration-200 cursor-pointer"
                 title="فتح في المحرر"
               >
-                <Play size={20} className="text-white mr-[-2px]" fill="white" />
+                <Play size={20} className="text-white -scale-x-100 ms-0.5" fill="white" />
               </button>
             </div>
           )}
