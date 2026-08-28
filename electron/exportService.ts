@@ -2,11 +2,11 @@ import { ipcMain, dialog } from 'electron';
 import path from 'path';
 import fs from 'fs';
 import https from 'https';
-import http from 'http';
 import type { IncomingHttpHeaders } from 'http';
 import { createWriteStream } from 'fs';
 import { spawn } from 'child_process';
 import { buildAudioFilters, ExportAudioSettings } from '../src/services/audioDspFilters';
+import { isSafeUserPath, isSafeRemoteDownloadUrl } from './pathSecurity.js';
 
 let ffmpeg: any;
 let ffmpegBinaryPath = '';
@@ -203,6 +203,11 @@ function downloadFile(url: string, destPath: string, redirects = 0): Promise<Dow
       return;
     }
 
+    if (!isSafeRemoteDownloadUrl(url)) {
+      reject(new Error(`الرابط غير آمن أو محظور أمنياً: ${url}`));
+      return;
+    }
+
     let parsedUrl: URL;
     try {
       parsedUrl = new URL(url);
@@ -211,8 +216,7 @@ function downloadFile(url: string, destPath: string, redirects = 0): Promise<Dow
       return;
     }
 
-    const protocol = parsedUrl.protocol === 'https:' ? https : http;
-    const req = protocol.get(url, {
+    const req = https.get(parsedUrl, {
       headers: {
         'User-Agent': 'IslamicReelsStudio/1.0',
         Accept: '*/*',
@@ -223,7 +227,19 @@ function downloadFile(url: string, destPath: string, redirects = 0): Promise<Dow
 
       if (status >= 300 && status < 400 && location) {
         res.resume();
-        const nextUrl = new URL(location, url).toString();
+        let nextUrl: string;
+        try {
+          nextUrl = new URL(location, url).toString();
+        } catch {
+          reject(new Error(`رابط التحويل غير صالح: ${location}`));
+          return;
+        }
+
+        if (!isSafeRemoteDownloadUrl(nextUrl)) {
+          reject(new Error(`رابط التحويل غير آمن ومحظور: ${nextUrl}`));
+          return;
+        }
+
         downloadFile(nextUrl, destPath, redirects + 1).then(resolve, reject);
         return;
       }
@@ -852,7 +868,10 @@ export function setupExportHandlers(tempDir: string) {
       defaultPath: `${projectName}.mp4`,
       filters: [{ name: 'فيديو', extensions: ['mp4', 'mkv'] }],
     });
-    return result.filePath || null;
+    if (result.filePath && isSafeUserPath(result.filePath)) {
+      return result.filePath;
+    }
+    return null;
   });
 
   ipcMain.handle('export:cancel', async () => {
@@ -894,6 +913,15 @@ export function setupExportHandlers(tempDir: string) {
       } else {
         options.outputPath = resolved;
       }
+
+      // Security validation against unauthorized paths
+      if (!isSafeUserPath(options.outputPath)) {
+        return {
+          success: false,
+          error: `مسار حفظ الفيديو غير مصرح به أو خارج المجلدات المسموحة: ${options.outputPath}`,
+        };
+      }
+
       // Ensure target directory exists
       const targetDir = path.dirname(options.outputPath);
       if (!fs.existsSync(targetDir)) {
@@ -915,7 +943,14 @@ export function setupExportHandlers(tempDir: string) {
       const audioDurations: number[] = [];
       const isDataUrl = (u: string) => typeof u === 'string' && u.startsWith('data:');
       const isHttp = (u: string) => typeof u === 'string' && (u.startsWith('http://') || u.startsWith('https://'));
-      const isLocalFile = (u: string) => typeof u === 'string' && !u.startsWith('blob:') && fs.existsSync(u);
+      const isLocalFile = (u: string) =>
+        typeof u === 'string' &&
+        !u.startsWith('blob:') &&
+        !u.startsWith('http://') &&
+        !u.startsWith('https://') &&
+        !u.startsWith('data:') &&
+        fs.existsSync(u) &&
+        isSafeUserPath(u);
 
       const urls = (options.audioUrls || []).filter(u => u && typeof u === 'string' && (isHttp(u) || isDataUrl(u) || isLocalFile(u)));
 
@@ -990,12 +1025,12 @@ export function setupExportHandlers(tempDir: string) {
           }
           safeSendProgress(_event.sender, { phase: 'تم تحميل الخلفية', percent: 32 });
         } else {
-          if (fs.existsSync(bgPath)) {
+          if (fs.existsSync(bgPath) && isSafeUserPath(bgPath)) {
             localBgPath = bgPath;
             backgroundKind = backgroundKind || mediaKindFromFile(bgPath);
           } else {
-            console.warn('[Export] Background file does not exist:', bgPath);
-            throw new Error(`ملف الخلفية غير موجود: ${bgPath}`);
+            console.warn('[Export] Background file does not exist or unauthorized path:', bgPath);
+            throw new Error(`ملف الخلفية غير موجود أو مساره غير مصرح به: ${bgPath}`);
           }
         }
       }

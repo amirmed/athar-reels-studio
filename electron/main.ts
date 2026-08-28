@@ -1,8 +1,9 @@
-import { app, BrowserWindow, ipcMain, dialog, shell, Menu, nativeTheme } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog, shell, Menu, nativeTheme, session } from 'electron';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { setupExportHandlers } from './exportService.js';
+import { isSafeUserPath } from './pathSecurity.js';
 
 // ESM-compatible __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -50,47 +51,6 @@ function atomicWriteFileSync(filePath: string, content: string | Buffer) {
   fs.renameSync(tmpPath, filePath);
 }
 
-// Path validation helper against Path Traversal vulnerabilities
-function isSafeUserPath(targetPath: string): boolean {
-  if (!targetPath || typeof targetPath !== 'string') return false;
-  try {
-    const normalized = path.resolve(targetPath);
-    const normalizedLower = process.platform === 'win32' ? normalized.toLowerCase() : normalized;
-    const allowedRoots = [
-      getAppDataPath(),
-      app.getPath('userData'),
-      app.getPath('temp'),
-      app.getPath('videos'),
-      app.getPath('pictures'),
-      app.getPath('documents'),
-      app.getPath('downloads'),
-      app.getPath('desktop'),
-      app.getPath('home'),
-    ];
-
-    try {
-      const settingsFile = getSettingsPath();
-      if (fs.existsSync(settingsFile)) {
-        const parsed = JSON.parse(fs.readFileSync(settingsFile, 'utf8'));
-        if (parsed?.projectsPath && typeof parsed.projectsPath === 'string') {
-          allowedRoots.push(parsed.projectsPath);
-        }
-      }
-    } catch {
-      // Ignore settings read error
-    }
-
-    return allowedRoots.some(root => {
-      const resolvedRoot = path.resolve(root);
-      const rootLower = process.platform === 'win32' ? resolvedRoot.toLowerCase() : resolvedRoot;
-      const rootWithSep = rootLower.endsWith(path.sep) ? rootLower : rootLower + path.sep;
-      return normalizedLower === rootLower || normalizedLower.startsWith(rootWithSep);
-    });
-  } catch {
-    return false;
-  }
-}
-
 // Sanitize project ID to prevent directory traversal
 function sanitizeProjectId(id: any): string | null {
   if (!id || typeof id !== 'string') return null;
@@ -105,6 +65,14 @@ function createWindow() {
   // Force dark mode for the native title bar
   nativeTheme.themeSource = 'dark';
 
+  // Secure default session permissions: deny untrusted device/camera/microphone requests by default
+  session.defaultSession.setPermissionRequestHandler((_webContents, _permission, callback) => {
+    callback(false);
+  });
+  session.defaultSession.setPermissionCheckHandler(() => {
+    return false;
+  });
+
   mainWindow = new BrowserWindow({
     width: 1440,
     height: 900,
@@ -118,7 +86,7 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.cjs'),
       nodeIntegration: false,
       contextIsolation: true,
-      sandbox: false,
+      sandbox: true,
     },
   });
 
