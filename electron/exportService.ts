@@ -876,13 +876,28 @@ export function setupExportHandlers(tempDir: string) {
     }
 
     // Validate and sanitize output path
+    const cleanProjectName = (options.projectName || 'ayah_reel').replace(/[/\\?%*:|"<>]/g, '_').trim() || 'ayah_reel';
     if (!options.outputPath || typeof options.outputPath !== 'string') {
-      options.outputPath = path.join(tempDir, `ayah_reel_${Date.now()}.mp4`);
+      options.outputPath = path.join(tempDir, `${cleanProjectName}_${Date.now()}.mp4`);
     } else {
-      const resolved = path.resolve(options.outputPath);
+      let resolved = path.resolve(options.outputPath);
+      try {
+        if (fs.existsSync(resolved) && fs.statSync(resolved).isDirectory()) {
+          resolved = path.join(resolved, `${cleanProjectName}.mp4`);
+        }
+      } catch (err) {
+        console.debug('[Export] Output path stat check error:', err);
+      }
       const ext = path.extname(resolved).toLowerCase();
       if (!['.mp4', '.mkv', '.webm', '.mov'].includes(ext)) {
         options.outputPath = `${resolved}.mp4`;
+      } else {
+        options.outputPath = resolved;
+      }
+      // Ensure target directory exists
+      const targetDir = path.dirname(options.outputPath);
+      if (!fs.existsSync(targetDir)) {
+        fs.mkdirSync(targetDir, { recursive: true });
       }
     }
 

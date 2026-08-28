@@ -29,6 +29,7 @@ import {
 } from '../../types';
 import { isVideoMedia } from '../../utils/imageUtils';
 import { useHotkeys } from '../../hooks/useHotkeys';
+import { useAppStore } from '../../store/useAppStore';
 import {
   PLATFORM_PRESETS,
   exportProject,
@@ -249,6 +250,11 @@ export const ExportModal: React.FC<ExportModalProps> = ({
       Math.round((((activePreset.bitrate + 192_000) * totalDurationSec) / (8 * 1024 * 1024)) * 10) / 10;
     setEstimatedSizeMb(estMb);
 
+    const settings = useAppStore.getState().settings;
+    const preferredSavePath = settings?.projectsPath
+      ? `${settings.projectsPath.replace(/[/\\]+$/, '')}/${projectName.replace(/[/\\?%*:|"<>]/g, '-')}.mp4`
+      : undefined;
+
     try {
       const result = await exportProject({
         projectName,
@@ -269,6 +275,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         showTranslation,
         showTafsir,
         totalDuration,
+        savePathPref: preferredSavePath,
         signal: abortControllerRef.current.signal,
         onProgress: (evt) => {
           setProgress(evt.percent);
@@ -541,7 +548,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             </div>
 
             {/* Native Path or Download Blob Actions */}
-            {outputPath && window.electronAPI?.shell && (
+            {outputPath && (outputPath.includes('/') || outputPath.includes('\\')) && window.electronAPI?.shell && (
               <div className="space-y-2">
                 <div className="p-2.5 rounded-xl bg-surface-950/80 border border-surface-700/40 text-xs font-mono text-gold-300/90 truncate">
                   {outputPath}
@@ -567,7 +574,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               </div>
             )}
 
-            {downloadBlobUrl && !window.electronAPI?.shell && (
+            {downloadBlobUrl && (
               <div className="space-y-2">
                 <button
                   type="button"
@@ -600,7 +607,9 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                     // Web fallback
                     const a = document.createElement('a');
                     a.href = downloadBlobUrl;
-                    a.download = outputPath || 'ayah_video.mp4';
+                    a.download = (outputPath && !outputPath.includes('/') && !outputPath.includes('\\'))
+                      ? outputPath
+                      : `${projectName.replace(/[/\\?%*:|"<>]/g, '-')}.mp4`;
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
@@ -608,7 +617,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                   className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-surface-950 font-extrabold text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 active:scale-98 transition-all cursor-pointer"
                 >
                   <Download size={18} />
-                  <span>حفظ وتحميل ملف الفيديو (Save Video) 📥</span>
+                  <span>حفظ باسم / تحميل ملف الفيديو 📥</span>
                 </button>
               </div>
             )}

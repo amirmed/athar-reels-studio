@@ -176,8 +176,11 @@ export const ExportPage: React.FC = () => {
 
         if (result.success) {
           let savedPath: string | null = result.outputPath || null;
-          if (result.blob && !savedPath) {
-            savedPath = await saveVideoBlob(result.blob, currentProject.name);
+          if (result.blob && (!savedPath || (!savedPath.includes('/') && !savedPath.includes('\\')))) {
+            const preferredPath = settings?.projectsPath
+              ? `${settings.projectsPath.replace(/[/\\]+$/, '')}/${currentProject.name}.mp4`
+              : undefined;
+            savedPath = await saveVideoBlob(result.blob, currentProject.name, preferredPath);
           }
 
           const completedJob: ExportJob = {
@@ -583,12 +586,25 @@ async function saveVideoBlob(
   projectName: string,
   defaultPath?: string
 ): Promise<string | null> {
+  const isMp4 = blob.type.includes('mp4');
+  const ext = isMp4 ? 'mp4' : 'webm';
+  const cleanName = projectName.replace(/[/\\?%*:|"<>]/g, '-').trim() || 'ayah_video';
+  const resolvedDefaultPath = defaultPath || `${cleanName}.${ext}`;
+
   try {
-    // Try Electron file save dialog
+    // If Electron fs is available and defaultPath is an absolute path, write directly or prompt
     if (window.electronAPI?.dialog?.saveFile) {
       const savePath = await window.electronAPI.dialog.saveFile({
-        defaultPath: defaultPath || `${projectName}.webm`,
-        filters: [{ name: 'فيديو', extensions: ['webm'] }],
+        defaultPath: resolvedDefaultPath,
+        filters: isMp4
+          ? [
+              { name: 'فيديو MP4', extensions: ['mp4'] },
+              { name: 'فيديو WebM', extensions: ['webm'] },
+            ]
+          : [
+              { name: 'فيديو WebM', extensions: ['webm'] },
+              { name: 'فيديو MP4', extensions: ['mp4'] },
+            ],
       });
       if (savePath) {
         const arrayBuffer = await blob.arrayBuffer();
@@ -608,7 +624,7 @@ async function saveVideoBlob(
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `${projectName}.webm`;
+  a.download = `${cleanName}.${ext}`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);

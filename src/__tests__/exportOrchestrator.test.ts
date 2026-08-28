@@ -5,6 +5,7 @@ import {
   QUALITY_BITRATES,
   concatenateAudioBuffers,
   exportProject,
+  resolveTargetOutputPath,
 } from '../services/exportOrchestrator';
 
 describe('ExportOrchestrator Service', () => {
@@ -140,6 +141,7 @@ describe('ExportOrchestrator Service', () => {
       const result = await exportProject({
         projectName: 'Test Project',
         aspectRatio: '9:16',
+        savePathPref: 'D:/CustomVideos/MyReel.mp4',
         ayahs: [
           {
             number: 1,
@@ -159,8 +161,38 @@ describe('ExportOrchestrator Service', () => {
       expect(result.success).toBe(true);
       expect(result.engine).toBe('ffmpeg');
       expect(result.outputPath).toBe('C:/exports/test_video.mp4');
-      expect(mockStart).toHaveBeenCalled();
+      expect(mockStart).toHaveBeenCalledWith(
+        expect.objectContaining({
+          projectName: 'Test Project',
+          outputPath: 'D:/CustomVideos/MyReel.mp4',
+        })
+      );
       expect(progressCalls.some((p) => p.percent === 50)).toBe(true);
+    });
+
+    it('resolves target output paths correctly from project name and savePathPref', () => {
+      // Default fallback
+      expect(resolveTargetOutputPath('My Cool Video', 'mp4')).toBe('My Cool Video.mp4');
+      
+      // With custom directory path (forward slash)
+      expect(
+        resolveTargetOutputPath('Ayah Reel', 'mp4', 'C:/Users/User/Videos')
+      ).toBe('C:/Users/User/Videos/Ayah Reel.mp4');
+      
+      // With custom directory path (backslash)
+      expect(
+        resolveTargetOutputPath('Surah Maryam', 'mp4', 'D:\\IslamicProjects\\Exports\\')
+      ).toBe('D:\\IslamicProjects\\Exports\\Surah Maryam.mp4');
+      
+      // With exact target file path
+      expect(
+        resolveTargetOutputPath('Surah Yasin', 'mp4', 'E:/Custom/Output_Surah.mp4')
+      ).toBe('E:/Custom/Output_Surah.mp4');
+      
+      // Sanitize special characters in project name
+      expect(
+        resolveTargetOutputPath('Surah/Al-Baqarah:Ayah*1?', 'mp4')
+      ).toBe('Surah-Al-Baqarah-Ayah-1-.mp4');
     });
 
     it('handles cancellation via AbortSignal gracefully', async () => {

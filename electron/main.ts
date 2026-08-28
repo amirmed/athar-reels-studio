@@ -65,7 +65,21 @@ function isSafeUserPath(targetPath: string): boolean {
       app.getPath('documents'),
       app.getPath('downloads'),
       app.getPath('desktop'),
+      app.getPath('home'),
     ];
+
+    try {
+      const settingsFile = getSettingsPath();
+      if (fs.existsSync(settingsFile)) {
+        const parsed = JSON.parse(fs.readFileSync(settingsFile, 'utf8'));
+        if (parsed?.projectsPath && typeof parsed.projectsPath === 'string') {
+          allowedRoots.push(parsed.projectsPath);
+        }
+      }
+    } catch {
+      // Ignore settings read error
+    }
+
     return allowedRoots.some(root => {
       const resolvedRoot = path.resolve(root);
       const rootLower = process.platform === 'win32' ? resolvedRoot.toLowerCase() : resolvedRoot;

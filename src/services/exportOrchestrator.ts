@@ -175,6 +175,30 @@ export interface ExportResult {
 }
 
 /**
+ * Resolve target output file path from project name, extension, and optional user save path preference
+ */
+export function resolveTargetOutputPath(
+  projectName: string,
+  ext: string = 'mp4',
+  savePathPref?: string
+): string {
+  const cleanProjectName = projectName.replace(/[/\\?%*:|"<>]/g, '-').trim() || 'ayah_video';
+  const targetExt = ext.startsWith('.') ? ext.slice(1) : ext;
+
+  if (savePathPref && typeof savePathPref === 'string' && savePathPref.trim().length > 0) {
+    const trimmed = savePathPref.trim();
+    if (/\.(mp4|webm|mkv|mov|avi)$/i.test(trimmed)) {
+      return trimmed;
+    }
+    const separator = trimmed.includes('\\') ? '\\' : '/';
+    const cleanDir = trimmed.replace(/[/\\]+$/, '');
+    return `${cleanDir}${separator}${cleanProjectName}.${targetExt}`;
+  }
+
+  return `${cleanProjectName}.${targetExt}`;
+}
+
+/**
  * Fetch and decode an audio URL into an AudioBuffer
  */
 export async function fetchAndDecodeAudio(
@@ -305,6 +329,7 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
     showTranslation = false,
     showTafsir: _showTafsir = false,
     totalDuration,
+    savePathPref,
     preferEngine = 'auto',
     signal,
     onProgress,
@@ -401,6 +426,8 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
         };
       });
 
+      const targetFfmpegOutputPath = resolveTargetOutputPath(projectName, 'mp4', savePathPref);
+
       const exportResult = await window.electronAPI.videoExport.start({
         projectName,
         aspectRatio,
@@ -418,6 +445,7 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
         reciterName,
         fps,
         bitrate: targetBitrate,
+        outputPath: targetFfmpegOutputPath,
       });
 
       unbindProgress();
@@ -579,8 +607,30 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
         },
       });
 
+      const targetOutputPath = resolveTargetOutputPath(projectName, 'mp4', savePathPref);
+      const isExplicitPath = targetOutputPath.includes('/') || targetOutputPath.includes('\\');
+
+      // If running in Electron and we have an absolute destination path, save binary file directly to disk
+      if (
+        typeof window !== 'undefined' &&
+        window.electronAPI?.fs?.writeBinaryFile &&
+        isExplicitPath
+      ) {
+        try {
+          const arrayBuffer = await mp4Blob.arrayBuffer();
+          const writeRes = await window.electronAPI.fs.writeBinaryFile(
+            targetOutputPath,
+            new Uint8Array(arrayBuffer)
+          );
+          if (writeRes && !writeRes.success && writeRes.error) {
+            console.warn('[ExportOrchestrator] Failed writing to preferred save path:', writeRes.error);
+          }
+        } catch (fsErr) {
+          console.warn('[ExportOrchestrator] writeBinaryFile error:', fsErr);
+        }
+      }
+
       const downloadUrl = URL.createObjectURL(mp4Blob);
-      const cleanProjectName = projectName.replace(/[/\\?%*:|"<>]/g, '-');
       reportProgress('اكتمل التصدير بنجاح وبصيغة MP4 القياسية ✅', 100, { engine: 'webcodecs' });
 
       return {
@@ -588,7 +638,7 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
         engine: 'webcodecs',
         blob: mp4Blob,
         blobUrl: downloadUrl,
-        outputPath: `${cleanProjectName}.mp4`,
+        outputPath: targetOutputPath,
         durationSec: totalDurationSec,
         fileSizeBytes: mp4Blob.size,
       };
@@ -754,20 +804,42 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
     recorder.stop();
   });
 
-  const downloadUrl = URL.createObjectURL(finalBlob);
-  const cleanProjectName = projectName.replace(/[/\\?%*:|"<>]/g, '-');
   const ext = selectedMime.includes('mp4') ? 'mp4' : 'webm';
+  const targetOutputPath = resolveTargetOutputPath(projectName, ext, savePathPref);
+  const isExplicitPath = targetOutputPath.includes('/') || targetOutputPath.includes('\\');
+
+  // If running in Electron and we have an absolute destination path, save binary file directly to disk
+  if (
+    typeof window !== 'undefined' &&
+    window.electronAPI?.fs?.writeBinaryFile &&
+    isExplicitPath
+  ) {
+    try {
+      const arrayBuffer = await finalBlob.arrayBuffer();
+      const writeRes = await window.electronAPI.fs.writeBinaryFile(
+        targetOutputPath,
+        new Uint8Array(arrayBuffer)
+      );
+      if (writeRes && !writeRes.success && writeRes.error) {
+        console.warn('[ExportOrchestrator] Failed writing to preferred save path:', writeRes.error);
+      }
+    } catch (fsErr) {
+      console.warn('[ExportOrchestrator] writeBinaryFile error:', fsErr);
+    }
+  }
+
+  const downloadUrl = URL.createObjectURL(finalBlob);
   reportProgress('اكتمل التصدير بنجاح ✅', 100, { engine: 'mediarecorder' });
 
-    return {
-      success: true,
-      engine: 'mediarecorder',
-      blob: finalBlob,
-      blobUrl: downloadUrl,
-      outputPath: `${cleanProjectName}.${ext}`,
-      durationSec: totalDurationSec,
-      fileSizeBytes: finalBlob.size,
-    };
+  return {
+    success: true,
+    engine: 'mediarecorder',
+    blob: finalBlob,
+    blobUrl: downloadUrl,
+    outputPath: targetOutputPath,
+    durationSec: totalDurationSec,
+    fileSizeBytes: finalBlob.size,
+  };
   } finally {
     if (audioCtx && audioCtx.state !== 'closed') {
       try {
