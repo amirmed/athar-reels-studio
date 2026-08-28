@@ -10,6 +10,7 @@ import { renderVideoExportFrame } from './videoFrameRenderer';
 import { isWebCodecsExportSupported, exportVideoWithWebCodecs } from './webCodecsExportService';
 import { render8DSpatialBuffer } from './spatial8DAudioEngine';
 import { isVideoMedia } from '../utils/imageUtils';
+import { extractAudioPeaksFromBuffer } from './audioPeakExtractor';
 
 export interface PlatformPreset {
   id: string;
@@ -564,6 +565,9 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
 
   if (signal?.aborted) throw new Error('تم إلغاء عملية التصدير');
 
+  // 4.5. Compute Acoustic Waveform Peaks from Decoded Master Buffer
+  const masterAudioPeaks = masterBuffer ? extractAudioPeaksFromBuffer(masterBuffer, 350) : undefined;
+
   // ─── TIER 2: Ultra-Fast WebCodecs Hardware Muxer (MP4) ───────────────────────
   const canUseWebCodecs = await isWebCodecsExportSupported();
   if (canUseWebCodecs && preferEngine !== 'mediarecorder') {
@@ -581,6 +585,7 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
         timeline: ayahTimeRanges,
         totalDurationSec,
         masterAudioBuffer: masterBuffer,
+        audioPeaks: masterAudioPeaks,
         audioUrls: validAyahs.map((a) => a.audioUrl).filter(Boolean),
         bgImage: bgImg,
         sceneBgImages,
@@ -772,6 +777,8 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
         reciterName,
         showTranslation,
         isCustomContent: !surahName || surahName.length === 0,
+        audioPeaks: masterAudioPeaks,
+        totalDurationSec,
       });
 
       const percent = Math.min(99, 35 + Math.round(currentProg * 64));

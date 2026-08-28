@@ -19,6 +19,7 @@ import { Modal } from './Modal';
 import { ThumbnailModal } from './ThumbnailModal';
 import { PublishKitModal } from './PublishKitModal';
 import { renderVideoExportFrame } from '../../services/videoFrameRenderer';
+import { getAudioPeaksCached, extractAudioPeaksFromUrl } from '../../services/audioPeakExtractor';
 import { AyahData } from '../../services/quranApi';
 import {
   TextSettings,
@@ -127,6 +128,31 @@ export const ExportModal: React.FC<ExportModalProps> = ({
   const activePreset =
     PLATFORM_PRESETS.find((p) => p.id === selectedPlatformPreset) || PLATFORM_PRESETS[0];
 
+  // Pre-load audio peaks for live preview parity
+  const previewAudioUrl = audioUrls?.[0] || ayahs?.[0]?.audioUrl;
+  const [previewPeaks, setPreviewPeaks] = useState<number[] | undefined>(undefined);
+
+  useEffect(() => {
+    if (!previewAudioUrl) {
+      setPreviewPeaks(undefined);
+      return;
+    }
+    const cached = getAudioPeaksCached(previewAudioUrl);
+    if (cached) {
+      setPreviewPeaks(cached);
+      return;
+    }
+    let isCancelled = false;
+    extractAudioPeaksFromUrl(previewAudioUrl).then((p) => {
+      if (!isCancelled && p && p.length > 0) {
+        setPreviewPeaks(p);
+      }
+    }).catch(() => {});
+    return () => {
+      isCancelled = true;
+    };
+  }, [previewAudioUrl]);
+
   // 5.1 🎥 Live Export Canvas Preview Loop
   useEffect(() => {
     if (!isOpen || activeTab !== 'preview' || !previewCanvasRef.current) return;
@@ -200,6 +226,8 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         reciterName,
         showTranslation,
         isCustomContent: !surahName || surahName.length === 0,
+        audioPeaks: previewPeaks,
+        totalDurationSec: maxPreviewDuration,
       });
 
       previewAnimRef.current = requestAnimationFrame(previewLoop);

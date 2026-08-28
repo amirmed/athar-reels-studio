@@ -11,6 +11,7 @@
 
 import { AyahData } from './quranApi';
 import { TextSettings, QuranWord } from '../types';
+import { getSampledWaveformHeights } from './audioPeakExtractor';
 
 export interface FrameRenderOptions {
   ctx: CanvasRenderingContext2D;
@@ -32,6 +33,8 @@ export interface FrameRenderOptions {
   reciterName?: string;
   showTranslation?: boolean;
   isCustomContent?: boolean;
+  audioPeaks?: number[];
+  totalDurationSec?: number;
 }
 
 // Layout Cache Data Structures
@@ -949,30 +952,108 @@ export function renderVideoExportFrame(opts: FrameRenderOptions): void {
     ctx.restore();
   }
 
-  // 8. Audio Waveform Visualizer
+  // 8. Audio Waveform Visualizer (Real Acoustic Peaks & 1:1 Preview Parity)
   if (textSettings?.showWaveform !== false) {
     ctx.save();
     const wfColor = textSettings?.waveformColor || '#fbbf24';
+    const wfStyle = textSettings?.waveformStyle || 'bars';
+    const wfOpacity = textSettings?.waveformOpacity ?? 0.85;
     const barCount = 28;
     const totalW = width * 0.58;
-    const barW = totalW / (barCount * 1.6);
     const startX = (width - totalW) / 2;
     const baseY = height * 0.86;
+    const maxH = textSettings?.waveformHeight ? textSettings.waveformHeight * 1.5 : 36;
 
+    ctx.globalAlpha = wfOpacity;
     ctx.fillStyle = wfColor;
+    ctx.strokeStyle = wfColor;
     ctx.shadowColor = wfColor;
-    ctx.shadowBlur = 10;
+    ctx.shadowBlur = 8;
 
-    for (let b = 0; b < barCount; b++) {
-      const phase = frame * 0.22 + b * 0.38;
-      const hFactor = 0.25 + 0.75 * Math.abs(Math.sin(phase));
-      const barH =
-        6 + hFactor * (textSettings?.waveformHeight ? textSettings.waveformHeight * 1.4 : 32);
-      const bx = startX + b * (barW * 1.6);
+    const heights = getSampledWaveformHeights(
+      opts.audioPeaks,
+      currentTimeSec,
+      opts.totalDurationSec || currentAyah?.duration || 15,
+      barCount,
+      frame
+    );
+
+    if (wfStyle === 'wave') {
+      const avgAmp = heights.reduce((sum, h) => sum + h, 0) / heights.length;
+      const waveAmplitude = Math.max(6, avgAmp * maxH * 0.9);
+
+      // Primary wave curve
+      ctx.lineWidth = Math.max(2.5, width * 0.0035);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
       ctx.beginPath();
-      ctx.roundRect(bx, baseY - barH, barW, barH, 4);
+      for (let i = 0; i <= 60; i++) {
+        const t = i / 60;
+        const x = startX + t * totalW;
+        const peakAmp = heights[Math.min(heights.length - 1, Math.floor(t * heights.length))] || avgAmp;
+        const y = baseY + Math.sin(t * Math.PI * 4 + frame * 0.15) * (peakAmp * waveAmplitude);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Secondary subtle harmonic wave curve
+      ctx.lineWidth = Math.max(1.5, width * 0.002);
+      ctx.globalAlpha = wfOpacity * 0.5;
+      ctx.beginPath();
+      for (let i = 0; i <= 60; i++) {
+        const t = i / 60;
+        const x = startX + t * totalW;
+        const peakAmp = heights[Math.min(heights.length - 1, Math.floor((1 - t) * heights.length))] || avgAmp;
+        const y = baseY + Math.sin(t * Math.PI * 3 + frame * 0.12 + Math.PI / 3) * (peakAmp * waveAmplitude * 0.7);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    } else if (wfStyle === 'dots') {
+      const dotCount = 16;
+      const dotRadius = Math.max(2.2, width * 0.0035);
+      const dotSpacing = totalW / (dotCount - 1);
+      const dotHeights = getSampledWaveformHeights(
+        opts.audioPeaks,
+        currentTimeSec,
+        opts.totalDurationSec || currentAyah?.duration || 15,
+        dotCount,
+        frame
+      );
+
+      for (let i = 0; i < dotCount; i++) {
+        const dx = startX + i * dotSpacing;
+        const hFactor = dotHeights[i] || 0.3;
+        const dy = baseY - hFactor * maxH * 0.8;
+
+        ctx.beginPath();
+        ctx.arc(dx, dy, dotRadius * (0.8 + hFactor * 0.5), 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else if (wfStyle === 'pulse') {
+      const avgAmp = heights.reduce((sum, h) => sum + h, 0) / heights.length;
+      const pulseWidth = totalW * (0.7 + avgAmp * 0.3);
+      const px = (width - pulseWidth) / 2;
+      const pulseH = Math.max(3, maxH * 0.25 * (0.6 + avgAmp * 0.8));
+
+      ctx.shadowBlur = 12 + avgAmp * 10;
+      ctx.beginPath();
+      ctx.roundRect(px, baseY - pulseH / 2, pulseWidth, pulseH, pulseH / 2);
       ctx.fill();
+    } else {
+      // Default: 'bars'
+      const barW = totalW / (barCount * 1.6);
+      for (let b = 0; b < barCount; b++) {
+        const hFactor = heights[b];
+        const barH = Math.max(4, hFactor * maxH);
+        const bx = startX + b * (barW * 1.6);
+        ctx.beginPath();
+        ctx.roundRect(bx, baseY - barH, barW, barH, 4);
+        ctx.fill();
+      }
     }
+
     ctx.restore();
   }
 

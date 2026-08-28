@@ -5,6 +5,7 @@ import { AyahData } from '../../services/quranApi';
 import { TextSettings, QuranWord } from '../../types';
 import { AudioWaveformBar } from './AudioWaveformBar';
 import { isVideoMedia } from '../../utils/imageUtils';
+import { getAudioPeaksCached, extractAudioPeaksFromUrl } from '../../services/audioPeakExtractor';
 
 const CURATED_SCENE_FALLBACKS = [
   'https://images.pexels.com/photos/1529881/pexels-photo-1529881.jpeg?auto=compress&cs=tinysrgb&w=1280',
@@ -38,6 +39,7 @@ interface PreviewFrameProps {
   videoEffect?: string;
   size?: 'normal' | 'fullscreen';
   performanceMode?: 'balanced' | 'quality' | 'performance';
+  audioPeaks?: number[];
   onWordClick?: (ayahIndex: number, word: QuranWord) => void;
   onWatermarkDragEnd?: (x: number, y: number) => void;
 }
@@ -78,10 +80,40 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = React.memo(
     videoEffect = 'none',
     size = 'normal',
     performanceMode = 'balanced',
+    audioPeaks,
     onWordClick,
     onWatermarkDragEnd,
   }) => {
     const isPerf = performanceMode === 'performance';
+
+    const activeAyahObj = ayahs.length > 0 && currentAyahIndex >= 0 ? ayahs[currentAyahIndex] : ayahs[0];
+    const currentAudioUrl = activeAyahObj?.audioUrl;
+    const [livePeaks, setLivePeaks] = React.useState<number[] | undefined>(audioPeaks);
+
+    React.useEffect(() => {
+      if (audioPeaks && audioPeaks.length > 0) {
+        setLivePeaks(audioPeaks);
+        return;
+      }
+      if (!currentAudioUrl) {
+        setLivePeaks(undefined);
+        return;
+      }
+      const cached = getAudioPeaksCached(currentAudioUrl);
+      if (cached) {
+        setLivePeaks(cached);
+        return;
+      }
+      let isCancelled = false;
+      extractAudioPeaksFromUrl(currentAudioUrl).then((p) => {
+        if (!isCancelled && p && p.length > 0) {
+          setLivePeaks(p);
+        }
+      }).catch(() => {});
+      return () => {
+        isCancelled = true;
+      };
+    }, [audioPeaks, currentAudioUrl]);
 
     const baseDims = aspectDimensions[aspectRatio] || aspectDimensions['9:16'];
     const scaleFactor = size === 'fullscreen' ? 1.55 : 1.0;
@@ -1197,6 +1229,9 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = React.memo(
                 color={textSettings.waveformColor || '#fbbf24'}
                 height={textSettings.waveformHeight || (size === 'fullscreen' ? 36 : 22)}
                 opacity={textSettings.waveformOpacity ?? 0.85}
+                peaks={livePeaks}
+                currentTimeSec={currentTime}
+                totalDurationSec={activeAyahObj?.duration || 15}
                 barCount={
                   isPerf ? (size === 'fullscreen' ? 14 : 10) : size === 'fullscreen' ? 36 : 26
                 }

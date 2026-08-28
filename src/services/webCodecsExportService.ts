@@ -8,6 +8,7 @@ import { Muxer, ArrayBufferTarget } from 'mp4-muxer';
 import { AyahData } from './quranApi';
 import { TextSettings, AudioSettings } from '../types';
 import { renderVideoExportFrame } from './videoFrameRenderer';
+import { extractAudioPeaksFromBuffer } from './audioPeakExtractor';
 
 export interface WebCodecsExportParams {
   width: number;
@@ -23,6 +24,7 @@ export interface WebCodecsExportParams {
   }>;
   totalDurationSec: number;
   masterAudioBuffer?: AudioBuffer | null;
+  audioPeaks?: number[];
   audioUrls?: string[];
   audioSettings?: AudioSettings;
   bgImage?: HTMLImageElement | null;
@@ -290,6 +292,10 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
     masterBuffer = await buildMasterAudioBuffer(params.audioUrls, totalDurationSec, params.audioSettings);
   }
 
+  const effectiveAudioPeaks =
+    params.audioPeaks ||
+    (masterBuffer ? extractAudioPeaksFromBuffer(masterBuffer, 350) : undefined);
+
   const sampleRate = masterBuffer ? masterBuffer.sampleRate : 48000;
   const numberOfChannels = masterBuffer ? masterBuffer.numberOfChannels : 2;
   const hasAudio = !!(masterBuffer && masterBuffer.length > 0);
@@ -485,6 +491,8 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
       surahName,
       reciterName,
       showTranslation,
+      audioPeaks: effectiveAudioPeaks,
+      totalDurationSec,
     });
 
     // Create VideoFrame from Canvas
