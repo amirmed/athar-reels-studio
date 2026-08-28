@@ -11,6 +11,8 @@ import {
   Video,
   Heart,
   CheckCircle2,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { MotherDuaModal } from '../ui/MotherDuaModal';
 
@@ -18,6 +20,8 @@ export const WelcomePage: React.FC = () => {
   const setCurrentPage = useAppStore((s) => s.setCurrentPage);
   const addToast = useAppStore((s) => s.addToast);
   const startTour = useAppStore((s) => s.startTour);
+  const theme = useAppStore((s) => s.theme);
+  const toggleTheme = useAppStore((s) => s.toggleTheme);
   const [showMotherDua, setShowMotherDua] = useState(false);
 
   const handleStartNow = () => {
@@ -115,6 +119,29 @@ export const WelcomePage: React.FC = () => {
           >
             <Heart size={14} className="text-rose-400 fill-rose-400/30 animate-pulse" />
             <span>صدقة جارية عن الوالدة تيجاني عائشة رحمها الله 🌸🤲</span>
+          </button>
+
+          {/* Theme Toggle */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label={
+              theme === 'dark'
+                ? 'التبديل للوضع النهاري (فاتح)'
+                : 'التبديل للوضع الليلي (داكن)'
+            }
+            title={
+              theme === 'dark'
+                ? 'التبديل للوضع النهاري (فاتح)'
+                : 'التبديل للوضع الليلي (داكن)'
+            }
+            className="w-8 h-8 rounded-full bg-surface-900 border border-surface-700/40 flex items-center justify-center text-surface-400 hover:text-surface-50 hover:border-gold-400/40 transition-all cursor-pointer shadow-sm active:scale-95"
+          >
+            {theme === 'dark' ? (
+              <Sun size={15} className="text-amber-400" />
+            ) : (
+              <Moon size={15} className="text-gold-400" />
+            )}
           </button>
         </motion.div>
 
