@@ -7,6 +7,7 @@ import { ProjectCard } from '../ui/ProjectCard';
 import { EmptyState } from '../ui/EmptyState';
 import { Modal, ConfirmDialog } from '../ui/Modal';
 import { AutoReelModal } from '../ui/AutoReelModal';
+import { DashboardSkeleton } from '../ui/DashboardSkeleton';
 import { createDefaultProject } from '../../utils/projectDefaults';
 import {
   FolderOpen,
@@ -279,6 +280,17 @@ export const DashboardPage: React.FC = () => {
     });
     setCurrentPage('editor');
   };
+
+  if (isLoadingProjects) {
+    return (
+      <AppLayout
+        title={t('nav.dashboard', 'الرئيسية')}
+        subtitle={t('dashboard.welcomeSubtitle', 'لوحة التحكم واستوديو الإنتاج السريع')}
+      >
+        <DashboardSkeleton />
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout

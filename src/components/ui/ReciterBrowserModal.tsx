@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   Search,
   Mic,
@@ -8,7 +8,6 @@ import {
   Check,
   Sparkles,
   Volume2,
-  X,
   Star,
   Flame,
   Crown,
@@ -24,7 +23,7 @@ import {
 } from '../../services/quranApi';
 import { surahs } from '../../data/mockData';
 import { useAppStore } from '../../store/useAppStore';
-import { useHotkeys } from '../../hooks/useHotkeys';
+import { Modal } from './Modal';
 
 interface ReciterBrowserModalProps {
   isOpen: boolean;
@@ -205,78 +204,23 @@ export const ReciterBrowserModal: React.FC<ReciterBrowserModalProps> = ({
     },
   ];
 
-  useHotkeys(
-    'Escape',
-    () => {
-      if (audioRef.current) audioRef.current.pause();
-      onClose();
-    },
-    { enabled: isOpen }
-  );
-
-  if (!isOpen) return null;
+  const handleClose = () => {
+    if (audioRef.current) audioRef.current.pause();
+    onClose();
+  };
 
   return (
-    <AnimatePresence>
-      <div
-        className="fixed inset-0 z-50 flex items-center justify-center p-4"
-        role="dialog"
-        aria-modal="true"
-        aria-label="تصفح واختيار قراء القرآن الكريم"
-      >
-        {/* Backdrop */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={() => {
-            if (audioRef.current) audioRef.current.pause();
-            onClose();
-          }}
-          className="absolute inset-0 bg-black/80 backdrop-blur-md"
-        />
-
-        {/* Modal Window */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.94, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.94, y: 20 }}
-          className="relative w-full max-w-4xl max-h-[88vh] flex flex-col rounded-3xl bg-surface-950/95 border border-white/[0.1] shadow-2xl overflow-hidden z-10"
-        >
-          {/* Header */}
-          <div className="p-5 border-b border-white/[0.06] flex items-center justify-between bg-gradient-to-r from-accent-500/10 via-gold-500/10 to-transparent">
-            <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-accent-500 to-gold-500 flex items-center justify-center text-white shadow-lg shadow-accent-500/25">
-                <Mic size={22} />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="text-base font-bold text-white">
-                    مكتبة كبار قراء العالم الإسلامي
-                  </h3>
-                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-accent-500/20 text-accent-300 font-bold border border-accent-500/30">
-                    {everyAyahReciters.length} قارئ ورواية
-                  </span>
-                </div>
-                <p className="text-xs text-white/50 mt-0.5">
-                  تصفح القراء، واعرف السور المسجلة لكل قارئ مع ميزة الاستماع التجريبي الفوري
-                </p>
-              </div>
-            </div>
-
-            <button
-              onClick={() => {
-                if (audioRef.current) audioRef.current.pause();
-                onClose();
-              }}
-              className="w-9 h-9 rounded-full bg-surface-800/60 hover:bg-surface-700 text-white/60 hover:text-white flex items-center justify-center border border-white/[0.06] transition-all"
-            >
-              <X size={18} />
-            </button>
-          </div>
-
-          {/* Controls: Search & Category Chips */}
-          <div className="p-4 border-b border-white/[0.06] space-y-3 bg-surface-900/40">
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      title="مكتبة كبار قراء العالم الإسلامي"
+      subtitle="تصفح القراء، واعرف السور المسجلة لكل قارئ مع ميزة الاستماع التجريبي الفوري"
+      headerIcon={<Mic size={22} className="text-gold-400" />}
+      size="xl"
+    >
+      <div className="space-y-4">
+        {/* Controls: Search & Category Chips */}
+        <div className="p-3 border-b border-white/[0.06] space-y-3 bg-surface-900/40 rounded-2xl">
             <div className="relative">
               <input
                 type="text"
@@ -446,8 +390,7 @@ export const ReciterBrowserModal: React.FC<ReciterBrowserModalProps> = ({
               );
             })}
           </div>
-        </motion.div>
       </div>
-    </AnimatePresence>
+    </Modal>
   );
 };

@@ -4,6 +4,7 @@ import { Topbar } from './Topbar';
 import { CharityRibbonFooter } from './CharityRibbonFooter';
 import { GlobalSearchModal } from '../ui/GlobalSearchModal';
 import { MotherDuaModal } from '../ui/MotherDuaModal';
+import { KeyboardShortcutsModal } from '../ui/KeyboardShortcutsModal';
 import { ToastContainer } from '../ui/Toast';
 import { InteractiveTourGuide } from '../ui/InteractiveTourGuide';
 
@@ -28,10 +29,16 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 }) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMotherDuaOpen, setIsMotherDuaOpen] = useState(false);
+  const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
 
   // Global Ctrl+K / Cmd+K listener
   useHotkeys('ctrl+k', () => {
     setIsSearchOpen((prev) => !prev);
+  });
+
+  // Global Shift+? / ? listener
+  useHotkeys('shift+?', () => {
+    setIsShortcutsOpen((prev) => !prev);
   });
 
   return (
@@ -46,6 +53,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               actions={topbarActions}
               onOpenSearch={() => setIsSearchOpen(true)}
               onOpenMotherDua={() => setIsMotherDuaOpen(true)}
+              onOpenShortcuts={() => setIsShortcutsOpen(true)}
             />
           )}
           <main className="flex-1 overflow-auto">{children}</main>
@@ -64,6 +72,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
       {/* Mother Dua & Ongoing Charity Modal */}
       <MotherDuaModal isOpen={isMotherDuaOpen} onClose={() => setIsMotherDuaOpen(false)} />
+
+      {/* Global Keyboard Shortcuts Modal */}
+      <KeyboardShortcutsModal
+        isOpen={isShortcutsOpen}
+        onClose={() => setIsShortcutsOpen(false)}
+      />
 
       <ToastContainer />
       <InteractiveTourGuide />

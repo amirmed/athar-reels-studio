@@ -232,7 +232,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
       </div>
 
       {/* 🎙️ Live Voice Recording Studio Button */}
-      <div className="p-4 rounded-2xl bg-gradient-to-r from-gold-950/40 via-surface-900 to-amber-950/30 border border-gold-500/30 space-y-2.5 shadow-lg">
+      <div className="p-4 rounded-2xl bg-gradient-to-r from-gold-900/40 via-surface-900 to-amber-900/30 border border-gold-500/30 space-y-2.5 shadow-lg">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-gold-400/20 text-gold-300 flex items-center justify-center font-bold">

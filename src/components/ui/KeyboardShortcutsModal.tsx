@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  X,
   Keyboard,
   Play,
   SkipForward,
@@ -11,8 +10,7 @@ import {
   VolumeX,
   Maximize2,
 } from 'lucide-react';
-
-import { useHotkeys } from '../../hooks/useHotkeys';
+import { Modal } from './Modal';
 
 interface KeyboardShortcutsModalProps {
   isOpen: boolean;
@@ -23,10 +21,6 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  useHotkeys('Escape', onClose, { enabled: isOpen });
-
-  if (!isOpen) return null;
-
   const shortcuts = [
     {
       icon: <Play size={16} className="text-gold-400" />,
@@ -85,31 +79,17 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
   ];
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in"
-      role="dialog"
-      aria-modal="true"
-      aria-label="دليل اختصارات لوحة المفاتيح"
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="دليل اختصارات لوحة المفاتيح"
+      subtitle="التحكم السريع في تشغيل وتعديل وتصدير الآيات"
+      headerIcon={<Keyboard size={18} />}
+      size="md"
     >
-      <div className="relative w-full max-w-lg bg-surface-900/95 border border-gold-500/30 rounded-3xl p-6 shadow-2xl space-y-5 text-right">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-white/10 pb-4">
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-all cursor-pointer"
-          >
-            <X size={18} />
-          </button>
-          <div className="flex items-center gap-2.5">
-            <h3 className="text-base font-bold text-white">⌨️ دليل اختصارات لوحة المفاتيح</h3>
-            <div className="p-2 rounded-xl bg-gold-500/10 border border-gold-500/20 text-gold-400">
-              <Keyboard size={18} />
-            </div>
-          </div>
-        </div>
-
+      <div className="space-y-4 text-start">
         {/* Shortcuts List */}
-        <div className="grid grid-cols-1 gap-2.5 max-h-[60vh] overflow-y-auto pr-1">
+        <div className="grid grid-cols-1 gap-2">
           {shortcuts.map((sc, i) => (
             <div
               key={i}
@@ -140,11 +120,11 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
           ))}
         </div>
 
-        {/* Footer */}
-        <div className="pt-2 flex items-center justify-between border-t border-white/10 text-[11px] text-white/40">
+        {/* Footer info */}
+        <div className="pt-2 flex items-center justify-between border-t border-white/10 text-[11px] text-white/60">
           <span>
             اضغط{' '}
-            <kbd className="px-1.5 py-0.5 bg-surface-800 border border-white/10 rounded font-mono text-white/70">
+            <kbd className="px-1.5 py-0.5 bg-surface-800 border border-white/10 rounded font-mono text-white/80">
               Esc
             </kbd>{' '}
             للإغلاق
@@ -152,6 +132,6 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
           <span>⚡ تتيح لك العمل بسرعة واحترافية</span>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 };

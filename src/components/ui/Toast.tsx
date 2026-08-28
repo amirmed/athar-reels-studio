@@ -26,10 +26,10 @@ const ToastItem: React.FC<ToastItemProps> = React.memo(({ toast }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: 50, scale: 0.95 }}
-      animate={{ opacity: 1, x: 0, scale: 1 }}
-      exit={{ opacity: 0, x: 50, scale: 0.95 }}
-      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+      initial={{ opacity: 0, y: 20, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: 20, scale: 0.95 }}
+      transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
       className={`
         flex items-center gap-3 px-4 py-3 rounded-xl backdrop-blur-xl border shadow-xl
         ${bgMap[toast.type || 'info']}
@@ -51,7 +51,7 @@ const ToastItem: React.FC<ToastItemProps> = React.memo(({ toast }) => {
       )}
       <button
         onClick={() => removeToast(toast.id)}
-        className="text-white/40 hover:text-white/80 transition-colors p-1"
+        className="text-white/60 hover:text-white transition-colors p-1 cursor-pointer"
         aria-label="إغلاق التنبيه"
       >
         <X size={14} />
@@ -68,7 +68,7 @@ export const ToastContainer: React.FC = () => {
       role="status"
       aria-live="polite"
       aria-atomic="true"
-      className="fixed bottom-6 left-6 z-[100] flex flex-col gap-2 max-w-sm"
+      className="fixed bottom-6 start-6 z-[100] flex flex-col gap-2 max-w-sm"
     >
       <AnimatePresence mode="popLayout">
         {toasts.map((toast) => (

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   Mic,
   Square,
@@ -7,7 +7,6 @@ import {
   Pause,
   Upload,
   Sparkles,
-  X,
   Radio,
   Sliders,
   Zap,
@@ -17,7 +16,7 @@ import { MosqueReverbPreset, AudioSettings } from '../../types';
 import { voiceStudioEngine } from '../../services/voiceStudioEngine';
 import { savePersistentAudio } from '../../services/persistentAudioStorage';
 import { useAppStore } from '../../store/useAppStore';
-import { useHotkeys } from '../../hooks/useHotkeys';
+import { Modal } from './Modal';
 
 interface VoiceRecorderModalProps {
   isOpen: boolean;
@@ -72,8 +71,6 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
       if (timerRef.current) clearInterval(timerRef.current);
     }
   }, [isOpen, isRecording]);
-
-  useHotkeys('Escape', onClose, { enabled: isOpen });
 
   const handleStartRecord = async () => {
     try {
@@ -225,53 +222,18 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
       },
     ];
 
-  if (!isOpen) return null;
-
   return (
-    <AnimatePresence>
-      <div
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md"
-        role="dialog"
-        aria-modal="true"
-        aria-label="استوديو تسجيل التلاوة وصدى المسجد"
-      >
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 15 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 15 }}
-          className="relative w-full max-w-2xl bg-surface-950 border border-gold-500/30 rounded-3xl p-6 shadow-2xl overflow-hidden max-h-[92vh] flex flex-col"
-        >
-          {/* Ambient Glows */}
-          <div className="absolute -top-24 -right-24 w-60 h-60 bg-gold-500/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-24 -left-24 w-60 h-60 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-
-          {/* Header */}
-          <div className="flex items-center justify-between pb-4 border-b border-white/10 shrink-0">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-2xl bg-gradient-to-br from-gold-400 to-amber-600 text-black shadow-lg">
-                <Mic size={22} />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  استوديو تسجيل التلاوة وصدى المسجد 🎙️🕌
-                </h3>
-                <p className="text-xs text-white/50">
-                  سجل صوتك أو ارفع تلاوتك مع محاكاة صدى الحرم المكي وفلاتر الاستوديو الاحترافية
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={onClose}
-              className="p-2 rounded-xl bg-surface-900 text-white/60 hover:text-white hover:bg-surface-800 transition-colors cursor-pointer"
-            >
-              <X size={18} />
-            </button>
-          </div>
-
-          {/* Body Content */}
-          <div className="my-4 space-y-4 overflow-y-auto custom-scrollbar flex-1 pr-1">
-            {/* Mode Switcher */}
-            <div className="grid grid-cols-2 gap-2 p-1 rounded-2xl bg-surface-900/80 border border-white/[0.06]">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="استوديو تسجيل التلاوة وصدى المسجد 🎙️🕌"
+      subtitle="سجل صوتك أو ارفع تلاوتك مع محاكاة صدى الحرم المكي وفلاتر الاستوديو الاحترافية"
+      headerIcon={<Mic size={22} className="text-gold-400" />}
+      size="lg"
+    >
+      <div className="space-y-4">
+        {/* Mode Switcher */}
+        <div className="grid grid-cols-2 gap-2 p-1 rounded-2xl bg-surface-900/80 border border-white/[0.06]">
               <button
                 type="button"
                 onClick={() => setActiveMode('record')}
@@ -576,29 +538,27 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
             )}
           </div>
 
-          {/* Footer & Apply Action */}
-          <div className="pt-3 border-t border-white/10 flex items-center justify-between shrink-0">
+        {/* Footer & Apply Action */}
+        <div className="pt-3 border-t border-white/10 flex items-center justify-between shrink-0">
+          <button
+            type="button"
+            onClick={onClose}
+            className="btn-ghost px-4 py-2 text-xs font-bold"
+          >
+            إلغاء
+          </button>
+
+          {audioBlobUrl && (
             <button
               type="button"
-              onClick={onClose}
-              className="px-4 py-2.5 rounded-xl bg-surface-900 hover:bg-surface-800 text-white text-xs font-bold transition-colors cursor-pointer"
+              onClick={handleApply}
+              className="btn-gold px-6 py-2.5 text-xs font-bold flex items-center gap-2 shadow-lg"
             >
-              إلغاء
+              <Zap size={15} />
+              <span>استخدام هذا التسجيل في الريلز 🚀</span>
             </button>
-
-            {audioBlobUrl && (
-              <button
-                type="button"
-                onClick={handleApply}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-gold-400 to-amber-500 hover:from-gold-300 hover:to-amber-400 text-surface-950 font-black text-xs flex items-center gap-2 shadow-lg shadow-gold-500/20 transition-all active:scale-95 cursor-pointer"
-              >
-                <Zap size={15} />
-                <span>استخدام هذا التسجيل في الريلز 🚀</span>
-              </button>
-            )}
-          </div>
-        </motion.div>
-      </div>
-    </AnimatePresence>
+          )}
+        </div>
+    </Modal>
   );
 };

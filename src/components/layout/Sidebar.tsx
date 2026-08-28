@@ -178,7 +178,7 @@ export const Sidebar: React.FC = React.memo(() => {
                 {isActive && (
                   <motion.div
                     layoutId="sidebar-indicator"
-                    className="absolute right-0 top-1/2 -translate-y-1/2 w-[3px] h-6 bg-accent-400 rounded-l-full shadow-[0_0_8px_#38bdf8]"
+                    className="absolute start-0 top-1/2 -translate-y-1/2 w-[3px] h-6 bg-accent-400 rounded-e-full shadow-[0_0_10px_rgba(20,184,166,0.6)]"
                     transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                   />
                 )}

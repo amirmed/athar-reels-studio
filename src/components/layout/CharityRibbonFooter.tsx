@@ -23,7 +23,7 @@ export const CharityRibbonFooter: React.FC<CharityRibbonFooterProps> = React.mem
     };
 
     return (
-      <footer className="w-full bg-gradient-to-r from-surface-950 via-gold-950/25 to-surface-950 border-t border-gold-400/20 py-2.5 px-4 shrink-0 z-20 shadow-lg select-none">
+      <footer className="w-full bg-gradient-to-r from-surface-950 via-gold-900/25 to-surface-950 border-t border-gold-400/20 py-2.5 px-4 shrink-0 z-20 shadow-lg select-none">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2.5 text-center sm:text-right">
           {/* Main Charity Message */}
           <div

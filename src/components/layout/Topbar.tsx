@@ -10,6 +10,7 @@ import {
   ChevronDown,
   CheckCircle2,
   HelpCircle,
+  Keyboard,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -19,6 +20,7 @@ interface TopbarProps {
   actions?: React.ReactNode;
   onOpenSearch?: () => void;
   onOpenMotherDua?: () => void;
+  onOpenShortcuts?: () => void;
 }
 
 export const Topbar: React.FC<TopbarProps> = ({
@@ -27,6 +29,7 @@ export const Topbar: React.FC<TopbarProps> = ({
   actions,
   onOpenSearch,
   onOpenMotherDua: _onOpenMotherDua,
+  onOpenShortcuts,
 }) => {
   const theme = useAppStore((s) => s.theme);
   const toggleTheme = useAppStore((s) => s.toggleTheme);
@@ -113,6 +116,18 @@ export const Topbar: React.FC<TopbarProps> = ({
             </div>
           </button>
         </div>
+
+        {/* Keyboard Shortcuts Button */}
+        {onOpenShortcuts && (
+          <button
+            onClick={onOpenShortcuts}
+            aria-label="دليل اختصارات لوحة المفاتيح (?)"
+            title="اختصارات لوحة المفاتيح (? / Shift+?)"
+            className="w-9 h-9 rounded-xl bg-surface-800/40 border border-white/[0.06] flex items-center justify-center text-white/50 hover:text-gold-300 hover:bg-surface-700/50 hover:border-gold-400/30 transition-all duration-200 cursor-pointer shadow-sm active:scale-95"
+          >
+            <Keyboard size={16} />
+          </button>
+        )}
 
         {/* Interactive Tour Guide Button */}
         <button

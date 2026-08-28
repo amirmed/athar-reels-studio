@@ -6,17 +6,37 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
+  subtitle?: string;
+  headerIcon?: React.ReactNode;
+  headerActions?: React.ReactNode;
   children: React.ReactNode;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  className?: string;
+  bodyClassName?: string;
+  closeOnBackdropClick?: boolean;
 }
 
-const sizeMap = {
+const sizeMap: Record<NonNullable<ModalProps['size']>, string> = {
   sm: 'max-w-md',
   md: 'max-w-lg',
   lg: 'max-w-2xl',
+  xl: 'max-w-4xl',
+  full: 'max-w-6xl',
 };
 
-export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, size = 'md' }) => {
+export const Modal: React.FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  title,
+  subtitle,
+  headerIcon,
+  headerActions,
+  children,
+  size = 'md',
+  className = '',
+  bodyClassName = '',
+  closeOnBackdropClick = true,
+}) => {
   const modalRef = React.useRef<HTMLDivElement>(null);
   const previousActiveElementRef = React.useRef<HTMLElement | null>(null);
 
@@ -96,7 +116,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, 
     <AnimatePresence>
       {isOpen && (
         <div
-          className="fixed inset-0 z-[90] flex items-center justify-center p-6"
+          className="fixed inset-0 z-[90] flex items-center justify-center p-4 sm:p-6 overflow-hidden"
           role="dialog"
           aria-modal="true"
           aria-label={title || 'نافذة حوار'}
@@ -107,38 +127,52 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, 
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            onClick={onClose}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={closeOnBackdropClick ? onClose : undefined}
+            className="absolute inset-0 bg-black/70 backdrop-blur-md"
           />
 
           {/* Modal content */}
           <motion.div
             ref={modalRef}
-            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            initial={{ opacity: 0, scale: 0.96, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+            exit={{ opacity: 0, scale: 0.96, y: 8 }}
+            transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
             className={`
-              relative glass-panel-solid p-0 ${sizeMap[size]} w-full max-h-[80vh] overflow-hidden
-              shadow-2xl shadow-black/30
+              relative glass-panel-solid p-0 ${sizeMap[size] || sizeMap.md} w-full max-h-[85vh] flex flex-col overflow-hidden
+              shadow-2xl shadow-black/50 border border-white/[0.08] ${className}
             `}
           >
             {/* Header */}
-            {title && (
-              <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
-                <h3 className="text-base font-bold text-white/90">{title}</h3>
-                <button
-                  onClick={onClose}
-                  className="w-8 h-8 rounded-lg bg-surface-800/50 flex items-center justify-center text-white/40 hover:text-white/70 hover:bg-surface-700/70 transition-all cursor-pointer"
-                  aria-label="إغلاق النافذة"
-                >
-                  <X size={16} />
-                </button>
+            {(title || headerIcon || headerActions) && (
+              <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06] bg-surface-900/90 shrink-0">
+                <div className="flex items-center gap-3 min-w-0">
+                  {headerIcon && (
+                    <div className="w-9 h-9 rounded-xl bg-accent-500/10 border border-accent-500/20 flex items-center justify-center text-accent-400 shrink-0">
+                      {headerIcon}
+                    </div>
+                  )}
+                  <div className="min-w-0">
+                    {title && <h3 className="text-sm sm:text-base font-bold text-white/95 truncate">{title}</h3>}
+                    {subtitle && <p className="text-[11px] text-white/60 truncate">{subtitle}</p>}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  {headerActions}
+                  <button
+                    onClick={onClose}
+                    className="w-8 h-8 rounded-xl bg-surface-800/60 hover:bg-surface-700/80 flex items-center justify-center text-white/60 hover:text-white transition-all cursor-pointer border border-white/[0.04]"
+                    aria-label="إغلاق النافذة"
+                  >
+                    <X size={15} />
+                  </button>
+                </div>
               </div>
             )}
 
             {/* Body */}
-            <div className="p-6 overflow-y-auto max-h-[calc(80vh-64px)]">{children}</div>
+            <div className={`p-6 overflow-y-auto custom-scrollbar flex-1 ${bodyClassName}`}>{children}</div>
           </motion.div>
         </div>
       )}
