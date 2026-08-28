@@ -117,8 +117,7 @@
 @tailwind utilities;
 
 /* ==================== Semantic CSS Variables Design System ==================== */
-:root,
-html.dark {
+:root {
   color-scheme: dark;
   --color-surface-50: 248 249 252;
   --color-surface-100: 238 240 246;
@@ -133,7 +132,28 @@ html.dark {
   --color-surface-950: 13 15 26;
 }
 
-html.light {
+:root.dark,
+html.dark,
+body.dark,
+[data-theme='dark'] {
+  color-scheme: dark;
+  --color-surface-50: 248 249 252;
+  --color-surface-100: 238 240 246;
+  --color-surface-200: 213 217 232;
+  --color-surface-300: 176 184 209;
+  --color-surface-400: 132 144 181;
+  --color-surface-500: 100 112 155;
+  --color-surface-600: 79 89 129;
+  --color-surface-700: 65 73 105;
+  --color-surface-800: 30 34 53;
+  --color-surface-900: 22 25 39;
+  --color-surface-950: 13 15 26;
+}
+
+:root.light,
+html.light,
+body.light,
+[data-theme='light'] {
   color-scheme: light;
   --color-surface-50: 15 23 42;
   --color-surface-100: 30 41 59;

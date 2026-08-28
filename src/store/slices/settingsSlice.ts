@@ -17,16 +17,30 @@ const STORAGE_KEY_SETTINGS = 'ayahStudio_settings';
 
 export function applyThemeToDom(theme: 'dark' | 'light') {
   if (typeof document === 'undefined') return;
-  if (theme === 'light') {
-    document.documentElement.classList.remove('dark');
-    document.documentElement.classList.add('light');
-    document.documentElement.setAttribute('data-theme', 'light');
-    document.documentElement.style.colorScheme = 'light';
+  const isLight = theme === 'light';
+  const root = document.documentElement;
+  const body = document.body;
+
+  if (isLight) {
+    root.classList.remove('dark');
+    root.classList.add('light');
+    root.setAttribute('data-theme', 'light');
+    root.style.colorScheme = 'light';
+    if (body) {
+      body.classList.remove('dark');
+      body.classList.add('light');
+      body.setAttribute('data-theme', 'light');
+    }
   } else {
-    document.documentElement.classList.remove('light');
-    document.documentElement.classList.add('dark');
-    document.documentElement.setAttribute('data-theme', 'dark');
-    document.documentElement.style.colorScheme = 'dark';
+    root.classList.remove('light');
+    root.classList.add('dark');
+    root.setAttribute('data-theme', 'dark');
+    root.style.colorScheme = 'dark';
+    if (body) {
+      body.classList.remove('light');
+      body.classList.add('dark');
+      body.setAttribute('data-theme', 'dark');
+    }
   }
   try {
     if (typeof localStorage !== 'undefined') {

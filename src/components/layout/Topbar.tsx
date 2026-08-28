@@ -150,9 +150,18 @@ export const Topbar: React.FC<TopbarProps> = ({
               ? t('topbar.themeToggleLight', 'التبديل للوضع النهاري')
               : t('topbar.themeToggleDark', 'التبديل للوضع الليلي')
           }
-          className="w-9 h-9 rounded-xl bg-surface-800/40 border border-surface-700/40 flex items-center justify-center text-surface-400 hover:text-surface-50 hover:bg-surface-700/50 hover:border-surface-600 transition-all duration-200 cursor-pointer"
+          title={
+            theme === 'dark'
+              ? t('topbar.themeToggleLight', 'التبديل للوضع النهاري (فاتح)')
+              : t('topbar.themeToggleDark', 'التبديل للوضع الليلي (داكن)')
+          }
+          className="w-9 h-9 rounded-xl bg-surface-800/40 border border-surface-700/40 flex items-center justify-center text-surface-400 hover:text-surface-50 hover:bg-surface-700/50 hover:border-surface-600 transition-all duration-200 cursor-pointer shadow-sm active:scale-95"
         >
-          {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+          {theme === 'dark' ? (
+            <Sun size={16} className="text-amber-400 hover:text-amber-300 transition-colors" />
+          ) : (
+            <Moon size={16} className="text-gold-400 hover:text-gold-300 transition-colors" />
+          )}
         </button>
 
         {/* Notifications */}

@@ -8,6 +8,37 @@ describe('Zustand Modular Store (Slices & Persist)', () => {
       (globalThis as any).window = globalThis;
     }
 
+    const rootClasses = new Set<string>();
+    const rootAttrs: Record<string, string> = {};
+    const bodyClasses = new Set<string>();
+    const bodyAttrs: Record<string, string> = {};
+
+    (globalThis as any).document = {
+      documentElement: {
+        classList: {
+          add: vi.fn((cls: string) => rootClasses.add(cls)),
+          remove: vi.fn((cls: string) => rootClasses.delete(cls)),
+          contains: vi.fn((cls: string) => rootClasses.has(cls)),
+        },
+        setAttribute: vi.fn((k: string, v: string) => {
+          rootAttrs[k] = v;
+        }),
+        getAttribute: vi.fn((k: string) => rootAttrs[k] || null),
+        style: {},
+      },
+      body: {
+        classList: {
+          add: vi.fn((cls: string) => bodyClasses.add(cls)),
+          remove: vi.fn((cls: string) => bodyClasses.delete(cls)),
+          contains: vi.fn((cls: string) => bodyClasses.has(cls)),
+        },
+        setAttribute: vi.fn((k: string, v: string) => {
+          bodyAttrs[k] = v;
+        }),
+        getAttribute: vi.fn((k: string) => bodyAttrs[k] || null),
+      },
+    };
+
     const storage: Record<string, string> = {};
     (globalThis as any).localStorage = {
       getItem: vi.fn((k: string) => storage[k] || null),
@@ -182,18 +213,22 @@ describe('Zustand Modular Store (Slices & Persist)', () => {
       expect(useAppStore.getState().theme).toBe('light');
     });
 
-    it('applies theme classes to document root when applyThemeToDom is called', () => {
-      if (typeof document !== 'undefined') {
-        applyThemeToDom('light');
-        expect(document.documentElement.classList.contains('light')).toBe(true);
-        expect(document.documentElement.classList.contains('dark')).toBe(false);
-        expect(document.documentElement.getAttribute('data-theme')).toBe('light');
+    it('applies theme classes to document root and body when applyThemeToDom is called', () => {
+      applyThemeToDom('light');
+      expect(document.documentElement.classList.contains('light')).toBe(true);
+      expect(document.documentElement.classList.contains('dark')).toBe(false);
+      expect(document.documentElement.getAttribute('data-theme')).toBe('light');
+      expect(document.body.classList.contains('light')).toBe(true);
+      expect(document.body.classList.contains('dark')).toBe(false);
+      expect(document.body.getAttribute('data-theme')).toBe('light');
 
-        applyThemeToDom('dark');
-        expect(document.documentElement.classList.contains('dark')).toBe(true);
-        expect(document.documentElement.classList.contains('light')).toBe(false);
-        expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
-      }
+      applyThemeToDom('dark');
+      expect(document.documentElement.classList.contains('dark')).toBe(true);
+      expect(document.documentElement.classList.contains('light')).toBe(false);
+      expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
+      expect(document.body.classList.contains('dark')).toBe(true);
+      expect(document.body.classList.contains('light')).toBe(false);
+      expect(document.body.getAttribute('data-theme')).toBe('dark');
     });
   });
 
