@@ -608,13 +608,13 @@ export const VoiceStudioPage: React.FC = () => {
 
   const themeStyles = {
     obsidian:
-      'bg-gradient-to-b from-surface-950 via-surface-900 to-surface-950 border-gold-500/30 text-amber-100',
+      'bg-gradient-to-b from-surface-950 via-surface-900 to-surface-950 border-gold-500/30 text-surface-50',
     emerald:
-      'bg-gradient-to-b from-emerald-950/90 via-surface-950 to-emerald-950/90 border-emerald-500/30 text-emerald-100',
+      'bg-gradient-to-b from-emerald-500/10 via-surface-900 to-emerald-500/10 border-emerald-500/30 text-surface-50',
     parchment:
-      'bg-gradient-to-b from-[#2a241b] via-[#1f1a13] to-[#2a241b] border-amber-600/40 text-amber-200',
+      'bg-gradient-to-b from-amber-500/15 via-surface-900 to-amber-500/15 border-amber-600/40 text-surface-50',
     midnight:
-      'bg-gradient-to-b from-blue-950/80 via-surface-950 to-indigo-950/80 border-sky-500/30 text-sky-100',
+      'bg-gradient-to-b from-blue-500/10 via-surface-900 to-indigo-500/10 border-sky-500/30 text-surface-50',
   };
 
   return (
@@ -740,7 +740,7 @@ export const VoiceStudioPage: React.FC = () => {
                 className={`px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                   prompterMode === 'custom'
                     ? 'bg-gold-400 text-surface-950 shadow-sm font-black'
-                    : 'text-white/60 hover:text-white'
+                    : 'text-surface-300 hover:text-surface-50'
                 }`}
               >
                 <FileText size={13} />
@@ -751,8 +751,8 @@ export const VoiceStudioPage: React.FC = () => {
             {/* Teleprompter Controls: Font size, Speed presets, Slider, Play/Pause Scroll */}
             <div className="flex items-center gap-2.5 flex-wrap">
               {/* Speed Presets & Slider */}
-              <div className="flex items-center gap-1.5 p-1 rounded-xl bg-surface-900 border border-white/[0.06] text-xs">
-                <span className="text-[11px] text-white/50 px-1 font-bold">سرعة التلقين:</span>
+              <div className="flex items-center gap-1.5 p-1 rounded-xl bg-surface-900 border border-surface-700/40 text-xs">
+                <span className="text-[11px] text-surface-400 px-1 font-bold">سرعة التلقين:</span>
                 {[
                   { speed: 0.28, label: '🐢 هادئ' },
                   { speed: 0.45, label: '📖 ترتيل' },
@@ -764,8 +764,8 @@ export const VoiceStudioPage: React.FC = () => {
                     onClick={() => setScrollSpeed(sp.speed)}
                     className={`px-2 py-0.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
                       Math.abs(scrollSpeed - sp.speed) < 0.05
-                        ? 'bg-gold-400 text-surface-950 shadow-sm'
-                        : 'text-white/60 hover:text-white hover:bg-surface-800'
+                        ? 'bg-gold-400 text-surface-950 shadow-sm font-black'
+                        : 'text-surface-300 hover:text-surface-50 hover:bg-surface-800'
                     }`}
                   >
                     {sp.label}
@@ -783,7 +783,7 @@ export const VoiceStudioPage: React.FC = () => {
                 />
               </div>
 
-              <div className="flex items-center gap-1 text-xs text-white/60">
+              <div className="flex items-center gap-1 text-xs text-surface-300 font-bold">
                 <span className="text-[11px]">الخط:</span>
                 <input
                   type="range"
@@ -805,7 +805,7 @@ export const VoiceStudioPage: React.FC = () => {
                     onClick={() => setPrompterTheme(th)}
                     className={`w-5 h-5 rounded-full border transition-all ${
                       prompterTheme === th
-                        ? 'scale-110 border-white ring-2 ring-gold-400/50'
+                        ? 'scale-110 border-gold-400 ring-2 ring-gold-400/50'
                         : 'opacity-40 hover:opacity-80'
                     }`}
                     style={{
@@ -829,7 +829,7 @@ export const VoiceStudioPage: React.FC = () => {
                 className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
                   isMirrored
                     ? 'bg-purple-500/20 border-purple-400 text-purple-300 ring-1 ring-purple-400/40'
-                    : 'bg-surface-800 border-white/5 text-white/60 hover:text-white'
+                    : 'bg-surface-800 border-surface-700/40 text-surface-300 hover:text-surface-50 hover:bg-surface-700'
                 }`}
                 title="عكس الشاشة لزجاج التلقين (Mirror Mode 🪞)"
               >
@@ -855,7 +855,7 @@ export const VoiceStudioPage: React.FC = () => {
                 onClick={() => {
                   if (prompterContainerRef.current) prompterContainerRef.current.scrollTop = 0;
                 }}
-                className="p-1.5 rounded-lg bg-surface-800 hover:bg-surface-700 text-white/60 hover:text-white text-xs cursor-pointer"
+                className="p-1.5 rounded-lg bg-surface-800 hover:bg-surface-700 text-surface-300 hover:text-surface-50 border border-surface-700/40 text-xs cursor-pointer"
                 title="الرجوع للبداية"
               >
                 <RotateCcw size={13} />
@@ -864,11 +864,11 @@ export const VoiceStudioPage: React.FC = () => {
           </div>
 
           {/* Sub-selector Header (Surah & Ayah Pickers or Hadith/Dua Selector) */}
-          <div className="p-2.5 bg-surface-950/40 border-b border-white/[0.04] flex items-center gap-3 flex-wrap">
+          <div className="p-2.5 bg-surface-950/40 border-b border-surface-700/30 flex items-center gap-3 flex-wrap">
             {prompterMode === 'quran' && (
               <>
                 <div className="flex items-center gap-2">
-                  <label className="text-xs text-white/50 font-bold">السورة:</label>
+                  <label className="text-xs text-surface-400 font-bold">السورة:</label>
                   <select
                     value={selectedSurahNumber}
                     onChange={(e) => {
@@ -878,7 +878,7 @@ export const VoiceStudioPage: React.FC = () => {
                       const target = surahs.find((s) => s.number === num);
                       setToAyah(Math.min(7, target?.ayahCount || 7));
                     }}
-                    className="p-1.5 rounded-xl bg-surface-900 border border-white/10 text-xs font-bold text-white cursor-pointer"
+                    className="p-1.5 rounded-xl bg-surface-800 border border-surface-700/50 text-xs font-bold text-surface-50 cursor-pointer shadow-sm"
                   >
                     {surahs.map((s) => (
                       <option key={s.number} value={s.number}>
@@ -889,16 +889,16 @@ export const VoiceStudioPage: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <label className="text-xs text-white/50 font-bold">من الآية:</label>
+                  <label className="text-xs text-surface-400 font-bold">من الآية:</label>
                   <input
                     type="number"
                     min={1}
                     max={selectedSurah?.ayahCount || 7}
                     value={fromAyah}
                     onChange={(e) => setFromAyah(Math.max(1, Number(e.target.value)))}
-                    className="w-14 p-1 rounded-xl bg-surface-900 border border-white/10 text-xs font-bold text-center text-white"
+                    className="w-14 p-1 rounded-xl bg-surface-800 border border-surface-700/50 text-xs font-bold text-center text-surface-50 shadow-sm"
                   />
-                  <label className="text-xs text-white/50 font-bold">إلى:</label>
+                  <label className="text-xs text-surface-400 font-bold">إلى:</label>
                   <input
                     type="number"
                     min={fromAyah}
@@ -907,7 +907,7 @@ export const VoiceStudioPage: React.FC = () => {
                     onChange={(e) =>
                       setToAyah(Math.min(selectedSurah?.ayahCount || 7, Number(e.target.value)))
                     }
-                    className="w-14 p-1 rounded-xl bg-surface-900 border border-white/10 text-xs font-bold text-center text-white"
+                    className="w-14 p-1 rounded-xl bg-surface-800 border border-surface-700/50 text-xs font-bold text-center text-surface-50 shadow-sm"
                   />
                 </div>
               </>
@@ -915,11 +915,11 @@ export const VoiceStudioPage: React.FC = () => {
 
             {prompterMode === 'hadith' && (
               <div className="flex items-center gap-2 flex-1">
-                <label className="text-xs text-white/50 font-bold">اختر الحديث النبوي:</label>
+                <label className="text-xs text-surface-400 font-bold">اختر الحديث النبوي:</label>
                 <select
                   value={selectedZikrId}
                   onChange={(e) => setSelectedZikrId(e.target.value)}
-                  className="flex-1 p-1.5 rounded-xl bg-surface-900 border border-white/10 text-xs font-bold text-white cursor-pointer"
+                  className="flex-1 p-1.5 rounded-xl bg-surface-800 border border-surface-700/50 text-xs font-bold text-surface-50 cursor-pointer shadow-sm"
                 >
                   {initialAzkarList
                     .filter((z) => z.category === 'hadith')
@@ -934,11 +934,11 @@ export const VoiceStudioPage: React.FC = () => {
 
             {prompterMode === 'dua' && (
               <div className="flex items-center gap-2 flex-1">
-                <label className="text-xs text-white/50 font-bold">اختر الدعاء أو الذكر:</label>
+                <label className="text-xs text-surface-400 font-bold">اختر الدعاء أو الذكر:</label>
                 <select
                   value={selectedZikrId}
                   onChange={(e) => setSelectedZikrId(e.target.value)}
-                  className="flex-1 p-1.5 rounded-xl bg-surface-900 border border-white/10 text-xs font-bold text-white cursor-pointer"
+                  className="flex-1 p-1.5 rounded-xl bg-surface-800 border border-surface-700/50 text-xs font-bold text-surface-50 cursor-pointer shadow-sm"
                 >
                   {initialAzkarList
                     .filter((z) => z.category !== 'hadith')
@@ -952,7 +952,7 @@ export const VoiceStudioPage: React.FC = () => {
             )}
 
             {prompterMode === 'custom' && (
-              <div className="text-xs text-white/60">
+              <div className="text-xs text-surface-300">
                 <span>
                   ✍️ اكتب أو الصق موعظتك أو خاطرتك، أو سجل مباشرة بصوتك بدون كتابة إجبارية.
                 </span>
@@ -971,7 +971,7 @@ export const VoiceStudioPage: React.FC = () => {
           >
             {/* Elegant Islamic Header in Prompter */}
             {prompterMode === 'quran' && selectedSurahNumber !== 9 && fromAyah === 1 && (
-              <div className="mb-8 text-gold-400/90 font-serif text-xl sm:text-2xl select-none">
+              <div className="mb-8 text-gold-600 dark:text-gold-400 font-serif text-xl sm:text-2xl select-none font-bold">
                 بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
               </div>
             )}
@@ -980,21 +980,21 @@ export const VoiceStudioPage: React.FC = () => {
             {prompterMode === 'quran' && (
               <>
                 {isLoadingAyahs ? (
-                  <div className="h-full flex items-center justify-center text-gold-400 text-sm animate-pulse">
+                  <div className="h-full flex items-center justify-center text-gold-500 text-sm animate-pulse font-bold">
                     جاري تحميل الآيات بالتشكيل العثماني...
                   </div>
                 ) : (
                   <div
-                    className="leading-[2.4] font-medium tracking-wide max-w-3xl mx-auto select-none"
+                    className="leading-[2.4] font-medium tracking-wide max-w-3xl mx-auto select-none text-surface-50"
                     style={{ fontSize: `${fontSize}px` }}
                   >
                     {ayahs.map((ayah) => (
                       <span
                         key={ayah.numberInSurah}
-                        className="inline transition-colors hover:text-gold-300"
+                        className="inline transition-colors hover:text-gold-500"
                       >
                         {ayah.text}{' '}
-                        <span className="inline-flex items-center justify-center mx-1 text-gold-400 font-serif text-lg sm:text-xl">
+                        <span className="inline-flex items-center justify-center mx-1 text-gold-600 dark:text-gold-400 font-serif text-lg sm:text-xl font-bold">
                           ۝{ayah.numberInSurah}
                         </span>{' '}
                       </span>
@@ -1007,13 +1007,13 @@ export const VoiceStudioPage: React.FC = () => {
             {/* Hadith Content */}
             {prompterMode === 'hadith' && (
               <div className="max-w-3xl mx-auto space-y-6">
-                <h3 className="text-xl font-bold text-gold-400 mb-4">
+                <h3 className="text-xl font-bold text-gold-600 dark:text-gold-400 mb-4">
                   {initialAzkarList.find(
                     (z: AzkarItem) => z.id === selectedZikrId && z.category === 'hadith'
                   )?.title || initialAzkarList.find((z) => z.category === 'hadith')?.title}
                 </h3>
                 <p
-                  className="leading-[2.4] font-medium tracking-wide text-white select-none"
+                  className="leading-[2.4] font-medium tracking-wide text-surface-50 select-none"
                   style={{ fontSize: `${fontSize}px` }}
                 >
                   {initialAzkarList.find(
@@ -1021,7 +1021,7 @@ export const VoiceStudioPage: React.FC = () => {
                   )?.arabicText ||
                     initialAzkarList.find((z) => z.category === 'hadith')?.arabicText}
                 </p>
-                <div className="pt-4 text-xs text-white/50 font-sans">
+                <div className="pt-4 text-xs text-surface-400 font-sans font-medium">
                   {initialAzkarList.find(
                     (z: AzkarItem) => z.id === selectedZikrId && z.category === 'hadith'
                   )?.reference || 'صحيح البخاري'}
@@ -1032,20 +1032,20 @@ export const VoiceStudioPage: React.FC = () => {
             {/* Dua Content */}
             {prompterMode === 'dua' && (
               <div className="max-w-3xl mx-auto space-y-6">
-                <h3 className="text-xl font-bold text-gold-400 mb-4">
+                <h3 className="text-xl font-bold text-gold-600 dark:text-gold-400 mb-4">
                   {initialAzkarList.find(
                     (z: AzkarItem) => z.id === selectedZikrId && z.category !== 'hadith'
                   )?.title || initialAzkarList[0]?.title}
                 </h3>
                 <p
-                  className="leading-[2.4] font-medium tracking-wide text-white select-none"
+                  className="leading-[2.4] font-medium tracking-wide text-surface-50 select-none"
                   style={{ fontSize: `${fontSize}px` }}
                 >
                   {initialAzkarList.find(
                     (z: AzkarItem) => z.id === selectedZikrId && z.category !== 'hadith'
                   )?.arabicText || initialAzkarList[0]?.arabicText}
                 </p>
-                <div className="pt-4 text-xs text-white/50 font-sans">
+                <div className="pt-4 text-xs text-surface-400 font-sans font-medium">
                   {initialAzkarList.find(
                     (z: AzkarItem) => z.id === selectedZikrId && z.category !== 'hadith'
                   )?.reference || 'حصن المسلم'}
@@ -1061,7 +1061,7 @@ export const VoiceStudioPage: React.FC = () => {
                   onChange={(e) => setCustomText(e.target.value)}
                   rows={8}
                   placeholder="اكتب أو الصق موعظتك، كلمتك الطيبة، أو فكرتك هنا لتظهر أمامك أثناء التسجيل (أو اتركها فارغة للتسجيل الحر)..."
-                  className="w-full p-4 rounded-2xl bg-surface-900/60 border border-white/10 text-white text-center leading-[2.2] focus:outline-none focus:border-gold-400 resize-none"
+                  className="w-full p-4 rounded-2xl bg-surface-900 border border-surface-700/50 text-surface-50 text-center leading-[2.2] focus:outline-none focus:border-gold-400 resize-none shadow-sm"
                   style={{ fontSize: `${fontSize}px`, fontFamily }}
                 />
               </div>
@@ -1122,16 +1122,16 @@ export const VoiceStudioPage: React.FC = () => {
         {/* ======================================================== */}
         <div className="w-full lg:w-[420px] h-full max-h-full flex flex-col gap-3 shrink-0 overflow-y-auto custom-scrollbar pb-16 pe-1">
           {/* 1. Live Recording & VU Deck */}
-          <div className="p-5 rounded-3xl bg-surface-900/95 border border-gold-500/30 shadow-2xl relative overflow-hidden text-center space-y-3 shrink-0">
-            <div className="flex items-center justify-between text-xs font-bold text-white/70">
-              <span className="flex items-center gap-1.5 text-gold-400">
+          <div className="p-5 rounded-3xl bg-surface-900 border border-gold-500/30 shadow-xl relative overflow-hidden text-center space-y-3 shrink-0">
+            <div className="flex items-center justify-between text-xs font-bold text-surface-300">
+              <span className="flex items-center gap-1.5 text-gold-600 dark:text-gold-400">
                 <Radio
                   size={14}
                   className={
                     isRecording
                       ? 'animate-pulse text-red-500'
                       : isCountingDown
-                        ? 'animate-bounce text-amber-400'
+                        ? 'animate-bounce text-amber-500'
                         : ''
                   }
                 />
@@ -1143,7 +1143,7 @@ export const VoiceStudioPage: React.FC = () => {
                       : 'منصة التسجيل المباشر 🎙️'}
                 </span>
               </span>
-              <span className="font-mono text-white text-sm">
+              <span className="font-mono text-surface-50 text-sm font-bold">
                 {formatSeconds(recordingSeconds)}
               </span>
             </div>
@@ -1186,18 +1186,18 @@ export const VoiceStudioPage: React.FC = () => {
             {/* VU Meter & Instruction */}
             {isRecording ? (
               <div className="space-y-1">
-                <div className="w-full h-2 rounded-full bg-surface-950 overflow-hidden border border-white/[0.04]">
+                <div className="w-full h-2 rounded-full bg-surface-800 overflow-hidden border border-surface-700/40">
                   <div
                     className="h-full bg-gradient-to-r from-emerald-500 via-gold-400 to-red-500 transition-all duration-75"
                     style={{ width: `${audioLevel}%` }}
                   />
                 </div>
-                <span className="text-[11px] text-white/40 font-mono">
+                <span className="text-[11px] text-surface-400 font-mono">
                   مستوى الصوت: {audioLevel}%
                 </span>
               </div>
             ) : isCountingDown ? (
-              <div className="text-xs font-bold text-gold-300 animate-pulse">
+              <div className="text-xs font-bold text-gold-600 dark:text-gold-300 animate-pulse">
                 {countdownValue === 3 && '3.. خُذ نفساً عميقاً 🌿'}
                 {countdownValue === 2 && '2.. استعد للتلاوة ✨'}
                 {countdownValue === 1 && '1.. بِسْمِ اللَّه 📖'}
@@ -1205,11 +1205,11 @@ export const VoiceStudioPage: React.FC = () => {
               </div>
             ) : (
               <div className="flex items-center justify-center gap-3 pt-1">
-                <span className="text-xs text-white/50">أو</span>
+                <span className="text-xs text-surface-400">أو</span>
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="text-xs text-gold-400 hover:text-gold-300 underline font-bold cursor-pointer"
+                  className="text-xs text-gold-600 dark:text-gold-400 hover:underline font-bold cursor-pointer"
                 >
                   رفع ملف MP3 من جهازك 📁
                 </button>
@@ -1226,7 +1226,7 @@ export const VoiceStudioPage: React.FC = () => {
 
           {/* 2. Processed Preview Bar (Active when audio is ready) */}
           {audioBlobUrl && (
-            <div className="p-3.5 rounded-2xl bg-gradient-to-r from-gold-500/10 via-surface-900 to-amber-500/10 border border-gold-400/40 shadow-lg space-y-2.5">
+            <div className="p-3.5 rounded-2xl bg-surface-900 border border-gold-500/30 shadow-lg space-y-2.5">
               <div className="flex items-center justify-between gap-3">
                 <button
                   type="button"
@@ -1237,12 +1237,12 @@ export const VoiceStudioPage: React.FC = () => {
                 </button>
 
                 <div className="flex-1 min-w-0">
-                  <div className="text-xs font-bold text-white truncate">
+                  <div className="text-xs font-bold text-surface-50 truncate">
                     {isPlayingPreview
                       ? 'معاينة حية مع الصدى والطبيعة 🎧'
                       : 'استمع لتسجيلك مع التأثيرات'}
                   </div>
-                  <div className="text-xs text-gold-400 font-mono">
+                  <div className="text-xs text-gold-600 dark:text-gold-400 font-mono font-bold">
                     المدة: {formatSeconds(audioDuration)}
                   </div>
                 </div>
@@ -1258,30 +1258,30 @@ export const VoiceStudioPage: React.FC = () => {
               </div>
 
               {/* Custom Reciter Name Input */}
-              <div className="pt-2 border-t border-white/[0.08] space-y-1">
-                <label className="text-[11px] font-bold text-gold-300 flex items-center justify-between">
+              <div className="pt-2 border-t border-surface-700/40 space-y-1">
+                <label className="text-[11px] font-bold text-gold-600 dark:text-gold-300 flex items-center justify-between">
                   <span>اسمك / اسم القارئ (يظهر في الفيديو والغلاف):</span>
-                  <span className="text-[9px] text-white/40">تعديل</span>
+                  <span className="text-[9px] text-surface-400">تعديل</span>
                 </label>
                 <input
                   type="text"
                   value={customReciterName}
                   onChange={(e) => setCustomReciterName(e.target.value)}
                   placeholder="مثال: القارئ محمد طه / تلاوتي الخاصة"
-                  className="glass-input w-full p-2 rounded-xl text-xs bg-surface-950 border border-gold-400/30 text-white placeholder-white/30 focus:border-gold-400 focus:outline-none"
+                  className="glass-input w-full p-2 rounded-xl text-xs bg-surface-800 border border-gold-400/40 text-surface-50 placeholder-surface-400 focus:border-gold-500 focus:outline-none"
                 />
               </div>
             </div>
           )}
 
           {/* 3. Mosque Spatial Reverb (صدى المسجد الحرام) */}
-          <div className="p-4 rounded-3xl bg-surface-900/80 border border-purple-500/20 shadow-xl space-y-2.5">
+          <div className="p-4 rounded-3xl bg-surface-900 border border-purple-500/25 shadow-xl space-y-2.5">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-white flex items-center gap-1.5">
+              <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
                 <Sparkles size={14} className="text-purple-400" />
                 <span>صدى المسجد الحرام (Mosque Spatial Reverb) 🕌</span>
               </label>
-              <span className="text-[11px] font-bold text-purple-300 px-2 py-0.5 rounded-full bg-purple-500/15">
+              <span className="text-[11px] font-bold text-purple-400 px-2 py-0.5 rounded-full bg-purple-500/15 border border-purple-500/25">
                 3D Sound
               </span>
             </div>
@@ -1314,8 +1314,8 @@ export const VoiceStudioPage: React.FC = () => {
                     }}
                     className={`p-2 rounded-xl text-start transition-all cursor-pointer border flex items-center gap-1.5 ${
                       isSelected
-                        ? 'bg-purple-500/20 border-purple-400 text-white font-bold shadow-sm'
-                        : 'bg-surface-950/60 border-white/[0.04] text-white/60 hover:text-white'
+                        ? 'bg-purple-500/20 border-purple-400 text-surface-50 font-bold shadow-sm'
+                        : 'bg-surface-800/80 border-surface-700/40 text-surface-300 hover:text-surface-50 hover:bg-surface-800'
                     }`}
                   >
                     <span className="text-sm">{rev.icon}</span>
@@ -1326,10 +1326,10 @@ export const VoiceStudioPage: React.FC = () => {
             </div>
 
             {reverbPreset !== 'none' && (
-              <div className="pt-2 border-t border-white/[0.06]">
-                <div className="flex items-center justify-between text-xs font-bold text-white/60 mb-1">
+              <div className="pt-2 border-t border-surface-700/40">
+                <div className="flex items-center justify-between text-xs font-bold text-surface-300 mb-1">
                   <span>قوة الصدى والارتداد</span>
-                  <span className="font-mono text-purple-400">{reverbLevel}%</span>
+                  <span className="font-mono text-purple-400 font-bold">{reverbLevel}%</span>
                 </div>
                 <input
                   type="range"
@@ -1344,13 +1344,13 @@ export const VoiceStudioPage: React.FC = () => {
           </div>
 
           {/* 4. Studio DSP Audio Mastering */}
-          <div className="p-4 rounded-3xl bg-surface-900/80 border border-emerald-500/20 shadow-xl space-y-2">
+          <div className="p-4 rounded-3xl bg-surface-900 border border-emerald-500/25 shadow-xl space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-white flex items-center gap-1.5">
+              <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
                 <Sliders size={14} className="text-emerald-400" />
                 <span>فلاتر الاستوديو ونقاء الصوت (Mastering) 🎛️</span>
               </label>
-              <span className="text-[11px] text-emerald-400 font-bold">Studio DSP</span>
+              <span className="text-[11px] text-emerald-400 font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">Studio DSP</span>
             </div>
 
             <div className="grid grid-cols-3 gap-1.5">
@@ -1359,12 +1359,12 @@ export const VoiceStudioPage: React.FC = () => {
                 onClick={() => setEnableNoiseGate(!enableNoiseGate)}
                 className={`p-2 rounded-xl text-center text-[11px] font-bold border transition-all cursor-pointer ${
                   enableNoiseGate
-                    ? 'bg-emerald-500/20 border-emerald-400 text-white'
-                    : 'bg-surface-950/60 border-white/[0.04] text-white/40'
+                    ? 'bg-emerald-500/20 border-emerald-400 text-surface-50 shadow-sm'
+                    : 'bg-surface-800/80 border-surface-700/40 text-surface-300 hover:text-surface-50 hover:bg-surface-800'
                 }`}
               >
                 <div>⚡ عزل الضوضاء</div>
-                <div className="text-[10px] text-white/40">
+                <div className="text-[10px] text-surface-400">
                   {enableNoiseGate ? 'مفعل ✓' : 'معطل'}
                 </div>
               </button>
@@ -1374,12 +1374,12 @@ export const VoiceStudioPage: React.FC = () => {
                 onClick={() => setEnableClarity(!enableClarity)}
                 className={`p-2 rounded-xl text-center text-[11px] font-bold border transition-all cursor-pointer ${
                   enableClarity
-                    ? 'bg-emerald-500/20 border-emerald-400 text-white'
-                    : 'bg-surface-950/60 border-white/[0.04] text-white/40'
+                    ? 'bg-emerald-500/20 border-emerald-400 text-surface-50 shadow-sm'
+                    : 'bg-surface-800/80 border-surface-700/40 text-surface-300 hover:text-surface-50 hover:bg-surface-800'
                 }`}
               >
                 <div>💎 نقاء التجويد</div>
-                <div className="text-[10px] text-white/40">{enableClarity ? 'مفعل ✓' : 'معطل'}</div>
+                <div className="text-[10px] text-surface-400">{enableClarity ? 'مفعل ✓' : 'معطل'}</div>
               </button>
 
               <button
@@ -1387,21 +1387,21 @@ export const VoiceStudioPage: React.FC = () => {
                 onClick={() => setEnableWarmth(!enableWarmth)}
                 className={`p-2 rounded-xl text-center text-[11px] font-bold border transition-all cursor-pointer ${
                   enableWarmth
-                    ? 'bg-emerald-500/20 border-emerald-400 text-white'
-                    : 'bg-surface-950/60 border-white/[0.04] text-white/40'
+                    ? 'bg-emerald-500/20 border-emerald-400 text-surface-50 shadow-sm'
+                    : 'bg-surface-800/80 border-surface-700/40 text-surface-300 hover:text-surface-50 hover:bg-surface-800'
                 }`}
               >
                 <div>🎙️ دفء الصوت</div>
-                <div className="text-[10px] text-white/40">{enableWarmth ? 'مفعل ✓' : 'معطل'}</div>
+                <div className="text-[10px] text-surface-400">{enableWarmth ? 'مفعل ✓' : 'معطل'}</div>
               </button>
             </div>
           </div>
 
           {/* 5. Auto-Pitch Polish & Harmonic Sweetener */}
-          <div className="p-4 rounded-3xl bg-surface-900/80 border border-amber-500/25 shadow-xl space-y-2.5">
+          <div className="p-4 rounded-3xl bg-surface-900 border border-amber-500/25 shadow-xl space-y-2.5">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-white flex items-center gap-1.5">
-                <Flame size={14} className="text-amber-400" />
+              <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
+                <Flame size={14} className="text-amber-500" />
                 <span>تنعيم النبرة والهارمونيك (Auto-Pitch Polish) 💎</span>
               </label>
               <button
@@ -1409,8 +1409,8 @@ export const VoiceStudioPage: React.FC = () => {
                 onClick={() => setEnablePitchPolish(!enablePitchPolish)}
                 className={`px-2 py-0.5 rounded-full text-[11px] font-bold border transition-all cursor-pointer ${
                   enablePitchPolish
-                    ? 'bg-amber-400/20 border-amber-400 text-amber-300'
-                    : 'bg-surface-950/60 border-white/10 text-white/40'
+                    ? 'bg-amber-400/20 border-amber-400 text-amber-500 dark:text-amber-300'
+                    : 'bg-surface-800 border-surface-700/40 text-surface-400'
                 }`}
               >
                 {enablePitchPolish ? 'مفعل ✓' : 'معطل'}
@@ -1419,9 +1419,9 @@ export const VoiceStudioPage: React.FC = () => {
 
             {enablePitchPolish && (
               <div className="space-y-1 pt-1">
-                <div className="flex items-center justify-between text-xs font-bold text-white/60">
+                <div className="flex items-center justify-between text-xs font-bold text-surface-300">
                   <span>درجة التنعيم واللمعان الصوتي</span>
-                  <span className="font-mono text-amber-400">{pitchPolishLevel}%</span>
+                  <span className="font-mono text-amber-500 dark:text-amber-400 font-bold">{pitchPolishLevel}%</span>
                 </div>
                 <input
                   type="range"
@@ -1431,7 +1431,7 @@ export const VoiceStudioPage: React.FC = () => {
                   onChange={(e) => setPitchPolishLevel(Number(e.target.value))}
                   className="w-full accent-amber-400 cursor-pointer"
                 />
-                <p className="text-[10px] text-white/40">
+                <p className="text-[10px] text-surface-400">
                   يضيف نعومة مخملية للنبرة مع إبراز النقاء والتناغم الصوتي
                 </p>
               </div>
@@ -1439,10 +1439,10 @@ export const VoiceStudioPage: React.FC = () => {
           </div>
 
           {/* 6. 🎧 8D Binaural Spatial Audio Deck */}
-          <div className="p-4 rounded-3xl bg-surface-900/80 border border-gold-500/30 shadow-xl space-y-3">
+          <div className="p-4 rounded-3xl bg-surface-900 border border-gold-500/30 shadow-xl space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-white flex items-center gap-1.5">
-                <Headphones size={14} className="text-gold-400" />
+              <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
+                <Headphones size={14} className="text-gold-500 dark:text-gold-400" />
                 <span>صوت الحرم المكاني (8D Spatial) 🎧</span>
               </label>
               <button
@@ -1457,8 +1457,8 @@ export const VoiceStudioPage: React.FC = () => {
                 }}
                 className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold border transition-all cursor-pointer ${
                   enable8DAudio
-                    ? 'bg-gold-500/20 border-gold-400 text-gold-300 shadow-sm'
-                    : 'bg-surface-950/60 border-white/10 text-white/40'
+                    ? 'bg-gold-500/20 border-gold-400 text-gold-600 dark:text-gold-300 shadow-sm'
+                    : 'bg-surface-800 border-surface-700/40 text-surface-400'
                 }`}
               >
                 {enable8DAudio ? 'مفعل ✓' : 'معطل'}
@@ -1476,7 +1476,7 @@ export const VoiceStudioPage: React.FC = () => {
             {enable8DAudio && (
               <div className="space-y-2.5 pt-1">
                 <div>
-                  <label className="block text-white/60 text-xs font-bold mb-1.5">
+                  <label className="block text-surface-300 text-xs font-bold mb-1.5">
                     مسار الطواف 360°
                   </label>
                   <div className="grid grid-cols-2 gap-1.5">
@@ -1492,8 +1492,8 @@ export const VoiceStudioPage: React.FC = () => {
                         onClick={() => setEightDStyle(st.id as Spatial8DStyle)}
                         className={`p-2 rounded-xl text-xs font-bold border transition-all text-start cursor-pointer ${
                           eightDStyle === st.id
-                            ? 'bg-gold-500/20 border-gold-400 text-white shadow-sm'
-                            : 'bg-surface-950/60 border-white/[0.04] text-white/60 hover:text-white'
+                            ? 'bg-gold-500/20 border-gold-400 text-surface-50 shadow-sm'
+                            : 'bg-surface-800/80 border-surface-700/40 text-surface-300 hover:text-surface-50 hover:bg-surface-800'
                         }`}
                       >
                         {st.name}
@@ -1503,9 +1503,9 @@ export const VoiceStudioPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <div className="flex items-center justify-between text-xs font-bold text-white/60 mb-1">
+                  <div className="flex items-center justify-between text-xs font-bold text-surface-300 mb-1">
                     <span>سرعة الدوران المداري</span>
-                    <span className="font-mono text-gold-400">
+                    <span className="font-mono text-gold-600 dark:text-gold-400 font-bold">
                       {Math.round(eightDSpeed * 100)}%
                     </span>
                   </div>
@@ -1519,8 +1519,8 @@ export const VoiceStudioPage: React.FC = () => {
                   />
                 </div>
 
-                <div className="flex items-center justify-between pt-1 border-t border-white/[0.06]">
-                  <span className="text-xs text-white/70 font-medium">
+                <div className="flex items-center justify-between pt-1 border-t border-surface-700/40">
+                  <span className="text-xs text-surface-300 font-medium">
                     إظهار شارة السماعات 🎧 على الفيديو
                   </span>
                   <input
@@ -1535,9 +1535,9 @@ export const VoiceStudioPage: React.FC = () => {
           </div>
 
           {/* 7. Ambient Sounds Layering */}
-          <div className="p-4 rounded-3xl bg-surface-900/80 border border-sky-500/20 shadow-xl space-y-2.5">
+          <div className="p-4 rounded-3xl bg-surface-900 border border-sky-500/25 shadow-xl space-y-2.5">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-white flex items-center gap-1.5">
+              <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
                 <Volume2 size={14} className="text-sky-400" />
                 <span>مزج صوت الطبيعة في الخلفية (Ambient) 🌿</span>
               </label>
@@ -1560,8 +1560,8 @@ export const VoiceStudioPage: React.FC = () => {
                     }}
                     className={`p-2 rounded-xl text-start text-xs font-bold border transition-all cursor-pointer ${
                       isSelected
-                        ? 'bg-sky-500/20 border-sky-400 text-white'
-                        : 'bg-surface-950/60 border-white/[0.04] text-white/60 hover:text-white'
+                        ? 'bg-sky-500/20 border-sky-400 text-surface-50'
+                        : 'bg-surface-800/80 border-surface-700/40 text-surface-300 hover:text-surface-50 hover:bg-surface-800'
                     }`}
                   >
                     <span className="me-1">{snd.icon}</span>
@@ -1572,10 +1572,10 @@ export const VoiceStudioPage: React.FC = () => {
             </div>
 
             {ambientSoundId !== 'none' && (
-              <div className="pt-2 border-t border-white/[0.06]">
-                <div className="flex items-center justify-between text-xs font-bold text-white/60 mb-1">
+              <div className="pt-2 border-t border-surface-700/40">
+                <div className="flex items-center justify-between text-xs font-bold text-surface-300 mb-1">
                   <span>مستوى صوت الطبيعة</span>
-                  <span className="font-mono text-sky-400">{ambientVolume}%</span>
+                  <span className="font-mono text-sky-400 font-bold">{ambientVolume}%</span>
                 </div>
                 <input
                   type="range"

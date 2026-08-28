@@ -479,9 +479,9 @@ export const ImageQuotesStudioPage: React.FC = () => {
 
                 <button
                   onClick={handleConvertToReelProject}
-                  className="py-3 px-4 rounded-2xl bg-gradient-to-r from-gold-500/20 to-gold-600/20 hover:from-gold-500/30 hover:to-gold-600/30 text-gold-300 text-xs font-bold flex items-center justify-center gap-2 border border-gold-500/30 transition-all cursor-pointer"
+                  className="py-3 px-4 rounded-2xl bg-gradient-to-r from-gold-500/20 to-gold-600/20 hover:from-gold-500/30 hover:to-gold-600/30 text-gold-600 dark:text-gold-300 text-xs font-bold flex items-center justify-center gap-2 border border-gold-500/30 transition-all cursor-pointer"
                 >
-                  <Video size={15} className="text-gold-400" />
+                  <Video size={15} className="text-gold-500 dark:text-gold-400" />
                   <span>تحويل لريل فيديو</span>
                 </button>
               </div>
@@ -491,7 +491,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
           {/* Right Column: Visual Controls Sidebar (5 cols) */}
           <div className="lg:col-span-5 space-y-4">
             {/* Quick Navigation Tabs */}
-            <div className="flex items-center gap-1 p-1.5 rounded-2xl bg-surface-900/80 border border-white/[0.06] overflow-x-auto scrollbar-none">
+            <div className="flex items-center gap-1 p-1.5 rounded-2xl bg-surface-900 border border-surface-700/40 overflow-x-auto scrollbar-none">
               {[
                 { id: 'content', label: 'المحتوى', icon: <Type size={13} /> },
                 { id: 'style', label: 'الخط والتنسيق', icon: <Palette size={13} /> },
@@ -506,7 +506,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
                     activeTab === tab.id
                       ? 'bg-accent-500 text-white shadow-md shadow-accent-500/20'
-                      : 'text-white/50 hover:text-white hover:bg-surface-800'
+                      : 'text-surface-400 hover:text-surface-50 hover:bg-surface-800'
                   }`}
                 >
                   {tab.icon}

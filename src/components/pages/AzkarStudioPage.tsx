@@ -328,9 +328,9 @@ export const AzkarStudioPage: React.FC = () => {
 
                     {/* Benefit / Virtues Note */}
                     {item.benefit && (
-                      <div className="p-2.5 rounded-xl bg-gold-400/5 border border-gold-400/15 mb-4 flex items-start gap-2">
-                        <Sparkles size={14} className="text-gold-400 shrink-0 mt-0.5" />
-                        <p className="text-[11px] text-gold-300/80 leading-relaxed">
+                      <div className="p-2.5 rounded-xl bg-gold-500/10 border border-gold-500/20 mb-4 flex items-start gap-2">
+                        <Sparkles size={14} className="text-gold-500 shrink-0 mt-0.5" />
+                        <p className="text-[11px] text-amber-950 dark:text-gold-300 leading-relaxed font-medium">
                           {item.benefit}
                         </p>
                       </div>
