@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useAppStore } from '../../store/useAppStore';
+import { useTranslation } from '../../i18n';
 import { AppLayout } from '../layout/AppLayout';
 import { ExportProgress } from '../ui/ExportProgress';
 import { EmptyState } from '../ui/EmptyState';
@@ -39,6 +40,7 @@ export const ExportPage: React.FC = () => {
   const addToast = useAppStore((s) => s.addToast);
   const setCurrentPage = useAppStore((s) => s.setCurrentPage);
   const settings = useAppStore((s) => s.settings);
+  const { t } = useTranslation();
 
   const [aspectRatio, setAspectRatio] = useState<'9:16' | '16:9' | '1:1'>(
     currentProject?.aspectRatio || '9:16'
@@ -325,7 +327,7 @@ export const ExportPage: React.FC = () => {
   };
 
   return (
-    <AppLayout title="التصدير" subtitle="تصدير وإدارة المخرجات">
+    <AppLayout title={t('export.title', 'تصدير ونشر الفيديو 🎬')} subtitle={t('export.subtitle', 'اختر المنصة والجودة المناسبة لتصدير الريلز')}>
       <div className="p-6 animate-in max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left: Export settings */}

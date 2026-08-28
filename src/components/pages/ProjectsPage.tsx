@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../../store/useAppStore';
+import { useTranslation } from '../../i18n';
 import { AppLayout } from '../layout/AppLayout';
 import { ProjectCard } from '../ui/ProjectCard';
 import { EmptyState } from '../ui/EmptyState';
@@ -28,6 +29,7 @@ export const ProjectsPage: React.FC = () => {
   const modalData = useAppStore((s) => s.modalData);
   const closeModal = useAppStore((s) => s.closeModal);
   const addToast = useAppStore((s) => s.addToast);
+  const { t } = useTranslation();
 
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
@@ -135,8 +137,8 @@ export const ProjectsPage: React.FC = () => {
 
   return (
     <AppLayout
-      title="مشاريعي"
-      subtitle={`${projects.length} مشروع`}
+      title={t('projects.title', 'مشاريعي المحفوظة')}
+      subtitle={`${projects.length} ${t('common.all', 'مشروع')}`}
       topbarActions={
         <div className="flex items-center gap-2">
           {projects.length > 0 && (
@@ -156,17 +158,17 @@ export const ProjectsPage: React.FC = () => {
                 }`}
               >
                 <CheckSquare size={14} />
-                <span>{isSelectionMode ? 'إلغاء التحديد' : 'تحديد المشاريع'}</span>
+                <span>{isSelectionMode ? t('projects.deselectAll', 'إلغاء التحديد') : t('projects.selectAll', 'تحديد المشاريع')}</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setBulkConfirmType('all')}
                 className="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 transition-all flex items-center gap-1.5 cursor-pointer"
-                title="حذف جميع المشاريع نهائياً"
+                title={t('projects.deleteAll', 'حذف جميع المشاريع نهائياً')}
               >
                 <Trash2 size={14} />
-                <span>حذف الكل ⚠️</span>
+                <span>{t('projects.deleteAll', 'حذف الكل')} ⚠️</span>
               </button>
             </>
           )}
@@ -177,7 +179,7 @@ export const ProjectsPage: React.FC = () => {
             className="btn-primary-sm flex items-center gap-1.5 text-xs cursor-pointer shadow-md"
           >
             <PlusCircle size={14} />
-            مشروع جديد
+            {t('projects.newProject', 'مشروع جديد')}
           </button>
         </div>
       }
@@ -196,7 +198,7 @@ export const ProjectsPage: React.FC = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="بحث في المشاريع..."
+                placeholder={t('projects.searchPlaceholder', 'بحث في المشاريع...')}
                 className="glass-input ps-9 w-64 text-sm"
               />
             </div>
@@ -207,11 +209,10 @@ export const ProjectsPage: React.FC = () => {
               onChange={(e) => setStatusFilter(e.target.value)}
               className="glass-select text-sm cursor-pointer"
             >
-              <option value="all">جميع الحالات</option>
-              <option value="draft">مسودة</option>
-              <option value="editing">قيد التعديل</option>
-              <option value="exported">مُصدّر</option>
-              <option value="archived">مؤرشف</option>
+              <option value="all">{t('projects.filterAll', 'جميع الحالات')}</option>
+              <option value="draft">{t('projects.filterDraft', 'مسودة')}</option>
+              <option value="ready">{t('projects.filterReady', 'جاهزة')}</option>
+              <option value="exported">{t('projects.filterExported', 'مُصدّر')}</option>
             </select>
           </div>
 
@@ -264,9 +265,9 @@ export const ProjectsPage: React.FC = () => {
         {filteredProjects.length === 0 ? (
           <EmptyState
             icon={FolderOpen}
-            title="لا توجد مشاريع"
-            description="لم يتم العثور على مشاريع تطابق معايير البحث. أنشئ مشروعاً جديداً للبدء."
-            actionLabel="إنشاء مشروع جديد"
+            title={t('projects.noProjects', 'لا توجد مشاريع')}
+            description={t('projects.noResults', 'لم يتم العثور على مشاريع تطابق معايير البحث. أنشئ مشروعاً جديداً للبدء.')}
+            actionLabel={t('projects.newProject', 'إنشاء مشروع جديد')}
             onAction={() => setCurrentPage('create')}
           />
         ) : viewMode === 'grid' ? (

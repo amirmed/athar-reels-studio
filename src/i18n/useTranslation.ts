@@ -37,6 +37,15 @@ export function tLang(lang: SupportedLanguage = 'ar', key: string, fallback?: st
 }
 
 /**
+ * Applies language and direction attributes to document root element
+ */
+export function applyLanguageToDom(lang: SupportedLanguage = 'ar') {
+  if (typeof document === 'undefined') return;
+  document.documentElement.setAttribute('lang', lang);
+  document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+}
+
+/**
  * React Hook for type-safe, reactive i18n translation
  */
 export function useTranslation() {

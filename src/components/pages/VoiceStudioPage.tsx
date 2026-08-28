@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../../store/useAppStore';
+import { useTranslation } from '../../i18n';
 import {
   Mic,
   Square,
@@ -45,6 +46,7 @@ export const VoiceStudioPage: React.FC = () => {
   const setCurrentProject = useAppStore((s) => s.setCurrentProject);
   const addProject = useAppStore((s) => s.addProject);
   const addToast = useAppStore((s) => s.addToast);
+  const { t } = useTranslation();
 
   // Mode & Content State
   const [prompterMode, setPrompterMode] = useState<PrompterMode>('quran');
@@ -637,10 +639,10 @@ export const VoiceStudioPage: React.FC = () => {
             </div>
             <div>
               <h1 className="text-xs sm:text-sm font-black text-surface-50 flex items-center gap-1.5">
-                استوديو التسجيل الصوتي والمصحف الملقّن 🎙️📖
+                {t('voiceStudio.title', 'استوديو التسجيل والصوت الاحترافي 🎙️')}
               </h1>
               <p className="text-[11px] text-gold-400/80 hidden sm:block">
-                تلقين الآيات بالرسم العثماني • صدى الحرم المكي • معالجة الاستوديو
+                {t('voiceStudio.subtitle', 'سجل تلاوتك بصوتك، أو ولّد أصواتاً بالذكاء الاصطناعي مع صدى المساجد والمؤثرات المكانية 8D')}
               </p>
             </div>
           </div>

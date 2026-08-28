@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../../store/useAppStore';
+import { useTranslation } from '../../i18n';
 import { AppLayout } from '../layout/AppLayout';
 import { AzkarItem, Project } from '../../types';
 import { createDefaultProject } from '../../utils/projectDefaults';
@@ -32,6 +33,7 @@ export const AzkarStudioPage: React.FC = () => {
   const setCurrentProject = useAppStore((s) => s.setCurrentProject);
   const addToast = useAppStore((s) => s.addToast);
   const setActiveQuoteDraft = useAppStore((s) => s.setActiveQuoteDraft);
+  const { t } = useTranslation();
 
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -191,23 +193,23 @@ export const AzkarStudioPage: React.FC = () => {
 
   return (
     <AppLayout
-      title="أستوديو الأذكار والأدعية والأحاديث"
-      subtitle="مكتبة الأذكار النبوية وأدعية الأنبياء مع إمكانية تحويلها إلى ريلز فيديو أو كروت صور بضغطة زر"
+      title={t('azkarStudio.title', 'استوديو الأذكار والحديث النبوي 📖')}
+      subtitle={t('azkarStudio.subtitle', 'صمّم ريلز وبطاقات دعوية تفاعلية للأذكار المأثورة والأدعية النبوية بضغطة زر')}
       topbarActions={
         <div className="flex items-center gap-2">
           <button
             onClick={() => setCurrentPage('quotes')}
-            className="btn-secondary-sm flex items-center gap-1.5 text-xs"
+            className="btn-secondary-sm flex items-center gap-1.5 text-xs cursor-pointer"
           >
             <ImageIcon size={14} className="text-accent-400" />
-            أستوديو كروت الصور
+            {t('imageQuotes.title', 'استوديو كروت الصور')}
           </button>
           <button
             onClick={() => setCurrentPage('create')}
-            className="btn-primary-sm flex items-center gap-1.5 text-xs"
+            className="btn-primary-sm flex items-center gap-1.5 text-xs cursor-pointer"
           >
             <Sparkles size={14} />
-            إنشاء ريل مخصص
+            {t('nav.createProject', 'إنشاء ريل مخصص')}
           </button>
         </div>
       }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useAppStore } from '../../store/useAppStore';
+import { useTranslation } from '../../i18n';
 import { AppLayout } from '../layout/AppLayout';
 import { QuoteCardSettings, QuoteAspectRatio, OrnamentStyle } from '../../types';
 import { createDefaultProject } from '../../utils/projectDefaults';
@@ -83,6 +84,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
   const setCurrentProject = useAppStore((s) => s.setCurrentProject);
   const addToast = useAppStore((s) => s.addToast);
   const activeQuoteDraft = useAppStore((s) => s.activeQuoteDraft);
+  const { t } = useTranslation();
 
   const [settings, setSettings] = useState<QuoteCardSettings>({
     title: activeQuoteDraft?.title || 'إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ',
@@ -267,7 +269,8 @@ export const ImageQuotesStudioPage: React.FC = () => {
 
   return (
     <AppLayout
-      title="أستوديو كروت وبوستات الصور الدعوية"
+      title={t('imageQuotes.title', 'استوديو بطاقات الآيات 4K 🖼️')}
+      subtitle={t('imageQuotes.subtitle', 'توليد بطاقات اقتباسات قرآنية ودعوية فائقة الدقة جاهزة للنشر الفوري')}
       topbarActions={
         <div className="flex items-center gap-2">
           <button
@@ -275,15 +278,15 @@ export const ImageQuotesStudioPage: React.FC = () => {
             className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-gold-400 to-amber-500 hover:from-gold-300 hover:to-amber-400 text-surface-950 font-black text-xs flex items-center gap-1.5 shadow-md shadow-gold-500/20 hover:scale-105 active:scale-95 transition-all cursor-pointer"
           >
             <Film size={14} />
-            <span>ستوري متحرك 🎬✨</span>
+            <span>{t('imageQuotes.createVideoFromCard', 'ستوري متحرك 🎬✨')}</span>
           </button>
           <button
             onClick={handleDownload}
             disabled={isDownloading}
-            className="btn-primary-sm flex items-center gap-1.5 text-xs"
+            className="btn-primary-sm flex items-center gap-1.5 text-xs cursor-pointer"
           >
             <Download size={14} />
-            {isDownloading ? 'جاري التصدير...' : 'تحميل صورة HD'}
+            {isDownloading ? t('common.exporting', 'جاري التصدير...') : t('imageQuotes.download4K', 'تحميل صورة HD')}
           </button>
         </div>
       }
