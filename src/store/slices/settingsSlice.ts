@@ -102,12 +102,13 @@ export const createSettingsSlice: AppSlice<SettingsSlice> = (set, get) => ({
           set({ settings: { ...defaultSettings, ...loaded }, theme: loadedTheme });
           return;
         }
-      }
-      const local = loadFromLocal<AppSettings>(STORAGE_KEY_SETTINGS);
-      if (local) {
-        const localTheme = local.theme || getInitialTheme();
-        applyThemeToDom(localTheme);
-        set({ settings: { ...defaultSettings, ...local }, theme: localTheme });
+      } else {
+        const local = loadFromLocal<AppSettings>(STORAGE_KEY_SETTINGS);
+        if (local) {
+          const localTheme = local.theme || getInitialTheme();
+          applyThemeToDom(localTheme);
+          set({ settings: { ...defaultSettings, ...local }, theme: localTheme });
+        }
       }
     } catch (e) {
       console.warn('Failed to load settings:', e);
@@ -119,8 +120,9 @@ export const createSettingsSlice: AppSlice<SettingsSlice> = (set, get) => ({
       const { settings } = get();
       if (isElectron() && window.electronAPI?.settings) {
         await window.electronAPI.settings.save(settings);
+      } else {
+        saveToLocal(STORAGE_KEY_SETTINGS, settings);
       }
-      saveToLocal(STORAGE_KEY_SETTINGS, settings);
     } catch (e) {
       console.warn('Failed to save settings:', e);
     }

@@ -164,8 +164,7 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
         if (Array.isArray(loaded)) {
           baseProjects = loaded;
         }
-      }
-      if (baseProjects.length === 0) {
+      } else {
         const local = loadFromLocal<Project[]>(STORAGE_KEY_PROJECTS);
         baseProjects = local || [];
       }
@@ -202,19 +201,19 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
         }
       });
 
-      // 2. Sanitize projects for localStorage (strip heavy base64 strings to preserve quota)
-      const sanitizedProjects = projects.map((p) => {
-        if (p.thumbnail && p.thumbnail.startsWith('data:image/')) {
-          const { thumbnail: _t, ...rest } = p;
-          return rest as Project;
-        }
-        return p;
-      });
-
+      // 2. Single Owner: Electron IPC is primary, localStorage is web fallback
       if (isElectron() && window.electronAPI?.projects) {
         await window.electronAPI.projects.saveAll(projects);
+      } else {
+        const sanitizedProjects = projects.map((p) => {
+          if (p.thumbnail && p.thumbnail.startsWith('data:image/')) {
+            const { thumbnail: _t, ...rest } = p;
+            return rest as Project;
+          }
+          return p;
+        });
+        saveToLocal(STORAGE_KEY_PROJECTS, sanitizedProjects);
       }
-      saveToLocal(STORAGE_KEY_PROJECTS, sanitizedProjects);
     } catch (e) {
       console.warn('Failed to save projects:', e);
     }

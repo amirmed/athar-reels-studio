@@ -46,8 +46,7 @@ export const createExportSlice: AppSlice<ExportSlice> = (set, get) => ({
         if (Array.isArray(loaded)) {
           rawJobs = loaded;
         }
-      }
-      if (rawJobs.length === 0) {
+      } else {
         const local = loadFromLocal<ExportJob[]>(STORAGE_KEY_EXPORTS);
         if (local && Array.isArray(local)) {
           rawJobs = local;
@@ -82,8 +81,9 @@ export const createExportSlice: AppSlice<ExportSlice> = (set, get) => ({
       const { exportJobs } = get();
       if (isElectron() && window.electronAPI?.exports) {
         await window.electronAPI.exports.save(exportJobs);
+      } else {
+        saveToLocal(STORAGE_KEY_EXPORTS, exportJobs);
       }
-      saveToLocal(STORAGE_KEY_EXPORTS, exportJobs);
     } catch (e) {
       console.warn('Failed to save export jobs:', e);
     }

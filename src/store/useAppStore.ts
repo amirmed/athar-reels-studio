@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { Project } from '../types';
 import { AppStoreState, Toast, DeleteProjectModalData, ModalDataMap, ModalName } from './types';
 import { createUiSlice } from './slices/uiSlice';
 import { createProjectSlice } from './slices/projectSlice';
@@ -33,21 +32,10 @@ export const useAppStore = create<AppStoreState>()(
       partialize: (state) => ({
         sidebarCollapsed: state.sidebarCollapsed,
         settings: state.settings,
-        theme: state.settings.theme,
-        // Strip heavy base64 data URLs from localStorage to preserve storage quota
-        projects: state.projects.map((p) => {
-          if (p.thumbnail && p.thumbnail.startsWith('data:image/')) {
-            const { thumbnail: _t, ...rest } = p;
-            return rest as Project;
-          }
-          return p;
-        }),
-        exportJobs: state.exportJobs,
       }),
       onRehydrateStorage: () => (state) => {
-        if (state) {
-          const theme = state.settings?.theme || state.theme || 'dark';
-          applyThemeToDom(theme);
+        if (state?.settings?.theme) {
+          applyThemeToDom(state.settings.theme);
         }
       },
     }

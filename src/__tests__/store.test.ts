@@ -220,4 +220,47 @@ describe('Zustand Modular Store (Slices & Persist)', () => {
       expect(useAppStore.getState().exportJobs[0].progress).toBe(100);
     });
   });
+
+  describe('Single-Owner Persistence Architecture', () => {
+    it('uses Electron IPC as primary owner and avoids duplicate localStorage writes when electronAPI is present', async () => {
+      const mockSaveAll = vi.fn().mockResolvedValue({ success: true });
+      const api = {
+        projects: {
+          saveAll: mockSaveAll,
+          loadAll: vi.fn().mockResolvedValue([]),
+        },
+      };
+
+      (globalThis as any).electronAPI = api;
+      (window as any).electronAPI = api;
+
+      const project = createDefaultProject({ id: 'proj-ipc', name: 'مشروع إلكترون' });
+      useAppStore.getState().addProject(project);
+
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      expect(mockSaveAll).toHaveBeenCalledWith(
+        expect.arrayContaining([expect.objectContaining({ id: 'proj-ipc' })])
+      );
+
+      // Clean up mock
+      delete (globalThis as any).electronAPI;
+      delete (window as any).electronAPI;
+    });
+
+    it('falls back cleanly to localStorage when Electron is absent (Web Mode)', async () => {
+      delete (globalThis as any).electronAPI;
+      delete (window as any).electronAPI;
+
+      const project = createDefaultProject({ id: 'proj-web', name: 'مشروع ويب' });
+      useAppStore.getState().addProject(project);
+
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      expect((globalThis as any).localStorage.setItem).toHaveBeenCalledWith(
+        'ayahStudio_projects',
+        expect.stringContaining('proj-web')
+      );
+    });
+  });
 });
