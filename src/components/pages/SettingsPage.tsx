@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useAppStore } from '../../store/useAppStore';
 import { useTranslation } from '../../i18n';
@@ -14,7 +14,14 @@ import {
   Sun,
   Save,
   Shield,
+  Trash2,
+  RefreshCw,
 } from 'lucide-react';
+import {
+  getAudioStorageStats,
+  pruneOrphanAudioRecords,
+  StorageStats,
+} from '../../services/persistentAudioStorage';
 
 interface SettingGroupProps {
   title: string;
@@ -61,9 +68,59 @@ export const SettingsPage: React.FC = () => {
   const settings = useAppStore((s) => s.settings);
   const updateSettings = useAppStore((s) => s.updateSettings);
   const theme = useAppStore((s) => s.theme);
+  const projects = useAppStore((s) => s.projects);
   const addToast = useAppStore((s) => s.addToast);
   const saveSettings = useAppStore((s) => s.saveSettings);
   const { t, language } = useTranslation();
+
+  const [audioStorageStats, setAudioStorageStats] = useState<StorageStats | null>(null);
+  const [isCleaningStorage, setIsCleaningStorage] = useState(false);
+
+  const loadStorageStats = useCallback(async () => {
+    try {
+      const stats = await getAudioStorageStats();
+      setAudioStorageStats(stats);
+    } catch (err) {
+      console.debug('[SettingsPage] Error loading storage stats:', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadStorageStats();
+  }, [loadStorageStats]);
+
+  const handlePruneUnusedAudio = async () => {
+    setIsCleaningStorage(true);
+    try {
+      const activeKeys = projects
+        .map(
+          (p) =>
+            p.audioSettings?.customAudioKey ||
+            p.audioSettings?.customRecordedAudioUrl ||
+            p.id
+        )
+        .filter(Boolean) as string[];
+
+      const res = await pruneOrphanAudioRecords(activeKeys);
+      await loadStorageStats();
+      if (res.evictedCount > 0) {
+        addToast({
+          message: `تم تنظيف ${res.evictedCount} تسجيل غير مستخدم وتحرير مساحة التخزين ✨`,
+          type: 'success',
+        });
+      } else {
+        addToast({
+          message: 'ذاكرة الصوت نظيفة ومحدثة بالفعل! لا توجد ملفات مهملة 👍',
+          type: 'info',
+        });
+      }
+    } catch (err) {
+      console.warn('[SettingsPage] Prune error:', err);
+      addToast({ message: 'حدث خطأ أثناء تنظيف التخزين', type: 'error' });
+    } finally {
+      setIsCleaningStorage(false);
+    }
+  };
 
   const handleSave = async () => {
     await saveSettings();
@@ -244,6 +301,36 @@ export const SettingsPage: React.FC = () => {
               </select>
             </SettingRow>
           )}
+
+          {/* IndexedDB Audio Storage Quota & Eviction */}
+          <SettingRow
+            label="ذاكرة التسجيلات الصوتية (IndexedDB Cache)"
+            description={
+              audioStorageStats
+                ? `${audioStorageStats.totalCount} تسجيل صوتي مخزن • الحجم: ${audioStorageStats.formattedSize} / 100 MB`
+                : 'إدارة وتفريغ الملفات الصوتية والتسجيلات المهملة لتفادي امتلاء الذاكرة'
+            }
+          >
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={loadStorageStats}
+                title="تحديث البيانات"
+                className="p-2 rounded-xl bg-surface-800/60 hover:bg-surface-700 text-white/60 hover:text-white transition-all cursor-pointer border border-white/[0.04]"
+              >
+                <RefreshCw size={13} />
+              </button>
+              <button
+                type="button"
+                onClick={handlePruneUnusedAudio}
+                disabled={isCleaningStorage || !audioStorageStats || audioStorageStats.totalCount === 0}
+                className="glass-button text-xs py-1.5 px-3 flex items-center gap-1.5 hover:border-accent-500/40 text-accent-300 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <Trash2 size={13} />
+                <span>{isCleaningStorage ? 'جاري التنظيف...' : 'تنظيف المهملات 🧹'}</span>
+              </button>
+            </div>
+          </SettingRow>
         </SettingGroup>
 
         {/* Export defaults */}
