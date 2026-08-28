@@ -107,6 +107,7 @@ export const EditorTimeline: React.FC<EditorTimelineProps> = React.memo(
                   onClick={onOpenWaveformEditor}
                   className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-gradient-to-r from-gold-400/20 to-amber-500/20 hover:from-gold-400/30 hover:to-amber-500/30 border border-gold-400/30 text-gold-300 text-[11px] font-bold transition-all shadow-sm active:scale-95 cursor-pointer"
                   title="تعديل توقيت الكلمات بالسحب على الموجة الصوتية بدقة"
+                  aria-label="تعديل توقيت الكلمات بالسحب على الموجة الصوتية بدقة"
                 >
                   <Sliders size={12} className="text-gold-400" />
                   <span>ضبط توقيت الكلمات والموجة 🎙️⏱️</span>
@@ -126,6 +127,7 @@ export const EditorTimeline: React.FC<EditorTimelineProps> = React.memo(
                   onClick={() => setZoomLevel((z) => Math.max(1, z - 0.25))}
                   className="p-1 text-white/50 hover:text-white cursor-pointer"
                   title="تصغير التايم لاين"
+                  aria-label="تصغير التايم لاين"
                 >
                   <ZoomOut size={12} />
                 </button>
@@ -135,6 +137,7 @@ export const EditorTimeline: React.FC<EditorTimelineProps> = React.memo(
                   onClick={() => setZoomLevel((z) => Math.min(2.5, z + 0.25))}
                   className="p-1 text-white/50 hover:text-white cursor-pointer"
                   title="تكبير التايم لاين"
+                  aria-label="تكبير التايم لاين"
                 >
                   <ZoomIn size={12} />
                 </button>

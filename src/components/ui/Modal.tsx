@@ -161,6 +161,7 @@ export const Modal: React.FC<ModalProps> = ({
                 <div className="flex items-center gap-2 shrink-0">
                   {headerActions}
                   <button
+                    type="button"
                     onClick={onClose}
                     className="w-8 h-8 rounded-xl bg-surface-800/60 hover:bg-surface-700/80 flex items-center justify-center text-white/60 hover:text-white transition-all cursor-pointer border border-white/[0.04]"
                     aria-label="إغلاق النافذة"

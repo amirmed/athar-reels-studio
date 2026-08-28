@@ -163,8 +163,11 @@ export const Sidebar: React.FC = React.memo(() => {
               )}
 
               <button
+                type="button"
                 onClick={() => setCurrentPage(item.id)}
                 title={item.label[currentLangKey] || item.label.ar}
+                aria-label={item.label[currentLangKey] || item.label.ar}
+                aria-current={isActive ? 'page' : undefined}
                 className={`
                   w-full flex items-center gap-2.5 rounded-xl transition-all duration-200 relative cursor-pointer
                   ${sidebarCollapsed ? 'px-0 py-2.5 justify-center' : 'px-3 py-2.5'}
@@ -213,7 +216,9 @@ export const Sidebar: React.FC = React.memo(() => {
       {/* New Project shortcut */}
       <div className="px-2 mb-3">
         <button
+          type="button"
           onClick={() => setCurrentPage('create')}
+          aria-label={t('topbar.newProject', 'مشروع جديد')}
           className={`
             w-full flex items-center gap-2 rounded-xl transition-all duration-200
             bg-gradient-to-l from-accent-600/20 to-accent-500/10 border border-accent-500/20

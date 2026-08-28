@@ -87,6 +87,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           onClick={onBack}
           className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-all cursor-pointer flex items-center gap-1.5 text-xs font-bold shrink-0"
           title="الرجوع للرئيسية"
+          aria-label="الرجوع للرئيسية"
         >
           <ArrowRight size={18} />
           <span className="hidden sm:inline">الرئيسية</span>
@@ -132,6 +133,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                 : 'text-white/20 cursor-not-allowed'
             }`}
             title="تراجع (Ctrl + Z)"
+            aria-label="تراجع (Ctrl + Z)"
           >
             <Undo2 size={14} />
             <span className="hidden xl:inline text-xs">تراجع</span>
@@ -146,6 +148,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                 : 'text-white/20 cursor-not-allowed'
             }`}
             title="إعادة (Ctrl + Y)"
+            aria-label="إعادة (Ctrl + Y)"
           >
             <Redo2 size={14} />
             <span className="hidden xl:inline text-xs">إعادة</span>
@@ -167,6 +170,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                 : 'bg-surface-800 text-white/80 border-white/10 hover:border-gold-400/40 hover:text-white'
             }`}
             title="التبديل بين الوضع المبسط والوضع المتقدم"
+            aria-label="التبديل بين الوضع المبسط والوضع المتقدم"
           >
             <span>{isProMode ? '⚡ وضع Pro' : '🎯 مبسط'}</span>
           </button>
@@ -178,6 +182,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           onClick={onOpenAutoReel}
           className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600/30 to-gold-500/30 hover:from-purple-600/40 hover:to-gold-500/40 text-purple-200 text-xs font-bold border border-purple-400/30 transition-all cursor-pointer shadow-sm active:scale-95"
           title="توليد ريلز تلقائي بالذكاء الاصطناعي"
+          aria-label="توليد ريلز تلقائي بالذكاء الاصطناعي"
         >
           <Sparkles size={13} className="text-purple-300 animate-pulse" />
           <span className="hidden sm:inline">Auto-Reel AI</span>
@@ -194,6 +199,9 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                 : 'bg-surface-800/80 hover:bg-surface-700 text-white/80 hover:text-white border-white/10'
             }`}
             title="المزيد من الأدوات الإبداعية والاستوديوهات"
+            aria-label="المزيد من الأدوات الإبداعية والاستوديوهات"
+            aria-expanded={isToolsMenuOpen}
+            aria-haspopup="true"
           >
             <MoreHorizontal size={16} />
             <span className="hidden lg:inline text-xs">أدوات إبداعية</span>
@@ -219,6 +227,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                     onOpenPlaylists();
                   }}
                   className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-gold-300 hover:bg-gold-500/15 transition-all text-start cursor-pointer"
+                  aria-label="مزاجات وقوائم قرآنية"
                 >
                   <BookOpen size={15} className="text-gold-400" />
                   <span>مزاجات وقوائم قرآنية 🎧</span>
@@ -231,6 +240,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                     onOpenEvents();
                   }}
                   className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-emerald-300 hover:bg-emerald-500/15 transition-all text-start cursor-pointer"
+                  aria-label="مواسم ومناسبات إسلامية"
                 >
                   <Crown size={15} className="text-emerald-400" />
                   <span>مواسم ومناسبات إسلامية 🌙</span>
@@ -244,6 +254,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                       onOpenQuotes();
                     }}
                     className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-sky-300 hover:bg-sky-500/15 transition-all text-start cursor-pointer"
+                    aria-label="تصميم بوست وبطاقة صورة"
                   >
                     <ImageIcon size={15} className="text-sky-400" />
                     <span>تصميم بوست وبطاقة صورة 🖼️</span>
@@ -257,6 +268,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                     onOpenVoiceRecorder();
                   }}
                   className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-amber-300 hover:bg-amber-500/15 transition-all text-start cursor-pointer"
+                  aria-label="تسجيل صوتك وتلاوتك"
                 >
                   <Mic size={15} className="text-amber-400" />
                   <span>تسجيل صوتك وتلاوتك 🎙️</span>
@@ -270,6 +282,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                       onOpenKeyboardShortcuts();
                     }}
                     className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-white/70 hover:bg-white/10 hover:text-white transition-all text-start cursor-pointer border-t border-white/5 pt-2"
+                    aria-label="اختصارات لوحة المفاتيح"
                   >
                     <Keyboard size={15} className="text-white/50" />
                     <span>اختصارات لوحة المفاتيح ⌨️</span>
@@ -286,6 +299,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           onClick={onSave}
           className="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer border border-white/10 active:scale-95"
           title="حفظ المشروع (Ctrl + S)"
+          aria-label="حفظ المشروع (Ctrl + S)"
         >
           <Save size={14} className="text-gold-400" />
           <span className="hidden sm:inline">حفظ</span>
@@ -296,6 +310,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           type="button"
           onClick={onOpenExport}
           className="px-3 sm:px-4 py-1.5 rounded-xl bg-gradient-to-r from-gold-500 to-amber-400 hover:from-gold-400 hover:to-amber-300 text-surface-950 font-black text-xs flex items-center gap-1.5 shadow-lg shadow-gold-500/20 transition-all cursor-pointer active:scale-95 shrink-0"
+          aria-label="تصدير الفيديو النهائي"
         >
           <Download size={14} />
           <span>تصدير 🚀</span>

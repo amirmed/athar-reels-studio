@@ -65,6 +65,8 @@ export const EditorDockNav: React.FC<EditorDockNavProps> = ({
                   : 'text-white/60 hover:text-white hover:bg-white/5'
               }`}
               title={tab.label}
+              aria-label={tab.label}
+              aria-selected={isActive}
             >
               <Icon size={19} />
               <span className="text-xs font-bold tracking-tight">{tab.label}</span>
@@ -88,6 +90,7 @@ export const EditorDockNav: React.FC<EditorDockNavProps> = ({
                 : 'bg-surface-800/80 border-white/[0.08] text-white/60 hover:text-white hover:border-gold-400/40'
             }`}
             title={isProMode ? 'تبديل للوضع المبسط' : 'فتح الوضع الاحترافي الكامل (Pro)'}
+            aria-label={isProMode ? 'تبديل للوضع المبسط' : 'فتح الوضع الاحترافي الكامل (Pro)'}
           >
             <Zap size={14} className={isProMode ? 'text-purple-400' : 'text-gold-400'} />
             <span className="text-[11px] font-bold">{isProMode ? 'PRO' : 'متقدم'}</span>
@@ -102,6 +105,7 @@ export const EditorDockNav: React.FC<EditorDockNavProps> = ({
           onClick={onToggleInspector}
           className="w-full py-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/60 hover:text-white flex items-center justify-center transition-all cursor-pointer"
           title={isInspectorOpen ? 'إخفاء لوحة التحكم' : 'إظهار لوحة التحكم'}
+          aria-label={isInspectorOpen ? 'إخفاء لوحة التحكم' : 'إظهار لوحة التحكم'}
         >
           {isInspectorOpen ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </button>

@@ -15,37 +15,43 @@ export const TitleBar: React.FC = () => {
       {/* Window control buttons — use CSS class no-drag, NOT inline style */}
       <div className="no-drag flex items-center h-full">
         <button
+          type="button"
           className="no-drag h-full px-4 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors"
           onClick={() => {
             if (window.electronAPI?.window?.minimize) {
               window.electronAPI.window.minimize();
             }
           }}
-          title="Minimize"
+          title="تصغير النافذة"
+          aria-label="تصغير النافذة"
         >
           <Minus size={14} className="pointer-events-none" />
         </button>
 
         <button
+          type="button"
           className="no-drag h-full px-4 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors"
           onClick={() => {
             if (window.electronAPI?.window?.maximize) {
               window.electronAPI.window.maximize();
             }
           }}
-          title="Maximize"
+          title="تكبير النافذة"
+          aria-label="تكبير النافذة"
         >
           <Square size={12} className="pointer-events-none" />
         </button>
 
         <button
+          type="button"
           className="no-drag h-full px-4 flex items-center justify-center text-white/50 hover:text-white hover:bg-red-500 transition-colors"
           onClick={() => {
             if (window.electronAPI?.window?.close) {
               window.electronAPI.window.close();
             }
           }}
-          title="Close"
+          title="إغلاق التطبيق"
+          aria-label="إغلاق التطبيق"
         >
           <X size={14} className="pointer-events-none" />
         </button>

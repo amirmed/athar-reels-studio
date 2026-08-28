@@ -1140,6 +1140,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
               }}
               className="p-2 rounded-xl bg-surface-800 hover:bg-surface-700 text-white/70 hover:text-white transition-all cursor-pointer"
               title="إغلاق المحرر"
+              aria-label="إغلاق المحرر"
             >
               <X size={18} />
             </button>
@@ -1152,6 +1153,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                 onClick={handleUndo}
                 className="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-surface-800 disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer transition-all"
                 title="تراجع عن التعديل (Ctrl+Z)"
+                aria-label="تراجع عن التعديل (Ctrl+Z)"
               >
                 <Undo2 size={15} />
               </button>
@@ -1161,6 +1163,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                 onClick={handleRedo}
                 className="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-surface-800 disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer transition-all"
                 title="إعادة التعديل (Ctrl+Y)"
+                aria-label="إعادة التعديل (Ctrl+Y)"
               >
                 <Redo2 size={15} />
               </button>
@@ -1170,6 +1173,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
               type="button"
               onClick={handleSaveAndApply}
               className="px-4 py-2 rounded-xl bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 hover:to-amber-500 text-surface-950 font-extrabold flex items-center gap-1.5 shadow-lg shadow-gold-500/20 transition-all active:scale-95 cursor-pointer text-xs sm:text-sm"
+              aria-label="حفظ وتطبيق على الفيديو"
             >
               <Check size={16} className="stroke-[3]" />
               <span>حفظ وتطبيق على الفيديو ✨</span>
@@ -1218,6 +1222,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                   onClick={() => setActiveAyahFocusIdx((i) => Math.max(0, i - 1))}
                   className="p-1 rounded-lg text-white/60 hover:text-white disabled:opacity-30 cursor-pointer"
                   title="الآية السابقة"
+                  aria-label="الآية السابقة"
                 >
                   <ChevronRight size={16} />
                 </button>
@@ -1234,6 +1239,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                   }
                   className="p-1 rounded-lg text-white/60 hover:text-white disabled:opacity-30 cursor-pointer"
                   title="الآية التالية"
+                  aria-label="الآية التالية"
                 >
                   <ChevronLeft size={16} />
                 </button>
@@ -1315,6 +1321,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                   onClick={() => handleTrimStart(selectedWordIndex)}
                   className="px-2.5 py-1 rounded-lg bg-surface-800 hover:bg-gold-500/20 border border-white/10 hover:border-gold-400/50 text-white hover:text-gold-300 font-bold transition-all disabled:opacity-30 disabled:hover:bg-surface-800 cursor-pointer flex items-center gap-1.5"
                   title="حذف كل الكلمات السابقة والبدء من هذه الكلمة"
+                  aria-label="حذف كل الكلمات السابقة والبدء من هذه الكلمة"
                 >
                   <Scissors size={12} className="text-gold-400 rotate-180" />
                   <span>البدء من «{selectedWord.text}» (قص ما قبلها)</span>
@@ -1326,6 +1333,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                   onClick={() => handleTrimEnd(selectedWordIndex)}
                   className="px-2.5 py-1 rounded-lg bg-surface-800 hover:bg-gold-500/20 border border-white/10 hover:border-gold-400/50 text-white hover:text-gold-300 font-bold transition-all disabled:opacity-30 disabled:hover:bg-surface-800 cursor-pointer flex items-center gap-1.5"
                   title="حذف كل الكلمات اللاحقة والانتهاء عند هذه الكلمة"
+                  aria-label="حذف كل الكلمات اللاحقة والانتهاء عند هذه الكلمة"
                 >
                   <Scissors size={12} className="text-gold-400" />
                   <span>الانتهاء عند «{selectedWord.text}» (قص ما بعدها)</span>
@@ -1338,6 +1346,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                     onClick={() => handleMicroNudge(-0.05)}
                     className="px-1.5 py-0.5 text-[10px] font-mono text-white/60 hover:text-white rounded hover:bg-surface-800 cursor-pointer"
                     title="تقديم بداية الكلمة -0.05s"
+                    aria-label="تقديم بداية الكلمة -0.05 ثانية"
                   >
                     -0.05s
                   </button>
@@ -1347,6 +1356,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                     onClick={() => handleMicroNudge(0.05)}
                     className="px-1.5 py-0.5 text-[10px] font-mono text-white/60 hover:text-white rounded hover:bg-surface-800 cursor-pointer"
                     title="تأخير الكلمة +0.05s"
+                    aria-label="تأخير الكلمة +0.05 ثانية"
                   >
                     +0.05s
                   </button>
@@ -1366,6 +1376,11 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                       ? 'إلغاء تثبيت الكلمة'
                       : 'تثبيت وقفل توقيت هذه الكلمة لحمايتها من أي حركة أثناء تعديل الكلمات الأخرى'
                   }
+                  aria-label={
+                    isSelectedWordLocked
+                      ? 'إلغاء تثبيت الكلمة'
+                      : 'تثبيت وقفل توقيت هذه الكلمة لحمايتها من أي حركة أثناء تعديل الكلمات الأخرى'
+                  }
                 >
                   {isSelectedWordLocked ? (
                     <Lock size={12} className="text-amber-400" />
@@ -1381,6 +1396,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                   onClick={() => handleDeleteWord(selectedWordIndex)}
                   className="px-2 py-1 rounded-lg bg-surface-800 hover:bg-red-500/20 border border-white/10 hover:border-red-400/40 text-white/80 hover:text-red-300 font-bold transition-all disabled:opacity-30 cursor-pointer flex items-center gap-1"
                   title="حذف هذه الكلمة المنفردة من الآية"
+                  aria-label="حذف هذه الكلمة المنفردة من الآية"
                 >
                   <Trash2 size={12} className="text-red-400" />
                   <span>حذف</span>
@@ -1396,6 +1412,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
               onClick={handleAutoSnapAcoustic}
               className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-gold-500/30 hover:from-amber-500/30 hover:to-gold-500/40 border border-gold-400/50 text-gold-300 font-extrabold text-xs flex items-center gap-1.5 transition-all shadow-md shadow-gold-500/10 cursor-pointer active:scale-95"
               title="تحليل الملف الصوتي ومحاذاة بدايات ونهايات الكلمات تلقائياً على نبرات الصوت والسكتات"
+              aria-label="تحليل الملف الصوتي ومحاذاة بدايات ونهايات الكلمات تلقائياً"
             >
               <Zap size={13} className="text-gold-400 animate-pulse" />
               <span>محاذاة ذكية لنبرات الصوت ⚡</span>
@@ -1415,6 +1432,11 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                   ? 'الدفع التلقائي مفعل: عند تكبير كلمة ستدفع الكلمات اللاحقة تلقائياً دون الحاجة لتعديل كل كلمة'
                   : 'الدفع التلقائي معطل'
               }
+              aria-label={
+                isMagneticPushEnabled
+                  ? 'الدفع التلقائي مفعل'
+                  : 'الدفع التلقائي معطل'
+              }
             >
               <Magnet
                 size={13}
@@ -1431,6 +1453,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
               onClick={handleRestoreOriginal}
               className="px-2.5 py-1 rounded-lg bg-surface-800 hover:bg-surface-700 border border-white/10 text-white/60 hover:text-white text-[11px] font-bold flex items-center gap-1 transition-all cursor-pointer"
               title="استرجاع جميع كلمات ونصوص الآيات الأصلية كاملة"
+              aria-label="استرجاع جميع كلمات ونصوص الآيات الأصلية كاملة"
             >
               <RotateCcw size={11} />
               <span>استعادة</span>
@@ -1475,6 +1498,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                   onClick={() => setZoomLevel((z) => Math.max(1, z - 0.5))}
                   className="p-1 text-white/50 hover:text-white cursor-pointer"
                   title="تصغير التايم لاين"
+                  aria-label="تصغير التايم لاين"
                 >
                   <ZoomOut size={13} />
                 </button>
@@ -1484,6 +1508,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                   onClick={() => setZoomLevel((z) => Math.min(3.5, z + 0.5))}
                   className="p-1 text-white/50 hover:text-white cursor-pointer"
                   title="تكبير التايم لاين"
+                  aria-label="تكبير التايم لاين"
                 >
                   <ZoomIn size={13} />
                 </button>
@@ -1623,6 +1648,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
               onClick={toggleGlobalPlay}
               className="p-2.5 rounded-xl bg-gold-500 hover:bg-gold-400 text-surface-950 font-bold transition-all shadow-md active:scale-95 cursor-pointer"
               title={isPlaying ? 'إيقاف مؤقت' : 'تشغيل التلاوة كاملة (المسافة)'}
+              aria-label={isPlaying ? 'إيقاف مؤقت' : 'تشغيل التلاوة كاملة (المسافة)'}
             >
               {isPlaying ? <Pause size={16} /> : <Play size={16} />}
             </button>
@@ -1635,6 +1661,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
               }}
               className="p-2 rounded-xl bg-surface-800 hover:bg-surface-700 text-white/70 hover:text-white cursor-pointer"
               title="إعادة من البداية"
+              aria-label="إعادة من البداية"
             >
               <RotateCcw size={15} />
             </button>
@@ -1646,6 +1673,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                 onClick={() => playSoloWord(selectedWordIndex)}
                 className="px-3 py-1.5 rounded-xl bg-surface-800 hover:bg-surface-700 border border-gold-400/30 text-gold-300 text-xs font-bold flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
                 title="استماع للكلمة المحددة فقط للتأكد من مخرج الحرف"
+                aria-label="استماع للكلمة المحددة فقط"
               >
                 <Volume2 size={14} className="text-gold-400" />
                 <span>سماع «{selectedWord.text}» 🔊</span>
@@ -1666,6 +1694,11 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                   ? 'إلغاء تكرار الكلمة'
                   : 'تكرار سماع الكلمة باستمرار لتعديل مخرجها بدقة'
               }
+              aria-label={
+                isLoopingWord
+                  ? 'إلغاء تكرار الكلمة'
+                  : 'تكرار سماع الكلمة باستمرار'
+              }
             >
               <Repeat size={14} />
             </button>
@@ -1684,6 +1717,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                     ? 'bg-gold-400 text-surface-950 font-black'
                     : 'text-white/60 hover:text-white'
                 }`}
+                aria-label={`سرعة التشغيل ${spd}x`}
               >
                 {spd}x
               </button>
@@ -1697,6 +1731,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
               onClick={handleDistributeEvenly}
               className="px-3 py-1.5 rounded-xl bg-surface-800 hover:bg-surface-700 border border-white/10 text-white/80 hover:text-gold-300 text-xs font-bold flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
               title="إعادة توزيع جميع الكلمات غير المثبتة بالتساوي التام على طول المسار الصوتي"
+              aria-label="إعادة توزيع جميع الكلمات غير المثبتة بالتساوي التام"
             >
               <Wand2 size={13} className="text-gold-400" />
               <span>توزيع متساوي 🪄</span>
@@ -1709,6 +1744,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                 onClick={() => handleShiftAll(0.1)}
                 className="p-1 rounded-lg text-white/70 hover:text-white cursor-pointer text-xs font-mono font-bold"
                 title="إزاحة جميع الكلمات غير المثبتة للأمام +0.1s"
+                aria-label="إزاحة جميع الكلمات للأمام 0.1 ثانية"
               >
                 +0.1s ⏩
               </button>
@@ -1717,6 +1753,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                 onClick={() => handleShiftAll(-0.1)}
                 className="p-1 rounded-lg text-white/70 hover:text-white cursor-pointer text-xs font-mono font-bold"
                 title="إزاحة جميع الكلمات غير المثبتة للخلف -0.1s"
+                aria-label="إزاحة جميع الكلمات للخلف 0.1 ثانية"
               >
                 ⏪ -0.1s
               </button>
