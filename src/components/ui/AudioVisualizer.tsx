@@ -26,7 +26,10 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
 
     // Setup AudioContext and analyser
     if (!contextRef.current) {
-      contextRef.current = new AudioContext();
+      const AudioCtxClass =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      contextRef.current = new AudioCtxClass();
     }
     const ctx = contextRef.current;
 
@@ -47,6 +50,14 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
 
     return () => {
       cancelAnimationFrame(animFrameRef.current);
+      if (contextRef.current && contextRef.current.state !== 'closed') {
+        contextRef.current.close().catch((err) => {
+          console.debug('[AudioVisualizer] AudioContext close error:', err);
+        });
+        contextRef.current = null;
+      }
+      sourceRef.current = null;
+      analyserRef.current = null;
     };
   }, [audioElement]);
 
