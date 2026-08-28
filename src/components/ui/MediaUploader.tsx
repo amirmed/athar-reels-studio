@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useRef } from 'react';
+import React, { useCallback, useState, useRef, useEffect } from 'react';
 import {
   Upload,
   X,
@@ -46,6 +46,32 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
 }) => {
   const addToast = useAppStore((s) => s.addToast);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const createdBlobUrlsRef = useRef<Set<string>>(new Set());
+
+  // Clean up any blob URLs created by this component on unmount
+  useEffect(() => {
+    return () => {
+      createdBlobUrlsRef.current.forEach((url) => {
+        try {
+          URL.revokeObjectURL(url);
+        } catch {
+          // ignore
+        }
+      });
+      createdBlobUrlsRef.current.clear();
+    };
+  }, []);
+
+  const revokeOldBlobUrl = useCallback((url?: string) => {
+    if (url && url.startsWith('blob:') && createdBlobUrlsRef.current.has(url)) {
+      try {
+        URL.revokeObjectURL(url);
+      } catch {
+        // ignore
+      }
+      createdBlobUrlsRef.current.delete(url);
+    }
+  }, []);
 
   const [mode, setMode] = useState<'upload' | 'url' | 'search'>('upload');
   const [urlInput, setUrlInput] = useState('');
@@ -70,6 +96,7 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
         // If Electron provides native file path
         const electronPath = (file as File & { path?: string }).path;
         if (electronPath && typeof electronPath === 'string' && electronPath.length > 3) {
+          revokeOldBlobUrl(currentFile);
           onUpload(electronPath);
           addToast({ message: `تم تحميل ملف "${file.name}" بنجاح 📁✨`, type: 'success' });
           setIsReadingFile(false);
@@ -82,20 +109,25 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
           reader.onload = (e) => {
             const dataUrl = e.target?.result as string;
             if (dataUrl) {
+              revokeOldBlobUrl(currentFile);
               onUpload(dataUrl);
               addToast({ message: `تم رفع الصورة "${file.name}" بنجاح 🖼️✨`, type: 'success' });
             }
             setIsReadingFile(false);
           };
           reader.onerror = () => {
+            revokeOldBlobUrl(currentFile);
             const blobUrl = URL.createObjectURL(file);
+            createdBlobUrlsRef.current.add(blobUrl);
             onUpload(blobUrl);
             setIsReadingFile(false);
           };
           reader.readAsDataURL(file);
         } else {
           // For videos or large media: use ObjectURL
+          revokeOldBlobUrl(currentFile);
           const blobUrl = URL.createObjectURL(file);
+          createdBlobUrlsRef.current.add(blobUrl);
           onUpload(blobUrl);
           addToast({ message: `تم رفع وتعيين "${file.name}" كخلفية بنجاح 🎬✨`, type: 'success' });
           setIsReadingFile(false);
@@ -106,7 +138,7 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
         setIsReadingFile(false);
       }
     },
-    [onUpload, addToast]
+    [onUpload, addToast, currentFile, revokeOldBlobUrl]
   );
 
   const handleUploadClick = useCallback(async () => {
@@ -285,7 +317,10 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
             </button>
             <button
               type="button"
-              onClick={onRemove}
+              onClick={() => {
+                revokeOldBlobUrl(currentFile);
+                onRemove();
+              }}
               className="flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg bg-red-500/10 text-red-400 text-xs hover:bg-red-500/20 font-medium transition-colors cursor-pointer"
             >
               <X size={13} />

@@ -125,7 +125,7 @@ export const AzkarStudioPage: React.FC = () => {
       customText: item.arabicText,
       customTitle: item.title,
       customReference: item.reference,
-      customAudioUrl: item.audioUrl || `/api/tts?text=${encodeURIComponent(item.arabicText)}`,
+      customAudioUrl: item.audioUrl || undefined,
       reciter: 'الشيخ حامد (صوت وقور)',
       reciterId: 'hamed_neural',
       surah: item.title,

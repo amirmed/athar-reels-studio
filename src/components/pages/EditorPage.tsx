@@ -28,6 +28,7 @@ import { proceduralAmbientEngine } from '../../data/ambientSounds';
 import { unifiedAudioEngine } from '../../services/unifiedAudioEngine';
 import { resolveValidAudioUrl } from '../../services/persistentAudioStorage';
 import { generateProjectThumbnailDataUrl } from '../../services/thumbnailGeneratorService';
+import { synthesizeArabicSpeech } from '../../services/arabicTtsService';
 
 // Modular Editor Components
 import { EditorHeader } from '../editor/EditorHeader';
@@ -438,12 +439,24 @@ export const EditorPage: React.FC = () => {
 
     if (isNonQuran) {
       const text = currentProject?.customText || currentProject?.name || '';
-      const audioUrl =
-        currentProject?.customAudioUrl || `/api/tts?text=${encodeURIComponent(text)}`;
+      let audioUrl = currentProject?.customAudioUrl || '';
       const rawWords = text.split(/\s+/).filter(Boolean);
       const totalWords = Math.max(rawWords.length, 1);
-      const estimatedTotalSec =
+      let estimatedTotalSec =
         recordedDuration && recordedDuration > 0 ? recordedDuration : Math.max(8, totalWords * 0.85);
+
+      if (!audioUrl && text) {
+        try {
+          const ttsRes = await synthesizeArabicSpeech(text, 'ar-SA-HamedNeural');
+          audioUrl = ttsRes.audioUrl;
+          if (ttsRes.duration > 0 && (!recordedDuration || recordedDuration <= 0)) {
+            estimatedTotalSec = ttsRes.duration;
+          }
+        } catch (ttsErr) {
+          console.warn('[EditorPage] synthesizeArabicSpeech error:', ttsErr);
+        }
+      }
+
       const secPerWord = Math.max(0.1, estimatedTotalSec / totalWords);
 
       const words: QuranWord[] = rawWords.map((w, idx) => ({

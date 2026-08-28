@@ -66,4 +66,30 @@ describe('projectDefaults Factory Suite', () => {
     expect(audioSettings.recitationVolume).toBe(100);
     expect(audioSettings.fadeIn).toBe(true);
   });
+
+  it('correctly merges raw partial textSettings and audioSettings without wiping other defaults', () => {
+    const project = createDefaultProject({
+      name: 'Partial Settings Test',
+      // Pass a raw partial textSettings object with only 1 property
+      textSettings: {
+        fontSize: 48,
+      } as any,
+      // Pass a raw partial audioSettings object with only 1 property
+      audioSettings: {
+        reverbLevel: 90,
+      } as any,
+    });
+
+    // Overridden values
+    expect(project.textSettings.fontSize).toBe(48);
+    expect(project.audioSettings.reverbLevel).toBe(90);
+
+    // Preserved default values that were not in the override
+    expect(project.textSettings.fontFamily).toBe('Amiri');
+    expect(project.textSettings.fontWeight).toBe('bold');
+    expect(project.textSettings.textColor).toBe('#ffffff');
+    expect(project.textSettings.wordHighlightStyle).toBe('goldGlow');
+    expect(project.audioSettings.recitationVolume).toBe(100);
+    expect(project.audioSettings.fadeIn).toBe(true);
+  });
 });

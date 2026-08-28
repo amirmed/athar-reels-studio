@@ -455,7 +455,8 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
     await audioCtx.resume();
   }
 
-  // 1. Decode all Ayah audio buffers
+  try {
+    // 1. Decode all Ayah audio buffers
   const validAudioUrls = audioUrls.filter(Boolean);
   const loadedBuffers: AudioBuffer[] = [];
 
@@ -758,13 +759,35 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
   const ext = selectedMime.includes('mp4') ? 'mp4' : 'webm';
   reportProgress('اكتمل التصدير بنجاح ✅', 100, { engine: 'mediarecorder' });
 
-  return {
-    success: true,
-    engine: 'mediarecorder',
-    blob: finalBlob,
-    blobUrl: downloadUrl,
-    outputPath: `${cleanProjectName}.${ext}`,
-    durationSec: totalDurationSec,
-    fileSizeBytes: finalBlob.size,
-  };
+    return {
+      success: true,
+      engine: 'mediarecorder',
+      blob: finalBlob,
+      blobUrl: downloadUrl,
+      outputPath: `${cleanProjectName}.${ext}`,
+      durationSec: totalDurationSec,
+      fileSizeBytes: finalBlob.size,
+    };
+  } finally {
+    if (audioCtx && audioCtx.state !== 'closed') {
+      try {
+        await audioCtx.close();
+      } catch (err) {
+        console.debug('[ExportOrchestrator] AudioContext close error:', err);
+      }
+    }
+  }
+}
+
+/**
+ * Revoke blob URLs generated during export to free browser memory
+ */
+export function revokeExportBlobUrl(url?: string): void {
+  if (url && url.startsWith('blob:')) {
+    try {
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.debug('[ExportOrchestrator] Blob URL revoke error:', err);
+    }
+  }
 }

@@ -28,6 +28,7 @@ import {
 import { ViralCaptionGenerator } from '../ui/ViralCaptionGenerator';
 import { PublishKitModal } from '../ui/PublishKitModal';
 import { exportProject } from '../../services/exportOrchestrator';
+import { synthesizeArabicSpeech } from '../../services/arabicTtsService';
 
 // ==================== Export Page Component ====================
 export const ExportPage: React.FC = () => {
@@ -65,11 +66,23 @@ export const ExportPage: React.FC = () => {
           currentProject.contentType === 'azkar'
         ) {
           const text = currentProject.customText || currentProject.name;
-          const audioUrl =
-            currentProject.customAudioUrl || `/api/tts?text=${encodeURIComponent(text)}`;
+          let audioUrl = currentProject.customAudioUrl;
+          let estimatedTotalSec = 10;
+
+          if (!audioUrl && text) {
+            try {
+              const ttsResult = await synthesizeArabicSpeech(text, 'ar-SA-HamedNeural');
+              audioUrl = ttsResult.audioUrl;
+              if (ttsResult.duration > 0) {
+                estimatedTotalSec = ttsResult.duration;
+              }
+            } catch (ttsErr) {
+              console.warn('[ExportPage] synthesizeArabicSpeech error:', ttsErr);
+            }
+          }
+
           const rawWords = text.split(/\s+/).filter(Boolean);
           const totalWords = Math.max(rawWords.length, 1);
-          const estimatedTotalSec = 10;
           const secPerWord = estimatedTotalSec / totalWords;
 
           const words: QuranWord[] = rawWords.map((w, idx) => ({
@@ -88,7 +101,7 @@ export const ExportPage: React.FC = () => {
               surahNumber: 0,
               surahName: currentProject.customTitle || currentProject.name,
               text: text,
-              audioUrl: audioUrl,
+              audioUrl: audioUrl || '',
               juz: 1,
               page: 1,
               words,

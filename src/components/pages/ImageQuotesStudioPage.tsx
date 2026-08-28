@@ -213,7 +213,6 @@ export const ImageQuotesStudioPage: React.FC = () => {
       customText: settings.text,
       customTitle: settings.title,
       customReference: settings.reference,
-      customAudioUrl: `/api/tts?text=${encodeURIComponent(settings.text)}`,
       reciter: 'الشيخ حامد (صوت وقور)',
       reciterId: 'hamed_neural',
       surah: settings.title || 'اقتباس دعوي',

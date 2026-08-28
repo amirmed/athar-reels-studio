@@ -98,6 +98,12 @@ export function createDefaultAudioSettings(overrides?: Partial<AudioSettings>): 
 
 export function createDefaultProject(overrides?: Partial<Project>): Project {
   const now = new Date().toISOString();
+  const {
+    textSettings: overrideTextSettings,
+    audioSettings: overrideAudioSettings,
+    ...restOverrides
+  } = overrides || {};
+
   return {
     id: `project-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
     name: 'ريل قرآني جديد',
@@ -109,7 +115,8 @@ export function createDefaultProject(overrides?: Partial<Project>): Project {
     toAyah: 7,
     aspectRatio: '9:16',
     backgroundType: 'image',
-    backgroundUrl: 'https://images.pexels.com/photos/1529881/pexels-photo-1529881.jpeg?auto=compress&cs=tinysrgb&w=1280',
+    backgroundUrl:
+      'https://images.pexels.com/photos/1529881/pexels-photo-1529881.jpeg?auto=compress&cs=tinysrgb&w=1280',
     backgroundOpacity: 0.65,
     watermark: 'أَثَـر ستوديو',
     createdAt: now,
@@ -117,10 +124,10 @@ export function createDefaultProject(overrides?: Partial<Project>): Project {
     status: 'draft',
     exportCount: 0,
     contentType: 'quran',
-    textSettings: createDefaultTextSettings(overrides?.textSettings),
-    audioSettings: createDefaultAudioSettings(overrides?.audioSettings),
     translationEnabled: false,
     tafsirEnabled: false,
-    ...overrides,
+    ...restOverrides,
+    textSettings: createDefaultTextSettings(overrideTextSettings),
+    audioSettings: createDefaultAudioSettings(overrideAudioSettings),
   };
 }
