@@ -46,7 +46,7 @@ export const EditorDockNav: React.FC<EditorDockNavProps> = ({
   const visibleTabs = isProMode ? ALL_TABS : ALL_TABS.filter((t) => !t.isPro);
 
   return (
-    <aside className="w-20 border-e border-white/10 bg-surface-900 flex flex-col items-center py-3 gap-2 shrink-0 z-20">
+    <aside className="w-20 border-e border-surface-700/40 bg-surface-900 flex flex-col items-center py-3 gap-2 shrink-0 z-20">
       <div className="flex-1 flex flex-col gap-2 w-full px-2">
         {visibleTabs.map((tab) => {
           const Icon = tab.icon;
@@ -62,7 +62,7 @@ export const EditorDockNav: React.FC<EditorDockNavProps> = ({
               className={`w-full py-2.5 rounded-xl flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer relative group ${
                 isActive
                   ? 'bg-gold-500/15 text-gold-300 font-bold border border-gold-400/40 shadow-md shadow-gold-500/10'
-                  : 'text-white/60 hover:text-white hover:bg-white/5'
+                  : 'text-surface-400 hover:text-surface-50 hover:bg-surface-800/60'
               }`}
               title={tab.label}
               aria-label={tab.label}
@@ -87,7 +87,7 @@ export const EditorDockNav: React.FC<EditorDockNavProps> = ({
             className={`w-full mt-2 py-2 rounded-xl border flex flex-col items-center justify-center gap-1 transition-all cursor-pointer ${
               isProMode
                 ? 'bg-purple-500/20 border-purple-500/40 text-purple-300 hover:bg-purple-500/30'
-                : 'bg-surface-800/80 border-white/[0.08] text-white/60 hover:text-white hover:border-gold-400/40'
+                : 'bg-surface-800/80 border-surface-700/40 text-surface-400 hover:text-surface-50 hover:border-gold-400/40'
             }`}
             title={isProMode ? 'تبديل للوضع المبسط' : 'فتح الوضع الاحترافي الكامل (Pro)'}
             aria-label={isProMode ? 'تبديل للوضع المبسط' : 'فتح الوضع الاحترافي الكامل (Pro)'}
@@ -99,11 +99,11 @@ export const EditorDockNav: React.FC<EditorDockNavProps> = ({
       </div>
 
       {/* Collapse/Expand Inspector toggle button */}
-      <div className="px-2 w-full pt-2 border-t border-white/5">
+      <div className="px-2 w-full pt-2 border-t border-surface-700/30">
         <button
           type="button"
           onClick={onToggleInspector}
-          className="w-full py-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/60 hover:text-white flex items-center justify-center transition-all cursor-pointer"
+          className="w-full py-2 rounded-xl bg-surface-800/60 hover:bg-surface-800 text-surface-400 hover:text-surface-50 flex items-center justify-center transition-all cursor-pointer"
           title={isInspectorOpen ? 'إخفاء لوحة التحكم' : 'إظهار لوحة التحكم'}
           aria-label={isInspectorOpen ? 'إخفاء لوحة التحكم' : 'إظهار لوحة التحكم'}
         >

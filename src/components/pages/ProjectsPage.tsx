@@ -152,7 +152,7 @@ export const ProjectsPage: React.FC = () => {
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                   isSelectionMode
                     ? 'bg-accent-500 text-surface-950 shadow-md'
-                    : 'bg-surface-800/80 hover:bg-surface-700 text-white/70 hover:text-white border border-white/[0.08]'
+                    : 'bg-surface-800/80 hover:bg-surface-700 text-surface-300 hover:text-surface-50 border border-surface-700/40'
                 }`}
               >
                 <CheckSquare size={14} />
@@ -160,6 +160,7 @@ export const ProjectsPage: React.FC = () => {
               </button>
 
               <button
+                type="button"
                 onClick={() => setBulkConfirmType('all')}
                 className="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 transition-all flex items-center gap-1.5 cursor-pointer"
                 title="حذف جميع المشاريع نهائياً"
@@ -171,6 +172,7 @@ export const ProjectsPage: React.FC = () => {
           )}
 
           <button
+            type="button"
             onClick={() => setCurrentPage('create')}
             className="btn-primary-sm flex items-center gap-1.5 text-xs cursor-pointer shadow-md"
           >
@@ -188,7 +190,7 @@ export const ProjectsPage: React.FC = () => {
             <div className="relative">
               <Search
                 size={15}
-                className="absolute start-3 top-1/2 -translate-y-1/2 text-white/30"
+                className="absolute start-3 top-1/2 -translate-y-1/2 text-surface-400"
               />
               <input
                 type="text"
@@ -229,24 +231,26 @@ export const ProjectsPage: React.FC = () => {
             )}
 
             {/* View toggle */}
-            <div className="flex items-center gap-1 bg-surface-800/40 border border-white/[0.06] rounded-xl p-1">
+            <div className="flex items-center gap-1 bg-surface-800/40 border border-surface-700/40 rounded-xl p-1">
               <button
+                type="button"
                 onClick={() => setViewMode('grid')}
                 className={`p-2 rounded-lg transition-all cursor-pointer ${
                   viewMode === 'grid'
                     ? 'bg-accent-500/15 text-accent-400'
-                    : 'text-white/30 hover:text-white/60'
+                    : 'text-surface-400 hover:text-surface-200'
                 }`}
                 title="عرض شبكي"
               >
                 <LayoutGrid size={16} />
               </button>
               <button
+                type="button"
                 onClick={() => setViewMode('list')}
                 className={`p-2 rounded-lg transition-all cursor-pointer ${
                   viewMode === 'list'
                     ? 'bg-accent-500/15 text-accent-400'
-                    : 'text-white/30 hover:text-white/60'
+                    : 'text-surface-400 hover:text-surface-200'
                 }`}
                 title="عرض قائمة"
               >
@@ -308,19 +312,19 @@ export const ProjectsPage: React.FC = () => {
               <div className="w-8 h-8 rounded-xl bg-accent-500/20 text-accent-400 flex items-center justify-center font-bold text-xs">
                 {selectedIds.size}
               </div>
-              <span className="text-xs font-bold text-white">
+              <span className="text-xs font-bold text-surface-50">
                 تم تحديد <strong className="text-accent-400">{selectedIds.size}</strong> من{' '}
                 {projects.length}
               </span>
             </div>
 
-            <div className="h-6 w-[1px] bg-white/[0.1] hidden sm:block" />
+            <div className="h-6 w-[1px] bg-surface-700/40 hidden sm:block" />
 
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={handleSelectAll}
-                className="px-3 py-1.5 rounded-xl bg-surface-800 hover:bg-surface-700 text-white/80 hover:text-white text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                className="px-3 py-1.5 rounded-xl bg-surface-800 hover:bg-surface-700 text-surface-200 hover:text-surface-50 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
               >
                 {isAllSelected ? <Square size={13} /> : <CheckSquare size={13} />}
                 <span>{isAllSelected ? 'إلغاء تحديد الكل' : 'تحديد الكل'}</span>
@@ -338,7 +342,7 @@ export const ProjectsPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleClearSelection}
-                className="p-1.5 rounded-xl hover:bg-surface-800 text-white/40 hover:text-white transition-all cursor-pointer"
+                className="p-1.5 rounded-xl hover:bg-surface-800 text-surface-400 hover:text-surface-50 transition-all cursor-pointer"
                 title="إلغاء"
               >
                 <X size={16} />

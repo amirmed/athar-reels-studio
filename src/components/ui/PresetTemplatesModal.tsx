@@ -54,7 +54,7 @@ export const PresetTemplatesModal: React.FC<PresetTemplatesModalProps> = ({
                 className={`relative rounded-2xl overflow-hidden border-2 cursor-pointer transition-all shadow-lg group flex flex-col justify-between ${
                   isSelected
                     ? 'border-gold-400 shadow-gold-500/20 bg-surface-950'
-                    : 'border-white/[0.08] hover:border-gold-400/50 bg-surface-950/80'
+                    : 'border-surface-700/40 hover:border-gold-400/50 bg-surface-950/80'
                 }`}
               >
                 {/* Thumbnail Banner */}
@@ -82,26 +82,26 @@ export const PresetTemplatesModal: React.FC<PresetTemplatesModalProps> = ({
                 {/* Body Content */}
                 <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                   <div>
-                    <h4 className="text-sm font-bold text-white mb-1 group-hover:text-gold-300 transition-colors flex items-center justify-between">
+                    <h4 className="text-sm font-bold text-surface-50 mb-1 group-hover:text-gold-300 transition-colors flex items-center justify-between">
                       <span>{tpl.name}</span>
-                      <span className="text-[11px] text-white/40 font-normal">
+                      <span className="text-[11px] text-surface-400 font-normal">
                         {tpl.englishName}
                       </span>
                     </h4>
-                    <p className="text-xs text-white/60 leading-relaxed line-clamp-2">
+                    <p className="text-xs text-surface-300 leading-relaxed line-clamp-2">
                       {tpl.description}
                     </p>
                   </div>
 
                   {/* Features Badges */}
-                  <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-white/[0.06] text-[11px] text-white/50">
-                    <span className="px-2 py-0.5 rounded-md bg-white/[0.04] border border-white/[0.04]">
+                  <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-surface-700/40 text-[11px] text-surface-400">
+                    <span className="px-2 py-0.5 rounded-md bg-surface-800/60 border border-surface-700/30">
                       خط: {tpl.textSettings.fontFamily}
                     </span>
-                    <span className="px-2 py-0.5 rounded-md bg-white/[0.04] border border-white/[0.04]">
+                    <span className="px-2 py-0.5 rounded-md bg-surface-800/60 border border-surface-700/30">
                       توهج: {tpl.textSettings.wordHighlightStyle}
                     </span>
-                    <span className="px-2 py-0.5 rounded-md bg-white/[0.04] border border-white/[0.04]">
+                    <span className="px-2 py-0.5 rounded-md bg-surface-800/60 border border-surface-700/30">
                       موجات: {tpl.textSettings.waveformStyle || 'pulse'}
                     </span>
                   </div>
@@ -127,7 +127,7 @@ export const PresetTemplatesModal: React.FC<PresetTemplatesModalProps> = ({
         </div>
 
         {/* Footer Note */}
-        <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs text-white/50">
+        <div className="pt-3 border-t border-surface-700/40 flex items-center justify-between text-xs text-surface-400">
           <div className="flex items-center gap-2">
             <Sparkles size={14} className="text-gold-400" />
             <span>يمكنك تعديل أي تفصيلة لاحقاً من لوحة الإعدادات بعد تطبيق القالب.</span>

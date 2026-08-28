@@ -83,7 +83,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
                       مفعل
                     </span>
                   </div>
-                  <div className="text-[11px] text-white/50">
+                  <div className="text-[11px] text-surface-400">
                     {Math.round(audioSettings.customAudioDuration || 0)}ث • مع صدى الحرم
                   </div>
                 </div>
@@ -124,7 +124,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
                       type: 'info',
                     });
                   }}
-                  className="p-1.5 rounded-xl bg-white/5 hover:bg-red-500/20 text-white/40 hover:text-red-300 border border-white/10 transition-all cursor-pointer"
+                  className="p-1.5 rounded-xl bg-surface-800 hover:bg-red-500/20 text-surface-400 hover:text-red-300 border border-surface-700/40 transition-all cursor-pointer"
                   title="حذف التسجيل الصوتي والعودة للقارئ المعتمد"
                 >
                   <Trash2 size={13} />
@@ -136,7 +136,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
             <div className="pt-2 border-t border-gold-400/20 space-y-1">
               <label className="text-[11px] font-bold text-gold-300 flex items-center justify-between">
                 <span>اسمك / اسم القارئ (يظهر في الفيديو والغلاف):</span>
-                <span className="text-[9px] text-white/40">تعديل</span>
+                <span className="text-[9px] text-surface-400">تعديل</span>
               </label>
               <input
                 type="text"
@@ -152,7 +152,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
                   }
                 }}
                 placeholder="مثال: القارئ محمد طه / تلاوتي الخاصة"
-                className="glass-input w-full p-2 rounded-xl text-xs bg-surface-950/90 border border-gold-400/30 text-white placeholder-white/30 focus:border-gold-400 focus:outline-none"
+                className="glass-input w-full p-2 rounded-xl text-xs bg-surface-950/90 border border-gold-400/30 text-surface-50 placeholder-surface-500 focus:border-gold-400 focus:outline-none"
               />
             </div>
           </div>
@@ -160,7 +160,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
 
         <div className="flex items-center justify-between mb-1.5">
           <div className="flex items-center gap-1.5">
-            <label className="text-white/60 font-bold">اختيار القارئ</label>
+            <label className="text-surface-300 font-bold">اختيار القارئ</label>
             {(() => {
               const avail = getAvailableSurahsForReciter(reciterId);
               const isFull = avail.length === 114;
@@ -277,7 +277,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
               ]);
             }}
             rows={4}
-            className="w-full p-2.5 rounded-xl bg-surface-950/80 border border-white/10 text-white text-xs leading-relaxed focus:outline-none focus:border-gold-400 resize-none font-medium"
+            className="w-full p-2.5 rounded-xl bg-surface-950/80 border border-surface-700/40 text-surface-50 text-xs leading-relaxed focus:outline-none focus:border-gold-400 resize-none font-medium"
             placeholder="اكتب أو عدل نص الموعظة أو الحديث هنا..."
           />
         </div>
@@ -285,7 +285,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
         <>
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="block text-white/60 font-bold">السورة القرآنية</label>
+              <label className="block text-surface-400 font-bold">السورة القرآنية</label>
               {(() => {
                 const avail = getAvailableSurahsForReciter(reciterId);
                 const isFull = avail.length === 114;
@@ -324,7 +324,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
                   {displayed.map((s) => {
                     const isAvail = avail.includes(s.number);
                     return (
-                      <option key={s.number} value={s.number} className="bg-surface-900 text-white">
+                      <option key={s.number} value={s.number} className="bg-surface-900 text-surface-50">
                         {s.number}. سورة {s.name} ({s.ayahCount} آية){' '}
                         {isAvail ? '✓' : '(⚠️ غير مسجلة)'}
                       </option>
@@ -379,7 +379,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
 
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-white/60 mb-1 font-bold">من آية</label>
+              <label className="block text-surface-400 mb-1 font-bold">من آية</label>
               <input
                 type="number"
                 min={1}
@@ -390,7 +390,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
               />
             </div>
             <div>
-              <label className="block text-white/60 mb-1 font-bold">إلى آية</label>
+              <label className="block text-surface-400 mb-1 font-bold">إلى آية</label>
               <input
                 type="number"
                 min={fromAyah}
@@ -405,9 +405,9 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
       )}
 
       {/* Translation & Tafsir Toggles */}
-      <div className="pt-2 border-t border-white/10 space-y-2">
+      <div className="pt-2 border-t border-surface-700/40 space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-white/70 font-bold flex items-center gap-1.5">
+          <span className="text-surface-300 font-bold flex items-center gap-1.5">
             <Globe size={13} className="text-gold-400" />
             <span>عرض الترجمة الإنجليزية</span>
           </span>
@@ -420,7 +420,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
         </div>
 
         <div className="flex items-center justify-between">
-          <span className="text-white/70 font-bold flex items-center gap-1.5">
+          <span className="text-surface-300 font-bold flex items-center gap-1.5">
             <span className="text-xs">📜</span>
             <span>عرض التفسير الميسر</span>
           </span>

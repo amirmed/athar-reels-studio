@@ -103,10 +103,10 @@ export const Sidebar: React.FC = React.memo(() => {
       initial={false}
       animate={{ width: sidebarCollapsed ? 72 : 240 }}
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-      className="h-full bg-surface-950/50 backdrop-blur-xl border-e border-white/[0.04] flex flex-col shrink-0 relative z-30"
+      className="h-full bg-surface-950/50 backdrop-blur-xl border-e border-surface-700/30 flex flex-col shrink-0 relative z-30"
     >
       {/* Logo area */}
-      <div className="p-4 flex items-center gap-3 border-b border-white/[0.04]">
+      <div className="p-4 flex items-center gap-3 border-b border-surface-700/30">
         <div className="w-10 h-10 rounded-xl bg-surface-900 border border-gold-400/30 overflow-hidden flex items-center justify-center shrink-0 shadow-lg shadow-gold-500/10">
           <img src="/logo.png" alt="Athar Studio Logo" className="w-full h-full object-cover" />
         </div>
@@ -119,7 +119,7 @@ export const Sidebar: React.FC = React.memo(() => {
               transition={{ duration: 0.2 }}
               className="overflow-hidden"
             >
-              <div className="text-sm font-black text-white whitespace-nowrap tracking-tight">
+              <div className="text-sm font-black text-surface-50 whitespace-nowrap tracking-tight">
                 {t('appName', 'أَثَــر ستوديو')}
               </div>
               <p className="text-xs text-gold-400/90 whitespace-nowrap font-semibold">
@@ -157,7 +157,7 @@ export const Sidebar: React.FC = React.memo(() => {
               )}
 
               {showSystemHeader && !sidebarCollapsed && (
-                <div className="pt-3 pb-1 px-3 text-[11px] font-bold text-white/40 tracking-wider">
+                <div className="pt-3 pb-1 px-3 text-[11px] font-bold text-surface-400 tracking-wider">
                   <span>{t('nav.system', 'المشاريع والإعدادات')}</span>
                 </div>
               )}
@@ -173,8 +173,8 @@ export const Sidebar: React.FC = React.memo(() => {
                   ${sidebarCollapsed ? 'px-0 py-2.5 justify-center' : 'px-3 py-2.5'}
                   ${
                     isActive
-                      ? 'bg-gradient-to-r from-accent-500/20 to-accent-600/10 text-white font-bold shadow-sm border border-accent-500/30'
-                      : 'text-white/70 hover:bg-white/[0.04] hover:text-white font-medium'
+                      ? 'bg-gradient-to-r from-accent-500/20 to-accent-600/10 text-surface-50 font-bold shadow-sm border border-accent-500/30'
+                      : 'text-surface-300 hover:bg-surface-800/60 hover:text-surface-50 font-medium'
                   }
                 `}
               >
@@ -243,10 +243,11 @@ export const Sidebar: React.FC = React.memo(() => {
       </div>
 
       {/* Collapse toggle */}
-      <div className="border-t border-white/[0.06] p-2">
+      <div className="border-t border-surface-700/30 p-2">
         <button
+          type="button"
           onClick={toggleSidebar}
-          className="w-full flex items-center justify-center py-2 rounded-lg text-white/50 hover:text-white hover:bg-white/[0.06] transition-all duration-200 cursor-pointer"
+          className="w-full flex items-center justify-center py-2 rounded-lg text-surface-400 hover:text-surface-50 hover:bg-surface-800/60 transition-all duration-200 cursor-pointer"
           title={
             sidebarCollapsed ? t('common.next', 'توسيع القائمة') : t('common.back', 'تصغير القائمة')
           }

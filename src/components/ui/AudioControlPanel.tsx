@@ -62,7 +62,7 @@ export const AudioControlPanel: React.FC<AudioControlPanelProps> = ({
             ${
               fadeIn
                 ? 'bg-teal-500/10 text-teal-400 border-teal-500/20'
-                : 'bg-surface-800/40 text-white/40 border-white/[0.06] hover:bg-surface-800/60'
+                : 'bg-surface-800/40 text-surface-400 border-surface-700/40 hover:bg-surface-800/60'
             }
           `}
         >
@@ -76,7 +76,7 @@ export const AudioControlPanel: React.FC<AudioControlPanelProps> = ({
             ${
               fadeOut
                 ? 'bg-teal-500/10 text-teal-400 border-teal-500/20'
-                : 'bg-surface-800/40 text-white/40 border-white/[0.06] hover:bg-surface-800/60'
+                : 'bg-surface-800/40 text-surface-400 border-surface-700/40 hover:bg-surface-800/60'
             }
           `}
         >
@@ -89,7 +89,7 @@ export const AudioControlPanel: React.FC<AudioControlPanelProps> = ({
       {(fadeIn || fadeOut) && (
         <Slider
           label="مدة التلاشي"
-          icon={<Clock size={14} className="text-white/50" />}
+          icon={<Clock size={14} className="text-surface-400" />}
           min={1}
           max={5}
           step={0.5}

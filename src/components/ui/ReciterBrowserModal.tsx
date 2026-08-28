@@ -220,7 +220,7 @@ export const ReciterBrowserModal: React.FC<ReciterBrowserModalProps> = ({
     >
       <div className="space-y-4">
         {/* Controls: Search & Category Chips */}
-        <div className="p-3 border-b border-white/[0.06] space-y-3 bg-surface-900/40 rounded-2xl">
+        <div className="p-3 border-b border-surface-700/40 space-y-3 bg-surface-900/40 rounded-2xl">
             <div className="relative">
               <input
                 type="text"
@@ -229,7 +229,7 @@ export const ReciterBrowserModal: React.FC<ReciterBrowserModalProps> = ({
                 placeholder="ابحث بالاسم: عبد الرحمن مسعد، شريف مصطفى، إسلام صبحي، ياسر الدوسري، عبد الباسط..."
                 className="glass-input w-full ps-10 pe-4 py-2.5 text-xs rounded-xl no-drag select-text cursor-text"
               />
-              <Search size={16} className="absolute start-3 top-3 text-white/40" />
+              <Search size={16} className="absolute start-3 top-3 text-surface-400" />
             </div>
 
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
@@ -240,7 +240,7 @@ export const ReciterBrowserModal: React.FC<ReciterBrowserModalProps> = ({
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 border cursor-pointer ${
                     filterCategory === fb.id
                       ? 'bg-accent-500 text-white border-accent-400 shadow-md shadow-accent-500/20'
-                      : 'bg-surface-800/80 hover:bg-surface-700 text-white/60 hover:text-white border-white/[0.04]'
+                      : 'bg-surface-800/80 hover:bg-surface-700 text-surface-300 hover:text-surface-50 border-surface-700/30'
                   }`}
                 >
                   {fb.icon}
@@ -265,7 +265,7 @@ export const ReciterBrowserModal: React.FC<ReciterBrowserModalProps> = ({
                   className={`group relative p-3.5 rounded-2xl border transition-all flex flex-col justify-between ${
                     isSelected
                       ? 'bg-accent-500/15 border-accent-400 shadow-lg shadow-accent-500/15'
-                      : 'bg-surface-900/60 hover:bg-surface-800/80 border-white/[0.06] hover:border-white/[0.15]'
+                      : 'bg-surface-900/60 hover:bg-surface-800/80 border-surface-700/40 hover:border-surface-700/70'
                   }`}
                 >
                   <div>
@@ -274,14 +274,14 @@ export const ReciterBrowserModal: React.FC<ReciterBrowserModalProps> = ({
                       className="flex items-start justify-between gap-2.5 mb-2.5 cursor-pointer"
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-surface-800 to-surface-700 border border-white/[0.08] flex items-center justify-center text-white/80 group-hover:scale-105 group-hover:text-gold-400 transition-all shrink-0 shadow-inner">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-surface-800 to-surface-700 border border-surface-700/40 flex items-center justify-center text-surface-200 group-hover:scale-105 group-hover:text-gold-400 transition-all shrink-0 shadow-inner">
                           <Mic size={18} />
                         </div>
                         <div className="min-w-0">
-                          <h4 className="font-bold text-xs text-white group-hover:text-gold-300 transition-colors truncate">
+                          <h4 className="font-bold text-xs text-surface-50 group-hover:text-gold-300 transition-colors truncate">
                             {reciter.nameAr}
                           </h4>
-                          <p className="text-[11px] text-white/40 truncate font-sans">
+                          <p className="text-[11px] text-surface-400 truncate font-sans">
                             {reciter.nameEn}
                           </p>
                         </div>
@@ -296,7 +296,7 @@ export const ReciterBrowserModal: React.FC<ReciterBrowserModalProps> = ({
 
                     {/* Surahs Availability & Style Badges */}
                     <div className="flex items-center gap-1.5 flex-wrap mb-2">
-                      <span className="text-[10px] px-2 py-0.5 rounded-md bg-surface-800 text-gold-300 font-bold border border-white/[0.04]">
+                      <span className="text-[10px] px-2 py-0.5 rounded-md bg-surface-800 text-gold-300 font-bold border border-surface-700/30">
                         {reciter.style}
                       </span>
                       {isFullQuran ? (
@@ -333,9 +333,9 @@ export const ReciterBrowserModal: React.FC<ReciterBrowserModalProps> = ({
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}
                             exit={{ opacity: 0, height: 0 }}
-                            className="mt-1.5 p-2 rounded-xl bg-surface-950 border border-white/10 max-h-36 overflow-y-auto space-y-1"
+                            className="mt-1.5 p-2 rounded-xl bg-surface-950 border border-surface-700/40 max-h-36 overflow-y-auto space-y-1"
                           >
-                            <p className="text-[10px] text-white/50 mb-1 font-bold">
+                            <p className="text-[10px] text-surface-400 mb-1 font-bold">
                               انقر لاختيار السورة فوراً مع القارئ:
                             </p>
                             <div className="flex flex-wrap gap-1">
@@ -349,7 +349,7 @@ export const ReciterBrowserModal: React.FC<ReciterBrowserModalProps> = ({
                                       e.stopPropagation();
                                       handleSelect(reciter, sNum);
                                     }}
-                                    className="px-1.5 py-0.5 rounded-md bg-surface-800 hover:bg-gold-500/20 text-white/80 hover:text-gold-300 text-[10px] font-bold border border-white/[0.04] transition-all cursor-pointer"
+                                    className="px-1.5 py-0.5 rounded-md bg-surface-800 hover:bg-gold-500/20 text-surface-200 hover:text-gold-300 text-[10px] font-bold border border-surface-700/30 transition-all cursor-pointer"
                                   >
                                     {sNum}. {sObj?.name || `سورة ${sNum}`}
                                   </button>
@@ -362,7 +362,7 @@ export const ReciterBrowserModal: React.FC<ReciterBrowserModalProps> = ({
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between pt-2 border-t border-white/[0.04] mt-1">
+                  <div className="flex items-center justify-between pt-2 border-t border-surface-700/30 mt-1">
                     <button
                       type="button"
                       onClick={() => handleSelect(reciter)}
@@ -378,7 +378,7 @@ export const ReciterBrowserModal: React.FC<ReciterBrowserModalProps> = ({
                       className={`py-1 px-2.5 rounded-lg text-[11px] font-bold flex items-center gap-1 transition-all cursor-pointer ${
                         isAuditioning
                           ? 'bg-gold-400 text-black shadow-md shadow-gold-500/30 animate-pulse'
-                          : 'bg-surface-800 hover:bg-gold-400/20 text-white/70 hover:text-gold-300 border border-white/[0.06]'
+                          : 'bg-surface-800 hover:bg-gold-400/20 text-surface-300 hover:text-gold-300 border border-surface-700/40'
                       }`}
                       title="استماع لتلاوة تجريبية"
                     >

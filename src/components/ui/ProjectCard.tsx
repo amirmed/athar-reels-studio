@@ -94,7 +94,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = React.memo(
               </button>
             )}
 
-            <div className="w-12 h-12 rounded-xl overflow-hidden bg-surface-800 border border-white/[0.08] flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-xl overflow-hidden bg-surface-800 border border-surface-700/40 flex items-center justify-center shrink-0">
               {project.thumbnail ? (
                 <img
                   src={project.thumbnail}
@@ -112,8 +112,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = React.memo(
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-sm font-semibold text-white/90 truncate">{project.name}</h3>
-              <p className="text-xs text-white/40 mt-0.5">
+              <h3 className="text-sm font-semibold text-surface-50 truncate">{project.name}</h3>
+              <p className="text-xs text-surface-400 mt-0.5">
                 {project.reciter} • سورة {project.surah}
               </p>
             </div>
@@ -129,14 +129,14 @@ export const ProjectCard: React.FC<ProjectCardProps> = React.memo(
               <>
                 <button
                   onClick={handleEdit}
-                  className="p-2 rounded-lg bg-surface-800/60 text-white/40 hover:bg-accent-500/20 hover:text-accent-400 transition-all cursor-pointer"
+                  className="p-2 rounded-lg bg-surface-800/60 text-surface-400 hover:bg-accent-500/20 hover:text-accent-400 transition-all cursor-pointer"
                   title="تعديل في المحرر"
                 >
                   <Edit3 size={14} />
                 </button>
                 <button
                   onClick={handleDelete}
-                  className="p-2 rounded-lg bg-surface-800/60 text-white/40 hover:bg-red-500/20 hover:text-red-400 transition-all cursor-pointer"
+                  className="p-2 rounded-lg bg-surface-800/60 text-surface-400 hover:bg-red-500/20 hover:text-red-400 transition-all cursor-pointer"
                   title="حذف المشروع"
                 >
                   <Trash2 size={14} />
@@ -247,17 +247,17 @@ export const ProjectCard: React.FC<ProjectCardProps> = React.memo(
 
         {/* Info area */}
         <div className="p-4">
-          <h3 className="text-sm sm:text-base font-bold text-white mb-1 truncate">
+          <h3 className="text-sm sm:text-base font-bold text-surface-50 mb-1 truncate">
             {project.name}
           </h3>
 
-          <div className="flex items-center gap-3 text-xs sm:text-[13px] text-white/60 mb-3.5 font-medium">
+          <div className="flex items-center gap-3 text-xs sm:text-[13px] text-surface-300 mb-3.5 font-medium">
             <span className="flex items-center gap-1">
               <User size={13} className="text-gold-400/80" />
               <span>{project.reciter}</span>
             </span>
             <span className="flex items-center gap-1 font-mono">
-              <Clock size={13} className="text-white/40" />
+              <Clock size={13} className="text-surface-400" />
               <span>{formatDate(project.createdAt)}</span>
             </span>
           </div>
@@ -272,7 +272,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = React.memo(
             </button>
             <button
               onClick={handleDuplicate}
-              className="w-9 h-9 rounded-xl bg-surface-800/80 text-white/50 flex items-center justify-center hover:bg-surface-700 hover:text-white transition-all cursor-pointer"
+              className="w-9 h-9 rounded-xl bg-surface-800/80 text-surface-400 flex items-center justify-center hover:bg-surface-700 hover:text-surface-50 transition-all cursor-pointer"
               title="تكرار"
             >
               <Copy size={14} />
@@ -282,14 +282,14 @@ export const ProjectCard: React.FC<ProjectCardProps> = React.memo(
                 setCurrentProject(project);
                 setCurrentPage('export');
               }}
-              className="w-9 h-9 rounded-xl bg-surface-800/80 text-white/50 flex items-center justify-center hover:bg-gold-500/20 hover:text-gold-300 transition-all cursor-pointer"
+              className="w-9 h-9 rounded-xl bg-surface-800/80 text-surface-400 flex items-center justify-center hover:bg-gold-500/20 hover:text-gold-300 transition-all cursor-pointer"
               title="تصدير"
             >
               <Download size={14} />
             </button>
             <button
               onClick={handleDelete}
-              className="w-9 h-9 rounded-xl bg-surface-800/80 text-white/50 flex items-center justify-center hover:bg-red-500/20 hover:text-red-400 transition-all cursor-pointer"
+              className="w-9 h-9 rounded-xl bg-surface-800/80 text-surface-400 flex items-center justify-center hover:bg-red-500/20 hover:text-red-400 transition-all cursor-pointer"
               title="حذف"
             >
               <Trash2 size={14} />

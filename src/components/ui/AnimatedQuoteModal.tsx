@@ -193,7 +193,7 @@ export const AnimatedQuoteModal: React.FC<AnimatedQuoteModalProps> = ({
               </div>
             </div>
 
-            <p className="text-xs text-white/40 mt-3 text-center">
+            <p className="text-xs text-surface-400 mt-3 text-center">
               يتم تصدير الفيديو بجودة 1080p بمعدل 30 إطار في الثانية
             </p>
           </div>
@@ -202,7 +202,7 @@ export const AnimatedQuoteModal: React.FC<AnimatedQuoteModalProps> = ({
           <div className="md:col-span-7 space-y-4">
             {/* 1. Motion Style Selector */}
             <div>
-              <label className="text-xs font-bold text-white/90 mb-2 flex items-center gap-1.5">
+              <label className="text-xs font-bold text-surface-50 mb-2 flex items-center gap-1.5">
                 <Wand2 size={14} className="text-gold-400" />
                 <span>اختر التأثير البصري الحركي:</span>
               </label>
@@ -217,14 +217,14 @@ export const AnimatedQuoteModal: React.FC<AnimatedQuoteModalProps> = ({
                       className={`p-3 rounded-2xl border text-start transition-all flex flex-col justify-between ${
                         isSelected
                           ? 'bg-gradient-to-r from-gold-500/20 to-amber-500/20 border-gold-400 shadow-md shadow-gold-500/10'
-                          : 'bg-surface-950/60 border-white/[0.08] hover:border-white/20'
+                          : 'bg-surface-950/60 border-surface-700/40 hover:border-surface-700/70'
                       }`}
                     >
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-base">{st.icon}</span>
-                        <span className="text-xs font-bold text-white">{st.name}</span>
+                        <span className="text-xs font-bold text-surface-50">{st.name}</span>
                       </div>
-                      <span className="text-[10px] text-white/50 leading-relaxed">{st.desc}</span>
+                      <span className="text-[10px] text-surface-400 leading-relaxed">{st.desc}</span>
                     </button>
                   );
                 })}
@@ -233,7 +233,7 @@ export const AnimatedQuoteModal: React.FC<AnimatedQuoteModalProps> = ({
 
             {/* 2. Duration Selector */}
             <div>
-              <label className="text-xs font-bold text-white/90 mb-2 flex items-center gap-1.5">
+              <label className="text-xs font-bold text-surface-50 mb-2 flex items-center gap-1.5">
                 <Clock size={14} className="text-sky-400" />
                 <span>مدة الفيديو:</span>
               </label>
@@ -246,7 +246,7 @@ export const AnimatedQuoteModal: React.FC<AnimatedQuoteModalProps> = ({
                     className={`py-2 px-3 rounded-xl text-xs font-bold transition-all border ${
                       durationSeconds === sec
                         ? 'bg-sky-500 text-white border-sky-400 shadow-sm'
-                        : 'bg-surface-950/60 border-white/[0.08] text-white/60 hover:text-white'
+                        : 'bg-surface-950/60 border-surface-700/40 text-surface-300 hover:text-surface-50'
                     }`}
                   >
                     {sec} ثوانٍ
@@ -257,7 +257,7 @@ export const AnimatedQuoteModal: React.FC<AnimatedQuoteModalProps> = ({
 
             {/* 3. Ambient Audio Selector */}
             <div>
-              <label className="text-xs font-bold text-white/90 mb-2 flex items-center gap-1.5">
+              <label className="text-xs font-bold text-surface-50 mb-2 flex items-center gap-1.5">
                 <Volume2 size={14} className="text-emerald-400" />
                 <span>صوت الخلفية التفاعلي (اختياري):</span>
               </label>
@@ -269,7 +269,7 @@ export const AnimatedQuoteModal: React.FC<AnimatedQuoteModalProps> = ({
                     setAmbientVolume(30);
                   }
                 }}
-                className="w-full bg-surface-950/80 border border-white/[0.1] rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-gold-400/60"
+                className="w-full bg-surface-950/80 border border-surface-700/40 rounded-xl p-2.5 text-xs text-surface-50 focus:outline-none focus:border-gold-400/60"
               >
                 <option value="none">بدون صوت (فيديو صامت)</option>
                 {ambientSounds.map((snd) => (
@@ -280,8 +280,8 @@ export const AnimatedQuoteModal: React.FC<AnimatedQuoteModalProps> = ({
               </select>
 
               {ambientSoundId !== 'none' && (
-                <div className="mt-2 p-3 rounded-xl bg-surface-950/60 border border-white/[0.06] space-y-1.5">
-                  <div className="flex items-center justify-between text-[11px] text-white/60">
+                <div className="mt-2 p-3 rounded-xl bg-surface-950/60 border border-surface-700/40 space-y-1.5">
+                  <div className="flex items-center justify-between text-[11px] text-surface-400">
                     <span>مستوى صوت الخلفية:</span>
                     <span className="font-mono text-emerald-400">{ambientVolume}%</span>
                   </div>
@@ -300,14 +300,14 @@ export const AnimatedQuoteModal: React.FC<AnimatedQuoteModalProps> = ({
         </div>
 
         {/* Modal Footer / Action Bar */}
-        <div className="pt-3 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="pt-3 border-t border-surface-700/40 flex flex-col sm:flex-row items-center justify-between gap-4">
           {isExporting ? (
             <div className="w-full space-y-2">
-              <div className="flex items-center justify-between text-xs font-bold text-white">
+              <div className="flex items-center justify-between text-xs font-bold text-surface-50">
                 <span>جاري تسجيل وتصدير الفيديو السينمائي...</span>
                 <span className="font-mono text-gold-300">{exportProgress}%</span>
               </div>
-              <div className="w-full h-2 rounded-full bg-white/[0.1] overflow-hidden">
+              <div className="w-full h-2 rounded-full bg-surface-700/40 overflow-hidden">
                 <motion.div
                   className="h-full bg-gradient-to-r from-gold-400 via-amber-500 to-accent-500 rounded-full"
                   style={{ width: `${exportProgress}%` }}
@@ -317,7 +317,7 @@ export const AnimatedQuoteModal: React.FC<AnimatedQuoteModalProps> = ({
             </div>
           ) : (
             <>
-              <div className="text-xs text-white/50 hidden sm:block">
+              <div className="text-xs text-surface-400 hidden sm:block">
                 جاهز للنشر على Instagram Reels, WhatsApp Status, TikTok 📱
               </div>
 

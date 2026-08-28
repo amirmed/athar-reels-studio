@@ -291,12 +291,13 @@ export const ImageQuotesStudioPage: React.FC = () => {
       <div className="p-6 max-w-7xl mx-auto space-y-6">
         {/* Top Preset Templates Carousel */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-          <span className="text-xs font-bold text-white/50 shrink-0 ms-2">القوالب الجاهزة:</span>
+          <span className="text-xs font-bold text-surface-400 shrink-0 ms-2">القوالب الجاهزة:</span>
           {quotePresetTemplates.map((tpl) => (
             <button
               key={tpl.id}
+              type="button"
               onClick={() => applyPreset(tpl)}
-              className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-surface-800/80 hover:bg-surface-700 text-xs font-bold text-white/80 hover:text-white border border-white/[0.06] hover:border-accent-400/40 transition-all shrink-0 group shadow-sm"
+              className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-surface-800/80 hover:bg-surface-700 text-xs font-bold text-surface-200 hover:text-surface-50 border border-surface-700/40 hover:border-accent-400/40 transition-all shrink-0 group shadow-sm cursor-pointer"
             >
               <span
                 className="w-2.5 h-2.5 rounded-full"
@@ -311,16 +312,17 @@ export const ImageQuotesStudioPage: React.FC = () => {
           {/* Left Column: Live Canvas Preview & Action Bar (7 cols) */}
           <div className="lg:col-span-7 space-y-4">
             {/* Aspect Ratio Switcher */}
-            <div className="flex items-center justify-between p-2 rounded-2xl bg-surface-900/80 border border-white/[0.06]">
+            <div className="flex items-center justify-between p-2 rounded-2xl bg-surface-900/80 border border-surface-700/40">
               <div className="flex items-center gap-1">
                 {(['1:1', '9:16', '4:5', '16:9'] as QuoteAspectRatio[]).map((ar) => (
                   <button
                     key={ar}
+                    type="button"
                     onClick={() => setSettings((s) => ({ ...s, aspectRatio: ar }))}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                       settings.aspectRatio === ar
                         ? 'bg-accent-500 text-white shadow-md shadow-accent-500/20'
-                        : 'text-white/50 hover:text-white hover:bg-surface-800'
+                        : 'text-surface-400 hover:text-surface-50 hover:bg-surface-800'
                     }`}
                   >
                     {ar === '1:1' && <Square size={13} />}
@@ -331,17 +333,17 @@ export const ImageQuotesStudioPage: React.FC = () => {
                   </button>
                 ))}
               </div>
-              <span className="text-xs text-white/40 px-2 font-mono">
+              <span className="text-xs text-surface-400 px-2 font-mono">
                 {ASPECT_DIMENSIONS[settings.aspectRatio].width} ×{' '}
                 {ASPECT_DIMENSIONS[settings.aspectRatio].height}
               </span>
             </div>
 
             {/* Canvas Preview Container */}
-            <div className="relative rounded-3xl bg-surface-950/80 border border-white/[0.08] p-4 flex items-center justify-center min-h-[500px] overflow-hidden shadow-2xl">
+            <div className="relative rounded-3xl bg-surface-950/80 border border-surface-700/40 p-4 flex items-center justify-center min-h-[500px] overflow-hidden shadow-2xl">
               {previewUrl ? (
                 <div
-                  className="relative max-h-[560px] max-w-full rounded-2xl overflow-hidden shadow-2xl border border-white/[0.1] transition-all"
+                  className="relative max-h-[560px] max-w-full rounded-2xl overflow-hidden shadow-2xl border border-surface-700/50 transition-all"
                   style={{
                     aspectRatio:
                       settings.aspectRatio === '1:1'
@@ -421,7 +423,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
                   )}
                 </div>
               ) : (
-                <div className="text-center py-20 text-white/40">
+                <div className="text-center py-20 text-surface-400">
                   <Sparkles size={32} className="mx-auto mb-2 animate-pulse text-accent-400" />
                   <p className="text-xs">جاري تجهيز المعاينة...</p>
                 </div>
@@ -432,6 +434,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
             <div className="space-y-2.5">
               {/* Primary Motion Video Action */}
               <button
+                type="button"
                 onClick={() => setShowAnimatedModal(true)}
                 className="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-gold-400 via-amber-500 to-amber-600 hover:from-gold-300 hover:to-amber-500 text-surface-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2.5 shadow-xl shadow-gold-500/20 hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer group"
               >
@@ -441,6 +444,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                 <button
+                  type="button"
                   onClick={handleDownload}
                   disabled={isDownloading}
                   className="py-3 px-4 rounded-2xl bg-gradient-to-r from-accent-500 to-accent-600 hover:from-accent-400 hover:to-accent-500 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-accent-500/20 transition-all group cursor-pointer"
@@ -453,16 +457,18 @@ export const ImageQuotesStudioPage: React.FC = () => {
                 </button>
 
                 <button
+                  type="button"
                   onClick={handleCopyImage}
-                  className="py-3 px-4 rounded-2xl bg-surface-800 hover:bg-surface-700 text-white text-xs font-bold flex items-center justify-center gap-2 border border-white/[0.08] hover:border-white/[0.15] transition-all cursor-pointer"
+                  className="py-3 px-4 rounded-2xl bg-surface-800 hover:bg-surface-700 text-surface-50 text-xs font-bold flex items-center justify-center gap-2 border border-surface-700/40 hover:border-surface-600 transition-all cursor-pointer"
                 >
                   {isCopied ? <Check size={15} className="text-emerald-400" /> : <Copy size={15} />}
                   <span>{isCopied ? 'تم النسخ ✓' : 'نسخ الصورة'}</span>
                 </button>
 
                 <button
+                  type="button"
                   onClick={handleCopyCaption}
-                  className="py-3 px-4 rounded-2xl bg-surface-800 hover:bg-surface-700 text-white text-xs font-bold flex items-center justify-center gap-2 border border-white/[0.08] hover:border-white/[0.15] transition-all cursor-pointer"
+                  className="py-3 px-4 rounded-2xl bg-surface-800 hover:bg-surface-700 text-surface-50 text-xs font-bold flex items-center justify-center gap-2 border border-surface-700/40 hover:border-surface-600 transition-all cursor-pointer"
                 >
                   <Hash size={15} className="text-gold-400" />
                   <span>نسخ الهاشتاغات</span>
@@ -510,7 +516,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
             {activeTab === 'content' && (
               <div className="glass-panel p-5 space-y-4 animate-in">
                 <div>
-                  <label className="block text-xs font-bold text-white/70 mb-1.5">
+                  <label className="block text-xs font-bold text-surface-300 mb-1.5">
                     عنوان الكرت أو المناسبة
                   </label>
                   <input
@@ -523,7 +529,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-white/70 mb-1.5">
+                  <label className="block text-xs font-bold text-surface-300 mb-1.5">
                     النص القرآني أو الحديث الشريف
                   </label>
                   <textarea
@@ -536,7 +542,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-white/70 mb-1.5">
+                  <label className="block text-xs font-bold text-surface-300 mb-1.5">
                     المصدر والتخريج
                   </label>
                   <input
@@ -549,13 +555,13 @@ export const ImageQuotesStudioPage: React.FC = () => {
                 </div>
 
                 {/* Curated Quotes & Quran Library */}
-                <div className="pt-2 border-t border-white/[0.06] space-y-2">
+                <div className="pt-2 border-t border-surface-700/40 space-y-2">
                   <div className="flex items-center justify-between">
                     <label className="text-xs font-bold text-gold-400 flex items-center gap-1.5">
                       <BookOpen size={13} />
                       <span>مكتبة الاقتباسات والآيات الجاهزة 📖</span>
                     </label>
-                    <span className="text-[11px] text-white/40">1-Click Apply</span>
+                    <span className="text-[11px] text-surface-400">1-Click Apply</span>
                   </div>
 
                   {/* Category Filter Pills */}
@@ -574,7 +580,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
                         className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all shrink-0 cursor-pointer ${
                           quoteCategoryFilter === cat.id
                             ? 'bg-gold-500/20 text-gold-300 border border-gold-400/40'
-                            : 'bg-surface-800/80 text-white/50 hover:text-white border border-white/[0.04]'
+                            : 'bg-surface-800/80 text-surface-400 hover:text-surface-50 border border-surface-700/40'
                         }`}
                       >
                         {cat.label}
@@ -590,20 +596,20 @@ export const ImageQuotesStudioPage: React.FC = () => {
                       <div
                         key={item.id}
                         onClick={() => handleSelectCuratedQuote(item)}
-                        className="p-2.5 rounded-xl bg-surface-800/60 hover:bg-surface-800 border border-white/[0.04] hover:border-gold-500/40 cursor-pointer transition-all flex items-center justify-between gap-2 group"
+                        className="p-2.5 rounded-xl bg-surface-800/60 hover:bg-surface-800 border border-surface-700/40 hover:border-gold-500/40 cursor-pointer transition-all flex items-center justify-between gap-2 group"
                       >
                         <div className="flex items-center gap-2 min-w-0">
                           <span className="text-sm shrink-0">{item.icon}</span>
                           <div className="min-w-0">
-                            <span className="text-xs text-white/90 font-bold block truncate group-hover:text-gold-300 transition-colors">
+                            <span className="text-xs text-surface-50 font-bold block truncate group-hover:text-gold-300 transition-colors">
                               {item.title}
                             </span>
-                            <span className="text-[11px] text-white/40 block truncate">
+                            <span className="text-[11px] text-surface-400 block truncate">
                               {item.reference}
                             </span>
                           </div>
                         </div>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/[0.06] text-gold-400 shrink-0 border border-white/[0.04]">
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-surface-800/60 text-gold-400 shrink-0 border border-surface-700/40">
                           {item.badge}
                         </span>
                       </div>
@@ -617,16 +623,16 @@ export const ImageQuotesStudioPage: React.FC = () => {
             {activeTab === 'style' && (
               <div className="glass-panel p-5 space-y-4 animate-in">
                 <div>
-                  <label className="block text-xs font-bold text-white/70 mb-1.5">
+                  <label className="block text-xs font-bold text-surface-300 mb-1.5">
                     نوع الخط العربي
                   </label>
                   <select
                     value={settings.fontFamily}
                     onChange={(e) => setSettings((s) => ({ ...s, fontFamily: e.target.value }))}
-                    className="glass-input w-full px-3 py-2 text-xs rounded-xl bg-surface-900 text-white"
+                    className="glass-input w-full px-3 py-2 text-xs rounded-xl bg-surface-900 text-surface-50"
                   >
                     {FONTS.map((f) => (
-                      <option key={f.id} value={f.id} className="bg-surface-900 text-white">
+                      <option key={f.id} value={f.id} className="bg-surface-900 text-surface-50">
                         {f.name}
                       </option>
                     ))}
@@ -634,7 +640,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <div className="flex items-center justify-between text-xs font-bold text-white/70 mb-1.5">
+                  <div className="flex items-center justify-between text-xs font-bold text-surface-300 mb-1.5">
                     <span>حجم الخط</span>
                     <span className="font-mono text-accent-400">{settings.fontSize}px</span>
                   </div>
@@ -651,7 +657,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <div className="flex items-center justify-between text-xs font-bold text-white/70 mb-1.5">
+                  <div className="flex items-center justify-between text-xs font-bold text-surface-300 mb-1.5">
                     <span>تباعد الأسطر</span>
                     <span className="font-mono text-accent-400">{settings.lineHeight}x</span>
                   </div>
@@ -669,10 +675,10 @@ export const ImageQuotesStudioPage: React.FC = () => {
                 </div>
 
                 {/* Text Gradient Toggle */}
-                <div className="flex items-center justify-between p-3 rounded-xl bg-surface-800/60 border border-white/[0.04]">
+                <div className="flex items-center justify-between p-3 rounded-xl bg-surface-800/60 border border-surface-700/40">
                   <div>
-                    <span className="text-xs font-bold text-white">تدرج لوني ذهبي للنص</span>
-                    <p className="text-[11px] text-white/40">
+                    <span className="text-xs font-bold text-surface-50">تدرج لوني ذهبي للنص</span>
+                    <p className="text-[11px] text-surface-400">
                       يضفي بريقاً ولمعاناً ملكياً على الكلمات
                     </p>
                   </div>
@@ -685,12 +691,12 @@ export const ImageQuotesStudioPage: React.FC = () => {
                 </div>
 
                 {/* Luxury Quote Marks Toggle */}
-                <div className="flex items-center justify-between p-3 rounded-xl bg-surface-800/60 border border-white/[0.04]">
+                <div className="flex items-center justify-between p-3 rounded-xl bg-surface-800/60 border border-surface-700/40">
                   <div>
-                    <span className="text-xs font-bold text-white">
+                    <span className="text-xs font-bold text-surface-50">
                       علامات التنصيص الملكية « ... »
                     </span>
-                    <p className="text-[11px] text-white/40">
+                    <p className="text-[11px] text-surface-400">
                       إحاطة النص القرآني أو الحديث بقوسي تنصيص
                     </p>
                   </div>
@@ -705,13 +711,13 @@ export const ImageQuotesStudioPage: React.FC = () => {
                 </div>
 
                 {/* Glassmorphism Frosted Card Toggle */}
-                <div className="p-3 rounded-xl bg-surface-800/60 border border-white/[0.04] space-y-2">
+                <div className="p-3 rounded-xl bg-surface-800/60 border border-surface-700/40 space-y-2">
                   <div className="flex items-center justify-between">
                     <div>
-                      <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                      <span className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
                         <span>بطاقة زجاجية بلورية خلف النص 🧊</span>
                       </span>
-                      <p className="text-[11px] text-white/40">
+                      <p className="text-[11px] text-surface-400">
                         Glassmorphism يرفع وضوح النص فوق الصور المعقدة
                       </p>
                     </div>
@@ -726,8 +732,8 @@ export const ImageQuotesStudioPage: React.FC = () => {
                   </div>
 
                   {settings.enableGlassCard && (
-                    <div className="pt-2 border-t border-white/[0.06]">
-                      <div className="flex items-center justify-between text-xs font-bold text-white/70 mb-1">
+                    <div className="pt-2 border-t border-surface-700/40">
+                      <div className="flex items-center justify-between text-xs font-bold text-surface-300 mb-1">
                         <span>عتامة البطاقة الزجاجية</span>
                         <span className="font-mono text-accent-400">
                           {Math.round((settings.glassOpacity ?? 0.45) * 100)}%
@@ -749,9 +755,9 @@ export const ImageQuotesStudioPage: React.FC = () => {
                 </div>
 
                 {/* Watermark Studio Card */}
-                <div className="p-4 rounded-2xl bg-surface-800/60 border border-white/[0.06] space-y-3.5">
+                <div className="p-4 rounded-2xl bg-surface-800/60 border border-surface-700/40 space-y-3.5">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-bold text-white flex items-center gap-1.5">
+                    <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
                       <Sparkles size={14} className="text-accent-400" />
                       <span>العلامة المائية والتوقيع (Watermark)</span>
                     </label>
@@ -766,7 +772,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
                       className={`px-2 py-0.5 rounded-full text-[11px] font-bold border transition-all cursor-pointer ${
                         settings.showWatermark !== false
                           ? 'bg-accent-500/20 border-accent-400 text-accent-300'
-                          : 'bg-surface-900 border-white/10 text-white/40'
+                          : 'bg-surface-900 border-surface-700/40 text-surface-400'
                       }`}
                     >
                       {settings.showWatermark !== false ? 'مفعلة ✓' : 'مخفية'}
@@ -790,7 +796,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
                       {/* 6/7-Direction Position Grid */}
                       <div>
                         <div className="flex items-center justify-between mb-2">
-                          <label className="text-xs font-bold text-white/60">
+                          <label className="text-xs font-bold text-surface-300">
                             موضع العلامة المائية (أو اسحبها باليد على الكرت ✋):
                           </label>
                           {(settings.watermarkX || settings.watermarkY) && (
@@ -809,7 +815,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
                             </button>
                           )}
                         </div>
-                        <div className="grid grid-cols-3 gap-1.5 max-w-xs mx-auto p-1.5 rounded-xl bg-surface-900/80 border border-white/[0.06]">
+                        <div className="grid grid-cols-3 gap-1.5 max-w-xs mx-auto p-1.5 rounded-xl bg-surface-900/80 border border-surface-700/40">
                           {[
                             { id: 'topLeft', label: '↖️ أعلى اليسار' },
                             { id: 'top', label: '⬆️ أعلى الوسط' },
@@ -835,7 +841,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
                                 !settings.watermarkX &&
                                 !settings.watermarkY
                                   ? 'bg-accent-500 text-white font-black shadow-md shadow-accent-500/30'
-                                  : 'bg-surface-800/80 text-white/60 hover:text-white hover:bg-surface-700'
+                                  : 'bg-surface-800/80 text-surface-300 hover:text-surface-50 hover:bg-surface-700'
                               } ${pos.id === 'center' ? 'col-span-3' : ''}`}
                             >
                               {pos.label}
@@ -845,9 +851,9 @@ export const ImageQuotesStudioPage: React.FC = () => {
                       </div>
 
                       {/* Opacity & Size Sliders */}
-                      <div className="space-y-2 pt-1 border-t border-white/[0.04]">
+                      <div className="space-y-2 pt-1 border-t border-surface-700/30">
                         <div>
-                          <div className="flex items-center justify-between text-xs font-bold text-white/60 mb-1">
+                          <div className="flex items-center justify-between text-xs font-bold text-surface-300 mb-1">
                             <span>شفافية العلامة المائية</span>
                             <span className="font-mono text-accent-400">
                               {Math.round((settings.watermarkOpacity ?? 0.6) * 100)}%
@@ -869,7 +875,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
                         </div>
 
                         <div>
-                          <div className="flex items-center justify-between text-xs font-bold text-white/60 mb-1">
+                          <div className="flex items-center justify-between text-xs font-bold text-surface-300 mb-1">
                             <span>حجم خط العلامة المائية</span>
                             <span className="font-mono text-accent-400">
                               {settings.watermarkFontSize || 12}px
@@ -892,8 +898,8 @@ export const ImageQuotesStudioPage: React.FC = () => {
                       </div>
 
                       {/* Watermark Color Preset */}
-                      <div className="pt-1 border-t border-white/[0.04]">
-                        <label className="block text-xs font-bold text-white/60 mb-1.5">
+                      <div className="pt-1 border-t border-surface-700/30">
+                        <label className="block text-xs font-bold text-surface-300 mb-1.5">
                           لون العلامة المائية:
                         </label>
                         <div className="flex items-center gap-2">
@@ -933,10 +939,10 @@ export const ImageQuotesStudioPage: React.FC = () => {
             {/* Ornaments Tab */}
             {activeTab === 'ornaments' && (
               <div className="glass-panel p-5 space-y-4 animate-in">
-                <div className="flex items-center justify-between p-3 rounded-xl bg-surface-800/60 border border-white/[0.04]">
+                <div className="flex items-center justify-between p-3 rounded-xl bg-surface-800/60 border border-surface-700/40">
                   <div>
-                    <span className="text-xs font-bold text-white">تفعيل الإطارات والزخارف</span>
-                    <p className="text-[11px] text-white/40">إطارات إسلامية باروكية تحيط بالكرت</p>
+                    <span className="text-xs font-bold text-surface-50">تفعيل الإطارات والزخارف</span>
+                    <p className="text-[11px] text-surface-400">إطارات إسلامية باروكية تحيط بالكرت</p>
                   </div>
                   <input
                     type="checkbox"
@@ -949,7 +955,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
                 {settings.showOrnament && (
                   <>
                     <div>
-                      <label className="block text-xs font-bold text-white/70 mb-2">
+                      <label className="block text-xs font-bold text-surface-300 mb-2">
                         نمط الإطار الإسلامي
                       </label>
                       <div className="grid grid-cols-2 gap-2">
@@ -961,13 +967,14 @@ export const ImageQuotesStudioPage: React.FC = () => {
                         ].map((orn) => (
                           <button
                             key={orn.id}
+                            type="button"
                             onClick={() =>
                               setSettings((s) => ({ ...s, ornamentStyle: orn.id as OrnamentStyle }))
                             }
-                            className={`p-3 rounded-xl text-xs font-bold text-start border transition-all ${
+                            className={`p-3 rounded-xl text-xs font-bold text-start border transition-all cursor-pointer ${
                               settings.ornamentStyle === orn.id
-                                ? 'bg-accent-500/20 border-accent-400 text-white'
-                                : 'bg-surface-800/60 border-white/[0.04] text-white/60 hover:text-white'
+                                ? 'bg-accent-500/20 border-accent-400 text-surface-50'
+                                : 'bg-surface-800/60 border-surface-700/40 text-surface-300 hover:text-surface-50'
                             }`}
                           >
                             {orn.name}
@@ -977,7 +984,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
                     </div>
 
                     <div>
-                      <div className="flex items-center justify-between text-xs font-bold text-white/70 mb-1.5">
+                      <div className="flex items-center justify-between text-xs font-bold text-surface-300 mb-1.5">
                         <span>شفافية الإطار</span>
                         <span className="font-mono text-accent-400">
                           {Math.round(settings.ornamentOpacity * 100)}%
@@ -1011,8 +1018,8 @@ export const ImageQuotesStudioPage: React.FC = () => {
                   }}
                 />
 
-                <div className="pt-3 border-t border-white/[0.06]">
-                  <div className="flex items-center justify-between text-xs font-bold text-white/70 mb-1.5">
+                <div className="pt-3 border-t border-surface-700/40">
+                  <div className="flex items-center justify-between text-xs font-bold text-surface-300 mb-1.5">
                     <span>عتامة وتغميق الخلفية (لزيادة وضوح النص)</span>
                     <span className="font-mono text-accent-400">
                       {Math.round(settings.backgroundOpacity * 100)}%
@@ -1049,8 +1056,8 @@ export const ImageQuotesStudioPage: React.FC = () => {
                   }}
                 />
 
-                <div className="pt-3 border-t border-white/[0.06]">
-                  <div className="flex items-center justify-between text-xs font-bold text-white/70 mb-1.5">
+                <div className="pt-3 border-t border-surface-700/40">
+                  <div className="flex items-center justify-between text-xs font-bold text-surface-300 mb-1.5">
                     <span>عتامة وتغميق الخلفية</span>
                     <span className="font-mono text-accent-400">
                       {Math.round(settings.backgroundOpacity * 100)}%

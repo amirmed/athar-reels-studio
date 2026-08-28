@@ -32,8 +32,8 @@ const colorMap = {
   },
   surface: {
     bg: 'from-surface-800/60 to-surface-900/60',
-    icon: 'bg-surface-700/60 text-white/70',
-    border: 'border-white/[0.06]',
+    icon: 'bg-surface-700/60 text-surface-300',
+    border: 'border-surface-700/40',
     glow: 'shadow-black/10',
   },
 };
@@ -56,13 +56,13 @@ export const StatCard: React.FC<StatCardProps> = ({
       transition={{ duration: 0.4, delay, ease: [0.4, 0, 0.2, 1] }}
       className={`
         glass-card bg-gradient-to-bl ${colors.bg} border ${colors.border}
-        p-5 hover:border-white/[0.1] transition-all duration-300
+        p-5 hover:border-surface-700/60 transition-all duration-300
         hover:shadow-xl ${colors.glow} group cursor-default overflow-hidden
       `}
     >
       <div className="flex items-start justify-between gap-3 min-w-0">
         <div className="flex-1 min-w-0 overflow-hidden">
-          <p className="text-xs sm:text-[13px] text-white/70 font-semibold mb-1.5 truncate">
+          <p className="text-xs sm:text-[13px] text-surface-300 font-semibold mb-1.5 truncate">
             {title}
           </p>
           <p
@@ -70,7 +70,7 @@ export const StatCard: React.FC<StatCardProps> = ({
               isTextValue
                 ? 'text-base sm:text-lg font-bold leading-snug font-arabic'
                 : 'text-2xl sm:text-3xl font-black font-mono'
-            } text-white truncate block w-full tracking-tight`}
+            } text-surface-50 truncate block w-full tracking-tight`}
             title={String(value)}
           >
             {value}

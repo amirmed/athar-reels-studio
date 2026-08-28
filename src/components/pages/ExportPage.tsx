@@ -337,8 +337,8 @@ export const ExportPage: React.FC = () => {
                   <Download size={20} className="text-accent-400" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-white/90">تصدير جديد</h3>
-                  <p className="text-xs text-white/50">
+                  <h3 className="text-base font-bold text-surface-50">تصدير جديد</h3>
+                  <p className="text-xs text-surface-400">
                     {currentProject ? currentProject.name : 'لم يتم اختيار مشروع'}
                   </p>
                 </div>
@@ -353,6 +353,7 @@ export const ExportPage: React.FC = () => {
                   {aspectOptions.map((opt) => (
                     <button
                       key={opt.value}
+                      type="button"
                       onClick={() => setAspectRatio(opt.value)}
                       disabled={isExporting}
                       className={`
@@ -360,7 +361,7 @@ export const ExportPage: React.FC = () => {
                         ${
                           aspectRatio === opt.value
                             ? 'bg-accent-500/10 border-accent-500/30'
-                            : 'bg-surface-800/40 border-white/[0.06] hover:bg-surface-800/60 hover:border-white/[0.1]'
+                            : 'bg-surface-800/40 border-surface-700/40 hover:bg-surface-800/60 hover:border-surface-600'
                         }
                         disabled:opacity-50
                       `}
@@ -371,16 +372,16 @@ export const ExportPage: React.FC = () => {
                         </div>
                       )}
                       <div
-                        className={`mb-1.5 mx-auto w-fit ${aspectRatio === opt.value ? 'text-accent-400' : 'text-white/30'}`}
+                        className={`mb-1.5 mx-auto w-fit ${aspectRatio === opt.value ? 'text-accent-400' : 'text-surface-400'}`}
                       >
                         {opt.icon}
                       </div>
                       <span
-                        className={`text-xs font-bold block ${aspectRatio === opt.value ? 'text-accent-400' : 'text-white/70'}`}
+                        className={`text-xs font-bold block ${aspectRatio === opt.value ? 'text-accent-400' : 'text-surface-300'}`}
                       >
                         {opt.label}
                       </span>
-                      <span className="text-xs text-white/40 block mt-0.5">{opt.sublabel}</span>
+                      <span className="text-xs text-surface-400 block mt-0.5">{opt.sublabel}</span>
                     </button>
                   ))}
                 </div>
@@ -393,6 +394,7 @@ export const ExportPage: React.FC = () => {
                   {qualityOptions.map((opt) => (
                     <button
                       key={opt.value}
+                      type="button"
                       onClick={() => setQuality(opt.value)}
                       disabled={isExporting}
                       className={`
@@ -400,7 +402,7 @@ export const ExportPage: React.FC = () => {
                         ${
                           quality === opt.value
                             ? 'bg-accent-500/10 border-accent-500/30'
-                            : 'bg-surface-800/40 border-white/[0.06] hover:bg-surface-800/60 hover:border-white/[0.1]'
+                            : 'bg-surface-800/40 border-surface-700/40 hover:bg-surface-800/60 hover:border-surface-600'
                         }
                         disabled:opacity-50
                       `}
@@ -409,19 +411,19 @@ export const ExportPage: React.FC = () => {
                         className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
                           quality === opt.value
                             ? 'bg-accent-500/15 text-accent-400'
-                            : 'bg-surface-700/50 text-white/30'
+                            : 'bg-surface-700/50 text-surface-400'
                         }`}
                       >
                         {opt.icon}
                       </div>
                       <div className="flex-1">
                         <span
-                          className={`text-sm font-bold block ${quality === opt.value ? 'text-accent-400' : 'text-white/80'}`}
+                          className={`text-sm font-bold block ${quality === opt.value ? 'text-accent-400' : 'text-surface-200'}`}
                         >
                           {opt.label}
-                          <span className="text-xs text-white/40 me-2">{opt.sublabel}</span>
+                          <span className="text-xs text-surface-400 me-2">{opt.sublabel}</span>
                         </span>
-                        <span className="text-xs text-white/50 block mt-0.5">{opt.desc}</span>
+                        <span className="text-xs text-surface-400 block mt-0.5">{opt.desc}</span>
                       </div>
                       {quality === opt.value && (
                         <div className="w-5 h-5 bg-accent-500 rounded-full flex items-center justify-center shrink-0">

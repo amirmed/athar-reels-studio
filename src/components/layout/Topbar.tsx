@@ -79,14 +79,14 @@ export const Topbar: React.FC<TopbarProps> = ({
   const unreadExportsCount = recentExports.filter((j) => !seenIds.includes(j.id)).length;
 
   return (
-    <header className="h-14 bg-surface-950/30 backdrop-blur-md border-b border-white/[0.04] flex items-center justify-between px-6 shrink-0 z-20">
+    <header className="h-14 bg-surface-950/30 backdrop-blur-md border-b border-surface-700/30 flex items-center justify-between px-6 shrink-0 z-20">
       {/* Right side: Title (H1 Level) */}
       <div className="flex items-center gap-4">
         {title && (
           <div>
-            <h1 className="text-lg sm:text-xl font-black text-white tracking-tight">{title}</h1>
+            <h1 className="text-lg sm:text-xl font-black text-surface-50 tracking-tight">{title}</h1>
             {subtitle && (
-              <p className="text-xs sm:text-[13px] text-white/60 mt-0.5 font-medium">{subtitle}</p>
+              <p className="text-xs sm:text-[13px] text-surface-300 mt-0.5 font-medium">{subtitle}</p>
             )}
           </div>
         )}
@@ -102,17 +102,17 @@ export const Topbar: React.FC<TopbarProps> = ({
             type="button"
             onClick={onOpenSearch}
             aria-label={t('topbar.globalSearch', 'فتح البحث في السور والقراء')}
-            className="flex items-center gap-2 bg-surface-800/40 border border-white/[0.06] hover:border-gold-400/40 rounded-xl px-3 py-2 w-56 hover:bg-surface-800/70 transition-all cursor-pointer group shadow-sm active:scale-95 text-start"
+            className="flex items-center gap-2 bg-surface-800/40 border border-surface-700/40 hover:border-gold-400/40 rounded-xl px-3 py-2 w-56 hover:bg-surface-800/70 transition-all cursor-pointer group shadow-sm active:scale-95 text-start"
           >
             <Search
               size={15}
               className="text-gold-400/70 group-hover:text-gold-400 transition-colors shrink-0"
             />
-            <span className="text-xs text-white/50 group-hover:text-white/80 transition-colors font-medium truncate">
+            <span className="text-xs text-surface-400 group-hover:text-surface-50 transition-colors font-medium truncate">
               {t('topbar.searchPlaceholder', 'بحث في السور، القراء...')}
             </span>
-            <div className="ms-auto flex items-center gap-1 bg-surface-700/60 border border-white/[0.08] rounded-md px-1.5 py-0.5 shrink-0">
-              <span className="text-[11px] text-white/50 font-bold">Ctrl+K</span>
+            <div className="ms-auto flex items-center gap-1 bg-surface-700/60 border border-surface-700/50 rounded-md px-1.5 py-0.5 shrink-0">
+              <span className="text-[11px] text-surface-400 font-bold">Ctrl+K</span>
             </div>
           </button>
         </div>
@@ -120,10 +120,11 @@ export const Topbar: React.FC<TopbarProps> = ({
         {/* Keyboard Shortcuts Button */}
         {onOpenShortcuts && (
           <button
+            type="button"
             onClick={onOpenShortcuts}
             aria-label="دليل اختصارات لوحة المفاتيح (?)"
             title="اختصارات لوحة المفاتيح (? / Shift+?)"
-            className="w-9 h-9 rounded-xl bg-surface-800/40 border border-white/[0.06] flex items-center justify-center text-white/50 hover:text-gold-300 hover:bg-surface-700/50 hover:border-gold-400/30 transition-all duration-200 cursor-pointer shadow-sm active:scale-95"
+            className="w-9 h-9 rounded-xl bg-surface-800/40 border border-surface-700/40 flex items-center justify-center text-surface-400 hover:text-gold-300 hover:bg-surface-700/50 hover:border-gold-400/30 transition-all duration-200 cursor-pointer shadow-sm active:scale-95"
           >
             <Keyboard size={16} />
           </button>
@@ -131,6 +132,7 @@ export const Topbar: React.FC<TopbarProps> = ({
 
         {/* Interactive Tour Guide Button */}
         <button
+          type="button"
           onClick={startTour}
           aria-label={t('topbar.tourGuide', 'بدء الجولة الإرشادية')}
           className="w-9 h-9 rounded-xl bg-gold-400/10 border border-gold-400/20 flex items-center justify-center text-gold-400 hover:text-gold-300 hover:bg-gold-400/20 hover:border-gold-400/40 transition-all duration-200 cursor-pointer shadow-sm active:scale-95"
@@ -141,13 +143,14 @@ export const Topbar: React.FC<TopbarProps> = ({
 
         {/* Theme toggle */}
         <button
+          type="button"
           onClick={toggleTheme}
           aria-label={
             theme === 'dark'
               ? t('topbar.themeToggleLight', 'التبديل للوضع النهاري')
               : t('topbar.themeToggleDark', 'التبديل للوضع الليلي')
           }
-          className="w-9 h-9 rounded-xl bg-surface-800/40 border border-white/[0.06] flex items-center justify-center text-white/40 hover:text-white/70 hover:bg-surface-700/50 hover:border-white/[0.1] transition-all duration-200 cursor-pointer"
+          className="w-9 h-9 rounded-xl bg-surface-800/40 border border-surface-700/40 flex items-center justify-center text-surface-400 hover:text-surface-50 hover:bg-surface-700/50 hover:border-surface-600 transition-all duration-200 cursor-pointer"
         >
           {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
         </button>
@@ -155,6 +158,7 @@ export const Topbar: React.FC<TopbarProps> = ({
         {/* Notifications */}
         <div className="relative">
           <button
+            type="button"
             onClick={() => {
               const next = !showNotifications;
               setShowNotifications(next);
@@ -164,7 +168,7 @@ export const Topbar: React.FC<TopbarProps> = ({
             }}
             aria-label={`الإشعارات ${unreadExportsCount > 0 ? `(${unreadExportsCount} جديدة)` : ''}`}
             title="الإشعارات والتنبيهات"
-            className="w-9 h-9 rounded-xl bg-surface-800/40 border border-white/[0.06] flex items-center justify-center text-white/40 hover:text-white/70 hover:bg-surface-700/50 hover:border-white/[0.1] transition-all duration-200 relative cursor-pointer"
+            className="w-9 h-9 rounded-xl bg-surface-800/40 border border-surface-700/40 flex items-center justify-center text-surface-400 hover:text-surface-50 hover:bg-surface-700/50 hover:border-surface-600 transition-all duration-200 relative cursor-pointer"
           >
             <Bell size={16} />
             {unreadExportsCount > 0 && (
@@ -180,10 +184,10 @@ export const Topbar: React.FC<TopbarProps> = ({
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  className="absolute start-0 top-full mt-2 w-80 bg-surface-900 border border-white/[0.08] rounded-2xl shadow-2xl z-50 overflow-hidden text-start"
+                  className="absolute start-0 top-full mt-2 w-80 bg-surface-900 border border-surface-700/50 rounded-2xl shadow-2xl z-50 overflow-hidden text-start"
                 >
-                  <div className="p-3.5 border-b border-white/[0.06] flex items-center justify-between">
-                    <h3 className="text-xs font-bold text-white/90">الإشعارات والتنبيهات 🔔</h3>
+                  <div className="p-3.5 border-b border-surface-700/30 flex items-center justify-between">
+                    <h3 className="text-xs font-bold text-surface-50">الإشعارات والتنبيهات 🔔</h3>
                     {recentExports.length > 0 && unreadExportsCount > 0 && (
                       <button
                         type="button"
@@ -201,7 +205,7 @@ export const Topbar: React.FC<TopbarProps> = ({
                         return (
                           <div
                             key={job.id}
-                            className={`p-3 border-b border-white/[0.04] hover:bg-white/[0.04] transition-colors cursor-pointer flex gap-3 items-start ${
+                            className={`p-3 border-b border-surface-700/20 hover:bg-surface-800/40 transition-colors cursor-pointer flex gap-3 items-start ${
                               isUnread ? 'bg-accent-500/10' : ''
                             }`}
                             onClick={() => {
@@ -214,14 +218,14 @@ export const Topbar: React.FC<TopbarProps> = ({
                               className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
                                 isUnread
                                   ? 'bg-accent-500/20 text-accent-400'
-                                  : 'bg-surface-800 text-white/40'
+                                  : 'bg-surface-800 text-surface-400'
                               }`}
                             >
                               <CheckCircle2 size={16} />
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center justify-between">
-                                <p className="text-xs font-bold text-white/90">
+                                <p className="text-xs font-bold text-surface-50">
                                   اكتمل التصدير بنجاح
                                 </p>
                                 {isUnread && (
@@ -231,10 +235,10 @@ export const Topbar: React.FC<TopbarProps> = ({
                                   />
                                 )}
                               </div>
-                              <p className="text-xs text-white/60 mt-0.5 truncate">
+                              <p className="text-xs text-surface-300 mt-0.5 truncate">
                                 {job.projectName} • {job.aspectRatio}
                               </p>
-                              <p className="text-[10px] text-white/40 mt-1 font-mono">
+                              <p className="text-[10px] text-surface-400 mt-1 font-mono">
                                 {new Date(job.createdAt).toLocaleTimeString('ar-EG', {
                                   hour: '2-digit',
                                   minute: '2-digit',
@@ -245,7 +249,7 @@ export const Topbar: React.FC<TopbarProps> = ({
                         );
                       })
                     ) : (
-                      <div className="p-6 text-center text-xs text-white/40">
+                      <div className="p-6 text-center text-xs text-surface-400">
                         لا توجد إشعارات جديدة
                       </div>
                     )}
@@ -257,22 +261,23 @@ export const Topbar: React.FC<TopbarProps> = ({
         </div>
 
         {/* Separator */}
-        <div className="w-px h-6 bg-white/[0.06]"></div>
+        <div className="w-px h-6 bg-surface-700/40"></div>
 
         {/* Settings button */}
         <button
+          type="button"
           onClick={() => setCurrentPage('settings')}
           aria-label="إعدادات التطبيق"
           title="إعدادات التطبيق"
-          className="flex items-center gap-2 bg-surface-800/40 border border-white/[0.06] rounded-xl px-3 py-2 hover:bg-surface-700/50 hover:border-white/[0.1] transition-all duration-200 group cursor-pointer"
+          className="flex items-center gap-2 bg-surface-800/40 border border-surface-700/40 rounded-xl px-3 py-2 hover:bg-surface-700/50 hover:border-surface-600 transition-all duration-200 group cursor-pointer"
         >
           <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center">
             <User size={13} className="text-white" />
           </div>
-          <span className="text-sm text-white/60 group-hover:text-white/80 transition-colors">
+          <span className="text-sm text-surface-300 group-hover:text-surface-50 transition-colors">
             الإعدادات
           </span>
-          <ChevronDown size={13} className="text-white/30" />
+          <ChevronDown size={13} className="text-surface-400" />
         </button>
       </div>
     </header>

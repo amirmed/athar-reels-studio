@@ -311,13 +311,13 @@ export const DashboardPage: React.FC = () => {
                 <span className="text-xs px-3 py-1 rounded-full bg-gold-400/15 text-gold-300 font-bold border border-gold-400/25">
                   آية اليوم المختارة
                 </span>
-                <span className="text-xs text-white/70 font-semibold">
+                <span className="text-xs text-surface-300 font-semibold">
                   سورة {dailyAyah.surahName} • الآية ({dailyAyah.fromAyah}
                   {dailyAyah.toAyah !== dailyAyah.fromAyah ? `-${dailyAyah.toAyah}` : ''})
                 </span>
-                <span className="text-xs text-white/50">بصوت القارئ: {dailyAyah.reciter}</span>
+                <span className="text-xs text-surface-400">بصوت القارئ: {dailyAyah.reciter}</span>
               </div>
-              <h2 className="text-xl sm:text-2xl font-arabic font-bold text-white/95 leading-loose selectable-text min-h-[3.5rem] flex items-center">
+              <h2 className="text-xl sm:text-2xl font-arabic font-bold text-surface-50 leading-loose selectable-text min-h-[3.5rem] flex items-center">
                 « {dailyAyah.text} »
               </h2>
               <p className="text-sm text-gold-300/90 font-medium">الموضوع: {dailyAyah.theme}</p>
@@ -339,13 +339,13 @@ export const DashboardPage: React.FC = () => {
         {/* 🚀 Creative Production Studios Launchpad */}
         <div className="space-y-3">
           <div className="flex items-center justify-between px-1">
-            <h2 className="text-lg sm:text-xl font-black text-white tracking-tight flex items-center gap-2">
+            <h2 className="text-lg sm:text-xl font-black text-surface-50 tracking-tight flex items-center gap-2">
               <span>استوديوهات الإنتاج والتصميم الإبداعي</span>
               <span className="text-xs px-2.5 py-0.5 rounded-full bg-gold-400/10 text-gold-300 border border-gold-400/20 font-bold">
                 4 استوديوهات متخصصة ✨
               </span>
             </h2>
-            <span className="text-xs text-white/50 hidden sm:inline">اضغط للفتح المباشر</span>
+            <span className="text-xs text-surface-400 hidden sm:inline">اضغط للفتح المباشر</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
@@ -364,14 +364,14 @@ export const DashboardPage: React.FC = () => {
                 </span>
               </div>
               <div className="space-y-1">
-                <h3 className="font-black text-sm text-white group-hover:text-gold-300 transition-colors">
+                <h3 className="font-black text-sm text-surface-50 group-hover:text-gold-300 transition-colors">
                   ريلز قرآني سينمائي
                 </h3>
-                <p className="text-xs text-white/60 line-clamp-2 leading-relaxed">
+                <p className="text-xs text-surface-300 line-clamp-2 leading-relaxed">
                   فيديوهات قصيرة لكبار القراء مع كاريوكي التلاوة ومؤثرات كين بيرنز FHD
                 </p>
               </div>
-              <div className="mt-3 pt-2.5 border-t border-white/[0.06] flex items-center justify-between text-xs font-bold text-gold-400 group-hover:text-gold-300">
+              <div className="mt-3 pt-2.5 border-t border-surface-700/40 flex items-center justify-between text-xs font-bold text-gold-400 group-hover:text-gold-300">
                 <span>إنشاء ريلز جديد</span>
                 <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
               </div>
@@ -392,14 +392,14 @@ export const DashboardPage: React.FC = () => {
                 </span>
               </div>
               <div className="space-y-1">
-                <h3 className="font-black text-sm text-white group-hover:text-emerald-300 transition-colors">
+                <h3 className="font-black text-sm text-surface-50 group-hover:text-emerald-300 transition-colors">
                   أذكار وأحاديث نبوية
                 </h3>
-                <p className="text-xs text-white/60 line-clamp-2 leading-relaxed">
+                <p className="text-xs text-surface-300 line-clamp-2 leading-relaxed">
                   أذكار الصباح والمساء وحصن المسلم مع عدّاد تسبيح تفاعلي وتحويل لريلز
                 </p>
               </div>
-              <div className="mt-3 pt-2.5 border-t border-white/[0.06] flex items-center justify-between text-xs font-bold text-emerald-400 group-hover:text-emerald-300">
+              <div className="mt-3 pt-2.5 border-t border-surface-700/40 flex items-center justify-between text-xs font-bold text-emerald-400 group-hover:text-emerald-300">
                 <span>فتح استوديو الأذكار</span>
                 <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
               </div>
@@ -420,14 +420,14 @@ export const DashboardPage: React.FC = () => {
                 </span>
               </div>
               <div className="space-y-1">
-                <h3 className="font-black text-sm text-white group-hover:text-sky-300 transition-colors">
+                <h3 className="font-black text-sm text-surface-50 group-hover:text-sky-300 transition-colors">
                   كروت وبوستات الصور
                 </h3>
-                <p className="text-xs text-white/60 line-clamp-2 leading-relaxed">
+                <p className="text-xs text-surface-300 line-clamp-2 leading-relaxed">
                   تصميم بوستات دعوية وبطاقات آيات جاهزة لإنستغرام وواتساب بنقرة زر
                 </p>
               </div>
-              <div className="mt-3 pt-2.5 border-t border-white/[0.06] flex items-center justify-between text-xs font-bold text-sky-400 group-hover:text-sky-300">
+              <div className="mt-3 pt-2.5 border-t border-surface-700/40 flex items-center justify-between text-xs font-bold text-sky-400 group-hover:text-sky-300">
                 <span>تصميم بوست الآن</span>
                 <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
               </div>
@@ -448,14 +448,14 @@ export const DashboardPage: React.FC = () => {
                 </span>
               </div>
               <div className="space-y-1">
-                <h3 className="font-black text-sm text-white group-hover:text-purple-300 transition-colors">
+                <h3 className="font-black text-sm text-surface-50 group-hover:text-purple-300 transition-colors">
                   التلقين والتسجيل 8D
                 </h3>
-                <p className="text-xs text-white/60 line-clamp-2 leading-relaxed">
+                <p className="text-xs text-surface-300 line-clamp-2 leading-relaxed">
                   مصحف ملقن متحرك لتسجيل تلاوتك بصوتك مع صدى الحرم ثلاثي الأبعاد
                 </p>
               </div>
-              <div className="mt-3 pt-2.5 border-t border-white/[0.06] flex items-center justify-between text-xs font-bold text-purple-400 group-hover:text-purple-300">
+              <div className="mt-3 pt-2.5 border-t border-surface-700/40 flex items-center justify-between text-xs font-bold text-purple-400 group-hover:text-purple-300">
                 <span>بدء التسجيل الصوتي</span>
                 <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
               </div>
@@ -467,11 +467,11 @@ export const DashboardPage: React.FC = () => {
         <div data-tour="trending-templates" className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <h2 className="text-lg sm:text-xl font-black text-white tracking-tight flex items-center gap-2">
+              <h2 className="text-lg sm:text-xl font-black text-surface-50 tracking-tight flex items-center gap-2">
                 <span>قوالب سينمائية مختارة</span>
                 <span className="text-sm">✨</span>
               </h2>
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-surface-800 text-white/70 border border-white/[0.06] font-medium">
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-surface-800 text-surface-300 border border-surface-700/40 font-medium">
                 تتجدد يومياً
               </span>
             </div>
@@ -487,8 +487,9 @@ export const DashboardPage: React.FC = () => {
                 <span>جولة إرشادية</span>
               </button>
               <button
+                type="button"
                 onClick={() => setCurrentPage('create')}
-                className="text-xs sm:text-[13px] text-white/80 hover:text-white font-bold cursor-pointer bg-white/[0.04] hover:bg-white/[0.08] px-3.5 py-2 rounded-xl border border-white/[0.06] min-h-[36px] flex items-center transition-all"
+                className="text-xs sm:text-[13px] text-surface-200 hover:text-surface-50 font-bold cursor-pointer bg-surface-800/60 hover:bg-surface-800 px-3.5 py-2 rounded-xl border border-surface-700/40 min-h-[36px] flex items-center transition-all"
               >
                 <span>عرض كل القوالب ←</span>
               </button>
@@ -502,7 +503,7 @@ export const DashboardPage: React.FC = () => {
                 key={tpl.id}
                 onClick={() => handleOpenTemplateModal(tpl)}
                 aria-label={`استخدام وتخصيص قالب ${tpl.name}`}
-                className="group relative rounded-2xl bg-surface-900 border border-white/[0.08] hover:border-gold-400/40 p-3.5 transition-all duration-300 cursor-pointer shadow-md hover:shadow-gold-500/10 flex flex-col justify-between text-start w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-400"
+                className="group relative rounded-2xl bg-surface-900 border border-surface-700/40 hover:border-gold-400/40 p-3.5 transition-all duration-300 cursor-pointer shadow-md hover:shadow-gold-500/10 flex flex-col justify-between text-start w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-400"
               >
                 {tpl.backgroundUrl && (
                   <div className="h-28 rounded-xl overflow-hidden mb-3 relative w-full">
@@ -517,10 +518,10 @@ export const DashboardPage: React.FC = () => {
                     </span>
                   </div>
                 )}
-                <p className="text-xs sm:text-[13px] text-white/70 line-clamp-1 mb-3 leading-relaxed w-full font-medium">
+                <p className="text-xs sm:text-[13px] text-surface-300 line-clamp-1 mb-3 leading-relaxed w-full font-medium">
                   {tpl.description}
                 </p>
-                <div className="flex items-center justify-between text-xs sm:text-[13px] font-bold text-gold-400 group-hover:text-gold-300 pt-2 border-t border-white/[0.04] w-full">
+                <div className="flex items-center justify-between text-xs sm:text-[13px] font-bold text-gold-400 group-hover:text-gold-300 pt-2 border-t border-surface-700/30 w-full">
                   <span>تخصيص واستخدام القالب</span>
                   <ArrowLeft
                     size={14}
@@ -655,8 +656,8 @@ export const DashboardPage: React.FC = () => {
               >
                 {item.icon}
               </div>
-              <h3 className="text-base font-bold text-white mb-1">{item.title}</h3>
-              <p className="text-xs sm:text-[13px] text-white/65 leading-relaxed font-medium">
+              <h3 className="text-base font-bold text-surface-50 mb-1">{item.title}</h3>
+              <p className="text-xs sm:text-[13px] text-surface-300 leading-relaxed font-medium">
                 {item.desc}
               </p>
             </motion.button>
@@ -679,7 +680,7 @@ export const DashboardPage: React.FC = () => {
           size="md"
         >
           <div className="space-y-4 text-start">
-            <div className="relative h-28 rounded-2xl overflow-hidden border border-white/10 shadow-md">
+            <div className="relative h-28 rounded-2xl overflow-hidden border border-surface-700/40 shadow-md">
               <img
                 src={selectedTemplateForConfirm.backgroundUrl}
                 alt={selectedTemplateForConfirm.name}
@@ -690,15 +691,15 @@ export const DashboardPage: React.FC = () => {
                   <span>{selectedTemplateForConfirm.icon}</span>
                   <span>{selectedTemplateForConfirm.name}</span>
                 </span>
-                <span className="text-xs text-white/60">
+                <span className="text-xs text-white/80">
                   {selectedTemplateForConfirm.description}
                 </span>
               </div>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-surface-900 border border-white/10 space-y-3">
+            <div className="p-3.5 rounded-2xl bg-surface-900 border border-surface-700/40 space-y-3">
               <div>
-                <label className="block text-xs font-bold text-white/70 mb-1">
+                <label className="block text-xs font-bold text-surface-300 mb-1">
                   السورة القرآنية 📖:
                 </label>
                 <select
@@ -710,7 +711,7 @@ export const DashboardPage: React.FC = () => {
                     const s = surahs.find((x) => x.number === num);
                     setTemplateToAyah(Math.min(7, s?.ayahCount || 7));
                   }}
-                  className="w-full p-2 rounded-xl bg-surface-950 border border-white/10 text-xs font-bold text-white cursor-pointer"
+                  className="w-full p-2 rounded-xl bg-surface-950 border border-surface-700/50 text-xs font-bold text-surface-50 cursor-pointer"
                 >
                   {surahs.map((s) => (
                     <option key={s.number} value={s.number}>
@@ -722,18 +723,18 @@ export const DashboardPage: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-xs font-bold text-white/70 mb-1">من الآية:</label>
+                  <label className="block text-xs font-bold text-surface-300 mb-1">من الآية:</label>
                   <input
                     type="number"
                     min={1}
                     max={surahs.find((s) => s.number === templateSurahNum)?.ayahCount || 7}
                     value={templateFromAyah}
                     onChange={(e) => setTemplateFromAyah(Math.max(1, Number(e.target.value)))}
-                    className="w-full p-2 rounded-xl bg-surface-950 border border-white/10 text-xs font-bold text-center text-white"
+                    className="w-full p-2 rounded-xl bg-surface-950 border border-surface-700/50 text-xs font-bold text-center text-surface-50"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-white/70 mb-1">إلى الآية:</label>
+                  <label className="block text-xs font-bold text-surface-300 mb-1">إلى الآية:</label>
                   <input
                     type="number"
                     min={templateFromAyah}
@@ -747,17 +748,17 @@ export const DashboardPage: React.FC = () => {
                         )
                       )
                     }
-                    className="w-full p-2 rounded-xl bg-surface-950 border border-white/10 text-xs font-bold text-center text-white"
+                    className="w-full p-2 rounded-xl bg-surface-950 border border-surface-700/50 text-xs font-bold text-center text-surface-50"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-white/70 mb-1">صوت القارئ 🎙️:</label>
+                <label className="block text-xs font-bold text-surface-300 mb-1">صوت القارئ 🎙️:</label>
                 <select
                   value={templateReciterId}
                   onChange={(e) => setTemplateReciterId(e.target.value)}
-                  className="w-full p-2 rounded-xl bg-surface-950 border border-white/10 text-xs font-bold text-white cursor-pointer"
+                  className="w-full p-2 rounded-xl bg-surface-950 border border-surface-700/50 text-xs font-bold text-surface-50 cursor-pointer"
                 >
                   {reciters.map((r) => (
                     <option key={r.id} value={r.id}>
@@ -780,7 +781,7 @@ export const DashboardPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setSelectedTemplateForConfirm(null)}
-                className="py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white text-xs font-bold cursor-pointer transition-all"
+                className="py-3 px-4 rounded-xl bg-surface-800/60 hover:bg-surface-800 text-surface-300 hover:text-surface-50 text-xs font-bold cursor-pointer transition-all"
               >
                 إلغاء
               </button>

@@ -41,7 +41,7 @@ const SettingGroup: React.FC<SettingGroupProps> = ({ title, icon, children, dela
       <div className="w-9 h-9 rounded-xl bg-accent-500/10 flex items-center justify-center text-accent-400">
         {icon}
       </div>
-      <h3 className="text-sm font-bold text-white/80">{title}</h3>
+      <h3 className="text-sm font-bold text-surface-200">{title}</h3>
     </div>
     <div className="divider !mt-3 !mb-4"></div>
     {children}
@@ -57,8 +57,8 @@ interface SettingRowProps {
 const SettingRow: React.FC<SettingRowProps> = ({ label, description, children }) => (
   <div className="flex items-center justify-between py-2">
     <div>
-      <div className="text-sm font-medium text-white/90">{label}</div>
-      {description && <div className="text-xs text-white/40 mt-0.5">{description}</div>}
+      <div className="text-sm font-medium text-surface-50">{label}</div>
+      {description && <div className="text-xs text-surface-400 mt-0.5">{description}</div>}
     </div>
     <div>{children}</div>
   </div>
@@ -183,7 +183,7 @@ export const SettingsPage: React.FC = () => {
                   : 'Choose between dark and light mode'
             }
           >
-            <div className="flex items-center gap-1 bg-surface-800/40 border border-white/[0.06] rounded-xl p-1">
+            <div className="flex items-center gap-1 bg-surface-800/40 border border-surface-700/40 rounded-xl p-1">
               <button
                 type="button"
                 onClick={() => {
@@ -192,7 +192,7 @@ export const SettingsPage: React.FC = () => {
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   theme === 'dark'
                     ? 'bg-accent-500/20 text-accent-400 border border-accent-500/30 shadow-sm'
-                    : 'text-white/40 hover:text-white/70'
+                    : 'text-surface-400 hover:text-surface-200'
                 }`}
               >
                 <Moon size={13} />
@@ -206,7 +206,7 @@ export const SettingsPage: React.FC = () => {
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   theme === 'light'
                     ? 'bg-accent-500/20 text-accent-400 border border-accent-500/30 shadow-sm'
-                    : 'text-white/40 hover:text-white/70'
+                    : 'text-surface-400 hover:text-surface-200'
                 }`}
               >
                 <Sun size={13} />
@@ -233,7 +233,7 @@ export const SettingsPage: React.FC = () => {
             }
           >
             <div className="flex items-center gap-2">
-              <span className="text-xs text-white/40 font-mono bg-surface-800/50 px-3 py-1.5 rounded-lg border border-white/[0.04] max-w-[240px] truncate">
+              <span className="text-xs text-surface-400 font-mono bg-surface-800/50 px-3 py-1.5 rounded-lg border border-surface-700/40 max-w-[240px] truncate">
                 {settings.projectsPath || (language === 'ar' ? 'المسار الافتراضي' : 'Default Path')}
               </span>
               <button
@@ -449,21 +449,21 @@ export const SettingsPage: React.FC = () => {
         >
           <div className="space-y-3 text-sm">
             <div className="flex items-center justify-between">
-              <span className="text-white/50">
+              <span className="text-surface-400">
                 {language === 'ar' ? 'اسم التطبيق' : 'Application Name'}
               </span>
-              <span className="text-white font-bold font-arabic">
+              <span className="text-surface-50 font-bold font-arabic">
                 {t('appName', 'أَثَــر ستوديو')} | Athar Reels Studio
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-white/50">{language === 'ar' ? 'الإصدار' : 'Version'}</span>
+              <span className="text-surface-400">{language === 'ar' ? 'الإصدار' : 'Version'}</span>
               <span className="text-gold-300 font-mono font-bold bg-gold-500/10 px-2 py-0.5 rounded-md border border-gold-500/20 text-xs">
                 v2.0.0 (Pro Viral Edition)
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-white/50">
+              <span className="text-surface-400">
                 {language === 'ar' ? 'الموقع الرسمي' : 'Official Website'}
               </span>
               <a
@@ -476,23 +476,23 @@ export const SettingsPage: React.FC = () => {
               </a>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-white/50">
+              <span className="text-surface-400">
                 {language === 'ar' ? 'محرك المعالجة والريندر' : 'Rendering Engine'}
               </span>
-              <span className="text-white/70 font-mono text-xs">
+              <span className="text-surface-300 font-mono text-xs">
                 WebCodecs + Native H.264 FastStart + Web Audio 8D
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-white/50">
+              <span className="text-surface-400">
                 {language === 'ar' ? 'مصادر التلاوات والبيانات' : 'Audio & Quran Sources'}
               </span>
-              <span className="text-white/70 font-mono text-xs">
+              <span className="text-surface-300 font-mono text-xs">
                 EveryAyah • MP3Quran • Quran.com
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-white/50">
+              <span className="text-surface-400">
                 {language === 'ar' ? 'الخصوصية والتخزين' : 'Privacy & Storage'}
               </span>
               <span className="text-emerald-400 font-medium text-xs">
@@ -514,7 +514,7 @@ export const SettingsPage: React.FC = () => {
               <p className="text-xs font-bold text-gold-300 font-arabic">
                 صَدَقَةٌ جَارِيَةٌ عَنِ الوَالِدَةِ تِيجَانِي عَائِشَة رَحِمَهَا اللهُ
               </p>
-              <p className="text-[11px] text-white/60 leading-relaxed font-arabic">
+              <p className="text-[11px] text-surface-300 leading-relaxed font-arabic">
                 اللَّهُمَّ اغْفِرْ لَهَا وَارْحَمْهَا، وَعَافِهَا وَاعْفُ عَنْهَا، وَأَكْرِمْ
                 نُزُلَهَا وَوَسِّعْ مُدْخَلَهَا، وَاجْعَلْ قَبْرَهَا رَوْضَةً مِنْ رِيَاضِ
                 الجَنَّةِ.

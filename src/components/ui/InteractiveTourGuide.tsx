@@ -287,7 +287,7 @@ export const InteractiveTourGuide: React.FC = () => {
               stopTour();
               addToast({ message: 'تم إغلاق الجولة التعليمية', type: 'info' });
             }}
-            className="p-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-all cursor-pointer"
+            className="p-1.5 rounded-xl bg-surface-800 hover:bg-surface-700 text-surface-400 hover:text-surface-50 transition-all cursor-pointer border border-surface-700/40"
             title="تخطي الجولة (Esc)"
           >
             <X size={15} />
@@ -296,20 +296,20 @@ export const InteractiveTourGuide: React.FC = () => {
 
         {/* Title & Description */}
         <div className="space-y-1.5 mb-3">
-          <h3 className="text-sm font-bold text-white tracking-tight">{currentStepData.title}</h3>
-          <p className="text-xs text-white/80 leading-relaxed">{currentStepData.description}</p>
+          <h3 className="text-sm font-bold text-surface-50 tracking-tight">{currentStepData.title}</h3>
+          <p className="text-xs text-surface-200 leading-relaxed">{currentStepData.description}</p>
         </div>
 
         {/* Pro Tip Box */}
         {currentStepData.tip && (
-          <div className="p-2.5 rounded-xl bg-surface-950/80 border border-white/[0.08] flex items-start gap-2 mb-4">
+          <div className="p-2.5 rounded-xl bg-surface-950/80 border border-surface-700/40 flex items-start gap-2 mb-4">
             <Lightbulb size={14} className="text-gold-400 shrink-0 mt-0.5" />
             <p className="text-xs text-gold-200/90 leading-snug">{currentStepData.tip}</p>
           </div>
         )}
 
         {/* Step Progress Dots */}
-        <div className="flex items-center justify-between pt-2 border-t border-white/10">
+        <div className="flex items-center justify-between pt-2 border-t border-surface-700/40">
           <div className="flex items-center gap-1.5">
             {TOUR_STEPS.map((_, idx) => (
               <div
@@ -319,7 +319,7 @@ export const InteractiveTourGuide: React.FC = () => {
                     ? 'w-5 bg-gold-400 shadow-sm shadow-gold-400/50'
                     : idx < tourStep
                       ? 'w-2 bg-gold-400/40'
-                      : 'w-1.5 bg-white/20'
+                      : 'w-1.5 bg-surface-700'
                 }`}
               />
             ))}
@@ -331,7 +331,7 @@ export const InteractiveTourGuide: React.FC = () => {
               <button
                 type="button"
                 onClick={prevTourStep}
-                className="py-1.5 px-3 rounded-xl bg-surface-800 hover:bg-surface-700 text-white/70 hover:text-white text-xs font-semibold flex items-center gap-1 transition-all cursor-pointer"
+                className="py-1.5 px-3 rounded-xl bg-surface-800 hover:bg-surface-700 text-surface-300 hover:text-surface-50 text-xs font-semibold flex items-center gap-1 transition-all cursor-pointer border border-surface-700/40"
               >
                 <ArrowRight size={12} />
                 <span>السابق</span>

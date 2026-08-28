@@ -20,13 +20,13 @@ export const SectionAccordion: React.FC<SectionAccordionProps> = ({
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div className="border border-white/[0.04] rounded-xl overflow-hidden">
+    <div className="border border-surface-700/40 rounded-xl overflow-hidden">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center gap-3 px-4 py-3.5 bg-surface-800/30 hover:bg-surface-800/50 transition-colors"
       >
         {icon && <span className="text-accent-400">{icon}</span>}
-        <span className="text-sm font-semibold text-white/80 flex-1 text-start">{title}</span>
+        <span className="text-sm font-semibold text-surface-200 flex-1 text-start">{title}</span>
         {badge && (
           <span className="text-[11px] bg-accent-500/15 text-accent-400 px-2 py-0.5 rounded-md font-medium">
             {badge}
@@ -35,7 +35,7 @@ export const SectionAccordion: React.FC<SectionAccordionProps> = ({
         <motion.span
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.2 }}
-          className="text-white/30"
+          className="text-surface-400"
         >
           <ChevronDown size={16} />
         </motion.span>
@@ -50,7 +50,7 @@ export const SectionAccordion: React.FC<SectionAccordionProps> = ({
             transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
             className="overflow-hidden"
           >
-            <div className="px-4 py-4 border-t border-white/[0.04] space-y-3">{children}</div>
+            <div className="px-4 py-4 border-t border-surface-700/40 space-y-3">{children}</div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -85,7 +85,7 @@ export const ExportProgress: React.FC<ExportProgressProps> = ({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.08 }}
-      className="glass-card p-4 hover:border-white/[0.1] transition-all duration-200"
+      className="glass-card p-4 hover:border-surface-700/60 transition-all duration-200"
     >
       <div className="flex items-start gap-4">
         {/* Status icon */}
@@ -94,7 +94,7 @@ export const ExportProgress: React.FC<ExportProgressProps> = ({
         {/* Content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-1">
-            <h3 className="text-sm font-semibold text-white/90 truncate">{job.projectName}</h3>
+            <h3 className="text-sm font-semibold text-surface-100 truncate">{job.projectName}</h3>
             <span
               className={`text-[11px] px-2 py-0.5 rounded-md font-medium ${getStatusColor(job.status)}`}
             >
@@ -103,7 +103,7 @@ export const ExportProgress: React.FC<ExportProgressProps> = ({
           </div>
 
           {/* Meta info */}
-          <div className="flex items-center gap-3 text-xs text-white/40 mb-3">
+          <div className="flex items-center gap-3 text-xs text-surface-400 mb-3">
             <span className="flex items-center gap-1">
               {ratioIcons[job.aspectRatio]}
               {ratioLabels[job.aspectRatio]}
@@ -128,7 +128,7 @@ export const ExportProgress: React.FC<ExportProgressProps> = ({
                   }`}
                 />
               </div>
-              <p className="text-[11px] text-white/30 mt-1 text-end font-mono">{job.progress}%</p>
+              <p className="text-[11px] text-surface-500 mt-1 text-end font-mono">{job.progress}%</p>
             </div>
           )}
 
@@ -177,7 +177,7 @@ export const ExportProgress: React.FC<ExportProgressProps> = ({
                 <button
                   type="button"
                   onClick={handleOpenFolder}
-                  className="flex items-center gap-1.5 text-xs text-white/50 hover:text-white transition-colors font-medium cursor-pointer"
+                  className="flex items-center gap-1.5 text-xs text-surface-400 hover:text-surface-50 transition-colors font-medium cursor-pointer"
                 >
                   <FolderOpen size={13} />
                   فتح المجلد
@@ -186,7 +186,7 @@ export const ExportProgress: React.FC<ExportProgressProps> = ({
 
               {/* If neither download nor output path available */}
               {!job.downloadUrl && !job.outputPath && (
-                <span className="text-xs text-white/30 italic">
+                <span className="text-xs text-surface-500 italic">
                   تم التصدير — أعد التصدير للتحميل
                 </span>
               )}

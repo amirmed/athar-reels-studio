@@ -106,7 +106,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
       {/* 🪄 1-Click Audio Atmosphere Presets */}
       <div className="p-3 rounded-2xl bg-surface-900/90 border border-gold-500/30 space-y-2 shadow-lg">
         <div className="flex items-center justify-between">
-          <label className="text-xs font-bold text-white flex items-center gap-1.5">
+          <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
             <Sparkles size={14} className="text-gold-400" />
             <span>أجواء صوتية متكاملة بضغطة زر 🪄</span>
           </label>
@@ -133,12 +133,12 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
               key={preset.id}
               type="button"
               onClick={() => applyAudioPreset(preset.id)}
-              className="p-2 rounded-xl text-start border border-white/[0.06] bg-surface-950/60 hover:bg-gold-500/10 hover:border-gold-500/30 transition-all cursor-pointer group"
+              className="p-2 rounded-xl text-start border border-surface-700/40 bg-surface-950/60 hover:bg-gold-500/10 hover:border-gold-500/30 transition-all cursor-pointer group"
             >
-              <div className="text-xs font-bold text-white group-hover:text-gold-300">
+              <div className="text-xs font-bold text-surface-50 group-hover:text-gold-300">
                 {preset.name}
               </div>
-              <div className="text-[10px] text-white/40 group-hover:text-white/60">
+              <div className="text-[10px] text-surface-400 group-hover:text-surface-300">
                 {preset.desc}
               </div>
             </button>
@@ -149,7 +149,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
       {/* 🌿 Procedural Layer 1: Ambient Islamic Nature & Masjid Atmosphere */}
       <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-purple-500/20 space-y-3">
         <div className="flex items-center justify-between">
-          <label className="text-xs font-bold text-white flex items-center gap-1.5">
+          <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
             <Volume2 size={14} className="text-purple-400" />
             <span>أجواء الطبيعة والسكينة (Ambient Atmosphere) 🌿</span>
           </label>
@@ -202,8 +202,8 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
                 }}
                 className={`p-2.5 rounded-xl text-start text-xs font-bold border transition-all cursor-pointer ${
                   isSelected
-                    ? 'bg-purple-500/25 border-purple-400 text-white shadow-md shadow-purple-500/10 ring-1 ring-purple-400/30'
-                    : 'bg-surface-800/60 border-white/[0.04] text-white/60 hover:text-white hover:bg-surface-800'
+                    ? 'bg-purple-500/25 border-purple-400 text-surface-50 shadow-md shadow-purple-500/10 ring-1 ring-purple-400/30'
+                    : 'bg-surface-800/60 border-surface-700/40 text-surface-400 hover:text-surface-50 hover:bg-surface-800'
                 }`}
               >
                 <div className="flex items-center gap-1.5 mb-0.5">
@@ -217,7 +217,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
       </div>
 
       <div>
-        <div className="flex items-center justify-between text-xs font-bold text-white/60 mb-1">
+        <div className="flex items-center justify-between text-xs font-bold text-surface-400 mb-1">
           <span>مستوى صوت الطبيعة</span>
           <span className="font-mono text-purple-400">
             {audioSettings.ambientSoundVolume ?? 22}%
@@ -243,8 +243,8 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
               <Mic size={16} />
             </div>
             <div>
-              <h4 className="text-xs font-bold text-white">تسجيل تلاوتك الخاصة أو رفع MP3 🎙️</h4>
-              <p className="text-[11px] text-white/50">مع محاكاة صدى الحرم المكي الشريف</p>
+              <h4 className="text-xs font-bold text-surface-50">تسجيل تلاوتك الخاصة أو رفع MP3 🎙️</h4>
+              <p className="text-[11px] text-surface-400">مع محاكاة صدى الحرم المكي الشريف</p>
             </div>
           </div>
         </div>
@@ -264,7 +264,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
               <span>✓</span>
               <span>تلاوتك المخصصة مفعلة في المشروع</span>
             </span>
-            <span className="font-mono text-[11px] text-white/50">
+            <span className="font-mono text-[11px] text-surface-400">
               {Math.round(audioSettings.customAudioDuration || 0)}ث
             </span>
           </div>
@@ -274,7 +274,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
       {/* 🕌 Mosque Spatial Reverb Section */}
       <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-purple-500/20 space-y-2.5">
         <div className="flex items-center justify-between">
-          <label className="text-xs font-bold text-white flex items-center gap-1.5">
+          <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
             <Sparkles size={14} className="text-purple-400" />
             <span>صدى المسجد الحرام (Mosque Spatial Reverb) 🕌</span>
           </label>
@@ -299,8 +299,8 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
                 onClick={() => setAudioSettings((s) => ({ ...s, reverbPreset: rev.id }))}
                 className={`p-2 rounded-xl text-start transition-all cursor-pointer border flex items-center gap-1.5 ${
                   isSelected
-                    ? 'bg-purple-500/20 border-purple-400 text-white font-bold shadow-sm'
-                    : 'bg-surface-950/60 border-white/[0.04] text-white/60 hover:text-white'
+                    ? 'bg-purple-500/20 border-purple-400 text-surface-50 font-bold shadow-sm'
+                    : 'bg-surface-950/60 border-surface-700/40 text-surface-400 hover:text-surface-50'
                 }`}
               >
                 <span className="text-sm">{rev.icon}</span>
@@ -311,8 +311,8 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
         </div>
 
         {audioSettings.reverbPreset && audioSettings.reverbPreset !== 'none' && (
-          <div className="pt-2 border-t border-white/[0.06]">
-            <div className="flex items-center justify-between text-xs font-bold text-white/60 mb-1">
+          <div className="pt-2 border-t border-surface-700/40">
+            <div className="flex items-center justify-between text-xs font-bold text-surface-400 mb-1">
               <span>قوة الصدى وعمق الارتداد</span>
               <span className="font-mono text-purple-400">{audioSettings.reverbLevel ?? 45}%</span>
             </div>
@@ -333,7 +333,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
       {/* 🎛️ Studio Audio Mastering & Noise Gate */}
       <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-emerald-500/20 space-y-2">
         <div className="flex items-center justify-between">
-          <label className="text-xs font-bold text-white flex items-center gap-1.5">
+          <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
             <Sliders size={14} className="text-emerald-400" />
             <span>فلاتر الاستوديو ونقاء الصوت 🎛️</span>
           </label>
@@ -346,12 +346,12 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
             onClick={() => setAudioSettings((s) => ({ ...s, enableNoiseGate: !s.enableNoiseGate }))}
             className={`p-2 rounded-xl text-center text-[11px] font-bold border transition-all cursor-pointer ${
               (audioSettings.enableNoiseGate ?? true)
-                ? 'bg-emerald-500/20 border-emerald-400 text-white'
-                : 'bg-surface-950/60 border-white/[0.04] text-white/40'
+                ? 'bg-emerald-500/20 border-emerald-400 text-surface-50'
+                : 'bg-surface-950/60 border-surface-700/40 text-surface-400'
             }`}
           >
             <div>⚡ عزل الضوضاء</div>
-            <div className="text-[10px] text-white/40">
+            <div className="text-[10px] text-surface-400">
               {(audioSettings.enableNoiseGate ?? true) ? 'مفعل ✓' : 'معطل'}
             </div>
           </button>
@@ -363,12 +363,12 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
             }
             className={`p-2 rounded-xl text-center text-[11px] font-bold border transition-all cursor-pointer ${
               (audioSettings.enableStudioClarity ?? true)
-                ? 'bg-emerald-500/20 border-emerald-400 text-white'
-                : 'bg-surface-950/60 border-white/[0.04] text-white/40'
+                ? 'bg-emerald-500/20 border-emerald-400 text-surface-50'
+                : 'bg-surface-950/60 border-surface-700/40 text-surface-400'
             }`}
           >
             <div>💎 نقاء التجويد</div>
-            <div className="text-[10px] text-white/40">
+            <div className="text-[10px] text-surface-400">
               {(audioSettings.enableStudioClarity ?? true) ? 'مفعل ✓' : 'معطل'}
             </div>
           </button>
@@ -380,12 +380,12 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
             }
             className={`p-2 rounded-xl text-center text-[11px] font-bold border transition-all cursor-pointer ${
               (audioSettings.enableVoiceWarmth ?? true)
-                ? 'bg-emerald-500/20 border-emerald-400 text-white'
-                : 'bg-surface-950/60 border-white/[0.04] text-white/40'
+                ? 'bg-emerald-500/20 border-emerald-400 text-surface-50'
+                : 'bg-surface-950/60 border-surface-700/40 text-surface-400'
             }`}
           >
             <div>🎙️ دفء الصوت</div>
-            <div className="text-[10px] text-white/40">
+            <div className="text-[10px] text-surface-400">
               {(audioSettings.enableVoiceWarmth ?? true) ? 'مفعل ✓' : 'معطل'}
             </div>
           </button>
@@ -395,7 +395,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
       {/* 🎧 8D Binaural Spatial Audio Section */}
       <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-gold-500/30 space-y-3 shadow-lg">
         <div className="flex items-center justify-between">
-          <label className="text-xs font-bold text-white flex items-center gap-1.5">
+          <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
             <Headphones size={14} className="text-gold-400" />
             <span>صوت الحرم المكاني (8D Spatial Audio) 🎧</span>
           </label>
@@ -415,7 +415,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
             className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold border transition-all cursor-pointer ${
               audioSettings.enable8DAudio
                 ? 'bg-gold-500/20 border-gold-400 text-gold-300 shadow-sm'
-                : 'bg-surface-950/60 border-white/10 text-white/40'
+                : 'bg-surface-950/60 border-surface-700/40 text-surface-400'
             }`}
           >
             {audioSettings.enable8DAudio ? 'مفعل ✓' : 'معطل'}
@@ -433,7 +433,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
         {audioSettings.enable8DAudio && (
           <div className="space-y-2.5 pt-1">
             <div>
-              <label className="block text-white/60 text-xs font-bold mb-1.5">
+              <label className="block text-surface-300 text-xs font-bold mb-1.5">
                 مسار الطواف المكاني 360°
               </label>
               <div className="grid grid-cols-2 gap-1.5">
@@ -449,8 +449,8 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
                     onClick={() => setAudioSettings((s) => ({ ...s, eightDStyle: st.id }))}
                     className={`p-2 rounded-xl text-xs font-bold border transition-all text-start cursor-pointer ${
                       (audioSettings.eightDStyle || 'orbit360') === st.id
-                        ? 'bg-gold-500/20 border-gold-400 text-white shadow-sm'
-                        : 'bg-surface-950/60 border-white/[0.04] text-white/60 hover:text-white'
+                        ? 'bg-gold-500/20 border-gold-400 text-surface-50 shadow-sm'
+                        : 'bg-surface-950/60 border-surface-700/40 text-surface-400 hover:text-surface-50'
                     }`}
                   >
                     {st.name}
@@ -460,7 +460,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
             </div>
 
             <div>
-              <div className="flex items-center justify-between text-xs font-bold text-white/60 mb-1">
+              <div className="flex items-center justify-between text-xs font-bold text-surface-400 mb-1">
                 <span>سرعة دوران الصوت حول الرأس</span>
                 <span className="font-mono text-gold-400">
                   {Math.round((audioSettings.eightDSpeed ?? 0.12) * 100)}%
@@ -472,14 +472,14 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
                 max={30}
                 value={Math.round((audioSettings.eightDSpeed ?? 0.12) * 100)}
                 onChange={(e) =>
-                  setAudioSettings((s) => ({ ...s, eightDSpeed: Number(e.target.value) / 100 }))
+                  setAudioSettings((s) => ({ ...s, eightDSpeed: Number(e.target.value) }))
                 }
                 className="w-full accent-gold-400 cursor-pointer"
               />
             </div>
 
-            <div className="flex items-center justify-between pt-1 border-t border-white/[0.06]">
-              <span className="text-xs text-white/70 font-medium">
+            <div className="flex items-center justify-between pt-1 border-t border-surface-700/40">
+              <span className="text-xs text-surface-300 font-medium">
                 إظهار شارة السماعات 🎧 على الفيديو
               </span>
               <input
@@ -498,7 +498,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Activity size={15} className="text-gold-400" />
-            <span className="font-bold text-white text-xs">شريط الموجات الصوتية التفاعلي 🎵</span>
+            <span className="font-bold text-surface-50 text-xs">شريط الموجات الصوتية التفاعلي 🎵</span>
           </div>
           <input
             type="checkbox"
@@ -511,7 +511,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
         {(textSettings.showWaveform ?? true) && (
           <div className="space-y-3 pt-1">
             <div>
-              <label className="block text-white/50 text-xs mb-1.5">شكل وحركة الموجات</label>
+              <label className="block text-surface-400 text-xs mb-1.5">شكل وحركة الموجات</label>
               <div className="grid grid-cols-2 gap-1.5">
                 {[
                   { id: 'bars' as const, name: '📊 أعمدة نيون (Bars)' },
@@ -525,8 +525,8 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
                     onClick={() => setTextSettings((s) => ({ ...s, waveformStyle: wf.id }))}
                     className={`p-2 rounded-xl text-xs font-bold border transition-all text-start cursor-pointer ${
                       (textSettings.waveformStyle || 'bars') === wf.id
-                        ? 'bg-gold-500/20 border-gold-400 text-white shadow-sm'
-                        : 'bg-surface-800/60 border-white/[0.04] text-white/60 hover:text-white'
+                        ? 'bg-gold-500/20 border-gold-400 text-surface-50 shadow-sm'
+                        : 'bg-surface-800/60 border-surface-700/40 text-surface-400 hover:text-surface-50'
                     }`}
                   >
                     {wf.name}
@@ -536,7 +536,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
             </div>
 
             <div>
-              <label className="block text-white/50 text-xs mb-1.5">لون توهج الموجات</label>
+              <label className="block text-surface-400 text-xs mb-1.5">لون توهج الموجات</label>
               <div className="flex items-center gap-2">
                 {[
                   { id: '#fbbf24', name: 'ذهبي' },
@@ -561,7 +561,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
             </div>
 
             <div>
-              <div className="flex items-center justify-between text-xs font-bold text-white/60 mb-1">
+              <div className="flex items-center justify-between text-xs font-bold text-surface-400 mb-1">
                 <span>ارتفاع الموجات</span>
                 <span className="font-mono text-gold-400">
                   {textSettings.waveformHeight || 24}px

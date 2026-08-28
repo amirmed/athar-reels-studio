@@ -35,9 +35,9 @@ export const BrandingPanel: React.FC<BrandingPanelProps> = ({
   return (
     <div className="space-y-4 animate-in">
       {/* Watermark Main Card */}
-      <div className="p-4 rounded-2xl bg-surface-800/60 border border-white/[0.06] space-y-3.5">
+      <div className="p-4 rounded-2xl bg-surface-800/60 border border-surface-700/40 space-y-3.5">
         <div className="flex items-center justify-between">
-          <label className="text-xs font-bold text-white flex items-center gap-1.5">
+          <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
             <Sparkles size={14} className="text-gold-400" />
             <span>العلامة المائية والتوقيع (Watermark)</span>
           </label>
@@ -52,7 +52,7 @@ export const BrandingPanel: React.FC<BrandingPanelProps> = ({
             className={`px-2 py-0.5 rounded-full text-[11px] font-bold border transition-all cursor-pointer ${
               textSettings.showWatermark !== false
                 ? 'bg-gold-400/20 border-gold-400 text-gold-300'
-                : 'bg-surface-900 border-white/10 text-white/40'
+                : 'bg-surface-900 border-surface-700/40 text-surface-400'
             }`}
           >
             {textSettings.showWatermark !== false ? 'مفعلة ✓' : 'مخفية'}
@@ -74,7 +74,7 @@ export const BrandingPanel: React.FC<BrandingPanelProps> = ({
             {/* 6/7-Direction Position Grid */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="text-xs font-bold text-white/60">
+                <label className="text-xs font-bold text-surface-400">
                   موضع العلامة المائية (أو اسحبها باليد في الشاشة ✋):
                 </label>
                 {(textSettings.watermarkX || textSettings.watermarkY) && (
@@ -93,7 +93,7 @@ export const BrandingPanel: React.FC<BrandingPanelProps> = ({
                   </button>
                 )}
               </div>
-              <div className="grid grid-cols-3 gap-1.5 max-w-xs mx-auto p-1.5 rounded-xl bg-surface-900/80 border border-white/[0.06]">
+              <div className="grid grid-cols-3 gap-1.5 max-w-xs mx-auto p-1.5 rounded-xl bg-surface-900/80 border border-surface-700/40">
                 {[
                   { id: 'topLeft', label: '↖️ أعلى اليسار' },
                   { id: 'top', label: '⬆️ أعلى الوسط' },
@@ -119,7 +119,7 @@ export const BrandingPanel: React.FC<BrandingPanelProps> = ({
                       !textSettings.watermarkX &&
                       !textSettings.watermarkY
                         ? 'bg-gradient-to-r from-gold-400 to-amber-500 text-surface-950 font-black shadow-md'
-                        : 'bg-surface-800/80 text-white/60 hover:text-white hover:bg-surface-700'
+                        : 'bg-surface-800/80 text-surface-400 hover:text-surface-50 hover:bg-surface-700'
                     } ${pos.id === 'center' ? 'col-span-3' : ''}`}
                   >
                     {pos.label}
@@ -129,7 +129,7 @@ export const BrandingPanel: React.FC<BrandingPanelProps> = ({
             </div>
 
             {/* Opacity & Size Sliders */}
-            <div className="space-y-2.5 pt-1 border-t border-white/[0.04]">
+            <div className="space-y-2.5 pt-1 border-t border-surface-700/30">
               <Slider
                 label="شفافية العلامة المائية"
                 min={10}
@@ -162,8 +162,8 @@ export const BrandingPanel: React.FC<BrandingPanelProps> = ({
             </div>
 
             {/* Watermark Color Preset */}
-            <div className="pt-1 border-t border-white/[0.04]">
-              <label className="block text-xs font-bold text-white/60 mb-1.5">
+            <div className="pt-1 border-t border-surface-700/30">
+              <label className="block text-xs font-bold text-surface-400 mb-1.5">
                 لون العلامة المائية:
               </label>
               <div className="flex items-center gap-2">
@@ -199,7 +199,7 @@ export const BrandingPanel: React.FC<BrandingPanelProps> = ({
       </div>
 
       {/* Viral Caption Engine */}
-      <div className="pt-2 border-t border-white/[0.06]">
+      <div className="pt-2 border-t border-surface-700/40">
         <ViralCaptionGenerator
           surahName={selectedSurahName || currentProject?.customTitle}
           ayahRange={`${fromAyah} - ${toAyah}`}

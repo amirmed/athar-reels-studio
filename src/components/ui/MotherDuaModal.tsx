@@ -322,7 +322,7 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
           type="button"
           onClick={onClose}
           aria-label="إغلاق النافذة"
-          className="absolute start-4 top-4 w-9 h-9 rounded-full bg-surface-800/80 hover:bg-surface-700 text-white/60 hover:text-white flex items-center justify-center transition-all border border-white/[0.06] cursor-pointer"
+          className="absolute start-4 top-4 w-9 h-9 rounded-full bg-surface-800/80 hover:bg-surface-700 text-surface-400 hover:text-surface-50 flex items-center justify-center transition-all border border-surface-700/40 cursor-pointer"
         >
           <X size={18} />
         </button>
@@ -331,22 +331,22 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
               <Heart size={24} className="text-rose-400 fill-rose-400/30 animate-pulse" />
             </div>
 
-            <h3 className="text-xl sm:text-2xl font-black text-white mb-1">
+            <h3 className="text-xl sm:text-2xl font-black text-surface-50 mb-1">
               ركن بر الوالدين والصدقة الجارية 🌸
             </h3>
-            <p className="text-xs sm:text-sm text-white/70 font-medium">
+            <p className="text-xs sm:text-sm text-surface-300 font-medium">
               أهدِ بطاقة دعاء لوالديك وشارك في الأجر المشترك
             </p>
 
             {/* Navigation Tabs */}
-            <div className="flex items-center justify-center gap-2 mt-4 max-w-md mx-auto p-1.5 rounded-2xl bg-surface-950/85 border border-white/[0.08]">
+            <div className="flex items-center justify-center gap-2 mt-4 max-w-md mx-auto p-1.5 rounded-2xl bg-surface-950/85 border border-surface-700/40">
               <button
                 type="button"
                 onClick={() => setActiveTab('parents')}
                 className={`flex-1 py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                   activeTab === 'parents'
                     ? 'bg-gradient-to-r from-gold-500 to-amber-500 text-surface-950 shadow-md font-black'
-                    : 'text-white/60 hover:text-white hover:bg-white/5'
+                    : 'text-surface-400 hover:text-surface-50 hover:bg-surface-800/50'
                 }`}
               >
                 <Sparkles size={15} />
@@ -359,7 +359,7 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
                 className={`flex-1 py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                   activeTab === 'tijani_aisha'
                     ? 'bg-gradient-to-r from-gold-500 to-amber-500 text-surface-950 shadow-md font-black'
-                    : 'text-white/60 hover:text-white hover:bg-white/5'
+                    : 'text-surface-400 hover:text-surface-50 hover:bg-surface-800/50'
                 }`}
               >
                 <Heart size={15} />
@@ -380,7 +380,7 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
                       <User size={15} />
                       <span>اختر لمن تهدي الدعاء والبطاقة:</span>
                     </span>
-                    <span className="text-[11px] text-white/40">تخصيص فوري</span>
+                    <span className="text-[11px] text-surface-400">تخصيص فوري</span>
                   </div>
 
                   {/* Recipient Buttons */}
@@ -398,7 +398,7 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
                         className={`py-2 px-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all border cursor-pointer ${
                           parentType === item.id
                             ? 'bg-gold-400/20 text-gold-300 border-gold-400/50 shadow-sm'
-                            : 'bg-surface-900/60 text-white/60 border-white/[0.06] hover:bg-white/5'
+                            : 'bg-surface-900/60 text-surface-300 border-surface-700/40 hover:bg-surface-800'
                         }`}
                       >
                         {item.label}
@@ -413,13 +413,13 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
                       placeholder="اكتب اسم والدتك أو والدك (مثلاً: أمي الحبيبة فاطمة)"
                       value={customName}
                       onChange={(e) => setCustomName(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-surface-900 border border-gold-400/30 text-white text-xs sm:text-sm placeholder:text-white/30 focus:outline-none focus:border-gold-400"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-surface-900 border border-gold-400/30 text-surface-50 text-xs sm:text-sm placeholder:text-surface-400 focus:outline-none focus:border-gold-400"
                     />
                   )}
 
                   {/* Life Status (Alive / Deceased) */}
-                  <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between">
-                    <span className="text-xs text-white/70 font-medium">حالة الوالدين:</span>
+                  <div className="pt-2 border-t border-surface-700/40 flex items-center justify-between">
+                    <span className="text-xs text-surface-300 font-medium">حالة الوالدين:</span>
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
@@ -427,7 +427,7 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
                         className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                           lifeStatus === 'alive'
                             ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm'
-                            : 'text-white/40 hover:text-white'
+                            : 'text-surface-400 hover:text-surface-50'
                         }`}
                       >
                         أحياء (حفظهم الله) 🌿
@@ -438,7 +438,7 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
                         className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                           lifeStatus === 'deceased'
                             ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40 shadow-sm'
-                            : 'text-white/40 hover:text-white'
+                            : 'text-surface-400 hover:text-surface-50'
                         }`}
                       >
                         متوفين (رحمهم الله) 🕊️
@@ -503,7 +503,7 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
                   <button
                     type="button"
                     onClick={handleCopyParentDua}
-                    className="py-3.5 px-3 rounded-2xl bg-surface-800 hover:bg-surface-700 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 border border-white/[0.08] transition-all cursor-pointer"
+                    className="py-3.5 px-3 rounded-2xl bg-surface-800 hover:bg-surface-700 text-surface-50 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 border border-surface-700/40 transition-all cursor-pointer"
                   >
                     {copied ? <Check size={16} className="text-emerald-400" /> : <Copy size={16} />}
                     <span>{copied ? 'تم النسخ' : 'نسخ الدعاء 📋'}</span>
@@ -517,7 +517,7 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
                       <Award size={15} />
                       <span>مسبحة بر الوالدين اليومية:</span>
                     </div>
-                    <div className="text-xs sm:text-sm text-white/60 mt-0.5 font-amiri font-bold">
+                    <div className="text-xs sm:text-sm text-surface-400 mt-0.5 font-amiri font-bold">
                       ﴿ رَّبِّ اغْفِرْ لِي وَلِوَالِدَيَّ ﴾
                     </div>
                   </div>
@@ -549,7 +549,7 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
                     <Sparkles size={16} className="text-gold-400" />
                     <span>بشارة نبوية شريفة (الملائكة تدعو لك ولوالديك):</span>
                   </div>
-                  <p className="text-sm sm:text-base text-white leading-relaxed font-medium font-amiri text-lg sm:text-xl">
+                  <p className="text-sm sm:text-base text-surface-50 leading-relaxed font-medium font-amiri text-lg sm:text-xl">
                     قال رسول الله ﷺ:{' '}
                     <strong className="text-yellow-200 font-bold">
                       «دَعْوَةُ المَرْءِ المُسْلِمِ لأَخِيهِ بِظَهْرِ الغَيْبِ مُسْتَجَابَةٌ، عِنْدَ
@@ -570,21 +570,21 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.08 * i }}
-                    className="p-5 sm:p-6 rounded-2xl bg-surface-950/90 border border-white/[0.12] hover:border-gold-400/40 transition-all text-start space-y-2.5 shadow-md"
+                    className="p-5 sm:p-6 rounded-2xl bg-surface-950/90 border border-surface-700/40 hover:border-gold-400/40 transition-all text-start space-y-2.5 shadow-md"
                   >
                     <div className="flex items-center gap-2">
                       <span className="w-2.5 h-2.5 rounded-full bg-gold-400"></span>
                       <h4 className="text-sm sm:text-base font-black text-gold-300">{dua.title}</h4>
                     </div>
-                    <p className="text-base sm:text-lg md:text-xl text-white leading-loose font-amiri font-bold tracking-wide">
+                    <p className="text-base sm:text-lg md:text-xl text-surface-50 leading-loose font-amiri font-bold tracking-wide">
                       {dua.text}
                     </p>
                   </motion.div>
                 ))}
 
                 {/* Platform Dedication Note */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-500/15 via-surface-950 to-gold-500/15 border border-emerald-500/30 text-xs sm:text-sm text-white/90 leading-relaxed space-y-1">
-                  <p className="font-bold text-white mb-1 flex items-center gap-1.5 text-sm sm:text-base">
+                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-500/15 via-surface-950 to-gold-500/15 border border-emerald-500/30 text-xs sm:text-sm text-surface-200 leading-relaxed space-y-1">
+                  <p className="font-bold text-surface-50 mb-1 flex items-center gap-1.5 text-sm sm:text-base">
                     <BookOpen size={16} className="text-emerald-400" />
                     <span>عن هذا المشروع المبارك:</span>
                   </p>

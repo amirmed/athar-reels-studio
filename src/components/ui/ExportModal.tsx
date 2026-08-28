@@ -345,14 +345,14 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         {status === 'idle' && (
           <div className="space-y-4">
             {/* Tab Switcher: Export Setup vs 5.1 🎥 Live Preview */}
-            <div className="flex p-1 bg-surface-950 rounded-2xl border border-white/10 text-xs font-bold">
+            <div className="flex p-1 bg-surface-950 rounded-2xl border border-surface-700/40 text-xs font-bold">
               <button
                 type="button"
                 onClick={() => setActiveTab('export')}
                 className={`flex-1 py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                   activeTab === 'export'
                     ? 'bg-gold-500 text-surface-950 font-extrabold shadow-sm'
-                    : 'text-white/60 hover:text-white'
+                    : 'text-surface-400 hover:text-surface-50'
                 }`}
               >
                 <Settings size={14} />
@@ -364,7 +364,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                 className={`flex-1 py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                   activeTab === 'preview'
                     ? 'bg-gold-500 text-surface-950 font-extrabold shadow-sm'
-                    : 'text-white/60 hover:text-white'
+                    : 'text-surface-400 hover:text-surface-50'
                 }`}
               >
                 <Eye size={14} />
@@ -375,7 +375,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             {/* TAB 1: 5.3 📐 Platform Presets */}
             {activeTab === 'export' && (
               <div className="space-y-3">
-                <label className="block text-white/70 text-xs font-bold">
+                <label className="block text-surface-300 text-xs font-bold">
                   اختر المنصة المستهدفة (تحسين تلقائي للدقة والبت-ريت) 🎯:
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
@@ -388,21 +388,21 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                         onClick={() => setSelectedPlatformPreset(preset.id)}
                         className={`p-3 rounded-2xl text-start border transition-all cursor-pointer flex flex-col justify-between ${
                           isSelected
-                            ? 'bg-gold-500/15 border-gold-400 text-white ring-1 ring-gold-400/40 shadow-lg shadow-gold-500/10'
-                            : 'bg-surface-950/60 border-white/[0.04] text-white/60 hover:text-white hover:bg-surface-950'
+                            ? 'bg-gold-500/15 border-gold-400 text-surface-50 ring-1 ring-gold-400/40 shadow-lg shadow-gold-500/10'
+                            : 'bg-surface-950/60 border-surface-700/30 text-surface-400 hover:text-surface-50 hover:bg-surface-950'
                         }`}
                       >
                         <div>
                           <div className="flex items-center justify-between mb-1">
                             <span className="text-base">{preset.icon}</span>
-                            <span className="text-[11px] font-mono text-gold-400 bg-surface-900 px-1.5 py-0.5 rounded border border-white/5">
+                            <span className="text-[11px] font-mono text-gold-400 bg-surface-900 px-1.5 py-0.5 rounded border border-surface-700/30">
                               {preset.bitrateLabel}
                             </span>
                           </div>
-                          <div className="font-bold text-xs text-white">{preset.name}</div>
-                          <div className="text-[11px] text-white/40">{preset.sub}</div>
+                          <div className="font-bold text-xs text-surface-50">{preset.name}</div>
+                          <div className="text-[11px] text-surface-400">{preset.sub}</div>
                         </div>
-                        <div className="mt-2 pt-1.5 border-t border-white/5 text-[10px] text-white/50 truncate">
+                        <div className="mt-2 pt-1.5 border-t border-surface-700/30 text-[10px] text-surface-400 truncate">
                           {preset.width}×{preset.height} • {preset.fps}fps
                         </div>
                       </button>
@@ -411,14 +411,14 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                 </div>
 
                 {/* Selected Platform Summary Badge */}
-                <div className="p-3 rounded-2xl bg-surface-950/80 border border-white/10 flex items-center justify-between text-xs">
+                <div className="p-3 rounded-2xl bg-surface-950/80 border border-surface-700/40 flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
                     <span className="text-base">{activePreset.icon}</span>
                     <div>
-                      <div className="font-bold text-white">
+                      <div className="font-bold text-surface-50">
                         {activePreset.name} ({activePreset.width}×{activePreset.height})
                       </div>
-                      <div className="text-[11px] text-white/50">{activePreset.desc}</div>
+                      <div className="text-[11px] text-surface-400">{activePreset.desc}</div>
                     </div>
                   </div>
                   <div className="text-end font-mono text-xs text-gold-300">
@@ -448,7 +448,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                     {isPreviewPlaying ? <Pause size={14} /> : <Play size={14} />}
                     <span>{isPreviewPlaying ? 'إيقاف المعاينة' : 'تشغيل المعاينة'}</span>
                   </button>
-                  <span className="text-xs text-white/60 font-mono">
+                  <span className="text-xs text-surface-400 font-mono">
                     {previewTimeSec.toFixed(1)}s / 6.0s
                   </span>
                 </div>
@@ -474,14 +474,14 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               <div className="inline-flex p-3 rounded-2xl bg-gold-500/10 text-gold-400 border border-gold-500/20 mb-1 animate-spin">
                 <Loader2 size={24} />
               </div>
-              <h4 className="font-bold text-sm text-white">{phase}</h4>
-              <p className="text-xs text-white/50 font-mono">
+              <h4 className="font-bold text-sm text-surface-50">{phase}</h4>
+              <p className="text-xs text-surface-400 font-mono">
                 {currentFrameNumber} / {totalFrameCount} إطار ({progress}%)
               </p>
             </div>
 
             {/* Glowing Multi-Segment Progress Bar */}
-            <div className="relative w-full h-4 rounded-full bg-surface-950 border border-white/10 overflow-hidden p-0.5 shadow-inner">
+            <div className="relative w-full h-4 rounded-full bg-surface-950 border border-surface-700/40 overflow-hidden p-0.5 shadow-inner">
               <motion.div
                 className="h-full rounded-full bg-gradient-to-r from-amber-500 via-gold-400 to-emerald-400 shadow-[0_0_12px_rgba(251,191,36,0.8)]"
                 initial={{ width: 0 }}
@@ -492,29 +492,29 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
             {/* 5.2 📊 Live Metrics Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
-              <div className="p-2.5 rounded-xl bg-surface-950/70 border border-white/5">
-                <div className="text-white/40 text-[11px]">الآية الحالية</div>
-                <div className="font-bold text-white mt-0.5">
+              <div className="p-2.5 rounded-xl bg-surface-950/70 border border-surface-700/30">
+                <div className="text-surface-400 text-[11px]">الآية الحالية</div>
+                <div className="font-bold text-surface-50 mt-0.5">
                   {currentAyahNumber} من {ayahs.length}
                 </div>
               </div>
-              <div className="p-2.5 rounded-xl bg-surface-950/70 border border-white/5">
-                <div className="text-white/40 text-[11px]">سرعة الإطارات</div>
+              <div className="p-2.5 rounded-xl bg-surface-950/70 border border-surface-700/30">
+                <div className="text-surface-400 text-[11px]">سرعة الإطارات</div>
                 <div className="font-bold text-gold-300 font-mono mt-0.5">{realtimeFps} FPS</div>
               </div>
-              <div className="p-2.5 rounded-xl bg-surface-950/70 border border-white/5">
-                <div className="text-white/40 text-[11px]">الوقت المنقضي</div>
-                <div className="font-bold text-white font-mono mt-0.5">{elapsedSeconds}s</div>
+              <div className="p-2.5 rounded-xl bg-surface-950/70 border border-surface-700/30">
+                <div className="text-surface-400 text-[11px]">الوقت المنقضي</div>
+                <div className="font-bold text-surface-50 font-mono mt-0.5">{elapsedSeconds}s</div>
               </div>
-              <div className="p-2.5 rounded-xl bg-surface-950/70 border border-white/5">
-                <div className="text-white/40 text-[11px]">الوقت المتبقي (ETA)</div>
+              <div className="p-2.5 rounded-xl bg-surface-950/70 border border-surface-700/30">
+                <div className="text-surface-400 text-[11px]">الوقت المتبقي (ETA)</div>
                 <div className="font-bold text-emerald-300 font-mono mt-0.5">
                   ~{estimatedSecondsRemaining}s
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center justify-between text-xs text-white/40 px-1">
+            <div className="flex items-center justify-between text-xs text-surface-400 px-1">
               <span>الحجم التقريبي للملف: ~{estimatedSizeMb} MB</span>
               <button
                 type="button"
@@ -534,7 +534,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               <CheckCircle2 size={32} />
             </div>
             <div>
-              <h4 className="font-extrabold text-base text-white">تم تصدير الفيديو بنجاح! 🎉</h4>
+              <h4 className="font-extrabold text-base text-surface-50">تم تصدير الفيديو بنجاح! 🎉</h4>
               <p className="text-xs text-emerald-400/90 mt-0.5">
                 الفيديو جاهز بأعلى جودة وصوت نقي 100%
               </p>
@@ -543,7 +543,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             {/* Native Path or Download Blob Actions */}
             {outputPath && window.electronAPI?.shell && (
               <div className="space-y-2">
-                <div className="p-2.5 rounded-xl bg-surface-950/80 border border-white/10 text-xs font-mono text-gold-300/90 truncate">
+                <div className="p-2.5 rounded-xl bg-surface-950/80 border border-surface-700/40 text-xs font-mono text-gold-300/90 truncate">
                   {outputPath}
                 </div>
                 <div className="grid grid-cols-2 gap-2">
@@ -558,7 +558,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                   <button
                     type="button"
                     onClick={() => window.electronAPI?.shell?.openPath(outputPath)}
-                    className="py-3 px-4 rounded-xl bg-surface-800 hover:bg-surface-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 border border-white/10 active:scale-98 transition-all cursor-pointer"
+                    className="py-3 px-4 rounded-xl bg-surface-800 hover:bg-surface-700 text-surface-50 font-bold text-xs flex items-center justify-center gap-1.5 border border-surface-700/40 active:scale-98 transition-all cursor-pointer"
                   >
                     <Play size={14} />
                     <span>تشغيل الفيديو 🎬</span>
@@ -628,7 +628,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               <button
                 type="button"
                 onClick={() => setShowThumbnailModal(true)}
-                className="py-2.5 px-3 rounded-xl bg-surface-950 border border-white/10 hover:border-gold-500/30 text-white font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                className="py-2.5 px-3 rounded-xl bg-surface-950 border border-surface-700/40 hover:border-gold-500/30 text-surface-50 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <ImageIcon size={14} className="text-gold-400" />
                 <span>تصميم غلاف الريلز 🖼️</span>
@@ -640,7 +640,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                   setStatus('idle');
                   setProgress(0);
                 }}
-                className="py-2.5 px-3 rounded-xl bg-surface-950 border border-white/10 hover:border-white/20 text-white/80 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                className="py-2.5 px-3 rounded-xl bg-surface-950 border border-surface-700/40 hover:border-surface-700/60 text-surface-300 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <RotateCcw size={14} />
                 <span>تصدير لمنصة أخرى 🔄</span>
@@ -656,7 +656,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               <AlertCircle size={32} />
             </div>
             <div>
-              <h4 className="font-bold text-sm text-white">تعذر إكمال تصدير الفيديو</h4>
+              <h4 className="font-bold text-sm text-surface-50">تعذر إكمال تصدير الفيديو</h4>
               <p className="text-xs text-rose-400 mt-1">
                 {error || 'حدث خطأ غير متوقع أثناء معالجة الإطارات'}
               </p>
@@ -665,7 +665,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             <button
               type="button"
               onClick={() => setStatus('idle')}
-              className="px-6 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs cursor-pointer"
+              className="px-6 py-2.5 rounded-xl bg-surface-800 hover:bg-surface-700 text-surface-50 font-bold text-xs cursor-pointer border border-surface-700/40"
             >
               إعادة المحاولة 🔄
             </button>

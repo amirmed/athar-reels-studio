@@ -28,7 +28,7 @@ export const CharityRibbonFooter: React.FC<CharityRibbonFooterProps> = React.mem
           {/* Main Charity Message */}
           <div
             onClick={handlePrayDua}
-            className="flex items-center gap-2 text-xs text-white/80 leading-relaxed font-medium cursor-pointer hover:text-white transition-colors"
+            className="flex items-center gap-2 text-xs text-surface-200 leading-relaxed font-medium cursor-pointer hover:text-surface-50 transition-colors"
           >
             <span className="text-sm">🌿</span>
             <p>
@@ -46,12 +46,12 @@ export const CharityRibbonFooter: React.FC<CharityRibbonFooterProps> = React.mem
               href="https://atar-studio.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-3.5 py-1.5 min-h-[34px] rounded-full bg-white/[0.05] hover:bg-gold-500/15 border border-white/[0.08] hover:border-gold-400/30 text-xs font-mono text-white/70 hover:text-gold-300 transition-all shadow-sm cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 min-h-[34px] rounded-full bg-surface-800/60 hover:bg-gold-500/15 border border-surface-700/40 hover:border-gold-400/30 text-xs font-mono text-surface-300 hover:text-gold-300 transition-all shadow-sm cursor-pointer"
               title="الموقع الرسمي • أَثَـر ستوديو"
             >
               <span className="text-gold-400 font-sans text-xs">🌐</span>
               <span className="font-bold tracking-wide">atar-studio.com</span>
-              <span className="text-[11px] text-white/40">© 2026</span>
+              <span className="text-[11px] text-surface-400">© 2026</span>
             </a>
 
             <button

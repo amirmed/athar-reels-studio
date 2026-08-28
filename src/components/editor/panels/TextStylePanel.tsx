@@ -92,7 +92,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
   return (
     <div className="space-y-4 animate-in">
       {/* Sub-Navigation Tabs */}
-      <div className="grid grid-cols-5 gap-1 p-1 bg-surface-900/90 rounded-2xl border border-white/[0.06] text-xs font-bold">
+      <div className="grid grid-cols-5 gap-1 p-1 bg-surface-900/90 rounded-2xl border border-surface-700/40 text-xs font-bold">
         {[
           { id: 'font', label: 'الخطوط', icon: '🔤' },
           { id: 'spacing', label: 'المسافات', icon: '📐' },
@@ -107,7 +107,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
             className={`py-2 rounded-xl transition-all cursor-pointer flex flex-col items-center gap-0.5 ${
               activeSubTab === tab.id
                 ? 'bg-gradient-to-b from-gold-500 to-amber-500 text-surface-950 font-black shadow-sm'
-                : 'text-white/50 hover:text-white hover:bg-surface-800/60'
+                : 'text-surface-400 hover:text-surface-50 hover:bg-surface-800/60'
             }`}
           >
             <span className="text-xs">{tab.icon}</span>
@@ -128,7 +128,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
             {/* Display Mode (Chunked vs Single Ayah) */}
             <div className="p-3 rounded-2xl bg-surface-900/90 border border-gold-500/20 space-y-2">
               <div className="flex items-center justify-between">
-                <label className="block text-white font-bold text-xs">نمط تقسيم الآيات 🎬</label>
+                <label className="block text-surface-50 font-bold text-xs">نمط تقسيم الآيات 🎬</label>
                 <span className="text-[11px] px-2 py-0.5 rounded-md bg-gold-500/15 text-gold-300 font-bold border border-gold-400/20">
                   {textSettings.displayMode === 'single_ayah' ? 'الآية كاملة 📜' : 'تقسيم ذكي ⚡'}
                 </span>
@@ -147,8 +147,8 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                       onClick={() => setTextSettings((s) => ({ ...s, displayMode: m.id as 'chunked' | 'single_ayah' }))}
                       className={`p-2 rounded-xl border text-center transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
                         isSelected
-                          ? 'bg-gold-500/20 border-gold-400 text-white font-bold shadow-sm'
-                          : 'bg-surface-800/60 border-white/[0.04] text-white/50 hover:text-white'
+                          ? 'bg-gold-500/20 border-gold-400 text-surface-50 font-bold shadow-sm'
+                          : 'bg-surface-800/60 border-surface-700/40 text-surface-400 hover:text-surface-50'
                       }`}
                     >
                       <span>{m.icon}</span>
@@ -176,7 +176,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                   className={`px-2.5 py-1 rounded-xl text-[11px] font-bold shrink-0 transition-all cursor-pointer ${
                     fontCategoryFilter === cat.id
                       ? 'bg-gold-500 text-surface-950 shadow-sm'
-                      : 'bg-surface-900 border border-white/[0.06] text-white/60 hover:text-white'
+                      : 'bg-surface-900 border border-surface-700/40 text-surface-300 hover:text-surface-50'
                   }`}
                 >
                   {cat.label}
@@ -198,17 +198,17 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                     className={`p-3 rounded-2xl border transition-all cursor-pointer group ${
                       isSelected
                         ? 'bg-gold-500/15 border-gold-400 shadow-md shadow-gold-500/10 ring-1 ring-gold-400/40'
-                        : 'bg-surface-900/80 hover:bg-surface-800/90 border-white/[0.06] hover:border-gold-400/40'
+                        : 'bg-surface-900/80 hover:bg-surface-800/90 border-surface-700/40 hover:border-gold-400/40'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-white group-hover:text-gold-300 transition-colors">
+                        <span className="text-xs font-bold text-surface-50 group-hover:text-gold-300 transition-colors">
                           {font.name}
                         </span>
-                        <span className="text-[10px] text-white/40 font-mono">({font.id})</span>
+                        <span className="text-[10px] text-surface-400 font-mono">({font.id})</span>
                       </div>
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/[0.06] text-white/60 border border-white/[0.04]">
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-surface-800 text-surface-300 border border-surface-700/40">
                         {font.categoryLabel}
                       </span>
                     </div>
@@ -234,7 +234,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
             icon={<Sliders size={16} className="text-gold-400" />}
             defaultOpen={true}
           >
-            <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-white/[0.06] space-y-3">
+            <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-surface-700/40 space-y-3">
               <Slider
                 label="حجم الخط (Font Size)"
                 min={16}
@@ -246,12 +246,12 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
               />
 
               {/* Font Weight & Alignment */}
-              <div className="grid grid-cols-2 gap-3 pt-2 border-t border-white/[0.06]">
+              <div className="grid grid-cols-2 gap-3 pt-2 border-t border-surface-700/40">
                 <div>
-                  <label className="block text-xs font-bold text-white/70 mb-1.5">
+                  <label className="block text-xs font-bold text-surface-300 mb-1.5">
                     وزن وسُمك الخط
                   </label>
-                  <div className="grid grid-cols-3 gap-1 bg-surface-950 p-1 rounded-xl border border-white/[0.04]">
+                  <div className="grid grid-cols-3 gap-1 bg-surface-950 p-1 rounded-xl border border-surface-700/30">
                     {[
                       { id: 'light', label: 'خفيف' },
                       { id: 'normal', label: 'عادي' },
@@ -266,7 +266,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                         className={`py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                           textSettings.fontWeight === w.id
                             ? 'bg-gold-500 text-surface-950 font-black shadow-sm'
-                            : 'text-white/60 hover:text-white'
+                            : 'text-surface-400 hover:text-surface-50'
                         }`}
                       >
                         {w.label}
@@ -276,8 +276,8 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-white/70 mb-1.5">محاذاة النص</label>
-                  <div className="grid grid-cols-3 gap-1 bg-surface-950 p-1 rounded-xl border border-white/[0.04]">
+                  <label className="block text-xs font-bold text-surface-300 mb-1.5">محاذاة النص</label>
+                  <div className="grid grid-cols-3 gap-1 bg-surface-950 p-1 rounded-xl border border-surface-700/30">
                     {[
                       { id: 'right', icon: AlignRight, name: 'محاذاة لليمين' },
                       { id: 'center', icon: AlignCenter, name: 'توسيط النص' },
@@ -294,7 +294,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                           className={`py-1.5 rounded-lg text-xs flex items-center justify-center transition-all cursor-pointer ${
                             textSettings.textAlign === a.id
                               ? 'bg-gold-500 text-surface-950 shadow-sm font-bold'
-                              : 'text-white/60 hover:text-white'
+                              : 'text-surface-400 hover:text-surface-50'
                           }`}
                         >
                           <Icon size={14} />
@@ -306,8 +306,8 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
               </div>
 
               {/* Text Color Palettes */}
-              <div className="pt-2 border-t border-white/[0.06]">
-                <label className="block text-xs font-bold text-white/70 mb-1.5">
+              <div className="pt-2 border-t border-surface-700/40">
+                <label className="block text-xs font-bold text-surface-300 mb-1.5">
                   لون النص الأساسي
                 </label>
                 <div className="flex items-center gap-1.5 flex-wrap">
@@ -329,7 +329,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                       className={`w-7 h-7 rounded-xl border transition-all cursor-pointer ${
                         textSettings.textColor === c.color
                           ? 'ring-2 ring-gold-400 scale-110 border-white'
-                          : 'border-white/20 opacity-70 hover:opacity-100'
+                          : 'border-surface-700/40 opacity-70 hover:opacity-100'
                       }`}
                       style={{ backgroundColor: c.color }}
                     />
@@ -338,7 +338,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                     type="color"
                     value={textSettings.textColor || '#ffffff'}
                     onChange={(e) => setTextSettings((s) => ({ ...s, textColor: e.target.value }))}
-                    className="w-7 h-7 rounded-xl bg-transparent border border-white/20 cursor-pointer"
+                    className="w-7 h-7 rounded-xl bg-transparent border border-surface-700/40 cursor-pointer"
                     title="لون مخصص"
                   />
                 </div>
@@ -357,7 +357,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
             defaultOpen={true}
           >
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-white/50">ضبط المسافات والارتفاع بالبكسل</span>
+              <span className="text-xs text-surface-400">ضبط المسافات والارتفاع بالبكسل</span>
               <button
                 type="button"
                 onClick={handleResetSpacing}
@@ -369,7 +369,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
             </div>
 
             {/* 1. Word Spacing */}
-            <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-white/[0.06]">
+            <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-surface-700/40">
               <Slider
                 label="المسافة بين الكلمات (Word Spacing)"
                 min={-2}
@@ -384,7 +384,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
             </div>
 
             {/* 2. Line Height */}
-            <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-white/[0.06]">
+            <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-surface-700/40">
               <Slider
                 label="ارتفاع وتباعد الأسطر (Line Height)"
                 min={1.2}
@@ -399,7 +399,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
             </div>
 
             {/* 3. Letter Spacing */}
-            <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-white/[0.06]">
+            <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-surface-700/40">
               <Slider
                 label="المسافة بين الحروف (Letter Spacing)"
                 min={-2}
@@ -431,11 +431,11 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                   key={p.id}
                   type="button"
                   onClick={() => applyPreset(p)}
-                  className="p-2 rounded-xl bg-surface-950/80 hover:bg-surface-800 border border-white/[0.06] hover:border-gold-400/40 text-start transition-all cursor-pointer flex items-center gap-2 group"
+                  className="p-2 rounded-xl bg-surface-950/80 hover:bg-surface-800 border border-surface-700/40 hover:border-gold-400/40 text-start transition-all cursor-pointer flex items-center gap-2 group"
                 >
                   <span className="text-base shrink-0">{p.icon}</span>
                   <div className="min-w-0 flex-1">
-                    <div className="font-bold text-white text-xs group-hover:text-gold-300 transition-colors truncate">
+                    <div className="font-bold text-surface-50 text-xs group-hover:text-gold-300 transition-colors truncate">
                       {p.name}
                     </div>
                   </div>
@@ -450,13 +450,13 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
             icon={<Sparkles size={16} className="text-gold-400" />}
             defaultOpen={true}
           >
-            <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-white/[0.06] space-y-3">
+            <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-surface-700/40 space-y-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="font-bold text-white text-xs block">
+                  <span className="font-bold text-surface-50 text-xs block">
                     تفعيل ظل النص
                   </span>
-                  <span className="text-[11px] text-white/40">يعزل الآية عن الخلفية بوضوح تام</span>
+                  <span className="text-[11px] text-surface-400">يعزل الآية عن الخلفية بوضوح تام</span>
                 </div>
                 <input
                   type="checkbox"
@@ -467,7 +467,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
               </div>
 
               {(textSettings.enableShadow ?? true) && (
-                <div className="space-y-3 pt-2 border-t border-white/[0.04]">
+                <div className="space-y-3 pt-2 border-t border-surface-700/30">
                   <Slider
                     label="شدة التمويه والانتشار (Shadow Blur)"
                     min={0}
@@ -498,13 +498,13 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
             icon={<Sparkles size={16} className="text-gold-400" />}
             defaultOpen={true}
           >
-            <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-white/[0.06] space-y-3">
+            <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-surface-700/40 space-y-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="font-bold text-white text-xs block">
+                  <span className="font-bold text-surface-50 text-xs block">
                     تفعيل التوهج
                   </span>
-                  <span className="text-[11px] text-white/40">
+                  <span className="text-[11px] text-surface-400">
                     هالة روحانية مشعة حول حروف الآية
                   </span>
                 </div>
@@ -517,9 +517,9 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
               </div>
 
               {(textSettings.enableGlow ?? false) && (
-                <div className="space-y-3 pt-2 border-t border-white/[0.04]">
+                <div className="space-y-3 pt-2 border-t border-surface-700/30">
                   <div>
-                    <label className="block text-xs font-bold text-white/60 mb-1.5">لون التوهج</label>
+                    <label className="block text-xs font-bold text-surface-400 mb-1.5">لون التوهج</label>
                     <div className="grid grid-cols-5 gap-1.5">
                       {[
                         { color: '#fbbf24', label: 'ذهبي 👑' },
@@ -535,7 +535,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                           className={`p-1.5 rounded-xl border text-center text-[11px] font-bold transition-all cursor-pointer ${
                             (textSettings.glowColor || '#fbbf24') === g.color
                               ? 'ring-2 ring-gold-400 border-white text-white shadow-md'
-                              : 'border-white/10 text-white/50 hover:text-white'
+                              : 'border-surface-700/40 text-surface-400 hover:text-surface-50'
                           }`}
                           style={{ backgroundColor: `${g.color}22` }}
                         >
@@ -565,13 +565,13 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
             icon={<Sliders size={16} className="text-gold-400" />}
             defaultOpen={false}
           >
-            <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-white/[0.06] space-y-3">
+            <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-surface-700/40 space-y-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="font-bold text-white text-xs block">
+                  <span className="font-bold text-surface-50 text-xs block">
                     حدود النص (Stroke)
                   </span>
-                  <span className="text-[11px] text-white/40">
+                  <span className="text-[11px] text-surface-400">
                     إطار يحدد الحروف لمنع تشويش الخلفيات الصعبة
                   </span>
                 </div>
@@ -584,7 +584,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
               </div>
 
               {(textSettings.enableStroke ?? false) && (
-                <div className="space-y-3 pt-2 border-t border-white/[0.04]">
+                <div className="space-y-3 pt-2 border-t border-surface-700/30">
                   <Slider
                     label="سُمك الحد الخارجي (Stroke Width)"
                     min={0.5}
@@ -597,7 +597,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                   />
 
                   <div>
-                    <label className="block text-xs font-bold text-white/60 mb-1.5">لون الحد</label>
+                    <label className="block text-xs font-bold text-surface-400 mb-1.5">لون الحد</label>
                     <div className="flex items-center gap-2">
                       {[
                         { color: '#000000', label: 'أسود كاحل' },
@@ -612,7 +612,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                           className={`px-3 py-1 rounded-xl border text-[11px] font-bold transition-all cursor-pointer ${
                             (textSettings.strokeColor || '#000000') === st.color
                               ? 'bg-purple-500 text-white border-purple-400 shadow-sm'
-                              : 'bg-surface-950 border-white/10 text-white/50 hover:text-white'
+                              : 'bg-surface-950 border-surface-700/40 text-surface-400 hover:text-surface-50'
                           }`}
                         >
                           {st.label}
@@ -631,7 +631,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
             icon={<Palette size={16} className="text-gold-400" />}
             defaultOpen={false}
           >
-            <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-white/[0.06] space-y-2.5">
+            <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-surface-700/40 space-y-2.5">
               <div className="grid grid-cols-3 gap-1.5">
                 {[
                   { id: 'none', label: 'أحادي اللون ⚪' },
@@ -647,8 +647,8 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                     onClick={() => setTextSettings((s) => ({ ...s, textGradient: grad.id as 'none' | 'gold' | 'emerald' | 'sunset' | 'royal' | 'amber' | 'celestial' }))}
                     className={`p-2 rounded-xl border text-center text-[11px] font-bold transition-all cursor-pointer ${
                       (textSettings.textGradient || 'none') === grad.id
-                        ? 'bg-gold-500/20 border-gold-400 text-white shadow-md'
-                        : 'bg-surface-950 border-white/[0.06] text-white/50 hover:text-white'
+                        ? 'bg-gold-500/20 border-gold-400 text-surface-50 shadow-md'
+                        : 'bg-surface-950 border-surface-700/40 text-surface-400 hover:text-surface-50'
                     }`}
                   >
                     {grad.label}
@@ -712,14 +712,14 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                   }}
                   className={`p-2.5 rounded-xl border text-start transition-all cursor-pointer flex items-start gap-2 ${
                     (textSettings.textAnimation || 'wordByWord') === anim.id
-                      ? 'bg-sky-500/20 border-sky-400 text-white font-bold shadow-md'
-                      : 'bg-surface-950 border-white/[0.06] text-white/50 hover:text-white'
+                      ? 'bg-sky-500/20 border-sky-400 text-surface-50 font-bold shadow-md'
+                      : 'bg-surface-950 border-surface-700/40 text-surface-400 hover:text-surface-50'
                   }`}
                 >
                   <span className="text-base shrink-0">{anim.icon}</span>
                   <div className="min-w-0">
-                    <div className="text-xs font-bold text-white truncate">{anim.label}</div>
-                    <div className="text-[10px] text-white/40 truncate">{anim.sub}</div>
+                    <div className="text-xs font-bold text-surface-50 truncate">{anim.label}</div>
+                    <div className="text-[10px] text-surface-400 truncate">{anim.sub}</div>
                   </div>
                 </button>
               ))}
@@ -735,10 +735,10 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
             <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-gold-500/20 space-y-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="font-bold text-white text-xs block">
+                  <span className="font-bold text-surface-50 text-xs block">
                     تفعيل كاريوكي الكلمات
                   </span>
-                  <span className="text-[11px] text-white/40">
+                  <span className="text-[11px] text-surface-400">
                     تلوين وتكبير الكلمة لحظة نطقها من القارئ
                   </span>
                 </div>
@@ -753,9 +753,9 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
               </div>
 
               {textSettings.wordHighlightEnabled && (
-                <div className="space-y-3 pt-2 border-t border-white/[0.04]">
+                <div className="space-y-3 pt-2 border-t border-surface-700/30">
                   <div>
-                    <label className="block text-xs font-bold text-white/60 mb-1.5">
+                    <label className="block text-xs font-bold text-surface-400 mb-1.5">
                       تأثير إبراز الكلمة
                     </label>
                     <div className="grid grid-cols-2 gap-1.5">
@@ -779,7 +779,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                           className={`p-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
                             (textSettings.wordHighlightStyle || 'goldGlow') === h.id
                               ? 'bg-gold-500/20 border-gold-400 text-gold-300 shadow-sm'
-                              : 'bg-surface-950 border-white/[0.06] text-white/50 hover:text-white'
+                              : 'bg-surface-950 border-surface-700/40 text-surface-400 hover:text-surface-50'
                           }`}
                         >
                           {h.name}
@@ -788,7 +788,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/[0.04] items-center">
+                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-surface-700/30 items-center">
                     <Slider
                       label="عتامة باقي الكلمات"
                       min={0.2}
@@ -806,16 +806,16 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                     />
 
                     <div className="flex flex-col justify-end">
-                      <label className="flex items-center gap-2 cursor-pointer p-2 rounded-xl bg-surface-950 border border-white/[0.04]">
+                      <label className="flex items-center gap-2 cursor-pointer p-2 rounded-xl bg-surface-950 border border-surface-700/30">
                         <input
                           type="checkbox"
                           checked={textSettings.highlightScale ?? true}
                           onChange={(e) =>
                             setTextSettings((s) => ({ ...s, highlightScale: e.target.checked }))
                           }
-                          className="rounded border-white/20 text-gold-500 focus:ring-0"
+                          className="rounded border-surface-700/40 text-gold-500 focus:ring-0"
                         />
-                        <span className="text-[11px] font-bold text-white">
+                        <span className="text-[11px] font-bold text-surface-50">
                           تكبير الكلمة النشطة 🔍
                         </span>
                       </label>
@@ -836,13 +836,13 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
             icon={<Sparkles size={16} className="text-gold-400" />}
             defaultOpen={true}
           >
-            <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-white/[0.06] space-y-3">
+            <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-surface-700/40 space-y-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="font-bold text-white text-xs block">
+                  <span className="font-bold text-surface-50 text-xs block">
                     عرض الترجمة الإنجليزية / العالمية
                   </span>
-                  <span className="text-[11px] text-white/40">
+                  <span className="text-[11px] text-surface-400">
                     تظهر أسفل النص العربي بشكل سينمائي
                   </span>
                 </div>
@@ -855,9 +855,9 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
               </div>
 
               {showTranslation && (
-                <div className="space-y-3 pt-2 border-t border-white/[0.04]">
+                <div className="space-y-3 pt-2 border-t border-surface-700/30">
                   <div>
-                    <label className="block text-xs font-bold text-white/60 mb-1.5">
+                    <label className="block text-xs font-bold text-surface-400 mb-1.5">
                       لغة الترجمة
                     </label>
                     <select
@@ -865,7 +865,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                       onChange={(e) =>
                         setTextSettings((s) => ({ ...s, translationLanguage: e.target.value as 'en' | 'fr' | 'ur' | 'tr' | 'es' | 'id' }))
                       }
-                      className="glass-input w-full p-2 rounded-xl text-xs bg-surface-950 border border-white/10"
+                      className="glass-input w-full p-2 rounded-xl text-xs bg-surface-950 border border-surface-700/40"
                     >
                       <option value="en">English (الإنجليزية - Saheeh International)</option>
                       <option value="fr">Français (الفرنسية - Muhammad Hamidullah)</option>

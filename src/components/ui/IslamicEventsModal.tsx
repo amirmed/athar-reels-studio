@@ -54,10 +54,10 @@ export const IslamicEventsModal: React.FC<IslamicEventsModalProps> = ({
                   مقترح الآن ⚡
                 </span>
               </div>
-              <h4 className="text-sm font-bold text-white mt-0.5">
+              <h4 className="text-sm font-bold text-surface-50 mt-0.5">
                 {liveOccasion.recommendedItem.title}
               </h4>
-              <p className="text-xs text-white/50">{liveOccasion.reason}</p>
+              <p className="text-xs text-surface-400">{liveOccasion.reason}</p>
             </div>
           </div>
 
@@ -86,7 +86,7 @@ export const IslamicEventsModal: React.FC<IslamicEventsModalProps> = ({
                 className={`p-3 rounded-2xl text-start transition-all cursor-pointer flex flex-col justify-between border ${
                   isSelected
                     ? `${cat.borderColor} bg-surface-900 shadow-md`
-                    : 'border-white/[0.06] bg-surface-900/40 text-white/60 hover:text-white hover:bg-surface-900/70'
+                    : 'border-surface-700/40 bg-surface-900/40 text-surface-400 hover:text-surface-50 hover:bg-surface-900/70'
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
@@ -95,14 +95,14 @@ export const IslamicEventsModal: React.FC<IslamicEventsModalProps> = ({
                     className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                       isSelected
                         ? 'bg-gold-500/20 text-gold-300'
-                        : 'bg-white/[0.04] text-white/40'
+                        : 'bg-surface-800 text-surface-400 border border-surface-700/30'
                     }`}
                   >
                     {cat.badge}
                   </span>
                 </div>
                 <span
-                  className={`text-xs font-bold ${isSelected ? 'text-white' : 'text-white/70'}`}
+                  className={`text-xs font-bold ${isSelected ? 'text-surface-50' : 'text-surface-300'}`}
                 >
                   {cat.name}
                 </span>
@@ -114,10 +114,10 @@ export const IslamicEventsModal: React.FC<IslamicEventsModalProps> = ({
         {/* Selected Category Header */}
         <div className="flex items-center justify-between pt-1">
           <div>
-            <h4 className="text-sm font-bold text-white flex items-center gap-1.5">
+            <h4 className="text-sm font-bold text-surface-50 flex items-center gap-1.5">
               <span>{currentCategory.name}</span>
             </h4>
-            <p className="text-xs text-white/50">{currentCategory.description}</p>
+            <p className="text-xs text-surface-400">{currentCategory.description}</p>
           </div>
           <span className="text-xs text-gold-400 font-bold">
             {currentCategory.items.length} قوالب جاهزة
@@ -129,7 +129,7 @@ export const IslamicEventsModal: React.FC<IslamicEventsModalProps> = ({
           {currentCategory.items.map((item) => (
             <div
               key={item.id}
-              className="rounded-2xl bg-surface-900/90 border border-white/[0.08] hover:border-gold-400/40 transition-all overflow-hidden flex flex-col justify-between shadow-lg group hover:-translate-y-0.5"
+              className="rounded-2xl bg-surface-900/90 border border-surface-700/40 hover:border-gold-400/40 transition-all overflow-hidden flex flex-col justify-between shadow-lg group hover:-translate-y-0.5"
             >
               {/* Image Header Preview */}
               <div className="relative h-28 w-full overflow-hidden">
@@ -156,19 +156,19 @@ export const IslamicEventsModal: React.FC<IslamicEventsModalProps> = ({
               {/* Content Details */}
               <div className="p-3.5 space-y-2 flex-1 flex flex-col justify-between">
                 <div>
-                  <h5 className="text-xs font-bold text-white group-hover:text-gold-300 transition-colors line-clamp-1 mb-1">
+                  <h5 className="text-xs font-bold text-surface-50 group-hover:text-gold-300 transition-colors line-clamp-1 mb-1">
                     {item.title}
                   </h5>
-                  <p className="text-xs text-white/70 italic line-clamp-2 leading-relaxed bg-surface-950/50 p-2 rounded-xl border border-white/[0.04]">
+                  <p className="text-xs text-surface-300 italic line-clamp-2 leading-relaxed bg-surface-950/50 p-2 rounded-xl border border-surface-700/30">
                     {item.subtitle}
                   </p>
                 </div>
 
-                <div className="space-y-2 pt-2 border-t border-white/[0.06]">
-                  <div className="flex items-center justify-between text-[11px] text-white/50">
+                <div className="space-y-2 pt-2 border-t border-surface-700/30">
+                  <div className="flex items-center justify-between text-[11px] text-surface-400">
                     <span className="flex items-center gap-1">
                       <span>🎙️</span>
-                      <span className="text-white/80">{item.reciterName}</span>
+                      <span className="text-surface-200">{item.reciterName}</span>
                     </span>
                     <span className="text-gold-400 font-bold">✨ فلتر ملكي</span>
                   </div>
@@ -191,8 +191,8 @@ export const IslamicEventsModal: React.FC<IslamicEventsModalProps> = ({
         </div>
 
         {/* Footer info */}
-        <div className="pt-3 border-t border-white/10 flex items-center justify-between">
-          <span className="text-xs text-white/60">
+        <div className="pt-3 border-t border-surface-700/40 flex items-center justify-between">
+          <span className="text-xs text-surface-400">
             💡 نصيحة: نشر مقاطع سورة الكهف يوم الجمعة يرفع التفاعل والمشاركات بأكثر من 300%.
           </span>
           <button

@@ -210,24 +210,24 @@ export const ArabicAiVoiceModal: React.FC<ArabicAiVoiceModalProps> = ({
     >
       <div className="space-y-4">
         {/* Active Content Preview */}
-        <div className="p-3.5 rounded-2xl bg-surface-950/80 border border-white/[0.06] space-y-1.5">
-          <div className="flex items-center justify-between text-xs text-white/40">
+        <div className="p-3.5 rounded-2xl bg-surface-950/80 border border-surface-700/40 space-y-1.5">
+          <div className="flex items-center justify-between text-xs text-surface-400">
             <span className="font-bold text-gold-400 flex items-center gap-1">
               <FileText size={12} />
               <span>{item.title}</span>
             </span>
             <span>{item.reference}</span>
           </div>
-          <p className="text-sm font-arabic font-semibold text-white/90 leading-relaxed text-start line-clamp-3">
+          <p className="text-sm font-arabic font-semibold text-surface-100 leading-relaxed text-start line-clamp-3">
             « {item.arabicText} »
           </p>
         </div>
 
         {/* Voices Grid */}
         <div>
-          <label className="block text-xs font-bold text-white mb-2 flex items-center justify-between">
+          <label className="block text-xs font-bold text-surface-50 mb-2 flex items-center justify-between">
             <span>اختر الصوت العربي المناسب:</span>
-            <span className="text-[11px] text-white/40">6 أصوات نبرة نقية</span>
+            <span className="text-[11px] text-surface-400">6 أصوات نبرة نقية</span>
           </label>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -243,19 +243,19 @@ export const ArabicAiVoiceModal: React.FC<ArabicAiVoiceModalProps> = ({
                   className={`p-3 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
                     isSelected
                       ? 'bg-gradient-to-r from-gold-500/15 to-amber-500/15 border-gold-400 shadow-md shadow-gold-500/10'
-                      : 'bg-surface-950/50 border-white/[0.06] hover:border-white/20'
+                      : 'bg-surface-950/50 border-surface-700/30 hover:border-surface-700/60'
                   }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
                     <span className="text-2xl shrink-0">{voice.icon}</span>
                     <div className="min-w-0 text-start">
-                      <h4 className="text-xs font-bold text-white truncate flex items-center gap-1.5">
+                      <h4 className="text-xs font-bold text-surface-50 truncate flex items-center gap-1.5">
                         <span>{voice.name}</span>
-                        <span className="text-[10px] px-1.5 py-0.2 rounded bg-white/10 text-white/60">
+                        <span className="text-[10px] px-1.5 py-0.2 rounded bg-surface-800 text-surface-400 border border-surface-700/30">
                           {voice.region}
                         </span>
                       </h4>
-                      <p className="text-[11px] text-white/50 truncate mt-0.5">
+                      <p className="text-[11px] text-surface-400 truncate mt-0.5">
                         {voice.description}
                       </p>
                     </div>
@@ -280,13 +280,13 @@ export const ArabicAiVoiceModal: React.FC<ArabicAiVoiceModalProps> = ({
         </div>
 
         {/* Speed / Pace Controls */}
-        <div className="p-3.5 rounded-2xl bg-surface-950/60 border border-white/[0.06] flex items-center justify-between gap-4">
-          <span className="text-xs font-bold text-white flex items-center gap-1.5">
+        <div className="p-3.5 rounded-2xl bg-surface-950/60 border border-surface-700/40 flex items-center justify-between gap-4">
+          <span className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
             <Sliders size={14} className="text-sky-400" />
             <span>سرعة الإلقاء الصوتي:</span>
           </span>
 
-          <div className="flex items-center gap-1 bg-surface-900 p-1 rounded-xl border border-white/5 text-xs font-bold">
+          <div className="flex items-center gap-1 bg-surface-900 p-1 rounded-xl border border-surface-700/30 text-xs font-bold">
             {[
               { id: '-15%', label: 'هادئ ومتأنٍ' },
               { id: '+0%', label: 'طبيعي معتدل' },
@@ -299,7 +299,7 @@ export const ArabicAiVoiceModal: React.FC<ArabicAiVoiceModalProps> = ({
                 className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
                   speechRate === s.id
                     ? 'bg-sky-500 text-white font-black shadow-sm'
-                    : 'text-white/50 hover:text-white'
+                    : 'text-surface-400 hover:text-surface-50'
                 }`}
               >
                 {s.label}
@@ -309,7 +309,7 @@ export const ArabicAiVoiceModal: React.FC<ArabicAiVoiceModalProps> = ({
         </div>
 
         {/* Modal Footer */}
-        <div className="pt-3 border-t border-white/[0.08] flex items-center justify-between gap-3">
+        <div className="pt-3 border-t border-surface-700/40 flex items-center justify-between gap-3">
           <button
             type="button"
             onClick={handlePlayFullItem}

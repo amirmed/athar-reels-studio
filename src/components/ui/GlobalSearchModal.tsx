@@ -238,11 +238,11 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       size="lg"
-      className="border border-white/[0.1] rounded-3xl shadow-2xl shadow-black/90 overflow-hidden"
+      className="border border-surface-700/40 rounded-3xl shadow-2xl shadow-black/90 overflow-hidden"
       bodyClassName="p-0 flex flex-col max-h-[75vh]"
     >
       {/* Search Input Header */}
-      <div className="p-4 border-b border-white/[0.08] flex items-center gap-3 bg-surface-950/60">
+      <div className="p-4 border-b border-surface-700/40 flex items-center gap-3 bg-surface-950/60">
         <Search size={20} className="text-gold-400 shrink-0" />
         <input
           ref={inputRef}
@@ -253,19 +253,19 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
             setSelectedIndex(0);
           }}
           placeholder="ابحث عن سورة، قارئ، مشروع، صفحة أو أمر سريع..."
-          className="flex-1 bg-transparent text-white text-sm placeholder:text-white/40 focus:outline-none"
+          className="flex-1 bg-transparent text-surface-50 text-sm placeholder:text-surface-400 focus:outline-none"
         />
         {query && (
           <button
             type="button"
             onClick={() => setQuery('')}
-            className="p-1 rounded-lg hover:bg-white/[0.05] text-white/40 hover:text-white"
+            className="p-1 rounded-lg hover:bg-surface-800 text-surface-400 hover:text-surface-50"
             aria-label="مسح نص البحث"
           >
             <X size={16} />
           </button>
         )}
-        <div className="px-2 py-1 rounded-lg bg-surface-800 border border-white/[0.06] text-[11px] font-bold text-white/50">
+        <div className="px-2 py-1 rounded-lg bg-surface-800 border border-surface-700/40 text-[11px] font-bold text-surface-400">
           ESC للإغلاق
         </div>
       </div>
@@ -273,7 +273,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
       {/* Results List */}
       <div className="p-3 space-y-1 overflow-y-auto flex-1 custom-scrollbar">
         {searchResults.length === 0 ? (
-          <div className="py-12 text-center text-white/40 text-xs">
+          <div className="py-12 text-center text-surface-400 text-xs">
             لا توجد نتائج تطابق "{query}"
           </div>
         ) : (
@@ -287,8 +287,8 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
                 onMouseEnter={() => setSelectedIndex(idx)}
                 className={`w-full flex items-center justify-between p-3 rounded-2xl transition-all text-start cursor-pointer ${
                   isSelected
-                    ? 'bg-gold-500/15 border border-gold-400/40 text-white shadow-sm'
-                    : 'hover:bg-white/[0.04] border border-transparent text-white/80'
+                    ? 'bg-gold-500/15 border border-gold-400/40 text-surface-50 shadow-sm'
+                    : 'hover:bg-surface-800/60 border border-transparent text-surface-200'
                 }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
@@ -296,14 +296,14 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
                     className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
                       isSelected
                         ? 'bg-gold-400/20 text-gold-300'
-                        : 'bg-surface-800 text-white/60'
+                        : 'bg-surface-800 text-surface-400'
                     }`}
                   >
                     {item.icon}
                   </div>
                   <div className="min-w-0">
                     <div className="text-xs font-bold truncate">{item.title}</div>
-                    <div className="text-xs text-white/45 truncate mt-0.5">{item.subtitle}</div>
+                    <div className="text-xs text-surface-400 truncate mt-0.5">{item.subtitle}</div>
                   </div>
                 </div>
 
@@ -311,7 +311,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
                   className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full shrink-0 ${
                     isSelected
                       ? 'bg-gold-400/20 text-gold-300'
-                      : 'bg-white/[0.06] text-white/50'
+                      : 'bg-surface-800 text-surface-400 border border-surface-700/40'
                   }`}
                 >
                   {item.category}
@@ -323,7 +323,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
       </div>
 
       {/* Search Footer */}
-      <div className="px-4 py-2.5 bg-surface-950/80 border-t border-white/[0.06] flex items-center justify-between text-xs text-white/40">
+      <div className="px-4 py-2.5 bg-surface-950/80 border-t border-surface-700/40 flex items-center justify-between text-xs text-surface-400">
         <div className="flex items-center gap-4">
           <span>
             استخدم الأسهم <strong>↑ ↓</strong> للتنقل

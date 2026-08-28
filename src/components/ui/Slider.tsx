@@ -60,9 +60,9 @@ export const Slider: React.FC<SliderProps> = ({
         <div className="flex items-center justify-between text-xs">
           <label
             htmlFor={inputId}
-            className="flex items-center gap-1.5 text-white/90 font-medium cursor-pointer select-none"
+            className="flex items-center gap-1.5 text-surface-100 font-medium cursor-pointer select-none"
           >
-            {icon && <span className="text-white/60">{icon}</span>}
+            {icon && <span className="text-surface-400">{icon}</span>}
             {label && <span>{label}</span>}
           </label>
           {showValueBadge && (
@@ -90,14 +90,14 @@ export const Slider: React.FC<SliderProps> = ({
           aria-valuenow={value}
           aria-valuetext={String(displayVal)}
           onChange={(e) => onChange(parseFloat(e.target.value))}
-          className={`w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-accent-500/50 ${ACCENT_CLASSES[accentColor]}`}
+          className={`w-full h-1.5 bg-surface-700/50 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-accent-500/50 ${ACCENT_CLASSES[accentColor]}`}
           style={{
-            background: `linear-gradient(to right, ${activeHex} 0%, ${activeHex} ${percentage}%, rgba(255, 255, 255, 0.1) ${percentage}%, rgba(255, 255, 255, 0.1) 100%)`,
+            background: `linear-gradient(to right, ${activeHex} 0%, ${activeHex} ${percentage}%, rgba(120, 130, 160, 0.25) ${percentage}%, rgba(120, 130, 160, 0.25) 100%)`,
           }}
         />
       </div>
 
-      {hint && <p className="text-[11px] text-white/60 leading-relaxed">{hint}</p>}
+      {hint && <p className="text-[11px] text-surface-400 leading-relaxed">{hint}</p>}
     </div>
   );
 };

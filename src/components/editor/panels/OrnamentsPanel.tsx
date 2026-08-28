@@ -14,10 +14,10 @@ export const OrnamentsPanel: React.FC<OrnamentsPanelProps> = ({
 }) => {
   return (
     <div className="space-y-4 animate-in">
-      <div className="flex items-center justify-between p-3 rounded-xl bg-surface-900/90 border border-white/[0.06]">
+      <div className="flex items-center justify-between p-3 rounded-xl bg-surface-900/90 border border-surface-700/40">
         <div className="flex items-center gap-1.5">
           <Frame size={14} className="text-emerald-400" />
-          <span className="font-bold text-white text-xs">تفعيل الإطارات الملكية</span>
+          <span className="font-bold text-surface-50 text-xs">تفعيل الإطارات الملكية</span>
         </div>
         <input
           type="checkbox"
@@ -32,7 +32,7 @@ export const OrnamentsPanel: React.FC<OrnamentsPanelProps> = ({
       {textSettings.showIslamicOrnaments && (
         <>
           <div>
-            <label className="text-xs font-bold text-white/60 mb-2 block">نوع الإطار الملكي</label>
+            <label className="text-xs font-bold text-surface-400 mb-2 block">نوع الإطار الملكي</label>
             <div className="grid grid-cols-2 gap-2">
               {[
                 { id: 'royalFrame', name: 'إطار ملكي ذهبي' },
@@ -42,11 +42,12 @@ export const OrnamentsPanel: React.FC<OrnamentsPanelProps> = ({
               ].map((o) => (
                 <button
                   key={o.id}
+                  type="button"
                   onClick={() => setTextSettings((s) => ({ ...s, ornamentStyle: o.id as TextSettings['ornamentStyle'] }))}
-                  className={`p-2 rounded-lg text-xs font-bold transition-all text-center ${
+                  className={`p-2 rounded-lg text-xs font-bold transition-all text-center cursor-pointer ${
                     textSettings.ornamentStyle === o.id
                       ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shadow-sm'
-                      : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/5'
+                      : 'bg-surface-800/60 text-surface-400 hover:bg-surface-800 hover:text-surface-50 border border-surface-700/40'
                   }`}
                 >
                   {o.name}

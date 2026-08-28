@@ -112,11 +112,11 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
         </button>
 
         <div className="text-start">
-          <div className="text-xs font-bold text-white flex items-center justify-start gap-1">
+          <div className="text-xs font-bold text-surface-50 flex items-center justify-start gap-1">
             <span>الذكاء القرآني للسياق</span>
             <Sparkles size={13} className="text-gold-400" />
           </div>
-          <div className="text-[11px] text-white/50">
+          <div className="text-[11px] text-surface-400">
             يقرأ معاني الآية ويختار الخلفية والتدرج المناسبين
           </div>
         </div>
@@ -125,21 +125,21 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
       {/* Target Scope Switcher (All Scenes vs Current Scene) */}
       {ayahs.length > 1 && (
         <div className="p-3 rounded-2xl bg-surface-900/90 border border-gold-400/30 space-y-2">
-          <div className="flex items-center justify-between text-xs font-bold text-white">
+          <div className="flex items-center justify-between text-xs font-bold text-surface-50">
             <span>نطاق تطبيق الصورة المختارة:</span>
             <span className="text-[11px] text-gold-300 font-mono">
               {applyScope === 'all' ? '🌟 كامل الريلز' : `🎬 مشهد ${currentAyahIndex + 1}`}
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-1.5 p-1 bg-surface-950 rounded-xl border border-white/5 text-xs font-bold">
+          <div className="grid grid-cols-2 gap-1.5 p-1 bg-surface-950 rounded-xl border border-surface-700/30 text-xs font-bold">
             <button
               type="button"
               onClick={() => setApplyScope('all')}
               className={`py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                 applyScope === 'all'
                   ? 'bg-gradient-to-r from-gold-500 to-amber-500 text-surface-950 font-extrabold shadow-sm'
-                  : 'text-white/50 hover:text-white'
+                  : 'text-surface-400 hover:text-surface-50'
               }`}
             >
               <span>🌟 جميع الآيات (الكل)</span>
@@ -151,7 +151,7 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
               className={`py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                 applyScope === 'current'
                   ? 'bg-sky-500 text-white font-extrabold shadow-sm'
-                  : 'text-white/50 hover:text-white'
+                  : 'text-surface-400 hover:text-surface-50'
               }`}
             >
               <span>🎬 المشهد الحالي ({currentAyahIndex + 1})</span>
@@ -180,7 +180,7 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
                 <Layers size={16} />
               </div>
               <div>
-                <span className="font-bold text-white text-xs block">
+                <span className="font-bold text-surface-50 text-xs block">
                   تغيير المشاهد مع كل آية (Story Mode) 🎬
                 </span>
                 <span className="text-[11px] text-sky-300/70">
@@ -205,8 +205,8 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
           </div>
 
           {(textSettings.enableMultiScene ?? false) && (
-            <div className="space-y-2 pt-1 border-t border-white/[0.06]">
-              <p className="text-[11px] text-white/50 leading-relaxed">
+            <div className="space-y-2 pt-1 border-t border-surface-700/40">
+              <p className="text-[11px] text-surface-400 leading-relaxed">
                 اضغط على أي مشهد لتخصيص صورته المنفردة أو اختر «جميع الآيات» لتبديل الخلفية للجميع
                 دفعة واحدة.
               </p>
@@ -224,7 +224,7 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
                       className={`px-2.5 py-1.5 rounded-lg border text-[11px] font-bold shrink-0 cursor-pointer transition-all flex items-center gap-1.5 ${
                         currentAyahIndex === aIdx
                           ? 'bg-sky-500/30 border-sky-400 text-sky-200 shadow-sm'
-                          : 'bg-surface-800/80 border-white/[0.06] text-white/50 hover:text-white'
+                          : 'bg-surface-800/80 border-surface-700/40 text-surface-400 hover:text-surface-50'
                       }`}
                     >
                       <span>مشهد {aIdx + 1}</span>
@@ -239,7 +239,7 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
       )}
 
       {/* Background source selector */}
-      <div className="flex items-center gap-1 p-1 bg-surface-900/90 rounded-xl border border-white/[0.06]">
+      <div className="flex items-center gap-1 p-1 bg-surface-900/90 rounded-xl border border-surface-700/40">
         {[
           { id: 'pexels' as const, label: 'Pexels 4K' },
           { id: 'ai' as const, label: 'توليد AI' },
@@ -250,7 +250,7 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
             type="button"
             onClick={() => setBgTab(t.id)}
             className={`flex-1 py-1.5 rounded-lg font-bold text-center transition-all cursor-pointer text-xs ${
-              bgTab === t.id ? 'bg-sky-500 text-white shadow-sm' : 'text-white/40 hover:text-white'
+              bgTab === t.id ? 'bg-sky-500 text-white shadow-sm' : 'text-surface-400 hover:text-surface-50'
             }`}
           >
             {t.label}
@@ -305,7 +305,7 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
         />
       )}
 
-      <div className="pt-2 border-t border-white/[0.06]">
+      <div className="pt-2 border-t border-surface-700/40">
         <Slider
           label="عتامة وتغميق الخلفية"
           min={0.1}
@@ -318,13 +318,13 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
       </div>
 
       {/* Cinematic Color Grading & Mood Selector */}
-      <div className="pt-3 border-t border-white/[0.06] space-y-2.5">
+      <div className="pt-3 border-t border-surface-700/40 space-y-2.5">
         <div className="flex items-center justify-between">
-          <label className="text-xs font-bold text-white flex items-center gap-1.5">
+          <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
             <Sparkles size={14} className="text-gold-400" />
             <span>فلاتر التدرج والتصحيح اللوني السينمائي 🎨</span>
           </label>
-          <span className="text-[11px] text-white/40">Color Moods</span>
+          <span className="text-[11px] text-surface-400">Color Moods</span>
         </div>
 
         <div className="grid grid-cols-3 gap-1.5">
@@ -345,8 +345,8 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
               }}
               className={`p-2 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1 ${
                 (textSettings.colorGrading ?? 'none') === filter.id
-                  ? 'bg-gold-500/20 border-gold-400 shadow-md shadow-gold-500/10 text-white font-bold'
-                  : 'bg-surface-900/80 border-white/[0.06] text-white/50 hover:text-white hover:bg-surface-800/60'
+                  ? 'bg-gold-500/20 border-gold-400 shadow-md shadow-gold-500/10 text-surface-50 font-bold'
+                  : 'bg-surface-900/80 border-surface-700/40 text-surface-400 hover:text-surface-50 hover:bg-surface-800/60'
               }`}
             >
               <span className="text-base">{filter.icon}</span>
@@ -357,13 +357,13 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
       </div>
 
       {/* 3D Slow Camera Motion & Ken Burns Selector */}
-      <div className="pt-3 border-t border-white/[0.06] space-y-2.5">
+      <div className="pt-3 border-t border-surface-700/40 space-y-2.5">
         <div className="flex items-center justify-between">
-          <label className="text-xs font-bold text-white flex items-center gap-1.5">
+          <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
             <Film size={14} className="text-sky-400" />
             <span>حركة الكاميرا السينمائية البطيئة 🎥</span>
           </label>
-          <span className="text-[11px] text-white/40">3D Camera Drift</span>
+          <span className="text-[11px] text-surface-400">3D Camera Drift</span>
         </div>
 
         <div className="grid grid-cols-2 gap-1.5">
@@ -382,8 +382,8 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
               }}
               className={`p-2 rounded-xl border text-start transition-all cursor-pointer flex items-center gap-2 ${
                 (textSettings.cameraMotion ?? 'none') === motionItem.id
-                  ? 'bg-sky-500/20 border-sky-400 shadow-md shadow-sky-500/10 text-white font-bold'
-                  : 'bg-surface-900/80 border-white/[0.06] text-white/50 hover:text-white hover:bg-surface-800/60'
+                  ? 'bg-sky-500/20 border-sky-400 shadow-md shadow-sky-500/10 text-surface-50 font-bold'
+                  : 'bg-surface-900/80 border-surface-700/40 text-surface-400 hover:text-surface-50 hover:bg-surface-800/60'
               }`}
             >
               <span className="text-sm">{motionItem.icon}</span>

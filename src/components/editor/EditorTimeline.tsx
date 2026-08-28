@@ -78,21 +78,21 @@ export const EditorTimeline: React.FC<EditorTimelineProps> = React.memo(
       ambientSounds.find((s) => s.id === audioSettings.ambientSoundId)?.name || 'بدون صوت طبيعة';
 
     return (
-      <div className="w-full bg-surface-900/95 backdrop-blur-xl border-t border-white/10 rounded-t-2xl shadow-2xl transition-all duration-300 z-20">
+      <div className="w-full bg-surface-900/95 backdrop-blur-xl border-t border-surface-700/40 rounded-t-2xl shadow-2xl transition-all duration-300 z-20">
         {/* Header bar */}
-        <div className="flex items-center justify-between px-3 py-1.5 border-b border-white/5 bg-surface-950/60">
+        <div className="flex items-center justify-between px-3 py-1.5 border-b border-surface-700/30 bg-surface-950/60">
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setIsExpanded(!isExpanded)}
-              className="flex items-center gap-1.5 text-xs font-bold text-white/80 hover:text-gold-400 transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 text-xs font-bold text-surface-200 hover:text-gold-400 transition-colors cursor-pointer"
             >
               <Clock size={13} className="text-gold-400" />
               <span>الشريط الزمني للآيات والصوت (Timeline)</span>
               {isExpanded ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
             </button>
 
-            <span className="text-[11px] px-2 py-0.5 rounded-md bg-white/5 text-white/50 font-mono">
+            <span className="text-[11px] px-2 py-0.5 rounded-md bg-surface-800/60 text-surface-400 font-mono">
               {ayahs.length} {ayahs.length === 1 ? 'آية' : 'آيات'} •{' '}
               {formatAudioTime(currentGlobalTime)} / {formatAudioTime(totalDuration)}
             </span>
@@ -121,11 +121,11 @@ export const EditorTimeline: React.FC<EditorTimelineProps> = React.memo(
               </div>
 
               {/* Zoom timeline scale */}
-              <div className="flex items-center gap-1 bg-surface-900 p-0.5 rounded-lg border border-white/10 text-xs">
+              <div className="flex items-center gap-1 bg-surface-900 p-0.5 rounded-lg border border-surface-700/40 text-xs">
                 <button
                   type="button"
                   onClick={() => setZoomLevel((z) => Math.max(1, z - 0.25))}
-                  className="p-1 text-white/50 hover:text-white cursor-pointer"
+                  className="p-1 text-surface-400 hover:text-surface-50 cursor-pointer"
                   title="تصغير التايم لاين"
                   aria-label="تصغير التايم لاين"
                 >
@@ -135,7 +135,7 @@ export const EditorTimeline: React.FC<EditorTimelineProps> = React.memo(
                 <button
                   type="button"
                   onClick={() => setZoomLevel((z) => Math.min(2.5, z + 0.25))}
-                  className="p-1 text-white/50 hover:text-white cursor-pointer"
+                  className="p-1 text-surface-400 hover:text-surface-50 cursor-pointer"
                   title="تكبير التايم لاين"
                   aria-label="تكبير التايم لاين"
                 >
@@ -188,27 +188,27 @@ export const EditorTimeline: React.FC<EditorTimelineProps> = React.memo(
                       className={`h-full rounded-xl border p-1.5 flex flex-col justify-between cursor-pointer transition-all relative overflow-hidden group focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 ${
                         isActive
                           ? 'bg-gradient-to-r from-gold-500/30 to-amber-500/25 border-gold-400 shadow-md shadow-gold-500/20 ring-1 ring-gold-400/40'
-                          : 'bg-surface-800/80 hover:bg-surface-700/80 border-white/10 hover:border-white/20'
+                          : 'bg-surface-800/80 hover:bg-surface-700/80 border-surface-700/40 hover:border-surface-600'
                       }`}
                       title={`انقر للانتقال للآية ${seg.ayahNumber}`}
                     >
                       {/* Top Row: Ayah Badge & Duration */}
                       <div className="flex items-center justify-between text-[11px]">
                         <span
-                          className={`font-bold flex items-center gap-1 ${isActive ? 'text-gold-300' : 'text-white/70'}`}
+                          className={`font-bold flex items-center gap-1 ${isActive ? 'text-gold-300' : 'text-surface-300'}`}
                         >
                           <span>﴿{seg.ayahNumber}﴾</span>
                           {isActive && (
                             <Sparkles size={10} className="text-gold-400 animate-pulse" />
                           )}
                         </span>
-                        <span className="font-mono text-[10px] text-white/40">
+                        <span className="font-mono text-[10px] text-surface-400">
                           {Math.round(seg.duration)}ث
                         </span>
                       </div>
 
                       {/* Bottom Row: Ayah Text snippet */}
-                      <div className="text-[11px] text-white/60 truncate font-arabic group-hover:text-white transition-colors">
+                      <div className="text-[11px] text-surface-400 truncate font-arabic group-hover:text-surface-50 transition-colors">
                         {seg.text}
                       </div>
 

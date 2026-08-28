@@ -23,12 +23,12 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       animate={{ opacity: 1, y: 0 }}
       className="flex flex-col items-center justify-center py-16 px-8"
     >
-      <div className="w-16 h-16 rounded-2xl bg-surface-800/50 border border-white/[0.06] flex items-center justify-center mb-4">
-        <Icon size={28} className="text-white/20" />
+      <div className="w-16 h-16 rounded-2xl bg-surface-800/50 border border-surface-700/40 flex items-center justify-center mb-4">
+        <Icon size={28} className="text-surface-500" />
       </div>
-      <h3 className="text-base font-semibold text-white/60 mb-2">{title}</h3>
+      <h3 className="text-base font-semibold text-surface-200 mb-2">{title}</h3>
       {description && (
-        <p className="text-sm text-white/30 max-w-sm text-center leading-relaxed">{description}</p>
+        <p className="text-sm text-surface-400 max-w-sm text-center leading-relaxed">{description}</p>
       )}
       {actionLabel && onAction && (
         <button onClick={onAction} className="btn-primary-sm mt-5">

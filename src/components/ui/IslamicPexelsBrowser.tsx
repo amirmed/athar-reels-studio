@@ -167,7 +167,7 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
               {mediaType === 'videos' ? <Film size={16} /> : <ImageIcon size={16} />}
             </div>
             <div className="min-w-0">
-              <h4 className="text-xs font-bold text-white flex items-center gap-1.5 flex-wrap">
+              <h4 className="text-xs font-bold text-surface-50 flex items-center gap-1.5 flex-wrap">
                 <span>
                   {mediaType === 'videos' ? 'مكتبة الفيديوهات الحية' : 'مكتبة صور Pexels 4K'}
                 </span>
@@ -175,7 +175,7 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
                   {mediaType === 'videos' ? '🎬 فيديوهات حية' : '🖼️ صور 4K نقية'}
                 </span>
               </h4>
-              <p className="text-[11px] text-white/50 truncate">
+              <p className="text-[11px] text-surface-400 truncate">
                 {mediaType === 'videos'
                   ? 'فيديوهات سينمائية للحرم، المساجد، والأمطار'
                   : 'خلفيات وصور إسلامية وطبيعية منتقاة للريلز'}
@@ -186,7 +186,7 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
           <button
             type="button"
             onClick={() => setShowKeyModal(!showKeyModal)}
-            className="p-1.5 rounded-xl bg-surface-900/80 hover:bg-surface-800 text-white/60 hover:text-white text-[11px] flex items-center gap-1 border border-white/[0.08] transition-all shrink-0 cursor-pointer shadow-sm"
+            className="p-1.5 rounded-xl bg-surface-900/80 hover:bg-surface-800 text-surface-400 hover:text-surface-50 text-[11px] flex items-center gap-1 border border-surface-700/40 transition-all shrink-0 cursor-pointer shadow-sm"
             title="إعدادات Pexels API المباشر"
           >
             <Key size={11} className={apiKey ? 'text-emerald-400' : 'text-gold-400'} />
@@ -195,7 +195,7 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
         </div>
 
         {/* Media Switcher: 🖼️ صور 4K (افتراضي) vs 🎬 فيديوهات حية */}
-        <div className="flex p-1 bg-surface-950/90 rounded-xl border border-white/[0.08] text-xs font-bold">
+        <div className="flex p-1 bg-surface-950/90 rounded-xl border border-surface-700/40 text-xs font-bold">
           <button
             type="button"
             onClick={() => {
@@ -205,7 +205,7 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
             className={`flex-1 py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer text-xs ${
               mediaType === 'photos'
                 ? 'bg-gradient-to-r from-sky-500 to-sky-600 text-white shadow-md font-bold'
-                : 'text-white/50 hover:text-white'
+                : 'text-surface-400 hover:text-surface-50'
             }`}
           >
             <ImageIcon size={13} />
@@ -220,7 +220,7 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
             className={`flex-1 py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer text-xs ${
               mediaType === 'videos'
                 ? 'bg-gradient-to-r from-sky-500 to-indigo-600 text-white shadow-md font-bold'
-                : 'text-white/50 hover:text-white'
+                : 'text-surface-400 hover:text-surface-50'
             }`}
           >
             <Film size={13} />
@@ -233,7 +233,7 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
       {showKeyModal && (
         <div className="p-3 rounded-xl bg-surface-900/90 border border-gold-500/30 space-y-2 animate-in">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-white flex items-center gap-1.5">
+            <span className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
               <Key size={13} className="text-gold-400" />
               ربط مفتاح Pexels المجاني (للبحث الحي عن ملايين الفيديوهات والصور):
             </span>
@@ -283,11 +283,11 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
             }
             className="glass-input w-full ps-9 pe-8 py-2 text-xs rounded-xl no-drag select-text cursor-text relative z-10"
           />
-          <Search size={14} className="absolute start-3 top-2.5 text-white/40" />
+          <Search size={14} className="absolute start-3 top-2.5 text-surface-400" />
           {searchQuery && (
             <button
               onClick={handleClearSearch}
-              className="absolute end-2.5 top-2.5 text-white/40 hover:text-white cursor-pointer z-20"
+              className="absolute end-2.5 top-2.5 text-surface-400 hover:text-surface-50 cursor-pointer z-20"
               title="مسح البحث"
             >
               <X size={13} />
@@ -307,7 +307,7 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
       {/* Quick Search Preset Tags */}
       <div>
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-          <span className="text-[11px] text-white/40 shrink-0">كلمات سريعة:</span>
+          <span className="text-[11px] text-surface-400 shrink-0">كلمات سريعة:</span>
           {ISLAMIC_SEARCH_TAGS.map((item) => (
             <button
               key={item.tag}
@@ -315,7 +315,7 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
               className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all shrink-0 border cursor-pointer ${
                 searchQuery.toLowerCase() === item.tag
                   ? 'bg-sky-500/20 text-sky-300 border-sky-400/50 shadow-sm'
-                  : 'bg-surface-800/50 hover:bg-surface-800 text-white/60 hover:text-white border-white/[0.04]'
+                  : 'bg-surface-800/50 hover:bg-surface-800 text-surface-300 hover:text-surface-50 border-surface-700/30'
               }`}
             >
               {item.label}
@@ -325,7 +325,7 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
       </div>
 
       {/* Categories Filter Tabs */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none pt-1 border-t border-white/[0.04]">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none pt-1 border-t border-surface-700/30">
         {mediaType === 'videos'
           ? ISLAMIC_VIDEO_CATEGORIES.map((cat) => (
               <button
@@ -337,7 +337,7 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
                 className={`px-3 py-1 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
                   selectedVideoCategory === cat.id
                     ? 'bg-gradient-to-r from-sky-500 to-indigo-600 text-white shadow-md shadow-sky-500/20'
-                    : 'bg-surface-800/60 text-white/60 hover:text-white hover:bg-surface-800 border border-white/[0.04]'
+                    : 'bg-surface-800/60 text-surface-300 hover:text-surface-50 hover:bg-surface-800 border border-surface-700/40'
                 }`}
               >
                 {cat.name}
@@ -353,7 +353,7 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
                 className={`px-3 py-1 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
                   selectedPhotoCategory === cat.id
                     ? 'bg-sky-500 text-white shadow-md shadow-sky-500/20'
-                    : 'bg-surface-800/60 text-white/60 hover:text-white hover:bg-surface-800 border border-white/[0.04]'
+                    : 'bg-surface-800/60 text-surface-300 hover:text-surface-50 hover:bg-surface-800 border border-surface-700/40'
                 }`}
               >
                 {cat.name}
@@ -367,14 +367,14 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
           ? Array.from({ length: 6 }).map((_, idx) => (
               <div
                 key={`skel-${idx}`}
-                className="rounded-xl h-28 bg-surface-800/80 border border-white/[0.06] animate-pulse flex flex-col justify-between p-2"
+                className="rounded-xl h-28 bg-surface-800/80 border border-surface-700/40 animate-pulse flex flex-col justify-between p-2"
               >
                 <div className="flex justify-end">
-                  <div className="w-4 h-4 rounded-full bg-white/10" />
+                  <div className="w-4 h-4 rounded-full bg-surface-700" />
                 </div>
                 <div className="space-y-1">
-                  <div className="w-2/3 h-2.5 rounded bg-white/10" />
-                  <div className="w-1/3 h-2 rounded bg-white/5" />
+                  <div className="w-2/3 h-2.5 rounded bg-surface-700" />
+                  <div className="w-1/3 h-2 rounded bg-surface-700/60" />
                 </div>
               </div>
             ))
@@ -401,7 +401,7 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
                       className={`group relative rounded-xl h-32 overflow-hidden cursor-pointer border transition-all duration-300 ${
                         isSelected
                           ? 'border-sky-400 ring-2 ring-sky-500/40 shadow-lg scale-[1.02]'
-                          : 'border-white/[0.06] hover:border-sky-400/50 hover:shadow-md'
+                          : 'border-surface-700/40 hover:border-sky-400/50 hover:shadow-md'
                       }`}
                     >
                       {isHovered ? (
@@ -461,7 +461,7 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
                       className={`group relative rounded-xl h-32 overflow-hidden cursor-pointer border transition-all duration-300 ${
                         isSelected
                           ? 'border-sky-400 ring-2 ring-sky-500/50 shadow-xl shadow-sky-500/20 scale-[1.02]'
-                          : 'border-white/[0.08] hover:border-sky-400/60 hover:shadow-lg'
+                          : 'border-surface-700/40 hover:border-sky-400/60 hover:shadow-lg'
                       }`}
                     >
                       {isHovered ? (
@@ -520,7 +520,7 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
                       className={`group relative rounded-xl h-28 overflow-hidden cursor-pointer border transition-all duration-300 ${
                         isSelected
                           ? 'border-sky-400 ring-2 ring-sky-500/40 shadow-lg scale-[1.02]'
-                          : 'border-white/[0.06] hover:border-sky-400/50 hover:shadow-md'
+                          : 'border-surface-700/40 hover:border-sky-400/50 hover:shadow-md'
                       }`}
                     >
                       <img
@@ -553,7 +553,7 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
                       className={`group relative rounded-xl h-28 overflow-hidden cursor-pointer border transition-all duration-300 ${
                         isSelected
                           ? 'border-sky-400 ring-2 ring-sky-500/40 shadow-lg scale-[1.02]'
-                          : 'border-white/[0.06] hover:border-sky-400/50 hover:shadow-md'
+                          : 'border-surface-700/40 hover:border-sky-400/50 hover:shadow-md'
                       }`}
                     >
                       <img
@@ -585,7 +585,7 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
       {/* Empty State */}
       {((mediaType === 'videos' && filteredVideos.length === 0 && liveVideos.length === 0) ||
         (mediaType === 'photos' && filteredWallpapers.length === 0 && livePhotos.length === 0)) && (
-        <div className="py-8 text-center text-white/40">
+        <div className="py-8 text-center text-surface-400">
           <Video size={24} className="mx-auto mb-1.5 opacity-40" />
           <p className="text-xs">لم يتم العثور على وسائط تطابق بحثك</p>
         </div>

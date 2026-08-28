@@ -11,10 +11,10 @@ const iconMap = {
 };
 
 const bgMap = {
-  success: 'bg-green-500/10 border-green-500/20',
-  error: 'bg-red-500/10 border-red-500/20',
-  info: 'bg-blue-500/10 border-blue-500/20',
-  warning: 'bg-yellow-500/10 border-yellow-500/20',
+  success: 'bg-surface-900/95 border-emerald-500/30 text-emerald-300',
+  error: 'bg-surface-900/95 border-red-500/30 text-red-300',
+  info: 'bg-surface-900/95 border-sky-500/30 text-sky-300',
+  warning: 'bg-surface-900/95 border-amber-500/30 text-amber-300',
 };
 
 interface ToastItemProps {
@@ -36,7 +36,7 @@ const ToastItem: React.FC<ToastItemProps> = React.memo(({ toast }) => {
       `}
     >
       {iconMap[toast.type || 'info']}
-      <p className="text-sm text-white/90 font-medium flex-1">{toast.message}</p>
+      <p className="text-sm text-surface-50 font-medium flex-1">{toast.message}</p>
       {toast.action && (
         <button
           type="button"
@@ -44,14 +44,14 @@ const ToastItem: React.FC<ToastItemProps> = React.memo(({ toast }) => {
             toast.action?.onClick();
             removeToast(toast.id);
           }}
-          className="px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 text-white text-xs font-bold transition-all shrink-0 cursor-pointer shadow-sm"
+          className="px-2.5 py-1 rounded-lg bg-surface-800 hover:bg-surface-700 text-surface-50 border border-surface-700/40 text-xs font-bold transition-all shrink-0 cursor-pointer shadow-sm"
         >
           {toast.action.label}
         </button>
       )}
       <button
         onClick={() => removeToast(toast.id)}
-        className="text-white/60 hover:text-white transition-colors p-1 cursor-pointer"
+        className="text-surface-400 hover:text-surface-50 transition-colors p-1 cursor-pointer"
         aria-label="إغلاق التنبيه"
       >
         <X size={14} />

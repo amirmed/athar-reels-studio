@@ -79,13 +79,13 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
   useHotkeys('Escape', () => setIsToolsMenuOpen(false), { enabled: isToolsMenuOpen });
 
   return (
-    <header className="h-16 border-b border-white/10 bg-surface-900/90 backdrop-blur-md px-3 sm:px-4 flex items-center justify-between z-30 sticky top-0">
+    <header className="h-16 border-b border-surface-700/40 bg-surface-900/90 backdrop-blur-md px-3 sm:px-4 flex items-center justify-between z-30 sticky top-0">
       {/* Left: Back & Project Title & Quick Actions */}
       <div className="flex items-center gap-2 md:gap-3 min-w-0">
         <button
           type="button"
           onClick={onBack}
-          className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-all cursor-pointer flex items-center gap-1.5 text-xs font-bold shrink-0"
+          className="p-2 rounded-xl bg-surface-800/60 hover:bg-surface-800 text-surface-300 hover:text-surface-50 transition-all cursor-pointer flex items-center gap-1.5 text-xs font-bold shrink-0"
           title="الرجوع للرئيسية"
           aria-label="الرجوع للرئيسية"
         >
@@ -93,11 +93,11 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           <span className="hidden sm:inline">الرئيسية</span>
         </button>
 
-        <div className="h-5 w-[1px] bg-white/10 mx-1 hidden sm:block shrink-0" />
+        <div className="h-5 w-[1px] bg-surface-700/40 mx-1 hidden sm:block shrink-0" />
 
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <h1 className="text-xs sm:text-sm md:text-base font-bold text-white max-w-[120px] sm:max-w-[180px] md:max-w-[240px] lg:max-w-[320px] truncate">
+            <h1 className="text-xs sm:text-sm md:text-base font-bold text-surface-50 max-w-[120px] sm:max-w-[180px] md:max-w-[240px] lg:max-w-[320px] truncate">
               {currentProject?.name || 'مشروع ريلز قرآني'}
             </h1>
             {saveStatus === 'saving' ? (
@@ -122,15 +122,15 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
         </div>
 
         {/* Undo / Redo Buttons */}
-        <div className="flex items-center bg-surface-950/80 p-0.5 sm:p-1 rounded-xl border border-white/10 gap-0.5 sm:gap-1 shrink-0">
+        <div className="flex items-center bg-surface-950/80 p-0.5 sm:p-1 rounded-xl border border-surface-700/40 gap-0.5 sm:gap-1 shrink-0">
           <button
             type="button"
             onClick={onUndo}
             disabled={!canUndo}
             className={`p-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
               canUndo
-                ? 'text-white hover:text-gold-300 hover:bg-white/10 cursor-pointer active:scale-95'
-                : 'text-white/20 cursor-not-allowed'
+                ? 'text-surface-50 hover:text-gold-300 hover:bg-surface-800 cursor-pointer active:scale-95'
+                : 'text-surface-500 cursor-not-allowed'
             }`}
             title="تراجع (Ctrl + Z)"
             aria-label="تراجع (Ctrl + Z)"
@@ -144,8 +144,8 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
             disabled={!canRedo}
             className={`p-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
               canRedo
-                ? 'text-white hover:text-gold-300 hover:bg-white/10 cursor-pointer active:scale-95'
-                : 'text-white/20 cursor-not-allowed'
+                ? 'text-surface-50 hover:text-gold-300 hover:bg-surface-800 cursor-pointer active:scale-95'
+                : 'text-surface-500 cursor-not-allowed'
             }`}
             title="إعادة (Ctrl + Y)"
             aria-label="إعادة (Ctrl + Y)"
@@ -167,7 +167,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
             className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
               isProMode
                 ? 'bg-purple-500/20 text-purple-300 border-purple-500/40 shadow-sm'
-                : 'bg-surface-800 text-white/80 border-white/10 hover:border-gold-400/40 hover:text-white'
+                : 'bg-surface-800 text-surface-200 border-surface-700/40 hover:border-gold-400/40 hover:text-surface-50'
             }`}
             title="التبديل بين الوضع المبسط والوضع المتقدم"
             aria-label="التبديل بين الوضع المبسط والوضع المتقدم"
@@ -196,7 +196,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
             className={`p-2 rounded-xl border transition-all cursor-pointer flex items-center gap-1 text-xs font-bold ${
               isToolsMenuOpen
                 ? 'bg-gold-500/20 text-gold-300 border-gold-500/40'
-                : 'bg-surface-800/80 hover:bg-surface-700 text-white/80 hover:text-white border-white/10'
+                : 'bg-surface-800/80 hover:bg-surface-700 text-surface-200 hover:text-surface-50 border-surface-700/40'
             }`}
             title="المزيد من الأدوات الإبداعية والاستوديوهات"
             aria-label="المزيد من الأدوات الإبداعية والاستوديوهات"
@@ -216,7 +216,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                 transition={{ duration: 0.15 }}
                 className="absolute start-0 sm:end-auto mt-2 w-56 bg-surface-900/95 backdrop-blur-xl border border-gold-500/30 rounded-2xl p-2 shadow-2xl z-50 space-y-1 text-start"
               >
-                <div className="px-3 py-1.5 border-b border-white/10 text-[11px] font-bold text-white/40">
+                <div className="px-3 py-1.5 border-b border-surface-700/40 text-[11px] font-bold text-surface-400">
                   استوديوهات وأدوات إضافية:
                 </div>
 
@@ -281,10 +281,10 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                       setIsToolsMenuOpen(false);
                       onOpenKeyboardShortcuts();
                     }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-white/70 hover:bg-white/10 hover:text-white transition-all text-start cursor-pointer border-t border-white/5 pt-2"
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-surface-300 hover:bg-surface-800 hover:text-surface-50 transition-all text-start cursor-pointer border-t border-surface-700/30 pt-2"
                     aria-label="اختصارات لوحة المفاتيح"
                   >
-                    <Keyboard size={15} className="text-white/50" />
+                    <Keyboard size={15} className="text-surface-400" />
                     <span>اختصارات لوحة المفاتيح ⌨️</span>
                   </button>
                 )}
@@ -297,7 +297,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
         <button
           type="button"
           onClick={onSave}
-          className="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer border border-white/10 active:scale-95"
+          className="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-surface-800 hover:bg-surface-700 text-surface-50 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer border border-surface-700/40 active:scale-95"
           title="حفظ المشروع (Ctrl + S)"
           aria-label="حفظ المشروع (Ctrl + S)"
         >

@@ -271,7 +271,7 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
       />
 
       {currentFile ? (
-        <div className="relative rounded-xl overflow-hidden border border-white/[0.08] bg-surface-800/60 shadow-lg">
+        <div className="relative rounded-xl overflow-hidden border border-surface-700/40 bg-surface-800/60 shadow-lg">
           {/* Media Preview (Video or Image) */}
           <div className="h-32 bg-gradient-to-br from-surface-700 to-surface-850 flex items-center justify-center overflow-hidden relative group">
             {isCurrentVideo ? (
@@ -301,12 +301,12 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-1.5 p-2 bg-surface-900/80 backdrop-blur-sm border-t border-white/[0.06]">
+          <div className="flex items-center gap-1.5 p-2 bg-surface-900/80 backdrop-blur-sm border-t border-surface-700/40">
             <button
               type="button"
               onClick={handleUploadClick}
               disabled={isReadingFile}
-              className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-surface-750 text-white/70 text-xs hover:bg-surface-700 hover:text-white font-medium transition-all cursor-pointer"
+              className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-surface-750 text-surface-300 text-xs hover:bg-surface-700 hover:text-surface-50 font-medium transition-all cursor-pointer"
             >
               {isReadingFile ? (
                 <Loader2 size={13} className="animate-spin text-gold-400" />
@@ -331,14 +331,14 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
       ) : (
         <div className="space-y-2">
           {/* Mode tabs */}
-          <div className="flex gap-1 p-1 bg-surface-800/40 rounded-xl border border-white/[0.04]">
+          <div className="flex gap-1 p-1 bg-surface-800/40 rounded-xl border border-surface-700/40">
             <button
               type="button"
               onClick={() => setMode('upload')}
               className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 mode === 'upload'
                   ? 'bg-gradient-to-r from-accent-500/20 to-sky-500/20 text-accent-300 border border-accent-500/30 shadow-sm'
-                  : 'text-white/40 hover:text-white/70'
+                  : 'text-surface-400 hover:text-surface-200'
               }`}
             >
               <Upload size={12} />
@@ -350,7 +350,7 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
               className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 mode === 'url'
                   ? 'bg-gradient-to-r from-accent-500/20 to-sky-500/20 text-accent-300 border border-accent-500/30 shadow-sm'
-                  : 'text-white/40 hover:text-white/70'
+                  : 'text-surface-400 hover:text-surface-200'
               }`}
             >
               <Link size={12} />
@@ -362,7 +362,7 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
               className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 mode === 'search'
                   ? 'bg-gradient-to-r from-accent-500/20 to-sky-500/20 text-accent-300 border border-accent-500/30 shadow-sm'
-                  : 'text-white/40 hover:text-white/70'
+                  : 'text-surface-400 hover:text-surface-200'
               }`}
             >
               <Search size={12} />
@@ -382,14 +382,14 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
                          ${
                            isDragging
                              ? 'border-gold-400 bg-gold-500/10 shadow-lg shadow-gold-500/10 scale-[1.01]'
-                             : 'border-white/[0.12] bg-surface-800/40 hover:border-gold-400/50 hover:bg-surface-800/70'
+                             : 'border-surface-700/40 bg-surface-800/40 hover:border-gold-400/50 hover:bg-surface-800/70'
                          }`}
             >
               <div
                 className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-all ${
                   isDragging
                     ? 'bg-gold-500/20 text-gold-300 scale-110'
-                    : 'bg-surface-700/60 text-white/50 group-hover:bg-gold-500/15 group-hover:text-gold-400'
+                    : 'bg-surface-700/60 text-surface-400 group-hover:bg-gold-500/15 group-hover:text-gold-400'
                 }`}
               >
                 {isReadingFile ? (
@@ -399,12 +399,12 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
                 )}
               </div>
               <div className="text-center px-4">
-                <span className="block text-xs font-bold text-white/80 group-hover:text-white transition-colors">
+                <span className="block text-xs font-bold text-surface-100 group-hover:text-surface-50 transition-colors">
                   {isReadingFile
                     ? 'جارٍ قراءة الملف...'
                     : `اضغط لاختيار ${typeLabels[type]} من جهازك`}
                 </span>
-                <span className="block text-[11px] text-white/40 mt-0.5 font-sans">
+                <span className="block text-[11px] text-surface-400 mt-0.5 font-sans">
                   أو اسحب وأفلت الملف هنا (JPG, PNG, WEBP, MP4)
                 </span>
               </div>
@@ -420,7 +420,7 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
                   value={urlInput}
                   onChange={(e) => setUrlInput(e.target.value)}
                   placeholder="الصق رابط الصورة أو الفيديو المباشر هنا..."
-                  className="flex-1 glass-input text-xs py-2 px-3 rounded-xl border border-white/10"
+                  className="flex-1 glass-input text-xs py-2 px-3 rounded-xl border border-surface-700/40"
                   dir="ltr"
                   onKeyDown={(e) => e.key === 'Enter' && handleUrlSubmit()}
                 />
@@ -447,7 +447,7 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="ابحث عن خلفية (مساجد، طبيعة، سماء...)"
-                  className="flex-1 glass-input text-xs py-2 px-3 rounded-xl border border-white/10"
+                  className="flex-1 glass-input text-xs py-2 px-3 rounded-xl border border-surface-700/40"
                   onKeyDown={(e) => e.key === 'Enter' && handleCustomSearch()}
                 />
                 <button
@@ -475,7 +475,7 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
                     className={`px-2 py-1 rounded-lg text-[11px] font-medium border transition-all cursor-pointer ${
                       selectedCategory === cat.id
                         ? 'bg-accent-500/15 border-accent-500/30 text-accent-300'
-                        : 'bg-surface-800/50 border-white/[0.05] text-white/50 hover:bg-surface-700 hover:text-white'
+                        : 'bg-surface-800/50 border-surface-700/40 text-surface-400 hover:bg-surface-700 hover:text-surface-50'
                     }`}
                   >
                     {cat.label}
@@ -485,13 +485,13 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
 
               {/* Search results grid */}
               {searchResults.length > 0 && (
-                <div className="grid grid-cols-4 gap-1.5 max-h-48 overflow-y-auto rounded-xl p-1.5 bg-surface-850/80 border border-white/[0.06] custom-scrollbar">
+                <div className="grid grid-cols-4 gap-1.5 max-h-48 overflow-y-auto rounded-xl p-1.5 bg-surface-850/80 border border-surface-700/40 custom-scrollbar">
                   {searchResults.map((url, i) => (
                     <button
                       key={i}
                       type="button"
                       onClick={() => handleSelectBackground(url)}
-                      className="relative aspect-[9/16] rounded-lg overflow-hidden border border-white/[0.06] 
+                      className="relative aspect-[9/16] rounded-lg overflow-hidden border border-surface-700/40 
                                  hover:border-gold-400/60 hover:scale-105 transition-all group cursor-pointer"
                     >
                       <img

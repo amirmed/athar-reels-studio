@@ -38,7 +38,7 @@ export const TemplatesPanel: React.FC<TemplatesPanelProps> = ({
         <span>معاينة القوالب السينمائية بالصور 🖼️</span>
       </button>
 
-      <p className="text-xs text-white/70 pt-1 font-medium">أو اختر قالباً سريعاً بنقرة واحدة:</p>
+      <p className="text-xs text-surface-300 pt-1 font-medium">أو اختر قالباً سريعاً بنقرة واحدة:</p>
       <div className="space-y-2">
         {studioTemplates.map((tpl) => (
           <div
@@ -47,10 +47,10 @@ export const TemplatesPanel: React.FC<TemplatesPanelProps> = ({
             className={`p-3 rounded-2xl border cursor-pointer transition-all flex items-center gap-3 group ${
               activeTemplateId === tpl.id
                 ? 'bg-gold-500/15 border-gold-400/50 shadow-sm'
-                : 'bg-surface-900/80 hover:bg-surface-800 border-white/[0.06] hover:border-gold-400/40'
+                : 'bg-surface-900/80 hover:bg-surface-800 border-surface-700/40 hover:border-gold-400/40'
             }`}
           >
-            <div className="w-10 h-10 rounded-xl overflow-hidden bg-surface-950 shrink-0 border border-white/[0.08] relative">
+            <div className="w-10 h-10 rounded-xl overflow-hidden bg-surface-950 shrink-0 border border-surface-700/40 relative">
               <img src={tpl.backgroundUrl} alt={tpl.name} className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black/30 flex items-center justify-center text-sm">
                 {tpl.icon}
@@ -58,14 +58,14 @@ export const TemplatesPanel: React.FC<TemplatesPanelProps> = ({
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between">
-                <h4 className="font-bold text-white group-hover:text-gold-300 transition-colors text-xs">
+                <h4 className="font-bold text-surface-50 group-hover:text-gold-300 transition-colors text-xs">
                   {tpl.name}
                 </h4>
-                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-white/10 text-white/80 border border-white/10">
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-surface-800 text-surface-300 border border-surface-700/40">
                   {tpl.tag}
                 </span>
               </div>
-              <p className="text-xs text-white/60 truncate mt-0.5">{tpl.description}</p>
+              <p className="text-xs text-surface-400 truncate mt-0.5">{tpl.description}</p>
             </div>
           </div>
         ))}

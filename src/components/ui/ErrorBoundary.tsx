@@ -81,15 +81,15 @@ ${errorInfo?.componentStack || 'No component stack'}
             <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-rose-500/10 rounded-full blur-[100px]" />
           </div>
 
-          <div className="relative z-10 max-w-xl w-full rounded-3xl bg-surface-900/90 border border-white/10 p-8 shadow-2xl backdrop-blur-xl space-y-6">
+          <div className="relative z-10 max-w-xl w-full rounded-3xl bg-surface-900/90 border border-surface-700/40 p-8 shadow-2xl backdrop-blur-xl space-y-6">
             {/* Header Icon & Title */}
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 rounded-2xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400 shrink-0 shadow-lg shadow-rose-500/10">
                 <AlertTriangle size={28} />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-white">حدث خطأ غير متوقع في الواجهة</h2>
-                <p className="text-xs text-white/50 mt-1 leading-relaxed">
+                <h2 className="text-xl font-bold text-surface-50">حدث خطأ غير متوقع في الواجهة</h2>
+                <p className="text-xs text-surface-400 mt-1 leading-relaxed">
                   تم رصد الخطأ وحماية بياناتك المحفوظة بأمان. يمكنك إعادة التحميل أو العودة
                   للرئيسية.
                 </p>
@@ -97,8 +97,8 @@ ${errorInfo?.componentStack || 'No component stack'}
             </div>
 
             {/* Error Message Box */}
-            <div className="p-4 rounded-2xl bg-surface-950 border border-white/[0.06] text-xs font-mono text-rose-300/90 break-words leading-relaxed">
-              <div className="flex items-center gap-1.5 text-white/40 mb-1.5 font-bold font-sans">
+            <div className="p-4 rounded-2xl bg-surface-950 border border-surface-700/40 text-xs font-mono text-rose-300/90 break-words leading-relaxed">
+              <div className="flex items-center gap-1.5 text-surface-400 mb-1.5 font-bold font-sans">
                 <Terminal size={13} />
                 <span>رسالة الخطأ:</span>
               </div>
@@ -109,14 +109,14 @@ ${errorInfo?.componentStack || 'No component stack'}
 
             {/* Collapsible Stack Trace */}
             {this.state.error?.stack && (
-              <details className="group rounded-2xl bg-surface-950/60 border border-white/[0.04] p-3 text-xs">
-                <summary className="font-bold text-white/50 hover:text-white/80 cursor-pointer flex items-center justify-between">
+              <details className="group rounded-2xl bg-surface-950/60 border border-surface-700/30 p-3 text-xs">
+                <summary className="font-bold text-surface-400 hover:text-surface-50 cursor-pointer flex items-center justify-between">
                   <span>عرض التفاصيل التقنية والـ Stack Trace</span>
-                  <span className="text-[10px] text-white/30 group-open:rotate-180 transition-transform">
+                  <span className="text-[10px] text-surface-500 group-open:rotate-180 transition-transform">
                     ▼
                   </span>
                 </summary>
-                <div className="mt-3 p-3 rounded-xl bg-black/50 text-[11px] font-mono text-white/50 overflow-x-auto max-h-40 custom-scrollbar selectable-text whitespace-pre-wrap">
+                <div className="mt-3 p-3 rounded-xl bg-surface-950 text-[11px] font-mono text-surface-400 overflow-x-auto max-h-40 custom-scrollbar selectable-text whitespace-pre-wrap border border-surface-700/30">
                   {this.state.error.stack}
                   {this.state.errorInfo?.componentStack}
                 </div>
@@ -137,7 +137,7 @@ ${errorInfo?.componentStack || 'No component stack'}
               <button
                 type="button"
                 onClick={this.handleGoHome}
-                className="flex-1 py-3 px-4 rounded-xl bg-surface-800 hover:bg-surface-700 text-white font-bold text-xs flex items-center justify-center gap-2 border border-white/10 active:scale-95 transition-all cursor-pointer"
+                className="flex-1 py-3 px-4 rounded-xl bg-surface-800 hover:bg-surface-700 text-surface-50 font-bold text-xs flex items-center justify-center gap-2 border border-surface-700/40 active:scale-95 transition-all cursor-pointer"
               >
                 <Home size={15} />
                 <span>العودة للرئيسية 🏠</span>
@@ -146,7 +146,7 @@ ${errorInfo?.componentStack || 'No component stack'}
               <button
                 type="button"
                 onClick={this.handleCopyError}
-                className="py-3 px-3 rounded-xl bg-surface-800/80 hover:bg-surface-700 text-white/70 hover:text-white text-xs font-bold flex items-center justify-center gap-1.5 border border-white/[0.06] transition-all cursor-pointer shrink-0"
+                className="py-3 px-3 rounded-xl bg-surface-800/80 hover:bg-surface-700 text-surface-300 hover:text-surface-50 text-xs font-bold flex items-center justify-center gap-1.5 border border-surface-700/40 transition-all cursor-pointer shrink-0"
                 title="نسخ تقرير الخطأ للتشخيص"
               >
                 {this.state.isCopied ? (

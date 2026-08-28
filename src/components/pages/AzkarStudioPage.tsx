@@ -214,7 +214,7 @@ export const AzkarStudioPage: React.FC = () => {
     >
       <div className="p-6 max-w-7xl mx-auto space-y-6">
         {/* Search & Hero Header */}
-        <div className="relative rounded-3xl bg-gradient-to-r from-surface-900 via-surface-800 to-surface-900 border border-white/[0.08] p-6 shadow-2xl overflow-hidden">
+        <div className="relative rounded-3xl bg-gradient-to-r from-surface-900 via-surface-800 to-surface-900 border border-surface-700/40 p-6 shadow-2xl overflow-hidden">
           <div className="absolute -top-12 -start-12 w-64 h-64 bg-accent-500/10 rounded-full blur-[80px]" />
           <div className="absolute -bottom-12 -end-12 w-64 h-64 bg-gold-500/10 rounded-full blur-[80px]" />
 
@@ -226,10 +226,10 @@ export const AzkarStudioPage: React.FC = () => {
                 </span>
                 <span className="text-xs font-bold text-gold-400">مكتبة إسلامية شاملة وموثوقة</span>
               </div>
-              <h2 className="text-2xl font-bold text-white mb-1">
+              <h2 className="text-2xl font-bold text-surface-50 mb-1">
                 حصن المسلم، أدعية الأنبياء، والأحاديث الصحيحة
               </h2>
-              <p className="text-xs text-white/50">
+              <p className="text-xs text-surface-400">
                 اقرأ واستمع للذكر بصوت نقي، تتبع عدد التكرار، أو حول أي دعاء مباشرة إلى فيديو تيك
                 توك وإنستغرام احترافي!
               </p>
@@ -244,7 +244,7 @@ export const AzkarStudioPage: React.FC = () => {
                 placeholder="ابحث عن دعاء، حديث، أو ذكر..."
                 className="glass-input w-full ps-10 pe-4 py-2.5 text-xs rounded-xl"
               />
-              <Search size={16} className="absolute start-3 top-3 text-white/40" />
+              <Search size={16} className="absolute start-3 top-3 text-surface-400" />
             </div>
           </div>
         </div>
@@ -254,11 +254,12 @@ export const AzkarStudioPage: React.FC = () => {
           {azkarCategories.map((cat) => (
             <button
               key={cat.id}
+              type="button"
               onClick={() => setSelectedCategory(cat.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
                 selectedCategory === cat.id
                   ? 'bg-gradient-to-r from-accent-500 to-accent-600 text-white shadow-lg shadow-accent-500/20 border border-accent-400/30'
-                  : 'bg-surface-800/60 hover:bg-surface-800 text-white/60 hover:text-white border border-white/[0.04]'
+                  : 'bg-surface-800/60 hover:bg-surface-800 text-surface-300 hover:text-surface-50 border border-surface-700/40'
               }`}
             >
               <span>{cat.icon}</span>
@@ -268,7 +269,7 @@ export const AzkarStudioPage: React.FC = () => {
         </div>
 
         {/* Results Counter */}
-        <div className="flex items-center justify-between text-xs text-white/40 px-1">
+        <div className="flex items-center justify-between text-xs text-surface-400 px-1">
           <span>يتم عرض {filteredItems.length} ذكراً وحديثاً</span>
           <span className="flex items-center gap-1 text-gold-400/80">
             <Award size={14} />
@@ -278,7 +279,7 @@ export const AzkarStudioPage: React.FC = () => {
 
         {/* Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <AnimatePresence>
+          <AnimatePresence mode="popLayout">
             {filteredItems.map((item) => {
               const currentCount = counters[item.id] || 0;
               const isCompleted = currentCount >= item.repeatCount;
@@ -292,12 +293,13 @@ export const AzkarStudioPage: React.FC = () => {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
                   className={`
-                    relative rounded-2xl p-5 border transition-all duration-300 flex flex-col justify-between
+                    p-5 rounded-2xl bg-surface-900 border transition-all flex flex-col justify-between
                     ${
                       isCompleted
-                        ? 'bg-emerald-950/20 border-emerald-500/30 shadow-lg shadow-emerald-500/5'
-                        : 'bg-surface-900/60 hover:bg-surface-900/90 border-white/[0.06] hover:border-accent-500/30'
+                        ? 'border-emerald-500/40 shadow-md shadow-emerald-500/5'
+                        : 'border-surface-700/40 hover:border-surface-600'
                     }
                   `}
                 >
@@ -305,19 +307,19 @@ export const AzkarStudioPage: React.FC = () => {
                     {/* Card Header */}
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs px-2.5 py-1 rounded-lg bg-surface-800/80 text-accent-400 border border-white/[0.06] font-semibold">
+                        <span className="text-xs px-2.5 py-1 rounded-lg bg-surface-800/80 text-accent-400 border border-surface-700/40 font-semibold">
                           {item.categoryNameAr}
                         </span>
-                        <h3 className="text-sm font-bold text-white">{item.title}</h3>
+                        <h3 className="text-sm font-bold text-surface-50">{item.title}</h3>
                       </div>
-                      <span className="text-[11px] font-mono text-white/40 bg-surface-800/40 px-2 py-0.5 rounded-md border border-white/[0.04]">
+                      <span className="text-[11px] font-mono text-surface-400 bg-surface-800/40 px-2 py-0.5 rounded-md border border-surface-700/40">
                         {item.reference}
                       </span>
                     </div>
 
                     {/* Arabic Text */}
-                    <div className="p-4 rounded-xl bg-surface-950/60 border border-white/[0.03] mb-3 text-start">
-                      <p className="quran-text text-lg leading-[2.2] text-white/95 font-medium select-text">
+                    <div className="p-4 rounded-xl bg-surface-950/60 border border-surface-700/30 mb-3 text-start">
+                      <p className="quran-text text-lg leading-[2.2] text-surface-50 font-medium select-text">
                         {item.arabicText}
                       </p>
                     </div>
@@ -334,17 +336,18 @@ export const AzkarStudioPage: React.FC = () => {
                   </div>
 
                   {/* Card Footer Actions */}
-                  <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between gap-2">
+                  <div className="pt-3 border-t border-surface-700/40 flex items-center justify-between gap-2">
                     {/* Interactive Repeat Counter Button */}
                     <div className="flex items-center gap-1.5">
                       <button
+                        type="button"
                         onClick={() => handleIncrement(item.id, item.repeatCount)}
                         className={`
-                          px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all
+                          px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer
                           ${
                             isCompleted
                               ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20'
-                              : 'bg-surface-800 hover:bg-accent-500/20 text-white border border-white/[0.06] hover:border-accent-500/40'
+                              : 'bg-surface-800 hover:bg-accent-500/20 text-surface-50 border border-surface-700/40 hover:border-accent-500/40'
                           }
                         `}
                       >
@@ -367,8 +370,9 @@ export const AzkarStudioPage: React.FC = () => {
 
                       {currentCount > 0 && (
                         <button
+                          type="button"
                           onClick={() => handleResetCounter(item.id)}
-                          className="p-1.5 rounded-lg bg-surface-800/60 hover:bg-surface-800 text-white/40 hover:text-white"
+                          className="p-1.5 rounded-lg bg-surface-800/60 hover:bg-surface-800 text-surface-400 hover:text-surface-50 cursor-pointer"
                           title="إعادة التصفير"
                         >
                           <RotateCcw size={12} />
@@ -380,11 +384,12 @@ export const AzkarStudioPage: React.FC = () => {
                     <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap justify-end">
                       {/* Audio speech button */}
                       <button
+                        type="button"
                         onClick={() => handleToggleSpeech(item)}
                         className={`p-2 rounded-xl border transition-all flex items-center gap-1 cursor-pointer ${
                           isPlaying
                             ? 'bg-accent-500 text-white border-accent-400 animate-pulse'
-                            : 'bg-surface-800 hover:bg-surface-700 text-white/80 hover:text-white border-white/[0.08]'
+                            : 'bg-surface-800 hover:bg-surface-700 text-surface-200 hover:text-surface-50 border-surface-700/40'
                         }`}
                         title="استماع صوتي سريع"
                       >
@@ -393,8 +398,9 @@ export const AzkarStudioPage: React.FC = () => {
 
                       {/* 1-Click Design Image Quote Card */}
                       <button
+                        type="button"
                         onClick={() => handleDesignImageCard(item)}
-                        className="py-1.5 px-2.5 rounded-xl bg-surface-800 hover:bg-surface-700 text-white/85 hover:text-white text-xs font-semibold flex items-center gap-1 border border-white/[0.08] hover:border-accent-400/40 transition-all cursor-pointer"
+                        className="py-1.5 px-2.5 rounded-xl bg-surface-800 hover:bg-surface-700 text-surface-200 hover:text-surface-50 text-xs font-semibold flex items-center gap-1 border border-surface-700/40 hover:border-accent-400/40 transition-all cursor-pointer"
                         title="تصميم كرت صورة فاخر للواتساب والإنستغرام"
                       >
                         <ImageIcon size={13} className="text-accent-400" />
@@ -403,8 +409,9 @@ export const AzkarStudioPage: React.FC = () => {
 
                       {/* Copy button */}
                       <button
+                        type="button"
                         onClick={() => handleCopy(item)}
-                        className="p-2 rounded-xl bg-surface-800 hover:bg-surface-700 text-white/70 hover:text-white border border-white/[0.08] transition-all cursor-pointer"
+                        className="p-2 rounded-xl bg-surface-800 hover:bg-surface-700 text-surface-300 hover:text-surface-50 border border-surface-700/40 transition-all cursor-pointer"
                         title="نسخ النص والمصدر"
                       >
                         {isCopied ? (
@@ -416,6 +423,7 @@ export const AzkarStudioPage: React.FC = () => {
 
                       {/* 1-Click Convert to Reel Video */}
                       <button
+                        type="button"
                         onClick={() => handleConvertToReel(item)}
                         className="py-1.5 px-3.5 rounded-xl bg-gradient-to-r from-accent-500 to-accent-600 hover:from-accent-400 hover:to-accent-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-accent-500/20 transition-all group cursor-pointer"
                       >

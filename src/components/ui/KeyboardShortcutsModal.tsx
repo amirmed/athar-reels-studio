@@ -93,7 +93,7 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
           {shortcuts.map((sc, i) => (
             <div
               key={i}
-              className="flex items-center justify-between p-3 rounded-2xl bg-surface-950/60 border border-white/[0.04] hover:border-gold-500/30 transition-all"
+              className="flex items-center justify-between p-3 rounded-2xl bg-surface-950/60 border border-surface-700/40 hover:border-gold-500/30 transition-all"
             >
               {/* Keys Badges */}
               <div className="flex items-center gap-1.5" dir="ltr">
@@ -103,7 +103,7 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
                       {k}
                     </kbd>
                     {kIdx < sc.keys.length - 1 && (
-                      <span className="text-white/40 text-xs font-bold">+</span>
+                      <span className="text-surface-400 text-xs font-bold">+</span>
                     )}
                   </React.Fragment>
                 ))}
@@ -111,8 +111,8 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
 
               {/* Title & Icon */}
               <div className="flex items-center gap-2.5">
-                <span className="text-xs font-bold text-white/90">{sc.title}</span>
-                <div className="p-1.5 rounded-lg bg-surface-900 border border-white/5">
+                <span className="text-xs font-bold text-surface-50">{sc.title}</span>
+                <div className="p-1.5 rounded-lg bg-surface-900 border border-surface-700/40">
                   {sc.icon}
                 </div>
               </div>
@@ -121,10 +121,10 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
         </div>
 
         {/* Footer info */}
-        <div className="pt-2 flex items-center justify-between border-t border-white/10 text-[11px] text-white/60">
+        <div className="pt-2 flex items-center justify-between border-t border-surface-700/40 text-[11px] text-surface-400">
           <span>
             اضغط{' '}
-            <kbd className="px-1.5 py-0.5 bg-surface-800 border border-white/10 rounded font-mono text-white/80">
+            <kbd className="px-1.5 py-0.5 bg-surface-800 border border-surface-700/40 rounded font-mono text-surface-200">
               Esc
             </kbd>{' '}
             للإغلاق

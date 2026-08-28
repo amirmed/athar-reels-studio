@@ -117,8 +117,8 @@ export const AiBackgroundGenerator: React.FC<AiBackgroundGeneratorProps> = ({
               <Sparkles size={16} />
             </div>
             <div>
-              <h4 className="text-xs font-bold text-white">توليد خلفيات بالذكاء الاصطناعي</h4>
-              <p className="text-[11px] text-white/40">توليد فوري لخلفيات إسلامية وطبيعية</p>
+              <h4 className="text-xs font-bold text-surface-50">توليد خلفيات بالذكاء الاصطناعي</h4>
+              <p className="text-[11px] text-surface-400">توليد فوري لخلفيات إسلامية وطبيعية</p>
             </div>
           </div>
           <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold shrink-0">
@@ -127,14 +127,14 @@ export const AiBackgroundGenerator: React.FC<AiBackgroundGeneratorProps> = ({
         </div>
 
         {/* Model switcher - Clean Responsive 2-Column Segmented Control */}
-        <div className="grid grid-cols-2 gap-1.5 bg-surface-950/80 p-1 rounded-xl border border-white/[0.06]">
+        <div className="grid grid-cols-2 gap-1.5 bg-surface-950/80 p-1 rounded-xl border border-surface-700/40">
           <button
             type="button"
             onClick={() => setModelMode('turbo')}
             className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
               modelMode === 'turbo'
                 ? 'bg-accent-500 text-white shadow-sm'
-                : 'text-white/50 hover:text-white hover:bg-surface-800/50'
+                : 'text-surface-400 hover:text-surface-50 hover:bg-surface-800/50'
             }`}
             title="توليد فائق السرعة في 1-2 ثانية"
           >
@@ -147,7 +147,7 @@ export const AiBackgroundGenerator: React.FC<AiBackgroundGeneratorProps> = ({
             className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
               modelMode === 'flux'
                 ? 'bg-gold-500 text-black shadow-sm'
-                : 'text-white/50 hover:text-white hover:bg-surface-800/50'
+                : 'text-surface-400 hover:text-surface-50 hover:bg-surface-800/50'
             }`}
             title="جودة سينمائية 8K في 5-7 ثوانٍ"
           >
@@ -159,7 +159,7 @@ export const AiBackgroundGenerator: React.FC<AiBackgroundGeneratorProps> = ({
 
       {/* Preset Chips */}
       <div>
-        <label className="text-[11px] text-white/40 mb-1.5 block">اقتراحات سريعة بضغطة زر:</label>
+        <label className="text-[11px] text-surface-400 mb-1.5 block">اقتراحات سريعة بضغطة زر:</label>
         <div className="grid grid-cols-2 gap-1.5 max-h-36 overflow-y-auto pe-0.5">
           {aiPromptPresets.map((p) => (
             <button
@@ -168,8 +168,8 @@ export const AiBackgroundGenerator: React.FC<AiBackgroundGeneratorProps> = ({
               disabled={isGenerating}
               className={`p-2 rounded-xl border text-start transition-all flex items-center gap-2 ${
                 selectedPresetId === p.id
-                  ? 'bg-accent-500/20 border-accent-500/40 text-white shadow-sm'
-                  : 'bg-surface-800/40 border-white/[0.04] text-white/60 hover:bg-surface-800/70 hover:text-white'
+                  ? 'bg-accent-500/20 border-accent-500/40 text-surface-50 shadow-sm'
+                  : 'bg-surface-800/40 border-surface-700/30 text-surface-300 hover:bg-surface-800/70 hover:text-surface-50'
               }`}
             >
               <span className="text-base shrink-0">{p.icon}</span>
@@ -181,7 +181,7 @@ export const AiBackgroundGenerator: React.FC<AiBackgroundGeneratorProps> = ({
 
       {/* Custom Prompt Input */}
       <div>
-        <label className="text-[11px] text-white/40 mb-1.5 block">
+        <label className="text-[11px] text-surface-400 mb-1.5 block">
           أو اكتب وصفاً مخصصاً (بالعربية أو الإنجليزية):
         </label>
         <div className="relative">
@@ -218,7 +218,7 @@ export const AiBackgroundGenerator: React.FC<AiBackgroundGeneratorProps> = ({
           >
             <div className="absolute inset-0 bg-gradient-to-t from-accent-500/10 via-transparent to-transparent animate-pulse" />
             <Loader2 size={32} className="text-accent-400 animate-spin mb-3" />
-            <p className="text-xs font-bold text-white mb-1">
+            <p className="text-xs font-bold text-surface-50 mb-1">
               جاري توليد الخلفية بنموذج{' '}
               {modelMode === 'turbo' ? 'Turbo فائق السرعة' : 'FLUX السينمائي'}...
             </p>
@@ -233,7 +233,7 @@ export const AiBackgroundGenerator: React.FC<AiBackgroundGeneratorProps> = ({
             animate={{ opacity: 1, y: 0 }}
             className="space-y-2.5"
           >
-            <div className="relative rounded-2xl overflow-hidden border border-white/[0.08] group bg-black shadow-lg">
+            <div className="relative rounded-2xl overflow-hidden border border-surface-700/40 group bg-black shadow-lg">
               <img
                 src={generatedUrl}
                 alt="AI Generated Background"
@@ -271,7 +271,7 @@ export const AiBackgroundGenerator: React.FC<AiBackgroundGeneratorProps> = ({
               <button
                 onClick={() => handleGenerate()}
                 title="توليد صورة جديدة أخرى فوراً"
-                className="p-2 rounded-xl bg-surface-800/80 hover:bg-surface-700 text-white/70 hover:text-white border border-white/[0.06] transition-all flex items-center gap-1"
+                className="p-2 rounded-xl bg-surface-800/80 hover:bg-surface-700 text-surface-300 hover:text-surface-50 border border-surface-700/40 transition-all flex items-center gap-1"
               >
                 <RefreshCw size={14} />
                 <span className="text-[11px] font-bold pe-0.5">مرة أخرى</span>
@@ -282,7 +282,7 @@ export const AiBackgroundGenerator: React.FC<AiBackgroundGeneratorProps> = ({
                 target="_blank"
                 rel="noreferrer"
                 title="تحميل الصورة"
-                className="p-2 rounded-xl bg-surface-800/80 hover:bg-surface-700 text-white/70 hover:text-white border border-white/[0.06] transition-all"
+                className="p-2 rounded-xl bg-surface-800/80 hover:bg-surface-700 text-surface-300 hover:text-surface-50 border border-surface-700/40 transition-all"
               >
                 <Download size={14} />
               </a>
@@ -293,10 +293,10 @@ export const AiBackgroundGenerator: React.FC<AiBackgroundGeneratorProps> = ({
 
       {/* History Strip */}
       {history.length > 1 && (
-        <div className="pt-2 border-t border-white/[0.06]">
+        <div className="pt-2 border-t border-surface-700/40">
           <div className="flex items-center gap-1.5 mb-2">
-            <History size={12} className="text-white/40" />
-            <span className="text-[11px] text-white/40">الخلفيات المولدة مؤخراً:</span>
+            <History size={12} className="text-surface-400" />
+            <span className="text-[11px] text-surface-400">الخلفيات المولدة مؤخراً:</span>
           </div>
           <div className="flex items-center gap-2 overflow-x-auto pb-1">
             {history.map((url, i) => (
@@ -309,7 +309,7 @@ export const AiBackgroundGenerator: React.FC<AiBackgroundGeneratorProps> = ({
                 className={`relative rounded-lg overflow-hidden shrink-0 border transition-all ${
                   appliedUrl === url
                     ? 'border-accent-400 scale-105'
-                    : 'border-white/[0.06] opacity-70 hover:opacity-100'
+                    : 'border-surface-700/40 opacity-70 hover:opacity-100'
                 }`}
               >
                 <img src={url} alt="History" className="w-12 h-12 object-cover" />

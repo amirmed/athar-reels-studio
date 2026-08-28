@@ -240,7 +240,7 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
                 className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                   activeMode === 'record'
                     ? 'bg-gradient-to-r from-gold-500 to-amber-500 text-surface-950 shadow-md font-black'
-                    : 'text-white/60 hover:text-white'
+                    : 'text-surface-400 hover:text-surface-50'
                 }`}
               >
                 <Radio size={15} />
@@ -253,7 +253,7 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
                 className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                   activeMode === 'upload'
                     ? 'bg-gradient-to-r from-gold-500 to-amber-500 text-surface-950 shadow-md font-black'
-                    : 'text-white/60 hover:text-white'
+                    : 'text-surface-400 hover:text-surface-50'
                 }`}
               >
                 <Upload size={15} />
@@ -263,7 +263,7 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
 
             {/* Tab 1: Live Recorder Box */}
             {activeMode === 'record' && (
-              <div className="p-6 rounded-3xl bg-gradient-to-b from-surface-900/90 to-surface-950 border border-white/[0.08] text-center space-y-4 shadow-xl relative overflow-hidden">
+              <div className="p-6 rounded-3xl bg-gradient-to-b from-surface-900/90 to-surface-950 border border-surface-700/40 text-center space-y-4 shadow-xl relative overflow-hidden">
                 {/* Visual Level Ring */}
                 <div className="relative w-28 h-28 mx-auto flex items-center justify-center">
                   {isRecording && (
@@ -288,10 +288,10 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
                 </div>
 
                 <div>
-                  <span className="text-2xl font-mono font-bold text-white block">
+                  <span className="text-2xl font-mono font-bold text-surface-50 block">
                     {formatSeconds(recordingSeconds)}
                   </span>
-                  <p className="text-xs text-white/50 mt-1">
+                  <p className="text-xs text-surface-400 mt-1">
                     {isRecording
                       ? 'جاري التسجيل الآن.. اضغط المربع للإيقاف'
                       : 'اضغط على زر المايكروفون لبدء التسجيل'}
@@ -307,7 +307,7 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
                         style={{ width: `${audioLevel}%` }}
                       />
                     </div>
-                    <span className="text-[11px] text-white/40 font-mono">
+                    <span className="text-[11px] text-surface-400 font-mono">
                       مستوى الصوت: {audioLevel}%
                     </span>
                   </div>
@@ -319,7 +319,7 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
             {activeMode === 'upload' && (
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className="p-8 rounded-3xl bg-surface-900/60 border-2 border-dashed border-white/20 hover:border-gold-400/60 text-center space-y-3 cursor-pointer transition-all hover:bg-surface-900/80 group"
+                className="p-8 rounded-3xl bg-surface-900/60 border-2 border-dashed border-surface-700/60 hover:border-gold-400/60 text-center space-y-3 cursor-pointer transition-all hover:bg-surface-900/80 group"
               >
                 <input
                   ref={fileInputRef}
@@ -332,10 +332,10 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
                   <Upload size={24} />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-white group-hover:text-gold-300 transition-colors">
+                  <h4 className="text-sm font-bold text-surface-50 group-hover:text-gold-300 transition-colors">
                     اختر ملفاً صوتياً أو اسحبه هنا
                   </h4>
-                  <p className="text-xs text-white/50 mt-1">
+                  <p className="text-xs text-surface-400 mt-1">
                     يدعم صيغ MP3, WAV, M4A, AAC بأعلى جودة
                   </p>
                 </div>
@@ -346,7 +346,7 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
             {audioBlobUrl && (
               <div className="space-y-4 p-4 rounded-3xl bg-surface-900/90 border border-gold-500/20 shadow-xl">
                 {/* Audio Status & Preview Player Bar */}
-                <div className="flex items-center justify-between p-3 rounded-2xl bg-surface-950 border border-white/[0.06]">
+                <div className="flex items-center justify-between p-3 rounded-2xl bg-surface-950 border border-surface-700/40">
                   <div className="flex items-center gap-3">
                     <button
                       type="button"
@@ -356,7 +356,7 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
                       {isPlaying ? <Pause size={18} /> : <Play size={18} className="me-0.5" />}
                     </button>
                     <div>
-                      <span className="text-xs font-bold text-white block">
+                      <span className="text-xs font-bold text-surface-50 block">
                         {isPlaying
                           ? 'تشغيل المعاينة المباشرة مع الصدى...'
                           : 'معاينة التسجيل مع التأثيرات'}
@@ -373,13 +373,13 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
                 </div>
 
                 {/* Mosque Spatial Reverb Section */}
-                <div className="space-y-2.5 pt-2 border-t border-white/[0.06]">
+                <div className="space-y-2.5 pt-2 border-t border-surface-700/40">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-bold text-white flex items-center gap-1.5">
+                    <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
                       <Sparkles size={14} className="text-gold-400" />
                       <span>صدى المسجد الحرام (Mosque Spatial Reverb) 🕌</span>
                     </label>
-                    <span className="text-[11px] text-white/40">3D Acoustics</span>
+                    <span className="text-[11px] text-surface-400">3D Acoustics</span>
                   </div>
 
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -404,8 +404,8 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
                           }}
                           className={`p-2.5 rounded-xl border text-start transition-all cursor-pointer flex flex-col justify-between ${
                             isSelected
-                              ? 'bg-gold-500/20 border-gold-400 text-white shadow-md'
-                              : 'bg-surface-950/60 border-white/[0.06] text-white/60 hover:text-white'
+                              ? 'bg-gold-500/20 border-gold-400 text-surface-50 shadow-md'
+                              : 'bg-surface-950/60 border-surface-700/30 text-surface-300 hover:text-surface-50'
                           }`}
                         >
                           <div className="flex items-center justify-between mb-1">
@@ -414,7 +414,7 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
                           </div>
                           <div>
                             <span className="text-xs font-bold block">{rev.name}</span>
-                            <span className="text-[10px] text-white/40 block truncate">
+                            <span className="text-[10px] text-surface-400 block truncate">
                               {rev.desc}
                             </span>
                           </div>
@@ -425,7 +425,7 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
 
                   {reverbPreset !== 'none' && (
                     <div className="pt-2">
-                      <div className="flex items-center justify-between text-xs font-bold text-white/70 mb-1">
+                      <div className="flex items-center justify-between text-xs font-bold text-surface-300 mb-1">
                         <span>قوة الصدى وعمق الارتداد</span>
                         <span className="font-mono text-gold-400">{reverbLevel}%</span>
                       </div>
@@ -442,8 +442,8 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
                 </div>
 
                 {/* Studio Audio Mastering & Noise Gate */}
-                <div className="space-y-2 pt-2 border-t border-white/[0.06]">
-                  <label className="text-xs font-bold text-white flex items-center gap-1.5">
+                <div className="space-y-2 pt-2 border-t border-surface-700/40">
+                  <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
                     <Sliders size={14} className="text-emerald-400" />
                     <span>فلاتر الاستوديو ونقاء الصوت (Mastering & Clarity) 🎛️</span>
                   </label>
@@ -455,13 +455,13 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
                       onClick={() => setEnableNoiseGate(!enableNoiseGate)}
                       className={`p-2.5 rounded-xl border text-start transition-all cursor-pointer flex items-center justify-between ${
                         enableNoiseGate
-                          ? 'bg-emerald-500/20 border-emerald-400 text-white'
-                          : 'bg-surface-950/60 border-white/[0.06] text-white/40'
+                          ? 'bg-emerald-500/20 border-emerald-400 text-surface-50'
+                          : 'bg-surface-950/60 border-surface-700/30 text-surface-400'
                       }`}
                     >
                       <div>
                         <span className="text-xs font-bold block">⚡ عزل الضوضاء</span>
-                        <span className="text-[10px] text-white/40">Noise Gate 85Hz</span>
+                        <span className="text-[10px] text-surface-400">Noise Gate 85Hz</span>
                       </div>
                       <span className="text-xs">{enableNoiseGate ? '✓' : ''}</span>
                     </button>
@@ -472,13 +472,13 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
                       onClick={() => setEnableClarity(!enableClarity)}
                       className={`p-2.5 rounded-xl border text-start transition-all cursor-pointer flex items-center justify-between ${
                         enableClarity
-                          ? 'bg-emerald-500/20 border-emerald-400 text-white'
-                          : 'bg-surface-950/60 border-white/[0.06] text-white/40'
+                          ? 'bg-emerald-500/20 border-emerald-400 text-surface-50'
+                          : 'bg-surface-950/60 border-surface-700/30 text-surface-400'
                       }`}
                     >
                       <div>
                         <span className="text-xs font-bold block">💎 نقاء التجويد</span>
-                        <span className="text-[10px] text-white/40">Clarity Boost</span>
+                        <span className="text-[10px] text-surface-400">Clarity Boost</span>
                       </div>
                       <span className="text-xs">{enableClarity ? '✓' : ''}</span>
                     </button>
@@ -489,13 +489,13 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
                       onClick={() => setEnableWarmth(!enableWarmth)}
                       className={`p-2.5 rounded-xl border text-start transition-all cursor-pointer flex items-center justify-between ${
                         enableWarmth
-                          ? 'bg-emerald-500/20 border-emerald-400 text-white'
-                          : 'bg-surface-950/60 border-white/[0.06] text-white/40'
+                          ? 'bg-emerald-500/20 border-emerald-400 text-surface-50'
+                          : 'bg-surface-950/60 border-surface-700/30 text-surface-400'
                       }`}
                     >
                       <div>
                         <span className="text-xs font-bold block">🎙️ دفء الصوت</span>
-                        <span className="text-[10px] text-white/40">Warmth & Body</span>
+                        <span className="text-[10px] text-surface-400">Warmth & Body</span>
                       </div>
                       <span className="text-xs">{enableWarmth ? '✓' : ''}</span>
                     </button>
@@ -503,10 +503,10 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
                 </div>
 
                 {/* Auto-Pitch Polish */}
-                <div className="pt-2 border-t border-white/[0.06]">
+                <div className="pt-2 border-t border-surface-700/40">
                   <div className="p-3 rounded-2xl bg-surface-950/70 border border-amber-500/30 space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-white flex items-center gap-1">
+                      <span className="text-xs font-bold text-surface-50 flex items-center gap-1">
                         <Flame size={13} className="text-amber-400" />
                         <span>تنعيم النبرة والهارمونيك (Auto-Pitch Polish) 💎</span>
                       </span>
@@ -516,7 +516,7 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
                         className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
                           enablePitchPolish
                             ? 'bg-amber-400/20 border-amber-400 text-amber-300'
-                            : 'text-white/40 border-white/10'
+                            : 'text-surface-400 border-surface-700/30'
                         }`}
                       >
                         {enablePitchPolish ? 'مفعل ✓' : 'معطل'}
@@ -539,7 +539,7 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
           </div>
 
         {/* Footer & Apply Action */}
-        <div className="pt-3 border-t border-white/10 flex items-center justify-between shrink-0">
+        <div className="pt-3 border-t border-surface-700/40 flex items-center justify-between shrink-0">
           <button
             type="button"
             onClick={onClose}

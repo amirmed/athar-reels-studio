@@ -616,26 +616,27 @@ export const VoiceStudioPage: React.FC = () => {
   };
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-surface-950 text-white overflow-hidden font-sans">
+    <div className="h-screen w-screen flex flex-col bg-surface-950 text-surface-50 overflow-hidden font-sans">
       {/* Top Professional Studio Header */}
-      <header className="h-14 bg-surface-950/95 backdrop-blur-2xl border-b border-white/[0.08] flex items-center justify-between px-4 sm:px-6 shrink-0 z-30 shadow-lg">
+      <header className="h-14 bg-surface-950/95 backdrop-blur-2xl border-b border-surface-700/40 flex items-center justify-between px-4 sm:px-6 shrink-0 z-30 shadow-lg">
         <div className="flex items-center gap-3">
           <button
+            type="button"
             onClick={() => setCurrentPage('dashboard')}
-            className="p-2 rounded-xl bg-surface-900 hover:bg-surface-800 text-white/70 hover:text-white border border-white/[0.06] transition-all flex items-center gap-1.5 text-xs font-bold cursor-pointer"
+            className="p-2 rounded-xl bg-surface-900 hover:bg-surface-800 text-surface-300 hover:text-surface-50 border border-surface-700/40 transition-all flex items-center gap-1.5 text-xs font-bold cursor-pointer"
           >
             <ArrowRight size={15} />
             <span>الرئيسية</span>
           </button>
 
-          <div className="w-px h-5 bg-white/[0.08]" />
+          <div className="w-px h-5 bg-surface-700/40" />
 
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-gold-400 to-amber-500 text-surface-950 flex items-center justify-center font-bold shadow-md">
               <Mic size={16} />
             </div>
             <div>
-              <h1 className="text-xs sm:text-sm font-black text-white flex items-center gap-1.5">
+              <h1 className="text-xs sm:text-sm font-black text-surface-50 flex items-center gap-1.5">
                 استوديو التسجيل الصوتي والمصحف الملقّن 🎙️📖
               </h1>
               <p className="text-[11px] text-gold-400/80 hidden sm:block">
@@ -652,7 +653,7 @@ export const VoiceStudioPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleClearDraft}
-                className="px-3 py-1.5 rounded-xl bg-surface-900 hover:bg-red-500/20 text-white/70 hover:text-red-300 text-xs font-bold flex items-center gap-1.5 border border-white/[0.08] hover:border-red-500/30 transition-all cursor-pointer"
+                className="px-3 py-1.5 rounded-xl bg-surface-900 hover:bg-red-500/20 text-surface-300 hover:text-red-300 text-xs font-bold flex items-center gap-1.5 border border-surface-700/40 hover:border-red-500/30 transition-all cursor-pointer"
                 title="مسح التسجيل والبدء من جديد"
               >
                 <Trash2 size={14} />
@@ -662,7 +663,7 @@ export const VoiceStudioPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleDownloadAudio}
-                className="px-3 py-1.5 rounded-xl bg-surface-900 hover:bg-surface-800 text-white/80 hover:text-white text-xs font-bold flex items-center gap-1.5 border border-white/[0.08] transition-all cursor-pointer"
+                className="px-3 py-1.5 rounded-xl bg-surface-900 hover:bg-surface-800 text-surface-200 hover:text-surface-50 text-xs font-bold flex items-center gap-1.5 border border-surface-700/40 transition-all cursor-pointer"
                 title="تنزيل الملف الصوتي"
               >
                 <Download size={14} />
@@ -687,18 +688,18 @@ export const VoiceStudioPage: React.FC = () => {
         {/* ======================================================== */}
         {/* LEFT COLUMN: المصحف الملقّن الذكي (Smart Quran Teleprompter) */}
         {/* ======================================================== */}
-        <div className="flex-1 flex flex-col bg-surface-900/60 border border-white/[0.08] rounded-3xl overflow-hidden shadow-2xl backdrop-blur-xl">
+        <div className="flex-1 flex flex-col bg-surface-900/60 border border-surface-700/40 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-xl">
           {/* Prompter Toolbar */}
-          <div className="p-3 bg-surface-950/80 border-b border-white/[0.06] flex flex-wrap items-center justify-between gap-2.5">
+          <div className="p-3 bg-surface-950/80 border-b border-surface-700/40 flex flex-wrap items-center justify-between gap-2.5">
             {/* Mode Switcher */}
-            <div className="flex items-center gap-1 p-1 rounded-xl bg-surface-900 border border-white/[0.06] flex-wrap">
+            <div className="flex items-center gap-1 p-1 rounded-xl bg-surface-900 border border-surface-700/40 flex-wrap">
               <button
                 type="button"
                 onClick={() => setPrompterMode('quran')}
                 className={`px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                   prompterMode === 'quran'
                     ? 'bg-gold-400 text-surface-950 shadow-sm font-black'
-                    : 'text-white/60 hover:text-white'
+                    : 'text-surface-300 hover:text-surface-50'
                 }`}
               >
                 <BookOpen size={13} />
@@ -711,7 +712,7 @@ export const VoiceStudioPage: React.FC = () => {
                 className={`px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                   prompterMode === 'hadith'
                     ? 'bg-gold-400 text-surface-950 shadow-sm font-black'
-                    : 'text-white/60 hover:text-white'
+                    : 'text-surface-300 hover:text-surface-50'
                 }`}
               >
                 <BookHeart size={13} />
@@ -724,7 +725,7 @@ export const VoiceStudioPage: React.FC = () => {
                 className={`px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                   prompterMode === 'dua'
                     ? 'bg-gold-400 text-surface-950 shadow-sm font-black'
-                    : 'text-white/60 hover:text-white'
+                    : 'text-surface-300 hover:text-surface-50'
                 }`}
               >
                 <Sparkles size={13} />

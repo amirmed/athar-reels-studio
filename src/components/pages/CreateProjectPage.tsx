@@ -226,11 +226,11 @@ export const CreateProjectPage: React.FC = () => {
         {/* Step 1: Format Switcher Pro Studio Cards */}
         <div className="space-y-2">
           <div className="flex items-center justify-between px-1">
-            <span className="text-xs font-black text-white/80 flex items-center gap-2">
+            <span className="text-xs font-black text-surface-200 flex items-center gap-2">
               <Sparkles size={14} className="text-gold-400" />
               <span>اختر بيئة الإنتاج والاستوديو (4 استوديوهات إبداعية متكاملة):</span>
             </span>
-            <span className="text-[11px] text-white/40 hidden sm:inline">1-Click Launch</span>
+            <span className="text-[11px] text-surface-400 hidden sm:inline">1-Click Launch</span>
           </div>
 
           <div
@@ -252,12 +252,12 @@ export const CreateProjectPage: React.FC = () => {
                   className={`p-4 rounded-3xl border text-start transition-all duration-300 cursor-pointer flex flex-col justify-between group relative overflow-hidden bg-gradient-to-b ${
                     isSelected
                       ? fmt.activeClass
-                      : 'bg-surface-950/70 border-white/[0.08] hover:border-white/25 hover:bg-surface-900/80 hover:scale-[1.02]'
+                      : 'bg-surface-950/70 border-surface-700/40 hover:border-surface-600 hover:bg-surface-900/80 hover:scale-[1.02]'
                   }`}
                 >
                   {/* Top Row: Icon + Badge */}
                   <div className="flex items-center justify-between mb-3 w-full">
-                    <div className="p-2.5 rounded-2xl bg-surface-900/90 border border-white/10 shadow-md group-hover:scale-110 transition-transform">
+                    <div className="p-2.5 rounded-2xl bg-surface-900/90 border border-surface-700/40 shadow-md group-hover:scale-110 transition-transform">
                       {fmt.icon}
                     </div>
                     <span
@@ -269,7 +269,7 @@ export const CreateProjectPage: React.FC = () => {
 
                   {/* Title & Description */}
                   <div className="space-y-1 my-1">
-                    <div className="font-black text-sm text-white flex items-center justify-between">
+                    <div className="font-black text-sm text-surface-50 flex items-center justify-between">
                       <span className="group-hover:text-gold-300 transition-colors">
                         {fmt.title}
                       </span>
@@ -277,13 +277,13 @@ export const CreateProjectPage: React.FC = () => {
                         <span className="w-2.5 h-2.5 rounded-full bg-gold-400 shadow-[0_0_8px_#fbbf24] animate-pulse" />
                       )}
                     </div>
-                    <p className="text-xs text-white/60 line-clamp-2 leading-relaxed font-medium">
+                    <p className="text-xs text-surface-300 line-clamp-2 leading-relaxed font-medium">
                       {fmt.desc}
                     </p>
                   </div>
 
                   {/* Bottom Action Footer */}
-                  <div className="mt-3 pt-2 border-t border-white/[0.06] flex items-center justify-between text-[11px] font-bold text-white/50 group-hover:text-white transition-colors">
+                  <div className="mt-3 pt-2 border-t border-surface-700/40 flex items-center justify-between text-[11px] font-bold text-surface-400 group-hover:text-surface-50 transition-colors">
                     <span>{isSelected ? 'الاستوديو المفعّل حالياً ✓' : 'فتح هذا الاستوديو ←'}</span>
                     <span className="font-mono text-xs text-gold-400 opacity-0 group-hover:opacity-100 transition-opacity">
                       ➔
@@ -309,14 +309,14 @@ export const CreateProjectPage: React.FC = () => {
               </div>
               <div>
                 <div className="flex items-center justify-center sm:justify-start gap-2 mb-0.5">
-                  <h3 className="text-sm font-bold text-white group-hover:text-gold-300 transition-colors">
+                  <h3 className="text-sm font-bold text-surface-50 group-hover:text-gold-300 transition-colors">
                     توليد ريلز قرآني تلقائي ذكي (1-Click Auto Reel) ⚡
                   </h3>
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-gold-400/20 text-gold-300 font-extrabold border border-gold-400/30 animate-pulse">
                     AI Auto
                   </span>
                 </div>
-                <p className="text-xs text-white/70 max-w-xl">
+                <p className="text-xs text-surface-300 max-w-xl">
                   اختر سورة، وسيقوم الذكاء الاصطناعي بجلب تلاوة الشيخ عبدالباسط، الآيات، التوقيت،
                   والخلفيات فوراً دون عناء!
                 </p>
@@ -337,7 +337,7 @@ export const CreateProjectPage: React.FC = () => {
         {/* Video Presets Catalog */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold text-white/80 flex items-center gap-2">
+            <h2 className="text-sm font-bold text-surface-200 flex items-center gap-2">
               <Sparkles size={16} className="text-gold-400" />
               <span>قوالب وتصاميم جاهزة للاستخدام السريع</span>
             </h2>
@@ -363,7 +363,7 @@ export const CreateProjectPage: React.FC = () => {
                   className={`relative p-3 rounded-2xl border transition-all cursor-pointer group ${
                     isSelected
                       ? 'bg-gold-500/15 border-gold-400 shadow-md shadow-gold-500/10 ring-1 ring-gold-400/50'
-                      : 'bg-surface-900 border-white/[0.08] hover:border-white/20'
+                      : 'bg-surface-900 border-surface-700/40 hover:border-surface-600'
                   }`}
                 >
                   {tpl.backgroundUrl && (
@@ -379,7 +379,7 @@ export const CreateProjectPage: React.FC = () => {
                       </span>
                     </div>
                   )}
-                  <p className="text-xs text-white/70 line-clamp-1 leading-relaxed">
+                  <p className="text-xs text-surface-300 line-clamp-1 leading-relaxed">
                     {tpl.description}
                   </p>
                   {isSelected && (
@@ -405,8 +405,8 @@ export const CreateProjectPage: React.FC = () => {
               <Sparkles size={20} className="text-accent-400" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white/90">تخصيص يدوي للمشروع</h2>
-              <p className="text-xs text-white/40">أو اختر تفاصيل السورة والآيات والقارئ يدوياً</p>
+              <h2 className="text-lg font-bold text-surface-50">تخصيص يدوي للمشروع</h2>
+              <p className="text-xs text-surface-400">أو اختر تفاصيل السورة والآيات والقارئ يدوياً</p>
             </div>
           </div>
 
@@ -477,7 +477,7 @@ export const CreateProjectPage: React.FC = () => {
               <label className="label flex items-center gap-2 mb-0">
                 <BookOpen size={14} className="text-accent-400" />
                 <span>اختيار السورة</span>
-                <span className="text-[11px] text-white/40">
+                <span className="text-[11px] text-surface-400">
                   ({displayedSurahs.length} سورة معروضة)
                 </span>
               </label>
@@ -580,7 +580,7 @@ export const CreateProjectPage: React.FC = () => {
                   className="glass-input w-full"
                 />
               </div>
-              <div className="col-span-2 text-[11px] text-white/30 text-center">
+              <div className="col-span-2 text-[11px] text-surface-400 text-center">
                 {toAyah - fromAyah + 1} آية سيتم تضمينها من أصل {selectedSurah.ayahCount} آية
               </div>
             </div>
@@ -606,7 +606,7 @@ export const CreateProjectPage: React.FC = () => {
                     ${
                       selectedTemplateId === tpl.id
                         ? 'bg-accent-500/15 border-accent-500/40 shadow-lg shadow-accent-500/10'
-                        : 'bg-surface-800/40 border-white/[0.06] text-white/50 hover:bg-surface-800/70 hover:border-white/[0.1]'
+                        : 'bg-surface-800/40 border-surface-700/40 text-surface-400 hover:bg-surface-800/70 hover:border-surface-600'
                     }
                   `}
                 >
@@ -618,11 +618,11 @@ export const CreateProjectPage: React.FC = () => {
                   <div className="flex items-center gap-2 mb-1.5">
                     <span className="text-xl">{tpl.icon}</span>
                     <div>
-                      <span className="text-xs font-bold text-white/90 block">{tpl.name}</span>
+                      <span className="text-xs font-bold text-surface-50 block">{tpl.name}</span>
                       <span className="text-[10px] text-gold-400 block">{tpl.tag}</span>
                     </div>
                   </div>
-                  <p className="text-[10px] text-white/40 line-clamp-2 leading-relaxed">
+                  <p className="text-[10px] text-surface-400 line-clamp-2 leading-relaxed">
                     {tpl.description}
                   </p>
                 </button>
@@ -640,13 +640,14 @@ export const CreateProjectPage: React.FC = () => {
               {aspectOptions.map((opt) => (
                 <button
                   key={opt.value}
+                  type="button"
                   onClick={() => setAspectRatio(opt.value)}
                   className={`
                     relative p-4 rounded-xl border text-center transition-all duration-200
                     ${
                       aspectRatio === opt.value
                         ? 'bg-accent-500/10 border-accent-500/30 text-accent-400'
-                        : 'bg-surface-800/40 border-white/[0.06] text-white/50 hover:bg-surface-800/60 hover:border-white/[0.1]'
+                        : 'bg-surface-800/40 border-surface-700/40 text-surface-400 hover:bg-surface-800/60 hover:border-surface-600'
                     }
                   `}
                 >

@@ -140,12 +140,12 @@ export const Modal: React.FC<ModalProps> = ({
             transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
             className={`
               relative glass-panel-solid p-0 ${sizeMap[size] || sizeMap.md} w-full max-h-[85vh] flex flex-col overflow-hidden
-              shadow-2xl shadow-black/50 border border-white/[0.08] ${className}
+              shadow-2xl shadow-black/50 border border-surface-700/40 ${className}
             `}
           >
             {/* Header */}
             {(title || headerIcon || headerActions) && (
-              <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06] bg-surface-900/90 shrink-0">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-surface-700/40 bg-surface-900/90 shrink-0">
                 <div className="flex items-center gap-3 min-w-0">
                   {headerIcon && (
                     <div className="w-9 h-9 rounded-xl bg-accent-500/10 border border-accent-500/20 flex items-center justify-center text-accent-400 shrink-0">
@@ -153,8 +153,8 @@ export const Modal: React.FC<ModalProps> = ({
                     </div>
                   )}
                   <div className="min-w-0">
-                    {title && <h3 className="text-sm sm:text-base font-bold text-white/95 truncate">{title}</h3>}
-                    {subtitle && <p className="text-[11px] text-white/60 truncate">{subtitle}</p>}
+                    {title && <h3 className="text-sm sm:text-base font-bold text-surface-50 truncate">{title}</h3>}
+                    {subtitle && <p className="text-[11px] text-surface-400 truncate">{subtitle}</p>}
                   </div>
                 </div>
 
@@ -163,7 +163,7 @@ export const Modal: React.FC<ModalProps> = ({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="w-8 h-8 rounded-xl bg-surface-800/60 hover:bg-surface-700/80 flex items-center justify-center text-white/60 hover:text-white transition-all cursor-pointer border border-white/[0.04]"
+                    className="w-8 h-8 rounded-xl bg-surface-800/60 hover:bg-surface-700/80 flex items-center justify-center text-surface-400 hover:text-surface-50 transition-all cursor-pointer border border-surface-700/30"
                     aria-label="إغلاق النافذة"
                   >
                     <X size={15} />
@@ -204,7 +204,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title} size="sm">
-      <p className="text-sm text-white/60 leading-relaxed mb-6">{message}</p>
+      <p className="text-sm text-surface-300 leading-relaxed mb-6">{message}</p>
       <div className="flex gap-3 justify-start">
         <button
           onClick={() => {

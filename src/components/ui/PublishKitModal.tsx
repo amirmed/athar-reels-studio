@@ -177,7 +177,7 @@ export const PublishKitModal: React.FC<PublishKitModalProps> = ({
     >
       <div className="space-y-5 text-start font-sans" dir="rtl">
         {/* Navigation Tabs */}
-        <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+        <div className="flex items-center justify-between border-b border-surface-700/40 pb-3">
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -185,7 +185,7 @@ export const PublishKitModal: React.FC<PublishKitModalProps> = ({
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                 activeTab === 'kit'
                   ? 'bg-gradient-to-r from-gold-500 to-amber-500 text-surface-950 shadow-md font-black'
-                  : 'text-white/60 hover:text-white bg-surface-900 border border-white/[0.06]'
+                  : 'text-surface-400 hover:text-surface-50 bg-surface-900 border border-surface-700/40'
               }`}
             >
               <Share2 size={14} />
@@ -198,7 +198,7 @@ export const PublishKitModal: React.FC<PublishKitModalProps> = ({
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                 activeTab === 'history'
                   ? 'bg-gradient-to-r from-gold-500 to-amber-500 text-surface-950 shadow-md font-black'
-                  : 'text-white/60 hover:text-white bg-surface-900 border border-white/[0.06]'
+                  : 'text-surface-400 hover:text-surface-50 bg-surface-900 border border-surface-700/40'
               }`}
             >
               <History size={14} />
@@ -223,7 +223,7 @@ export const PublishKitModal: React.FC<PublishKitModalProps> = ({
           <div className="space-y-5">
             {/* Quick Upload Platforms Grid */}
             <div>
-              <label className="block text-xs font-bold text-white/80 mb-2 flex items-center gap-1.5">
+              <label className="block text-xs font-bold text-surface-200 mb-2 flex items-center gap-1.5">
                 <Flame size={14} className="text-amber-400" />
                 <span>رفع الفيديو مباشرة بنقرة واحدة (Deep Links):</span>
               </label>
@@ -239,15 +239,15 @@ export const PublishKitModal: React.FC<PublishKitModalProps> = ({
                     <div className="flex items-center gap-2.5">
                       <span className="text-xl shrink-0">{p.icon}</span>
                       <div>
-                        <h4 className="text-xs font-bold text-white group-hover:text-gold-300 transition-colors">
+                        <h4 className="text-xs font-bold text-surface-50 group-hover:text-gold-300 transition-colors">
                           {p.name}
                         </h4>
-                        <p className="text-[10px] text-white/50">{p.sub}</p>
+                        <p className="text-[10px] text-surface-400">{p.sub}</p>
                       </div>
                     </div>
                     <ExternalLink
                       size={14}
-                      className="text-white/40 group-hover:text-white transition-colors"
+                      className="text-surface-400 group-hover:text-surface-50 transition-colors"
                     />
                   </button>
                 ))}
@@ -255,7 +255,7 @@ export const PublishKitModal: React.FC<PublishKitModalProps> = ({
             </div>
 
             {/* AI Viral Caption & Hashtags Generator */}
-            <div className="p-4 rounded-2xl bg-surface-900 border border-white/[0.08]">
+            <div className="p-4 rounded-2xl bg-surface-900 border border-surface-700/40">
               <ViralCaptionGenerator
                 surahName={finalSurah}
                 ayahRange={finalRange}
@@ -269,7 +269,7 @@ export const PublishKitModal: React.FC<PublishKitModalProps> = ({
         {activeTab === 'history' && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-white/70">
+              <span className="text-xs font-bold text-surface-300">
                 سجل الفيديوهات التي تم توجيهها ونشرها على المنصات:
               </span>
               {publishLogs.length > 0 && (
@@ -285,10 +285,10 @@ export const PublishKitModal: React.FC<PublishKitModalProps> = ({
             </div>
 
             {publishLogs.length === 0 ? (
-              <div className="p-10 rounded-2xl bg-surface-900/60 border border-white/[0.04] text-center space-y-2">
-                <Calendar size={28} className="mx-auto text-white/20" />
-                <p className="text-xs font-bold text-white/60">لا يوجد سجل نشر بعد</p>
-                <p className="text-[11px] text-white/40 max-w-sm mx-auto leading-relaxed">
+              <div className="p-10 rounded-2xl bg-surface-900/60 border border-surface-700/30 text-center space-y-2">
+                <Calendar size={28} className="mx-auto text-surface-500" />
+                <p className="text-xs font-bold text-surface-300">لا يوجد سجل نشر بعد</p>
+                <p className="text-[11px] text-surface-400 max-w-sm mx-auto leading-relaxed">
                   عندما تضغط على أحد أزرار النشر أعلاه (TikTok، YouTube، Instagram)، سيتم توثيق
                   الفيديو هنا لبناء أرشيف قناتك.
                 </p>
@@ -300,7 +300,7 @@ export const PublishKitModal: React.FC<PublishKitModalProps> = ({
                   return (
                     <div
                       key={log.id}
-                      className="p-3 rounded-2xl bg-surface-900 border border-white/[0.06] flex items-center justify-between gap-3 group"
+                      className="p-3 rounded-2xl bg-surface-900 border border-surface-700/40 flex items-center justify-between gap-3 group"
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="w-9 h-9 rounded-xl bg-surface-800 flex items-center justify-center text-base shrink-0">
@@ -308,14 +308,14 @@ export const PublishKitModal: React.FC<PublishKitModalProps> = ({
                         </div>
                         <div className="min-w-0">
                           <div className="flex items-center gap-2">
-                            <h4 className="text-xs font-bold text-white truncate">
+                            <h4 className="text-xs font-bold text-surface-50 truncate">
                               {log.projectName}
                             </h4>
                             <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
                               تم التوجيه ✓
                             </span>
                           </div>
-                          <div className="flex items-center gap-2 text-[10px] text-white/40 mt-0.5">
+                          <div className="flex items-center gap-2 text-[10px] text-surface-400 mt-0.5">
                             <span>منصة: {targetPlatform?.name || log.platform}</span>
                             <span>•</span>
                             <span className="font-mono">
@@ -333,7 +333,7 @@ export const PublishKitModal: React.FC<PublishKitModalProps> = ({
                       <button
                         type="button"
                         onClick={() => handleDeleteLogItem(log.id)}
-                        className="p-1.5 rounded-lg text-white/30 hover:text-rose-400 hover:bg-rose-500/10 transition-all cursor-pointer opacity-0 group-hover:opacity-100"
+                        className="p-1.5 rounded-lg text-surface-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all cursor-pointer opacity-0 group-hover:opacity-100"
                         title="حذف من السجل"
                       >
                         <Trash2 size={13} />

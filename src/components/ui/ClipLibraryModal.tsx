@@ -84,7 +84,7 @@ export const ClipLibraryModal: React.FC<ClipLibraryModalProps> = ({ isOpen, onCl
             />
             <Search
               size={18}
-              className="absolute start-3.5 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"
+              className="absolute start-3.5 top-1/2 -translate-y-1/2 text-surface-400 pointer-events-none"
             />
           </div>
 
@@ -99,7 +99,7 @@ export const ClipLibraryModal: React.FC<ClipLibraryModalProps> = ({ isOpen, onCl
                   className={`px-3.5 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 cursor-pointer border ${
                     isSelected
                       ? 'btn-gold shadow-md'
-                      : 'bg-surface-950 border-white/10 text-white/60 hover:text-white'
+                      : 'bg-surface-950 border-surface-700/40 text-surface-400 hover:text-surface-50'
                   }`}
                 >
                   <span>{cat.icon}</span>
@@ -113,10 +113,10 @@ export const ClipLibraryModal: React.FC<ClipLibraryModalProps> = ({ isOpen, onCl
         {/* Clips Grid */}
         <div className="overflow-y-auto max-h-[55vh] custom-scrollbar pe-1">
           {filteredClips.length === 0 ? (
-            <div className="py-16 text-center text-white/40 space-y-2">
+            <div className="py-16 text-center text-surface-400 space-y-2">
               <Film size={36} className="mx-auto opacity-30" />
               <p className="text-sm font-bold">لا توجد مقاطع مطابقة لبحثك</p>
-              <p className="text-xs text-white/30">جرّب تغيير كلمات البحث أو اختيار تصنيف آخر</p>
+              <p className="text-xs text-surface-500">جرّب تغيير كلمات البحث أو اختيار تصنيف آخر</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -124,7 +124,7 @@ export const ClipLibraryModal: React.FC<ClipLibraryModalProps> = ({ isOpen, onCl
                 <motion.div
                   key={clip.id}
                   whileHover={{ y: -3 }}
-                  className="rounded-2xl bg-surface-900/90 border border-white/[0.08] hover:border-gold-400/40 overflow-hidden shadow-lg flex flex-col justify-between transition-all group"
+                  className="rounded-2xl bg-surface-900/90 border border-surface-700/40 hover:border-gold-400/40 overflow-hidden shadow-lg flex flex-col justify-between transition-all group"
                 >
                   {/* Thumbnail / Video Preview Banner */}
                   <div className="relative h-36 w-full overflow-hidden bg-surface-950">
@@ -155,25 +155,25 @@ export const ClipLibraryModal: React.FC<ClipLibraryModalProps> = ({ isOpen, onCl
                   {/* Content Details */}
                   <div className="p-3.5 space-y-2.5 flex-1 flex flex-col justify-between">
                     <div>
-                      <h4 className="text-xs font-bold text-white group-hover:text-gold-300 transition-colors line-clamp-1 mb-1">
+                      <h4 className="text-xs font-bold text-surface-50 group-hover:text-gold-300 transition-colors line-clamp-1 mb-1">
                         {clip.title}
                       </h4>
-                      <p className="text-[11px] text-white/60 line-clamp-2 leading-relaxed bg-surface-950/60 p-2 rounded-xl border border-white/[0.04]">
+                      <p className="text-[11px] text-surface-300 line-clamp-2 leading-relaxed bg-surface-950/60 p-2 rounded-xl border border-surface-700/30">
                         « {clip.description} »
                       </p>
                     </div>
 
                     {/* Metadata Chips */}
-                    <div className="flex items-center gap-2 flex-wrap text-[11px] text-white/50 pt-1 border-t border-white/5">
-                      <div className="flex items-center gap-1 bg-surface-950/80 px-2 py-0.5 rounded border border-white/5">
+                    <div className="flex items-center gap-2 flex-wrap text-[11px] text-surface-400 pt-1 border-t border-surface-700/30">
+                      <div className="flex items-center gap-1 bg-surface-950/80 px-2 py-0.5 rounded border border-surface-700/30">
                         <Mic size={10} className="text-gold-400" />
-                        <span className="text-white/80">{clip.reciterName}</span>
+                        <span className="text-surface-200">{clip.reciterName}</span>
                       </div>
-                      <div className="flex items-center gap-1 bg-surface-950/80 px-2 py-0.5 rounded border border-white/5">
+                      <div className="flex items-center gap-1 bg-surface-950/80 px-2 py-0.5 rounded border border-surface-700/30">
                         <Clock size={10} className="text-sky-400" />
                         <span>{clip.estimatedDuration}</span>
                       </div>
-                      <div className="flex items-center gap-1 bg-surface-950/80 px-2 py-0.5 rounded border border-white/5">
+                      <div className="flex items-center gap-1 bg-surface-950/80 px-2 py-0.5 rounded border border-surface-700/30">
                         <Volume2 size={10} className="text-emerald-400" />
                         <span>صوت طبيعي 🌿</span>
                       </div>
@@ -198,7 +198,7 @@ export const ClipLibraryModal: React.FC<ClipLibraryModalProps> = ({ isOpen, onCl
         </div>
 
         {/* Footer Info Ribbon */}
-        <div className="p-3 border-t border-white/10 flex items-center justify-between text-xs text-white/60">
+        <div className="p-3 border-t border-surface-700/40 flex items-center justify-between text-xs text-surface-400">
           <div className="flex items-center gap-2">
             <CheckCircle2 size={14} className="text-emerald-400" />
             <span>

@@ -78,13 +78,13 @@ export const AutoReelModal: React.FC<AutoReelModalProps> = ({ isOpen, onClose })
               <Zap size={24} />
             </div>
             <div>
-              <h4 className="text-sm font-bold text-white flex items-center gap-2">
+              <h4 className="text-sm font-bold text-surface-50 flex items-center gap-2">
                 <span>توليد ريل عشوائي ذكي (Smart Random)</span>
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-gold-400/20 text-gold-300 font-bold border border-gold-400/30">
                   خوارزمية الانتشار 🔥
                 </span>
               </h4>
-              <p className="text-xs text-white/60 mt-0.5">
+              <p className="text-xs text-surface-400 mt-0.5">
                 يقوم النظام باختيار آية مؤثرة، خلفية سينمائية، وتظليل ذهبي مناسب بضغطة واحدة
               </p>
             </div>
@@ -112,11 +112,11 @@ export const AutoReelModal: React.FC<AutoReelModalProps> = ({ isOpen, onClose })
         {/* Categorized Themes Grid */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h4 className="text-xs font-bold text-white/90 flex items-center gap-2">
+            <h4 className="text-xs font-bold text-surface-50 flex items-center gap-2">
               <Flame size={14} className="text-gold-400" />
               <span>أو اختر قالباً جاهزاً وموضوعاً محدداً:</span>
             </h4>
-            <span className="text-[11px] text-white/40 font-mono">
+            <span className="text-[11px] text-surface-400 font-mono">
               {autoReelThemes.length} نمط متوفر
             </span>
           </div>
@@ -130,7 +130,7 @@ export const AutoReelModal: React.FC<AutoReelModalProps> = ({ isOpen, onClose })
                   key={theme.id}
                   whileHover={{ y: -3 }}
                   onClick={() => !generatingThemeId && handleGenerateTheme(theme)}
-                  className="p-3.5 rounded-2xl bg-surface-900/90 border border-white/[0.08] hover:border-gold-400/40 transition-all flex flex-col justify-between group cursor-pointer shadow-md relative overflow-hidden"
+                  className="p-3.5 rounded-2xl bg-surface-900/90 border border-surface-700/40 hover:border-gold-400/40 transition-all flex flex-col justify-between group cursor-pointer shadow-md relative overflow-hidden"
                 >
                   {/* Thumbnail / Image Preview Header */}
                   <div className="relative h-28 w-full rounded-xl overflow-hidden mb-3 bg-surface-950">
@@ -158,10 +158,10 @@ export const AutoReelModal: React.FC<AutoReelModalProps> = ({ isOpen, onClose })
 
                   {/* Info & Details */}
                   <div className="space-y-1 mb-3">
-                    <h5 className="text-xs font-bold text-white group-hover:text-gold-300 transition-colors">
+                    <h5 className="text-xs font-bold text-surface-50 group-hover:text-gold-300 transition-colors">
                       {theme.title}
                     </h5>
-                    <p className="text-[11px] text-white/50 line-clamp-2 leading-relaxed">
+                    <p className="text-[11px] text-surface-400 line-clamp-2 leading-relaxed">
                       {theme.subtitle}
                     </p>
                   </div>
