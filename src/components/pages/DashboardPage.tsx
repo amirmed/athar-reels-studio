@@ -576,7 +576,7 @@ export const DashboardPage: React.FC = () => {
         {/* Recent projects */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg sm:text-xl font-black text-white tracking-tight flex items-center gap-2">
+            <h2 className="text-lg sm:text-xl font-black text-surface-50 tracking-tight flex items-center gap-2">
               <Film size={20} className="text-accent-400" />
               <span>المشاريع الأخيرة</span>
             </h2>

@@ -1,5 +1,5 @@
 import React, { useEffect, Suspense, lazy } from 'react';
-import { useAppStore } from './store/useAppStore';
+import { useAppStore, applyThemeToDom } from './store/useAppStore';
 import { ToastContainer } from './components/ui/Toast';
 import { MotionConfig } from 'framer-motion';
 import { Loader2, Sparkles } from 'lucide-react';
@@ -81,15 +81,7 @@ const App: React.FC = () => {
 
   // Synchronize documentElement theme classes
   useEffect(() => {
-    if (theme === 'light') {
-      document.documentElement.classList.remove('dark');
-      document.documentElement.classList.add('light');
-      document.documentElement.setAttribute('data-theme', 'light');
-    } else {
-      document.documentElement.classList.remove('light');
-      document.documentElement.classList.add('dark');
-      document.documentElement.setAttribute('data-theme', 'dark');
-    }
+    applyThemeToDom(theme);
   }, [theme]);
 
   // Synchronize documentElement language and direction (RTL / LTR)

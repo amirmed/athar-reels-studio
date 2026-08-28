@@ -35,6 +35,7 @@ export const useAppStore = create<AppStoreState>()(
       }),
       onRehydrateStorage: () => (state) => {
         if (state?.settings?.theme) {
+          useAppStore.setState({ theme: state.settings.theme });
           applyThemeToDom(state.settings.theme);
         }
       },

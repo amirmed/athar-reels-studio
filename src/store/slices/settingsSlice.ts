@@ -21,10 +21,12 @@ export function applyThemeToDom(theme: 'dark' | 'light') {
     document.documentElement.classList.remove('dark');
     document.documentElement.classList.add('light');
     document.documentElement.setAttribute('data-theme', 'light');
+    document.documentElement.style.colorScheme = 'light';
   } else {
     document.documentElement.classList.remove('light');
     document.documentElement.classList.add('dark');
     document.documentElement.setAttribute('data-theme', 'dark');
+    document.documentElement.style.colorScheme = 'dark';
   }
   try {
     if (typeof localStorage !== 'undefined') {
@@ -70,61 +72,66 @@ function saveToLocal(key: string, data: unknown) {
   }
 }
 
-export const createSettingsSlice: AppSlice<SettingsSlice> = (set, get) => ({
-  theme: getInitialTheme(),
-  settings: defaultSettings,
+export const createSettingsSlice: AppSlice<SettingsSlice> = (set, get) => {
+  const initialTheme = getInitialTheme();
+  return {
+    theme: initialTheme,
+    settings: { ...defaultSettings, theme: initialTheme },
 
-  toggleTheme: () => {
-    const next: 'dark' | 'light' = get().theme === 'dark' ? 'light' : 'dark';
-    applyThemeToDom(next);
-    const updatedSettings: AppSettings = { ...get().settings, theme: next };
-    set({ theme: next, settings: updatedSettings });
-    get().saveSettings();
-  },
+    toggleTheme: () => {
+      const currentTheme = get().theme;
+      const next: 'dark' | 'light' = currentTheme === 'dark' ? 'light' : 'dark';
+      applyThemeToDom(next);
+      const updatedSettings: AppSettings = { ...get().settings, theme: next };
+      set({ theme: next, settings: updatedSettings });
+      get().saveSettings();
+    },
 
-  updateSettings: (updates: Partial<AppSettings>) => {
-    const nextTheme: 'dark' | 'light' = updates.theme || get().settings.theme || 'dark';
-    const nextSettings: AppSettings = { ...get().settings, ...updates, theme: nextTheme };
-    if (updates.theme) {
-      applyThemeToDom(updates.theme);
-    }
-    set({ settings: nextSettings, theme: nextTheme });
-    get().saveSettings();
-  },
-
-  loadSettings: async () => {
-    try {
-      if (isElectron() && window.electronAPI?.settings) {
-        const loaded = await window.electronAPI.settings.load();
-        if (loaded && Object.keys(loaded).length > 0) {
-          const loadedTheme = loaded.theme || getInitialTheme();
-          applyThemeToDom(loadedTheme);
-          set({ settings: { ...defaultSettings, ...loaded }, theme: loadedTheme });
-          return;
-        }
-      } else {
-        const local = loadFromLocal<AppSettings>(STORAGE_KEY_SETTINGS);
-        if (local) {
-          const localTheme = local.theme || getInitialTheme();
-          applyThemeToDom(localTheme);
-          set({ settings: { ...defaultSettings, ...local }, theme: localTheme });
-        }
+    updateSettings: (updates: Partial<AppSettings>) => {
+      const currentTheme = get().theme;
+      const nextTheme: 'dark' | 'light' = updates.theme ?? currentTheme ?? 'dark';
+      const nextSettings: AppSettings = { ...get().settings, ...updates, theme: nextTheme };
+      if (updates.theme) {
+        applyThemeToDom(updates.theme);
       }
-    } catch (e) {
-      console.warn('Failed to load settings:', e);
-    }
-  },
+      set({ settings: nextSettings, theme: nextTheme });
+      get().saveSettings();
+    },
 
-  saveSettings: async () => {
-    try {
-      const { settings } = get();
-      if (isElectron() && window.electronAPI?.settings) {
-        await window.electronAPI.settings.save(settings);
-      } else {
-        saveToLocal(STORAGE_KEY_SETTINGS, settings);
+    loadSettings: async () => {
+      try {
+        if (isElectron() && window.electronAPI?.settings) {
+          const loaded = await window.electronAPI.settings.load();
+          if (loaded && Object.keys(loaded).length > 0) {
+            const loadedTheme = loaded.theme || get().theme || getInitialTheme();
+            applyThemeToDom(loadedTheme);
+            set({ settings: { ...defaultSettings, ...loaded, theme: loadedTheme }, theme: loadedTheme });
+            return;
+          }
+        } else {
+          const local = loadFromLocal<AppSettings>(STORAGE_KEY_SETTINGS);
+          if (local) {
+            const localTheme = local.theme || get().theme || getInitialTheme();
+            applyThemeToDom(localTheme);
+            set({ settings: { ...defaultSettings, ...local, theme: localTheme }, theme: localTheme });
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to load settings:', e);
       }
-    } catch (e) {
-      console.warn('Failed to save settings:', e);
-    }
-  },
-});
+    },
+
+    saveSettings: async () => {
+      try {
+        const { settings } = get();
+        if (isElectron() && window.electronAPI?.settings) {
+          await window.electronAPI.settings.save(settings);
+        } else {
+          saveToLocal(STORAGE_KEY_SETTINGS, settings);
+        }
+      } catch (e) {
+        console.warn('Failed to save settings:', e);
+      }
+    },
+  };
+};

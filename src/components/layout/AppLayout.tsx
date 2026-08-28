@@ -42,7 +42,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   });
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-surface-950 overflow-hidden">
+    <div className="h-screen w-screen flex flex-col bg-surface-950 text-surface-50 overflow-hidden">
       <div className="flex-1 flex overflow-hidden">
         {!hideSidebar && <Sidebar />}
         <div className="flex-1 flex flex-col overflow-hidden min-w-0">

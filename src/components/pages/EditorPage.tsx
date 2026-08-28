@@ -992,7 +992,7 @@ export const EditorPage: React.FC = () => {
 
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-surface-950 text-white overflow-hidden">
+    <div className="h-screen w-screen flex flex-col bg-surface-950 text-surface-50 overflow-hidden">
       {/* 1. Header with Undo/Redo, Save, Export, and Quick Hubs */}
       <EditorHeader
         currentProject={currentProject}
