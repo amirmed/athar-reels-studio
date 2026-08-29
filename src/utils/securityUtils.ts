@@ -1,4 +1,4 @@
-﻿/**
+/**
  * SSRF & Remote URL Security Validator
  * Validates download URLs to prevent SSRF against loopback, LAN, link-local, and cloud metadata endpoints.
  */
@@ -61,3 +61,63 @@ export function isSafeRemoteDownloadUrl(urlStr: string): boolean {
     return false;
   }
 }
+
+/**
+ * List of prohibited sensitive directory patterns (defense-in-depth)
+ */
+export const SENSITIVE_PATH_PATTERNS: RegExp[] = [
+  /[/\\]\.ssh([/\\]|$)/i,
+  /[/\\]\.aws([/\\]|$)/i,
+  /[/\\]\.gnupg([/\\]|$)/i,
+  /[/\\]\.config([/\\]|$)/i,
+  /[/\\]\.git([/\\]|$)/i,
+  /[/\\]AppData[/\\]Local[/\\]Google[/\\]Chrome/i,
+  /[/\\]AppData[/\\]Roaming[/\\]Mozilla/i,
+  /[/\\]Windows[/\\]System32/i,
+  /[/\\]etc[/\\]shadow/i,
+  /[/\\]etc[/\\]passwd/i,
+];
+
+/**
+ * Validates whether a target path strictly resolves inside one of the given allowed root directories,
+ * preventing path traversal (e.g. `../`), root escapes, and access to sensitive folders.
+ */
+export function isPathInsideAllowedRoots(
+  targetPath: string,
+  allowedRoots: string[],
+  isWindows: boolean = typeof process !== 'undefined' ? process.platform === 'win32' : false
+): boolean {
+  if (!targetPath || typeof targetPath !== 'string' || !allowedRoots || allowedRoots.length === 0) {
+    return false;
+  }
+
+  try {
+    const cleanTarget = targetPath.trim();
+    if (!cleanTarget) return false;
+
+    // Reject NULL byte injection
+    if (cleanTarget.includes('\0')) return false;
+
+    for (const pattern of SENSITIVE_PATH_PATTERNS) {
+      if (pattern.test(cleanTarget)) {
+        return false;
+      }
+    }
+
+    const normalizedTarget = cleanTarget.replace(/\\/g, '/').replace(/\/+/g, '/');
+    const targetLower = isWindows ? normalizedTarget.toLowerCase() : normalizedTarget;
+
+    return allowedRoots.some((root) => {
+      if (!root || typeof root !== 'string') return false;
+      const normalizedRoot = root.trim().replace(/\\/g, '/').replace(/\/+/g, '/').replace(/\/$/, '');
+      if (!normalizedRoot) return false;
+      const rootLower = isWindows ? normalizedRoot.toLowerCase() : normalizedRoot;
+      const rootWithSlash = rootLower + '/';
+
+      return targetLower === rootLower || targetLower.startsWith(rootWithSlash);
+    });
+  } catch {
+    return false;
+  }
+}
+

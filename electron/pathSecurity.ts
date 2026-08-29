@@ -1,20 +1,35 @@
-﻿import { app } from 'electron';
+import { app } from 'electron';
 import path from 'path';
-import fs from 'fs';
-export { isSafeRemoteDownloadUrl } from '../src/utils/securityUtils';
+import { isSafeRemoteDownloadUrl, SENSITIVE_PATH_PATTERNS } from '../src/utils/securityUtils';
+export { isSafeRemoteDownloadUrl };
 
 /**
- * Path validation helper against Path Traversal vulnerabilities
- * Ensures that any filesystem read/write operation is strictly restricted
- * to authorized user directories or explicitly configured project folders.
+ * Path validation helper against Path Traversal & Unauthorized Access vulnerabilities.
+ * Strictly restricts filesystem read/write operations to immutable, authorized
+ * application data and standard user media/documents folders.
+ *
+ * Security guarantees:
+ * 1. Hardcoded, immutable allowed roots only (no dynamic additions from untrusted settings).
+ * 2. `home` root is strictly excluded to protect root-level user profile, credential, and browser data files.
+ * 3. Case-insensitive canonical path comparison and directory boundary enforcement.
+ * 4. Explicit blocking of sensitive credential and system directory patterns.
  */
 export function isSafeUserPath(targetPath: string): boolean {
   if (!targetPath || typeof targetPath !== 'string') return false;
   try {
     const normalized = path.resolve(targetPath);
     const normalizedLower = process.platform === 'win32' ? normalized.toLowerCase() : normalized;
+
+    // Defense-in-depth: block explicit sensitive credential and system directory patterns
+    for (const pattern of SENSITIVE_PATH_PATTERNS) {
+      if (pattern.test(normalized)) {
+        return false;
+      }
+    }
+
     const appData = path.join(app.getPath('userData'), 'IslamicReelsStudio');
 
+    // Strictly fixed, immutable whitelist of authorized folders
     const allowedRoots = [
       appData,
       app.getPath('userData'),
@@ -24,22 +39,10 @@ export function isSafeUserPath(targetPath: string): boolean {
       app.getPath('documents'),
       app.getPath('downloads'),
       app.getPath('desktop'),
-      app.getPath('home'),
     ];
 
-    try {
-      const settingsFile = path.join(appData, 'settings.json');
-      if (fs.existsSync(settingsFile)) {
-        const parsed = JSON.parse(fs.readFileSync(settingsFile, 'utf8'));
-        if (parsed?.projectsPath && typeof parsed.projectsPath === 'string') {
-          allowedRoots.push(parsed.projectsPath);
-        }
-      }
-    } catch {
-      // Ignore settings read error
-    }
-
     return allowedRoots.some((root) => {
+      if (!root || typeof root !== 'string') return false;
       const resolvedRoot = path.resolve(root);
       const rootLower = process.platform === 'win32' ? resolvedRoot.toLowerCase() : resolvedRoot;
       const rootWithSep = rootLower.endsWith(path.sep) ? rootLower : rootLower + path.sep;
