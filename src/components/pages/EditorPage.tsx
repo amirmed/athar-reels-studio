@@ -165,6 +165,7 @@ export const EditorPage: React.FC = () => {
   const [isLoadingAyahs, setIsLoadingAyahs] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const lastLoadedKeyRef = useRef<string>('');
+  const loadRequestIdRef = useRef<number>(0);
   const isSavingRef = useRef(false);
 
   // Audio playback state
@@ -446,6 +447,7 @@ export const EditorPage: React.FC = () => {
       return;
     }
 
+    const currentRequestId = ++loadRequestIdRef.current;
     setIsLoadingAyahs(true);
     setLoadError(null);
 
@@ -460,6 +462,7 @@ export const EditorPage: React.FC = () => {
       if (!audioUrl && text) {
         try {
           const ttsRes = await synthesizeArabicSpeech(text, 'ar-SA-HamedNeural');
+          if (loadRequestIdRef.current !== currentRequestId) return;
           audioUrl = ttsRes.audioUrl;
           if (ttsRes.duration > 0 && (!recordedDuration || recordedDuration <= 0)) {
             estimatedTotalSec = ttsRes.duration;
@@ -468,6 +471,8 @@ export const EditorPage: React.FC = () => {
           console.warn('[EditorPage] synthesizeArabicSpeech error:', ttsErr);
         }
       }
+
+      if (loadRequestIdRef.current !== currentRequestId) return;
 
       const secPerWord = Math.max(0.1, estimatedTotalSec / totalWords);
 
@@ -519,12 +524,21 @@ export const EditorPage: React.FC = () => {
           : Promise.resolve([]),
       ]);
 
+      if (loadRequestIdRef.current !== currentRequestId) {
+        // A newer request was fired in the meantime — ignore stale response
+        return;
+      }
+
       const customKey =
         audioSettings.customAudioKey ||
         currentProject?.audioSettings?.customAudioKey ||
         currentProject?.customAudioKey ||
         currentProject?.id;
       const customVoice = rawVoice ? await resolveValidAudioUrl(rawVoice, currentProject?.id, customKey) : '';
+
+      if (loadRequestIdRef.current !== currentRequestId) {
+        return;
+      }
 
       if (customVoice && ayahData.length > 0) {
         if (ayahData.length === 1) {
@@ -595,14 +609,22 @@ export const EditorPage: React.FC = () => {
         }
       }
 
+      if (loadRequestIdRef.current !== currentRequestId) {
+        return;
+      }
+
       lastLoadedKeyRef.current = requestKey;
       setAyahs(ayahData);
       setTranslations(translationData);
     } catch (err: unknown) {
-      setLoadError('فشل في تحميل الآيات. جاري استخدام الكاش المحلي...');
-      console.error(err);
+      if (loadRequestIdRef.current === currentRequestId) {
+        setLoadError('فشل في تحميل الآيات. جاري استخدام الكاش المحلي...');
+        console.error(err);
+      }
     } finally {
-      setIsLoadingAyahs(false);
+      if (loadRequestIdRef.current === currentRequestId) {
+        setIsLoadingAyahs(false);
+      }
     }
   }, [
     currentProject?.id,
