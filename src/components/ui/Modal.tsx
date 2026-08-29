@@ -14,6 +14,7 @@ interface ModalProps {
   className?: string;
   bodyClassName?: string;
   closeOnBackdropClick?: boolean;
+  closeOnEscape?: boolean;
 }
 
 const sizeMap: Record<NonNullable<ModalProps['size']>, string> = {
@@ -36,6 +37,7 @@ export const Modal: React.FC<ModalProps> = ({
   className = '',
   bodyClassName = '',
   closeOnBackdropClick = true,
+  closeOnEscape = true,
 }) => {
   const modalRef = React.useRef<HTMLDivElement>(null);
   const previousActiveElementRef = React.useRef<HTMLElement | null>(null);
@@ -60,7 +62,9 @@ export const Modal: React.FC<ModalProps> = ({
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        onClose();
+        if (closeOnEscape) {
+          onClose();
+        }
         return;
       }
 

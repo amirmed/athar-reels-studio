@@ -384,17 +384,39 @@ export const ExportModal: React.FC<ExportModalProps> = ({
     setPhase('');
   };
 
-  useHotkeys('Escape', onClose, { enabled: isOpen && status !== 'exporting' });
+  const handleUserCancelClick = () => {
+    if (typeof window !== 'undefined' && window.confirm) {
+      if (!window.confirm('هل أنت متأكد من رغبتك في إلغاء عملية تصدير الفيديو الجارية؟')) {
+        return;
+      }
+    }
+    handleCancelExport();
+  };
+
+  const handleModalClose = () => {
+    if (status === 'exporting') {
+      if (typeof window !== 'undefined' && window.confirm) {
+        if (!window.confirm('عملية التصدير جارية حالياً. هل أنت متأكد من إلغاء التصدير وإغلاق النافذة؟')) {
+          return;
+        }
+      }
+      handleCancelExport();
+    }
+    onClose();
+  };
+
+  useHotkeys('Escape', handleModalClose, { enabled: isOpen && status !== 'exporting' });
 
   return (
     <>
       <Modal
         isOpen={isOpen}
-        onClose={status === 'exporting' ? handleCancelExport : onClose}
+        onClose={handleModalClose}
         size="lg"
         title="🚀 تصدير الفيديو الذكي (Studio Export)"
         headerIcon={<Film size={18} />}
         closeOnBackdropClick={status !== 'exporting'}
+        closeOnEscape={status !== 'exporting'}
         bodyClassName="space-y-5 text-start"
       >
 
@@ -575,7 +597,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               <span>الحجم التقريبي للملف: ~{estimatedSizeMb} MB</span>
               <button
                 type="button"
-                onClick={handleCancelExport}
+                onClick={handleUserCancelClick}
                 className="text-rose-400 hover:underline cursor-pointer"
               >
                 إلغاء التصدير ✕
