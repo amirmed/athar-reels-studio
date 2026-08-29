@@ -134,7 +134,82 @@ export async function getAllProjectThumbnails(): Promise<Map<string, string>> {
 }
 
 /**
- * Delete a project thumbnail from IndexedDB
+ * Save project background DataURL to IndexedDB
+ */
+export async function saveProjectBackground(projectId: string, dataUrl: string): Promise<void> {
+  if (!projectId || !dataUrl) return;
+
+  try {
+    const db = await openDB();
+    await new Promise<void>((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      const store = tx.objectStore(STORE_NAME);
+      const req = store.put({
+        id: `bg_${projectId}`,
+        backgroundUrl: dataUrl,
+        updatedAt: Date.now(),
+      });
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error);
+    });
+  } catch (err) {
+    console.warn('[PersistentThumbnailStorage] Error saving project background:', err);
+  }
+}
+
+/**
+ * Get project background from IndexedDB
+ */
+export async function getProjectBackground(projectId: string): Promise<string | null> {
+  if (!projectId) return null;
+
+  try {
+    const db = await openDB();
+    return await new Promise<string | null>((resolve) => {
+      const tx = db.transaction(STORE_NAME, 'readonly');
+      const store = tx.objectStore(STORE_NAME);
+      const req = store.get(`bg_${projectId}`);
+      req.onsuccess = () => {
+        resolve(req.result ? req.result.backgroundUrl || null : null);
+      };
+      req.onerror = () => resolve(null);
+    });
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Load all stored project backgrounds in a single batch
+ */
+export async function getAllProjectBackgrounds(): Promise<Map<string, string>> {
+  const map = new Map<string, string>();
+  try {
+    const db = await openDB();
+    return await new Promise<Map<string, string>>((resolve) => {
+      const tx = db.transaction(STORE_NAME, 'readonly');
+      const store = tx.objectStore(STORE_NAME);
+      const req = store.getAll();
+      req.onsuccess = () => {
+        const results = req.result as Array<{ id: string; backgroundUrl?: string }>;
+        if (results && Array.isArray(results)) {
+          for (const item of results) {
+            if (item.id && item.id.startsWith('bg_') && item.backgroundUrl) {
+              map.set(item.id.replace(/^bg_/, ''), item.backgroundUrl);
+            }
+          }
+        }
+        resolve(map);
+      };
+      req.onerror = () => resolve(map);
+    });
+  } catch {
+    return map;
+  }
+}
+
+/**
+ * Delete a project thumbnail and background from IndexedDB
  */
 export async function deleteProjectThumbnail(projectId: string): Promise<void> {
   if (!projectId) return;
@@ -144,6 +219,7 @@ export async function deleteProjectThumbnail(projectId: string): Promise<void> {
     await new Promise<void>((resolve) => {
       const tx = db.transaction(STORE_NAME, 'readwrite');
       const store = tx.objectStore(STORE_NAME);
+      store.delete(`bg_${projectId}`);
       const req = store.delete(projectId);
       req.onsuccess = () => resolve();
       req.onerror = () => resolve();
@@ -154,7 +230,7 @@ export async function deleteProjectThumbnail(projectId: string): Promise<void> {
 }
 
 /**
- * Delete multiple project thumbnails in a single transaction
+ * Delete multiple project thumbnails and backgrounds in a single transaction
  */
 export async function deleteProjectThumbnails(projectIds: string[]): Promise<void> {
   if (!projectIds || projectIds.length === 0) return;
@@ -166,6 +242,7 @@ export async function deleteProjectThumbnails(projectIds: string[]): Promise<voi
       const store = tx.objectStore(STORE_NAME);
       for (const id of projectIds) {
         store.delete(id);
+        store.delete(`bg_${id}`);
       }
       tx.oncomplete = () => resolve();
       tx.onerror = () => resolve();

@@ -4,6 +4,8 @@ import { deletePersistentAudio } from '../../services/persistentAudioStorage';
 import {
   saveProjectThumbnail,
   getAllProjectThumbnails,
+  saveProjectBackground,
+  getAllProjectBackgrounds,
   deleteProjectThumbnail,
   deleteProjectThumbnails,
   clearAllProjectThumbnails,
@@ -32,13 +34,16 @@ function loadFromLocal<T>(key: string): T | null {
   }
 }
 
-function saveToLocal(key: string, data: unknown) {
+function saveToLocal(key: string, data: unknown): boolean {
   try {
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem(key, JSON.stringify(data));
+      return true;
     }
+    return false;
   } catch (e) {
     console.warn('localStorage save failed:', e);
+    return false;
   }
 }
 
@@ -215,14 +220,20 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
         baseProjects = local || [];
       }
 
-      // Fast async hydration of thumbnails from IndexedDB
+      // Fast async hydration of thumbnails and background media from IndexedDB
       try {
-        const thumbnailsMap = await getAllProjectThumbnails();
+        const [thumbnailsMap, backgroundsMap] = await Promise.all([
+          getAllProjectThumbnails(),
+          getAllProjectBackgrounds(),
+        ]);
         const hydratedProjects = baseProjects.map((p) => {
-          if (!p.thumbnail && thumbnailsMap.has(p.id)) {
-            return { ...p, thumbnail: thumbnailsMap.get(p.id) };
-          }
-          return p;
+          const thumbnail = p.thumbnail || thumbnailsMap.get(p.id);
+          const backgroundUrl = p.backgroundUrl || backgroundsMap.get(p.id);
+          return {
+            ...p,
+            ...(thumbnail ? { thumbnail } : {}),
+            ...(backgroundUrl ? { backgroundUrl } : {}),
+          };
         });
         set({ projects: hydratedProjects, isLoadingProjects: false });
       } catch {
@@ -238,32 +249,68 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
     try {
       const { projects } = get();
 
-      // 1. Offload heavy base64 data URLs to IndexedDB
+      // 1. Offload heavy base64 data URLs (thumbnails, backgrounds, scene media) to IndexedDB
       projects.forEach((p) => {
-        if (p.thumbnail && p.thumbnail.startsWith('data:image/')) {
+        if (p.thumbnail && p.thumbnail.startsWith('data:')) {
           saveProjectThumbnail(p.id, p.thumbnail).catch((err) => {
             console.warn(`[ProjectSlice] Failed to persist thumbnail for ${p.id}:`, err);
+          });
+        }
+        if (p.backgroundUrl && p.backgroundUrl.startsWith('data:')) {
+          saveProjectBackground(p.id, p.backgroundUrl).catch((err) => {
+            console.warn(`[ProjectSlice] Failed to persist background for ${p.id}:`, err);
+          });
+        }
+        const pAny = p as any;
+        if (pAny.backgroundFile && typeof pAny.backgroundFile === 'string' && pAny.backgroundFile.startsWith('data:')) {
+          saveProjectBackground(p.id, pAny.backgroundFile).catch((err) => {
+            console.warn(`[ProjectSlice] Failed to persist backgroundFile for ${p.id}:`, err);
           });
         }
       });
 
       // 2. Sanitize projects: Strip heavy base64 data URLs from persistent JSON storage
       const sanitizedProjects = projects.map((p) => {
-        if (p.thumbnail && p.thumbnail.startsWith('data:image/')) {
-          const { thumbnail: _t, ...rest } = p;
-          return rest as Project;
+        const cleanProject = { ...p };
+        if (cleanProject.thumbnail && cleanProject.thumbnail.startsWith('data:')) {
+          delete cleanProject.thumbnail;
         }
-        return p;
+        if (cleanProject.backgroundUrl && cleanProject.backgroundUrl.startsWith('data:')) {
+          delete cleanProject.backgroundUrl;
+        }
+        const cleanAny = cleanProject as any;
+        if (cleanAny.backgroundFile && typeof cleanAny.backgroundFile === 'string' && cleanAny.backgroundFile.startsWith('data:')) {
+          delete cleanAny.backgroundFile;
+        }
+        return cleanProject as Project;
       });
 
       // 3. Single Owner: Electron IPC is primary, localStorage is web fallback
       if (isElectron() && window.electronAPI?.projects) {
-        await window.electronAPI.projects.saveAll(sanitizedProjects);
+        try {
+          await window.electronAPI.projects.saveAll(sanitizedProjects);
+        } catch (electronSaveErr) {
+          console.error('[ProjectSlice] Electron save error:', electronSaveErr);
+          get().addToast?.({
+            message: '⚠️ تعذر حفظ المشاريع على القرص، تحقق من أذونات النظام',
+            type: 'error',
+          });
+        }
       } else {
-        saveToLocal(STORAGE_KEY_PROJECTS, sanitizedProjects);
+        const success = saveToLocal(STORAGE_KEY_PROJECTS, sanitizedProjects);
+        if (!success) {
+          get().addToast?.({
+            message: '⚠️ تحذير: تعذر حفظ المشروع محلياً بسبب امتلاء مساحة التخزين في المتصفح!',
+            type: 'error',
+          });
+        }
       }
     } catch (e) {
       console.warn('Failed to save projects:', e);
+      get().addToast?.({
+        message: '⚠️ حدث خطأ أثناء حفظ بيانات المشروع',
+        type: 'error',
+      });
     }
   },
 });
