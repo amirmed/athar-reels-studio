@@ -124,7 +124,7 @@ async function buildMasterAudioBuffer(
   try {
     const sampleRate = 48000;
     const numberOfChannels = 2;
-    const length = Math.ceil(sampleRate * (totalDurationSec + 2));
+    const length = Math.ceil(sampleRate * totalDurationSec);
     const offlineCtx = new OfflineAudioContext(numberOfChannels, length, sampleRate);
 
     // 1. DSP Filter Nodes (Noise Gate, Clarity, Warmth, Dynamics)
