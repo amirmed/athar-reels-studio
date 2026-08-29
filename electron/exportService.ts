@@ -176,22 +176,47 @@ function parseDurationSeconds(stderr: string): number | null {
   return Number.isFinite(total) && total > 0 ? total : null;
 }
 
-function getMediaDurationSeconds(filePath: string): Promise<number> {
+function getMediaDurationSeconds(filePath: string, timeoutMs = 15_000): Promise<number> {
   return new Promise((resolve, reject) => {
     const binary = ffmpegBinaryPath || process.env.FFMPEG_BIN || 'ffmpeg';
     const child = spawn(binary, ['-hide_banner', '-i', filePath], { windowsHide: true });
     let stderr = '';
+    let isSettled = false;
+
+    const timer = setTimeout(() => {
+      if (!isSettled) {
+        isSettled = true;
+        try {
+          child.kill('SIGKILL');
+        } catch {
+          // ignore
+        }
+        reject(new Error(`انتهت مهلة قراءة مدة الملف الصوتي/المرئي (${timeoutMs}ms): ${filePath}`));
+      }
+    }, timeoutMs);
 
     child.stderr.on('data', (chunk) => {
       stderr += chunk.toString();
     });
-    child.on('error', reject);
+
+    child.on('error', (err) => {
+      clearTimeout(timer);
+      if (!isSettled) {
+        isSettled = true;
+        reject(err);
+      }
+    });
+
     child.on('close', () => {
-      const duration = parseDurationSeconds(stderr);
-      if (duration) {
-        resolve(duration);
-      } else {
-        reject(new Error(`تعذر قراءة مدة الملف: ${filePath}`));
+      clearTimeout(timer);
+      if (!isSettled) {
+        isSettled = true;
+        const duration = parseDurationSeconds(stderr);
+        if (duration) {
+          resolve(duration);
+        } else {
+          reject(new Error(`تعذر قراءة مدة الملف: ${filePath}`));
+        }
       }
     });
   });
@@ -334,17 +359,43 @@ const previewWidths: Record<string, number> = {
 };
 
 // Concatenate multiple audio files into one using FFmpeg concat filter
-function concatAudio(inputs: string[], outputPath: string): Promise<void> {
+function concatAudio(inputs: string[], outputPath: string, timeoutMs = 60_000): Promise<void> {
   return new Promise((resolve, reject) => {
     const cmd = ffmpeg();
+    let isSettled = false;
+
+    const timer = setTimeout(() => {
+      if (!isSettled) {
+        isSettled = true;
+        try {
+          cmd.kill('SIGKILL');
+        } catch {
+          // ignore
+        }
+        reject(new Error(`انتهت مهلة دمج المقاطع الصوتية (${timeoutMs}ms)`));
+      }
+    }, timeoutMs);
+
     inputs.forEach(f => cmd.input(f));
     const filterInputs = inputs.map((_, i) => `[${i}:a]`).join('');
     cmd
       .complexFilter([`${filterInputs}concat=n=${inputs.length}:v=0:a=1[aout]`], 'aout')
       .output(outputPath)
       .outputOptions(['-c:a aac', '-b:a 192k'])
-      .on('end', () => resolve())
-      .on('error', reject)
+      .on('end', () => {
+        clearTimeout(timer);
+        if (!isSettled) {
+          isSettled = true;
+          resolve();
+        }
+      })
+      .on('error', (err: Error) => {
+        clearTimeout(timer);
+        if (!isSettled) {
+          isSettled = true;
+          reject(err);
+        }
+      })
       .run();
   });
 }
