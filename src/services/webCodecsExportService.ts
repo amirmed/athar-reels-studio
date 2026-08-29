@@ -401,7 +401,7 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
   // 6. Encode Audio Track in Chunks (if AudioEncoder active)
   if (audioEncoder && masterBuffer) {
     const channel0 = masterBuffer.getChannelData(0);
-    const channel1 = numberOfChannels > 1 ? masterBuffer.getChannelData(1) : channel0;
+    const channel1 = numberOfChannels > 1 ? masterBuffer.getChannelData(1) : null;
     const totalSamples = masterBuffer.length;
     const frameSize = 1024; // Standard AAC frame size
 
@@ -409,18 +409,22 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
       if (signal?.aborted) break;
 
       const currentFrameCount = Math.min(frameSize, totalSamples - offset);
-      const planarData = new Float32Array(currentFrameCount * 2);
+      const planarData = new Float32Array(currentFrameCount * numberOfChannels);
 
-      // Copy planar channel 0 & channel 1
+      // Copy planar channel 0
       planarData.set(channel0.subarray(offset, offset + currentFrameCount), 0);
-      planarData.set(channel1.subarray(offset, offset + currentFrameCount), currentFrameCount);
+
+      // Copy planar channel 1 if stereo
+      if (numberOfChannels > 1 && channel1) {
+        planarData.set(channel1.subarray(offset, offset + currentFrameCount), currentFrameCount);
+      }
 
       const timestampUs = Math.round((offset / sampleRate) * 1_000_000);
 
       const audioData = new AudioData({
         format: 'f32-planar',
         sampleRate,
-        numberOfChannels: 2,
+        numberOfChannels,
         numberOfFrames: currentFrameCount,
         timestamp: timestampUs,
         data: planarData,
