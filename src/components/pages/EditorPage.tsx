@@ -201,6 +201,9 @@ export const EditorPage: React.FC = () => {
 
   const isAnyModalOpen = Boolean(
     activeModal ||
+      showExportModal ||
+      showAutoReelModal ||
+      isFullscreenPreview ||
       isReciterModalOpen ||
       isPresetModalOpen ||
       isViralCaptionOpen ||
@@ -878,6 +881,8 @@ export const EditorPage: React.FC = () => {
   // Global Pro Keyboard Shortcuts Studio
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (isAnyModalOpen) return;
+
       const target = e.target as HTMLElement;
       if (
         target &&
@@ -951,6 +956,7 @@ export const EditorPage: React.FC = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [
+    isAnyModalOpen,
     isPlaying,
     currentAyahIndex,
     ayahs.length,
