@@ -6,6 +6,8 @@ import {
   getAllProjectThumbnails,
   saveProjectBackground,
   getAllProjectBackgrounds,
+  saveProjectSceneBackgrounds,
+  getAllProjectSceneBackgrounds,
   deleteProjectThumbnail,
   deleteProjectThumbnails,
   clearAllProjectThumbnails,
@@ -240,19 +242,34 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
         baseProjects = local || [];
       }
 
-      // Fast async hydration of thumbnails and background media from IndexedDB
+      // Fast async hydration of thumbnails, backgrounds, and scene media from IndexedDB
       try {
-        const [thumbnailsMap, backgroundsMap] = await Promise.all([
+        const [thumbnailsMap, backgroundsMap, scenesMap] = await Promise.all([
           getAllProjectThumbnails(),
           getAllProjectBackgrounds(),
+          getAllProjectSceneBackgrounds(),
         ]);
         const hydratedProjects = baseProjects.map((p) => {
           const thumbnail = p.thumbnail || thumbnailsMap.get(p.id);
           const backgroundUrl = p.backgroundUrl || backgroundsMap.get(p.id);
+          const storedScenes = scenesMap.get(p.id);
+          const sceneBackgrounds =
+            p.textSettings?.sceneBackgrounds && Object.keys(p.textSettings.sceneBackgrounds).length > 0
+              ? p.textSettings.sceneBackgrounds
+              : storedScenes;
+
           return {
             ...p,
             ...(thumbnail ? { thumbnail } : {}),
             ...(backgroundUrl ? { backgroundUrl } : {}),
+            ...(sceneBackgrounds
+              ? {
+                  textSettings: {
+                    ...(p.textSettings || {}),
+                    sceneBackgrounds,
+                  },
+                }
+              : {}),
           };
         });
         set({ projects: hydratedProjects, isLoadingProjects: false });
@@ -287,6 +304,16 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
             console.warn(`[ProjectSlice] Failed to persist backgroundFile for ${p.id}:`, err);
           });
         }
+        if (p.textSettings?.sceneBackgrounds) {
+          const hasDataUrlScenes = Object.values(p.textSettings.sceneBackgrounds).some(
+            (v) => typeof v === 'string' && v.startsWith('data:')
+          );
+          if (hasDataUrlScenes) {
+            saveProjectSceneBackgrounds(p.id, p.textSettings.sceneBackgrounds).catch((err) => {
+              console.warn(`[ProjectSlice] Failed to persist sceneBackgrounds for ${p.id}:`, err);
+            });
+          }
+        }
       });
 
       // 2. Sanitize projects: Strip heavy base64 data URLs from persistent JSON storage
@@ -301,6 +328,17 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
         const cleanAny = cleanProject as any;
         if (cleanAny.backgroundFile && typeof cleanAny.backgroundFile === 'string' && cleanAny.backgroundFile.startsWith('data:')) {
           delete cleanAny.backgroundFile;
+        }
+        if (cleanProject.textSettings?.sceneBackgrounds) {
+          const hasDataUrl = Object.values(cleanProject.textSettings.sceneBackgrounds).some(
+            (v) => typeof v === 'string' && v.startsWith('data:')
+          );
+          if (hasDataUrl) {
+            cleanProject.textSettings = {
+              ...cleanProject.textSettings,
+              sceneBackgrounds: {},
+            };
+          }
         }
         return cleanProject as Project;
       });

@@ -209,7 +209,87 @@ export async function getAllProjectBackgrounds(): Promise<Map<string, string>> {
 }
 
 /**
- * Delete a project thumbnail and background from IndexedDB
+ * Save project scene backgrounds DataURLs to IndexedDB
+ */
+export async function saveProjectSceneBackgrounds(
+  projectId: string,
+  sceneBackgrounds: Record<number, string>
+): Promise<void> {
+  if (!projectId || !sceneBackgrounds || Object.keys(sceneBackgrounds).length === 0) return;
+
+  try {
+    const db = await openDB();
+    await new Promise<void>((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      const store = tx.objectStore(STORE_NAME);
+      const req = store.put({
+        id: `scenes_${projectId}`,
+        sceneBackgrounds,
+        updatedAt: Date.now(),
+      });
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error);
+    });
+  } catch (err) {
+    console.warn('[PersistentThumbnailStorage] Error saving project scene backgrounds:', err);
+  }
+}
+
+/**
+ * Get project scene backgrounds from IndexedDB
+ */
+export async function getProjectSceneBackgrounds(
+  projectId: string
+): Promise<Record<number, string> | null> {
+  if (!projectId) return null;
+
+  try {
+    const db = await openDB();
+    return await new Promise<Record<number, string> | null>((resolve) => {
+      const tx = db.transaction(STORE_NAME, 'readonly');
+      const store = tx.objectStore(STORE_NAME);
+      const req = store.get(`scenes_${projectId}`);
+      req.onsuccess = () => {
+        resolve(req.result ? req.result.sceneBackgrounds || null : null);
+      };
+      req.onerror = () => resolve(null);
+    });
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Load all stored project scene backgrounds in a single batch
+ */
+export async function getAllProjectSceneBackgrounds(): Promise<Map<string, Record<number, string>>> {
+  const map = new Map<string, Record<number, string>>();
+  try {
+    const db = await openDB();
+    return await new Promise<Map<string, Record<number, string>>>((resolve) => {
+      const tx = db.transaction(STORE_NAME, 'readonly');
+      const store = tx.objectStore(STORE_NAME);
+      const req = store.getAll();
+      req.onsuccess = () => {
+        const results = req.result as Array<{ id: string; sceneBackgrounds?: Record<number, string> }>;
+        if (results && Array.isArray(results)) {
+          for (const item of results) {
+            if (item.id && item.id.startsWith('scenes_') && item.sceneBackgrounds) {
+              map.set(item.id.replace(/^scenes_/, ''), item.sceneBackgrounds);
+            }
+          }
+        }
+        resolve(map);
+      };
+      req.onerror = () => resolve(map);
+    });
+  } catch {
+    return map;
+  }
+}
+
+/**
+ * Delete a project thumbnail, background, and scene backgrounds from IndexedDB
  */
 export async function deleteProjectThumbnail(projectId: string): Promise<void> {
   if (!projectId) return;
@@ -220,6 +300,7 @@ export async function deleteProjectThumbnail(projectId: string): Promise<void> {
       const tx = db.transaction(STORE_NAME, 'readwrite');
       const store = tx.objectStore(STORE_NAME);
       store.delete(`bg_${projectId}`);
+      store.delete(`scenes_${projectId}`);
       const req = store.delete(projectId);
       req.onsuccess = () => resolve();
       req.onerror = () => resolve();
@@ -230,7 +311,7 @@ export async function deleteProjectThumbnail(projectId: string): Promise<void> {
 }
 
 /**
- * Delete multiple project thumbnails and backgrounds in a single transaction
+ * Delete multiple project thumbnails, backgrounds, and scene backgrounds in a single transaction
  */
 export async function deleteProjectThumbnails(projectIds: string[]): Promise<void> {
   if (!projectIds || projectIds.length === 0) return;
@@ -243,6 +324,7 @@ export async function deleteProjectThumbnails(projectIds: string[]): Promise<voi
       for (const id of projectIds) {
         store.delete(id);
         store.delete(`bg_${id}`);
+        store.delete(`scenes_${id}`);
       }
       tx.oncomplete = () => resolve();
       tx.onerror = () => resolve();
