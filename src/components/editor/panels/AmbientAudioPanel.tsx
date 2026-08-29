@@ -426,7 +426,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
         <Spatial8DRadar
           isEnabled={audioSettings.enable8DAudio ?? false}
           style={audioSettings.eightDStyle || 'orbit360'}
-          speed={audioSettings.eightDSpeed ?? 0.12}
+          speed={(audioSettings.eightDSpeed && audioSettings.eightDSpeed > 1) ? audioSettings.eightDSpeed / 100 : (audioSettings.eightDSpeed ?? 0.12)}
           depth={audioSettings.eightDDepth ?? 85}
         />
 
@@ -450,7 +450,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
                     className={`p-2 rounded-xl text-xs font-bold border transition-all text-start cursor-pointer ${
                       (audioSettings.eightDStyle || 'orbit360') === st.id
                         ? 'bg-gold-500/20 border-gold-400 text-surface-50 shadow-sm'
-                        : 'bg-surface-950/60 border-surface-700/40 text-surface-400 hover:text-surface-50'
+                        : 'bg-surface-950 border-surface-700/40 text-surface-400 hover:text-surface-50'
                     }`}
                   >
                     {st.name}
@@ -460,22 +460,34 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
             </div>
 
             <div>
-              <div className="flex items-center justify-between text-xs font-bold text-surface-400 mb-1">
-                <span>سرعة دوران الصوت حول الرأس</span>
-                <span className="font-mono text-gold-400">
-                  {Math.round((audioSettings.eightDSpeed ?? 0.12) * 100)}%
-                </span>
-              </div>
-              <input
-                type="range"
-                min={4}
-                max={30}
-                value={Math.round((audioSettings.eightDSpeed ?? 0.12) * 100)}
-                onChange={(e) =>
-                  setAudioSettings((s) => ({ ...s, eightDSpeed: Number(e.target.value) }))
-                }
-                className="w-full accent-gold-400 cursor-pointer"
-              />
+              {(() => {
+                const rawSpeed = audioSettings.eightDSpeed ?? 0.12;
+                const safeSpeed = rawSpeed > 1 ? rawSpeed / 100 : rawSpeed;
+                const speedPercent = Math.round(safeSpeed * 100);
+                return (
+                  <>
+                    <div className="flex items-center justify-between text-xs font-bold text-surface-400 mb-1">
+                      <span>سرعة دوران الصوت حول الرأس</span>
+                      <span className="font-mono text-gold-600 dark:text-gold-400 font-bold">
+                        {speedPercent}%
+                      </span>
+                    </div>
+                    <input
+                      type="range"
+                      min={4}
+                      max={30}
+                      value={speedPercent}
+                      onChange={(e) =>
+                        setAudioSettings((s) => ({
+                          ...s,
+                          eightDSpeed: Number(e.target.value) / 100,
+                        }))
+                      }
+                      className="w-full accent-gold-400 cursor-pointer"
+                    />
+                  </>
+                );
+              })()}
             </div>
 
             <div className="flex items-center justify-between pt-1 border-t border-surface-700/40">
