@@ -132,14 +132,29 @@ function createWindow() {
   });
 }
 
-app.whenReady().then(() => {
-  ensureDirectories();
-  createWindow();
-  // Clean orphaned export jobs older than 24h on startup
-  cleanOldExportJobs(getExportsPath());
-  // Setup FFmpeg export IPC handlers
-  setupExportHandlers(getExportsPath());
-});
+// Single-Instance Lock: prevent running multiple Electron instances
+const gotLock = app.requestSingleInstanceLock();
+
+if (!gotLock) {
+  app.quit();
+} else {
+  app.on('second-instance', () => {
+    const win = mainWindow || BrowserWindow.getAllWindows()[0];
+    if (win) {
+      if (win.isMinimized()) win.restore();
+      win.focus();
+    }
+  });
+
+  app.whenReady().then(() => {
+    ensureDirectories();
+    createWindow();
+    // Clean orphaned export jobs older than 24h on startup
+    cleanOldExportJobs(getExportsPath());
+    // Setup FFmpeg export IPC handlers
+    setupExportHandlers(getExportsPath());
+  });
+}
 
 app.on('before-quit', () => {
   killActiveExport();
