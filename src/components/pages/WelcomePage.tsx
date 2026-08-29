@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAppStore } from '../../store/useAppStore';
+import { useTranslation } from '../../i18n';
 import {
   Sparkles,
   ArrowLeft,
@@ -17,6 +18,7 @@ import {
 import { MotherDuaModal } from '../ui/MotherDuaModal';
 
 export const WelcomePage: React.FC = () => {
+  const { t } = useTranslation();
   const setCurrentPage = useAppStore((s) => s.setCurrentPage);
   const addToast = useAppStore((s) => s.addToast);
   const startTour = useAppStore((s) => s.startTour);
@@ -32,11 +34,11 @@ export const WelcomePage: React.FC = () => {
     }
     setCurrentPage('dashboard');
     addToast({
-      message: 'مرحباً بك في أَثَــر ستوديو! 🌟 استكشف أدواتك لصناعة ريلز قرآني احترافي.',
+      message: t('welcome.welcomeToast', 'مرحباً بك في أَثَــر ستوديو! 🌟 استكشف أدواتك لصناعة ريلز قرآني احترافي.'),
       type: 'success',
       duration: 8000,
       action: {
-        label: 'جولة سريعة (دقيقتين) 🚀',
+        label: t('welcome.tourAction', 'جولة سريعة (دقيقتين) 🚀'),
         onClick: () => {
           startTour();
         },
@@ -47,44 +49,44 @@ export const WelcomePage: React.FC = () => {
   const featureTiles = [
     {
       icon: <Flame className="text-amber-400" size={24} />,
-      title: 'صانع الفيديوهات الفيروسية',
-      desc: 'قوالب 9:16 مخصصة لخوارزميات TikTok و Instagram Reels و YouTube Shorts لتحقيق أعلى انتشار وتفاعل.',
-      badge: 'إصدار 2026',
+      title: t('welcome.tile1Title', 'صانع الفيديوهات الفيروسية'),
+      desc: t('welcome.tile1Desc', 'قوالب 9:16 مخصصة لخوارزميات TikTok و Instagram Reels و YouTube Shorts لتحقيق أعلى انتشار وتفاعل.'),
+      badge: t('welcome.tile1Badge', 'إصدار 2026'),
       color: 'border-surface-700/40 bg-surface-900',
     },
     {
       icon: <Mic className="text-emerald-400" size={24} />,
-      title: 'مكتبة كبار القراء والأصوات الخاشعة',
-      desc: 'أكثر من 70+ قارئ معتمد بمصاحف كاملة (ياسر الدوسري، ناصر القطامي، العوسي، إدريس أبكر، وأئمة الحرمين وروايات ورش وشعبة).',
-      badge: '70+ قارئ',
+      title: t('welcome.tile2Title', 'مكتبة كبار القراء والأصوات الخاشعة'),
+      desc: t('welcome.tile2Desc', 'أكثر من 70+ قارئ معتمد بمصاحف كاملة (ياسر الدوسري، ناصر القطامي، العوسي، إدريس أبكر، وأئمة الحرمين وروايات ورش وشعبة).'),
+      badge: t('welcome.tile2Badge', '70+ قارئ'),
       color: 'border-surface-700/40 bg-surface-900',
     },
     {
       icon: <Sparkles className="text-gold-400" size={24} />,
-      title: 'تظليل الكلمات والموجات الصوتية',
-      desc: 'تزامن كاريوكي فائق الدقة كلمة بكلمة مع موجات صوتية تفاعلية تنبض بنبرة صوت القارئ.',
-      badge: 'تزامن ذكي',
+      title: t('welcome.tile3Title', 'تظليل الكلمات والموجات الصوتية'),
+      desc: t('welcome.tile3Desc', 'تزامن كاريوكي فائق الدقة كلمة بكلمة مع موجات صوتية تفاعلية تنبض بنبرة صوت القارئ.'),
+      badge: t('welcome.tile3Badge', 'تزامن ذكي'),
       color: 'border-surface-700/40 bg-surface-900',
     },
     {
       icon: <Languages className="text-sky-400" size={24} />,
-      title: 'ترجمة فورية لـ 6 لغات عالمية',
-      desc: 'الإنجليزية، الفرنسية، الأوردو، التركية، الإسبانية، والإندونيسية لنشر رسالة القرآن حول العالم.',
-      badge: 'جمهور عالمي',
+      title: t('welcome.tile4Title', 'ترجمة فورية لـ 6 لغات عالمية'),
+      desc: t('welcome.tile4Desc', 'الإنجليزية، الفرنسية، الأوردو، التركية، الإسبانية، والإندونيسية لنشر رسالة القرآن حول العالم.'),
+      badge: t('welcome.tile4Badge', 'جمهور عالمي'),
       color: 'border-surface-700/40 bg-surface-900',
     },
     {
       icon: <Headphones className="text-purple-400" size={24} />,
-      title: 'استوديو الصوت ثلاثي الأبعاد 8D',
-      desc: 'صدى الحرم والمساجد الكبرى مع دمج أصوات الطبيعة (المطر، ركوب الخيل، أمواج البحر) بدقة مكانية حية.',
-      badge: 'صوت 8D',
+      title: t('welcome.tile5Title', 'استوديو الصوت ثلاثي الأبعاد 8D'),
+      desc: t('welcome.tile5Desc', 'صدى الحرم والمساجد الكبرى مع دمج أصوات الطبيعة (المطر، ركوب الخيل، أمواج البحر) بدقة مكانية حية.'),
+      badge: t('welcome.tile5Badge', 'صوت 8D'),
       color: 'border-surface-700/40 bg-surface-900',
     },
     {
       icon: <Video className="text-rose-400" size={24} />,
-      title: 'تصدير سينمائي فائق الدقة 1080p 60fps',
-      desc: 'توليد وتصدير الفيديو بنقرة زر واحدة بأعلى معدل بت (Ultra Bitrate) مُحسّن لخوارزميات الريلز وتيك توك بدون ضغط مشوه.',
-      badge: 'FHD 60fps',
+      title: t('welcome.tile6Title', 'تصدير سينمائي فائق الدقة 1080p 60fps'),
+      desc: t('welcome.tile6Desc', 'توليد وتصدير الفيديو بنقرة زر واحدة بأعلى معدل بت (Ultra Bitrate) مُحسّن لخوارزميات الريلز وتيك توك بدون ضغط مشوه.'),
+      badge: t('welcome.tile6Badge', 'FHD 60fps'),
       color: 'border-surface-700/40 bg-surface-900',
     },
   ];
@@ -107,7 +109,7 @@ export const WelcomePage: React.FC = () => {
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-900 border border-surface-700/40 shadow-sm">
             <span className="w-2 h-2 rounded-full bg-accent-400 animate-pulse" />
             <span className="text-xs font-bold text-surface-200">
-              أَثَــر ستوديو • الإصدار الاحترافي v2.0
+              {t('welcome.proBadge', 'أَثَــر ستوديو • الإصدار الاحترافي v2.0')}
             </span>
           </div>
 
@@ -115,10 +117,10 @@ export const WelcomePage: React.FC = () => {
             type="button"
             onClick={() => setShowMotherDua(true)}
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-gold-500/20 to-amber-500/20 hover:from-gold-500/30 hover:to-amber-500/30 text-gold-300 hover:text-gold-200 border border-gold-400/40 text-xs font-bold transition-all shadow-sm cursor-pointer active:scale-95"
-            title="فتح نافذة الدعاء والصدقة الجارية"
+            title={t('welcome.motherDuaTitle', 'فتح نافذة الدعاء والصدقة الجارية')}
           >
             <Heart size={14} className="text-rose-400 fill-rose-400/30 animate-pulse" />
-            <span>صدقة جارية عن الوالدة تيجاني عائشة رحمها الله 🌸🤲</span>
+            <span>{t('welcome.motherDuaButton', 'صدقة جارية عن الوالدة تيجاني عائشة رحمها الله 🌸🤲')}</span>
           </button>
 
           {/* Theme Toggle */}
@@ -127,13 +129,13 @@ export const WelcomePage: React.FC = () => {
             onClick={toggleTheme}
             aria-label={
               theme === 'dark'
-                ? 'التبديل للوضع النهاري (فاتح)'
-                : 'التبديل للوضع الليلي (داكن)'
+                ? t('welcome.toggleThemeLight', 'التبديل للوضع النهاري (فاتح)')
+                : t('welcome.toggleThemeDark', 'التبديل للوضع الليلي (داكن)')
             }
             title={
               theme === 'dark'
-                ? 'التبديل للوضع النهاري (فاتح)'
-                : 'التبديل للوضع الليلي (داكن)'
+                ? t('welcome.toggleThemeLight', 'التبديل للوضع النهاري (فاتح)')
+                : t('welcome.toggleThemeDark', 'التبديل للوضع الليلي (داكن)')
             }
             className="w-8 h-8 rounded-full bg-surface-900 border border-surface-700/40 flex items-center justify-center text-surface-400 hover:text-surface-50 hover:border-gold-400/40 transition-all cursor-pointer shadow-sm active:scale-95"
           >
@@ -176,14 +178,13 @@ export const WelcomePage: React.FC = () => {
             className="space-y-3"
           >
             <h1 className="text-4xl sm:text-5xl font-black text-surface-50 tracking-tight">
-              أَثَــر <span className="text-accent-400">ستوديو</span>
+              {t('welcome.appTitlePrefix', 'أَثَــر')} <span className="text-accent-400">{t('welcome.appTitleSuffix', 'ستوديو')}</span>
             </h1>
             <p className="text-xs sm:text-sm font-semibold text-surface-400 font-sans">
-              Athar Reels Studio • Quranic Video Creator
+              {t('welcome.appSubTitle', 'Athar Reels Studio • Quranic Video Creator')}
             </p>
             <p className="text-base sm:text-lg text-surface-200 max-w-2xl mx-auto leading-relaxed font-medium">
-              المنصة الاحترافية الأولى لإنتاج الريلز والفيديوهات القرآنية الفيروسية بأعلى جودة
-              وتصميم سينمائي مبتكر.
+              {t('welcome.heroDescription', 'المنصة الاحترافية الأولى لإنتاج الريلز والفيديوهات القرآنية الفيروسية بأعلى جودة وتصميم سينمائي مبتكر.')}
             </p>
           </motion.div>
 
@@ -195,17 +196,15 @@ export const WelcomePage: React.FC = () => {
             className="max-w-3xl mx-auto rounded-3xl bg-surface-900 border border-gold-400/20 p-6 sm:p-7 shadow-xl relative overflow-hidden text-center space-y-3"
           >
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-surface-800 border border-surface-700/40 text-surface-300 text-xs font-bold shadow-sm">
-              <span>سر تسمية «أَثَــر» • الصدقة الجارية</span>
+              <span>{t('welcome.spiritualBadge', 'سر تسمية «أَثَــر» • الصدقة الجارية')}</span>
             </div>
 
             <h2 className="text-xl sm:text-3xl font-bold font-arabic text-gold-300 tracking-wide leading-relaxed selectable-text">
-              ﴿إِنَّا نَحْنُ نُحْيِي الْمَوْتَىٰ وَنَكْتُبُ مَا قَدَّمُوا وَآثَارَهُمْ﴾
+              {t('welcome.spiritualVerse', '﴿إِنَّا نَحْنُ نُحْيِي الْمَوْتَىٰ وَنَكْتُبُ مَا قَدَّمُوا وَآثَارَهُمْ﴾')}
             </h2>
 
             <p className="text-sm text-surface-200 max-w-2xl mx-auto leading-relaxed font-medium">
-              كل دقيقة تقضيها هنا في صناعة ونشر تلاوة، هي{' '}
-              <strong className="text-gold-300">أثر مبارك وحسنات جارية</strong> تضيء لك في قبرك
-              ويمتد أجرها بعد رحيلك.. كم من قلبٍ يلين، وكم من مكروبٍ ينفرج همّه بآية نشرتها!
+              {t('welcome.spiritualText', 'كل دقيقة تقضيها هنا في صناعة ونشر تلاوة، هي أثر مبارك وحسنات جارية تضيء لك في قبرك ويمتد أجرها بعد رحيلك.. كم من قلبٍ يلين، وكم من مكروبٍ ينفرج همّه بآية نشرتها!')}
             </p>
           </motion.div>
 
@@ -222,17 +221,17 @@ export const WelcomePage: React.FC = () => {
               className="w-full sm:w-auto px-10 py-4 rounded-2xl bg-gradient-to-r from-gold-400 via-amber-500 to-amber-600 hover:from-gold-300 hover:to-amber-500 text-surface-950 font-black text-base sm:text-lg shadow-xl shadow-gold-500/20 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 cursor-pointer group"
             >
               <Sparkles size={20} className="group-hover:rotate-12 transition-transform" />
-              <span>ابدأ الآن واصنع أثرك القرآني</span>
+              <span>{t('welcome.startNowBtn', 'ابدأ الآن واصنع أثرك القرآني')}</span>
               <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
             </button>
             <div className="flex items-center gap-5 text-xs text-surface-400 font-medium">
               <span className="flex items-center gap-1.5">
                 <CheckCircle2 size={14} className="text-emerald-400" />
-                قوالب جاهزة بضغطة واحدة
+                {t('welcome.instantTemplates', 'قوالب جاهزة بضغطة واحدة')}
               </span>
               <span className="flex items-center gap-1.5">
                 <CheckCircle2 size={14} className="text-emerald-400" />
-                جولة إرشادية تفاعلية للتعرف على الأدوات
+                {t('welcome.interactiveTour', 'جولة إرشادية تفاعلية للتعرف على الأدوات')}
               </span>
             </div>
           </motion.div>
@@ -241,9 +240,9 @@ export const WelcomePage: React.FC = () => {
         {/* Feature Showcase Grid */}
         <div className="py-6 border-t border-surface-700/40">
           <div className="text-center mb-6">
-            <h2 className="text-lg font-bold text-surface-50 mb-1">مميزات وإمكانيات «أَثَــر ستوديو»</h2>
+            <h2 className="text-lg font-bold text-surface-50 mb-1">{t('welcome.featuresTitle', 'مميزات وإمكانيات «أَثَــر ستوديو»')}</h2>
             <p className="text-xs text-surface-400">
-              كل ما تحتاجه لصناعة محتوى قرآني يحقق ملايين المشاهدات
+              {t('welcome.featuresSubtitle', 'كل ما تحتاجه لصناعة محتوى قرآني يحقق ملايين المشاهدات')}
             </p>
           </div>
 
@@ -279,9 +278,9 @@ export const WelcomePage: React.FC = () => {
           className="mt-6 p-5 rounded-2xl bg-surface-900 border border-surface-700/40 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-start"
         >
           <div>
-            <h4 className="text-sm font-bold text-surface-50">جاهز لنشر آيات الله وإحياء أثرك؟</h4>
+            <h4 className="text-sm font-bold text-surface-50">{t('welcome.bottomBannerTitle', 'جاهز لنشر آيات الله وإحياء أثرك؟')}</h4>
             <p className="text-xs text-surface-400 mt-0.5">
-              ادخل مباشرة إلى لوحة التحكم واستكشف القوالب الرائجة
+              {t('welcome.bottomBannerSubtitle', 'ادخل مباشرة إلى لوحة التحكم واستكشف القوالب الرائجة')}
             </p>
           </div>
           <button
@@ -289,7 +288,7 @@ export const WelcomePage: React.FC = () => {
             onClick={handleStartNow}
             className="px-5 py-2.5 rounded-xl bg-surface-800 hover:bg-surface-700 text-surface-50 hover:text-accent-500 border border-surface-700/40 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
           >
-            <span>انطلق إلى لوحة التحكم</span>
+            <span>{t('welcome.goToDashboard', 'انطلق إلى لوحة التحكم')}</span>
             <ArrowLeft size={14} />
           </button>
         </motion.div>
