@@ -10,7 +10,7 @@ function ttsProxyPlugin(): import('vite').Plugin {
     name: 'tts-proxy-plugin',
     configureServer(server) {
       server.middlewares.use('/api/tts', async (req, res) => {
-        const urlObj = new URL(req.url, 'http://localhost');
+        const urlObj = new URL(req.url || '/', 'http://localhost');
         const text = urlObj.searchParams.get('text');
         const voice = urlObj.searchParams.get('voice') || 'ar-SA-HamedNeural';
         const rate = urlObj.searchParams.get('rate') || '-4%';

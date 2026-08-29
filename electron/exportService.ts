@@ -95,7 +95,7 @@ async function initFFmpeg() {
     }
   } catch (err: any) {
     console.error('[FFmpeg] Init error:', err);
-    throw new Error(`فشل تحميل محرك FFmpeg: ${err.message}`, { cause: err });
+    throw new Error(`فشل تحميل محرك FFmpeg: ${err.message}`);
   }
 }
 
@@ -295,6 +295,7 @@ async function downloadFile(url: string, destPath: string, redirects = 0): Promi
 
 export interface ExportOptions {
   outputPath: string;
+  projectName?: string;
   backgroundPath?: string;
   audioUrls?: string[];
   ayahs: ExportAyah[];
@@ -1064,7 +1065,7 @@ export function setupExportHandlers(tempDir: string) {
             backgroundKind = inferBackgroundKind(bgPath, download.contentType) || mediaKindFromFile(localBgPath) || backgroundKind;
           } catch (e) {
             console.warn('[Export] Failed to download background:', e);
-            throw new Error(`فشل تحميل الخلفية: ${errorMessage(e)}`, { cause: e });
+            throw new Error(`فشل تحميل الخلفية: ${errorMessage(e)}`);
           }
           safeSendProgress(_event.sender, { phase: 'تم تحميل الخلفية', percent: 32 });
         } else {
@@ -1108,15 +1109,8 @@ export function setupExportHandlers(tempDir: string) {
       const bundledFonts = getBundledFontsDir();
 
       if (assGenerated) {
-        // Draw background glass card if enabled
-        const settings = options.textSettings || {};
-        const boxColor = `${ffColor(settings.bgColor, '#000000')}@${Math.max(0, Math.min(1, settings.bgOpacity ?? 0.45)).toFixed(2)}`;
-        const boxWidth = Math.round(w * 0.86);
-        const boxHeight = Math.round(h * 0.36);
-        const boxX = Math.round((w - boxWidth) / 2);
-        const contentCenterY = getContentCenterY(settings, h);
-        const boxY = Math.round(contentCenterY - boxHeight / 2);
-
+        const cornerMargin = Math.max(16, Math.round(w * 0.04));
+        const cornerLength = Math.max(24, Math.round(w * 0.08));
         const cornerThickness = Math.max(3, Math.round(w * 0.006));
         const cornerColor = '0x14b8a6@0.25';
         textFilters.push(`drawbox=x=${cornerMargin}:y=${cornerMargin}:w=${cornerLength}:h=${cornerThickness}:color=${cornerColor}:t=fill`);
