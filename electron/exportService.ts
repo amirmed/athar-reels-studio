@@ -301,6 +301,8 @@ export interface ExportOptions {
   ayahs: ExportAyah[];
   aspectRatio: '9:16' | '16:9' | '1:1';
   quality: 'standard' | 'high' | 'premium';
+  fps?: number;
+  bitrate?: number;
   watermark?: string;
   textColor?: string;
   bgOpacity?: number;
@@ -313,6 +315,7 @@ export interface ExportOptions {
   showTranslation?: boolean;
   showTafsir?: boolean;
   surahName?: string;
+  reciterName?: string;
 }
 
 const crfMap = { standard: 28, high: 20, premium: 16 };
@@ -1143,6 +1146,8 @@ export function setupExportHandlers(tempDir: string) {
       }
       const totalDur = syncedTotalDuration;
 
+      const effectiveFps = Math.max(15, Math.min(60, options.fps ?? 25));
+
       return new Promise<{ success: boolean; outputPath?: string; error?: string }>((resolve) => {
         let cmd = ffmpeg();
         activeFfmpegCmd = cmd;
@@ -1150,9 +1155,9 @@ export function setupExportHandlers(tempDir: string) {
         if (isVideo && effectiveBg) {
           cmd = cmd.input(effectiveBg).inputOptions(['-stream_loop', '-1']);
         } else if (isImage && effectiveBg) {
-          cmd = cmd.input(effectiveBg).inputOptions(['-loop', '1', '-framerate', '25']);
+          cmd = cmd.input(effectiveBg).inputOptions(['-loop', '1', '-framerate', String(effectiveFps)]);
         } else {
-          cmd = cmd.input(`color=black:size=${w}x${h}:rate=25`).inputFormat('lavfi');
+          cmd = cmd.input(`color=black:size=${w}x${h}:rate=${effectiveFps}`).inputFormat('lavfi');
         }
 
         if (mergedAudio) cmd = cmd.input(mergedAudio);
@@ -1178,13 +1183,25 @@ export function setupExportHandlers(tempDir: string) {
         const outputExt = path.extname(options.outputPath).toLowerCase();
         const videoOutputOptions = [
           '-c:v libx264',
-          `-crf ${crf}`,
+          `-r ${effectiveFps}`,
           `-preset ${preset}`,
           '-pix_fmt yuv420p',
           `-t ${totalDur}`,
         ];
+
+        if (options.bitrate && options.bitrate > 0) {
+          const vBitrate = Math.round(options.bitrate / 1000);
+          videoOutputOptions.push(
+            `-b:v ${vBitrate}k`,
+            `-maxrate ${Math.round(vBitrate * 1.5)}k`,
+            `-bufsize ${vBitrate * 2}k`
+          );
+        } else {
+          videoOutputOptions.push(`-crf ${crf}`);
+        }
+
         if (outputExt !== '.mkv') {
-          videoOutputOptions.splice(4, 0, '-movflags +faststart');
+          videoOutputOptions.push('-movflags +faststart');
         }
 
         cmd.outputOptions(videoOutputOptions);
