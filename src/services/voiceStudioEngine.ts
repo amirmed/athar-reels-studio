@@ -30,6 +30,7 @@ export class VoiceStudioEngine {
   private spatial8DProcessor: Spatial8DAudioProcessor | null = null;
   private impulseCache = new Map<string, AudioBuffer>();
   private activeUrls = new Set<string>();
+  private recordingStartTime: number = 0;
 
   private constructor() {}
 
@@ -50,7 +51,27 @@ export class VoiceStudioEngine {
     return url;
   }
 
+  public cancelRecording(): void {
+    if (this.stream) {
+      this.stream.getTracks().forEach((track) => {
+        try {
+          track.stop();
+        } catch {}
+      });
+      this.stream = null;
+    }
+    if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
+      try {
+        this.mediaRecorder.stop();
+      } catch {}
+    }
+    this.mediaRecorder = null;
+    this.recordedChunks = [];
+    this.recordingStartTime = 0;
+  }
+
   public cleanup(): void {
+    this.cancelRecording();
     this.activeUrls.forEach((url) => {
       try {
         URL.revokeObjectURL(url);
@@ -94,6 +115,9 @@ export class VoiceStudioEngine {
    * Start Live Microphone Recording
    */
   public async startRecording(onVolumeLevel?: (vol: number) => void): Promise<void> {
+    // 1. Cleanup any previously active stream / recorder
+    this.cancelRecording();
+
     const ctx = this.getAudioContext();
     if (ctx.state === 'suspended') {
       await ctx.resume().catch((err) => {
@@ -102,50 +126,69 @@ export class VoiceStudioEngine {
     }
     this.recordedChunks = [];
 
-    this.stream = await navigator.mediaDevices.getUserMedia({
-      audio: {
-        echoCancellation: true,
-        noiseSuppression: false, // We use our own high-fidelity DSP
-        autoGainControl: true,
-      },
-    });
+    let stream: MediaStream | null = null;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: false, // We use our own high-fidelity DSP
+          autoGainControl: true,
+        },
+      });
+      this.stream = stream;
 
-    const source = ctx.createMediaStreamSource(this.stream);
-    this.analyser = ctx.createAnalyser();
-    this.analyser.fftSize = 256;
-    source.connect(this.analyser);
+      const source = ctx.createMediaStreamSource(this.stream);
+      this.analyser = ctx.createAnalyser();
+      this.analyser.fftSize = 256;
+      source.connect(this.analyser);
 
-    // Audio level meter loop
-    if (onVolumeLevel) {
-      const bufferLength = this.analyser.frequencyBinCount;
-      const dataArray = new Uint8Array(bufferLength);
+      // Audio level meter loop
+      if (onVolumeLevel) {
+        const bufferLength = this.analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
 
-      const checkLevel = () => {
-        if (!this.mediaRecorder || this.mediaRecorder.state !== 'recording') return;
-        this.analyser!.getByteFrequencyData(dataArray);
-        let sum = 0;
-        for (let i = 0; i < bufferLength; i++) {
-          sum += dataArray[i];
-        }
-        const avg = sum / bufferLength;
-        const normalized = Math.min(100, Math.round((avg / 128) * 100));
-        onVolumeLevel(normalized);
+        const checkLevel = () => {
+          if (!this.mediaRecorder || this.mediaRecorder.state !== 'recording') return;
+          this.analyser!.getByteFrequencyData(dataArray);
+          let sum = 0;
+          for (let i = 0; i < bufferLength; i++) {
+            sum += dataArray[i];
+          }
+          const avg = sum / bufferLength;
+          const normalized = Math.min(100, Math.round((avg / 128) * 100));
+          onVolumeLevel(normalized);
+          requestAnimationFrame(checkLevel);
+        };
         requestAnimationFrame(checkLevel);
-      };
-      requestAnimationFrame(checkLevel);
-    }
-
-    const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
-      ? 'audio/webm;codecs=opus'
-      : 'audio/webm';
-
-    this.mediaRecorder = new MediaRecorder(this.stream, { mimeType });
-    this.mediaRecorder.ondataavailable = (e) => {
-      if (e.data.size > 0) {
-        this.recordedChunks.push(e.data);
       }
-    };
-    this.mediaRecorder.start(100);
+
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+        ? 'audio/webm;codecs=opus'
+        : 'audio/webm';
+
+      this.mediaRecorder = new MediaRecorder(this.stream, { mimeType });
+      this.mediaRecorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) {
+          this.recordedChunks.push(e.data);
+        }
+      };
+
+      this.mediaRecorder.start(100);
+      this.recordingStartTime = performance.now();
+    } catch (err) {
+      // Ensure microphone track is stopped immediately on any failure
+      if (stream) {
+        stream.getTracks().forEach((track) => {
+          try {
+            track.stop();
+          } catch {}
+        });
+      }
+      this.stream = null;
+      this.mediaRecorder = null;
+      this.recordingStartTime = 0;
+      throw err;
+    }
   }
 
   /**
@@ -158,9 +201,18 @@ export class VoiceStudioEngine {
         return;
       }
 
+      const elapsedSec =
+        this.recordingStartTime > 0
+          ? Math.max(0.1, (performance.now() - this.recordingStartTime) / 1000)
+          : 0;
+
       this.mediaRecorder.onstop = async () => {
         if (this.stream) {
-          this.stream.getTracks().forEach((track) => track.stop());
+          this.stream.getTracks().forEach((track) => {
+            try {
+              track.stop();
+            } catch {}
+          });
           this.stream = null;
         }
 
@@ -173,11 +225,37 @@ export class VoiceStudioEngine {
           const ctx = this.getAudioContext();
           const arrayBuffer = await blob.arrayBuffer();
           this.currentBuffer = await ctx.decodeAudioData(arrayBuffer);
-          const duration = this.currentBuffer.duration;
-          resolve({ blob, url, duration });
-        } catch {
-          // Fallback if decode fails
-          resolve({ blob, url, duration: 10 });
+          const duration = this.currentBuffer?.duration || elapsedSec;
+          resolve({ blob, url, duration: Math.max(0.1, Math.round(duration * 100) / 100) });
+        } catch (decodeErr) {
+          console.warn('[VoiceStudioEngine] decodeAudioData fallback to recorded duration:', decodeErr);
+          let duration = elapsedSec;
+
+          // Attempt to extract duration from HTML5 Audio metadata if available
+          try {
+            const audioElem = new Audio(url);
+            await new Promise<void>((metaRes) => {
+              audioElem.onloadedmetadata = () => {
+                if (Number.isFinite(audioElem.duration) && audioElem.duration > 0) {
+                  duration = audioElem.duration;
+                }
+                metaRes();
+              };
+              audioElem.onerror = () => metaRes();
+              setTimeout(metaRes, 400);
+            });
+          } catch {}
+
+          // Create a matching fallback buffer with accurate duration
+          try {
+            const ctx = this.getAudioContext();
+            const sampleRate = ctx.sampleRate || 44100;
+            const finalDuration = Math.max(0.1, duration);
+            const numFrames = Math.max(1, Math.round(sampleRate * finalDuration));
+            this.currentBuffer = ctx.createBuffer(1, numFrames, sampleRate);
+          } catch {}
+
+          resolve({ blob, url, duration: Math.max(0.1, Math.round(duration * 100) / 100) });
         }
       };
 
