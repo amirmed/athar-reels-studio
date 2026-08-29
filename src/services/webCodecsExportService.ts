@@ -480,6 +480,8 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
 
       const activeSegment = timeline[activeSegmentIndex];
       const currentAyah = activeSegment ? activeSegment.ayah : params.ayahs[0];
+      const segmentStart = activeSegment?.start || 0;
+      const localAyahTime = Math.max(0, currentTimeSec - segmentStart);
 
       // Render frame to canvas with full visual parity
       renderVideoExportFrame({
@@ -488,7 +490,8 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
         height,
         frame: frameIdx,
         totalFrames,
-        currentTimeSec,
+        currentTimeSec: localAyahTime,
+        globalTimeSec: currentTimeSec,
         bgImage,
         sceneBgImages: params.sceneBgImages,
         currentAyahIndex: activeSegmentIndex >= 0 ? activeSegmentIndex : 0,

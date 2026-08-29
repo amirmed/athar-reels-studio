@@ -216,6 +216,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         frame: Math.floor(elapsed * 30),
         totalFrames: Math.floor(maxPreviewDuration * 30),
         currentTimeSec: elapsed,
+        globalTimeSec: elapsed,
         bgImage: bgImgEl,
         bgVideo: bgVideoEl,
         bgOpacity,

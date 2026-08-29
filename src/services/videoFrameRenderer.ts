@@ -20,6 +20,7 @@ export interface FrameRenderOptions {
   frame: number;
   totalFrames: number;
   currentTimeSec: number;
+  globalTimeSec?: number;
   bgImage?: HTMLImageElement | null;
   bgVideo?: HTMLVideoElement | null;
   sceneBgImages?: Record<number, HTMLImageElement | HTMLVideoElement>;
@@ -992,9 +993,10 @@ export function renderVideoExportFrame(opts: FrameRenderOptions): void {
     ctx.shadowColor = wfColor;
     ctx.shadowBlur = 8;
 
+    const waveformTime = opts.globalTimeSec !== undefined ? opts.globalTimeSec : currentTimeSec;
     const heights = getSampledWaveformHeights(
       opts.audioPeaks,
-      currentTimeSec,
+      waveformTime,
       opts.totalDurationSec || currentAyah?.duration || 15,
       barCount,
       frame
@@ -1038,7 +1040,7 @@ export function renderVideoExportFrame(opts: FrameRenderOptions): void {
       const dotSpacing = totalW / (dotCount - 1);
       const dotHeights = getSampledWaveformHeights(
         opts.audioPeaks,
-        currentTimeSec,
+        waveformTime,
         opts.totalDurationSec || currentAyah?.duration || 15,
         dotCount,
         frame

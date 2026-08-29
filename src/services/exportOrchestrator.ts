@@ -921,6 +921,7 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
         frame: currentFrame,
         totalFrames,
         currentTimeSec: localAyahTime,
+        globalTimeSec: elapsedAudioTime,
         bgImage: bgImg,
         bgVideo,
         bgOpacity: backgroundOpacity,
