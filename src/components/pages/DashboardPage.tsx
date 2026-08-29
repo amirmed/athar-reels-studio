@@ -241,6 +241,9 @@ export const DashboardPage: React.FC = () => {
       fromAyah: templateFromAyah,
       toAyah: templateToAyah,
       aspectRatio: '9:16',
+      transition: tpl.transition || 'fadeScale',
+      videoEffect: tpl.videoEffect || 'none',
+      activeTemplateId: tpl.id,
       backgroundType: tpl.backgroundUrl?.includes('.mp4') ? 'video' : 'image',
       backgroundUrl:
         tpl.backgroundUrl ||

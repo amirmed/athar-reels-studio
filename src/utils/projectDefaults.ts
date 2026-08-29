@@ -126,6 +126,8 @@ export function createDefaultProject(overrides?: Partial<Project>): Project {
     contentType: 'quran',
     translationEnabled: false,
     tafsirEnabled: false,
+    transition: 'fadeScale',
+    videoEffect: 'none',
     ...restOverrides,
     textSettings: createDefaultTextSettings(overrideTextSettings),
     audioSettings: createDefaultAudioSettings(overrideAudioSettings),

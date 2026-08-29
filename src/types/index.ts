@@ -32,6 +32,9 @@ export interface Project {
   sceneBackgrounds?: Record<number, string>;
   caption?: string;
   hashtags?: string[];
+  transition?: string;
+  videoEffect?: string;
+  activeTemplateId?: string;
 }
 
 export type WordHighlightStyle =

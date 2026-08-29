@@ -100,8 +100,12 @@ export const EditorPage: React.FC = () => {
     }
   );
 
-  const [transition, setTransition] = useState<string>('fadeScale');
-  const [videoEffect, setVideoEffect] = useState<string>('none');
+  const [transition, setTransition] = useState<string>(
+    currentProject?.transition || 'fadeScale'
+  );
+  const [videoEffect, setVideoEffect] = useState<string>(
+    currentProject?.videoEffect || 'none'
+  );
   const [showExportModal, setShowExportModal] = useState(false);
   const [showAutoReelModal, setShowAutoReelModal] = useState(false);
   const [isFullscreenPreview, setIsFullscreenPreview] = useState(false);
@@ -148,7 +152,9 @@ export const EditorPage: React.FC = () => {
   const [isClipLibraryOpen, setIsClipLibraryOpen] = useState(false);
   const [isKeyboardModalOpen, setIsKeyboardModalOpen] = useState(false);
   const [isWaveformTimingModalOpen, setIsWaveformTimingModalOpen] = useState(false);
-  const [activeTemplateId, setActiveTemplateId] = useState<string | undefined>();
+  const [activeTemplateId, setActiveTemplateId] = useState<string | undefined>(
+    currentProject?.activeTemplateId
+  );
   const [aspectRatio, setAspectRatio] = useState<'9:16' | '1:1' | '16:9'>(
     (currentProject?.aspectRatio as '9:16' | '1:1' | '16:9') || '9:16'
   );
@@ -267,6 +273,9 @@ export const EditorPage: React.FC = () => {
       if (currentProject.translationEnabled !== undefined)
         setShowTranslation(currentProject.translationEnabled);
       if (currentProject.tafsirEnabled !== undefined) setShowTafsir(currentProject.tafsirEnabled);
+      if (currentProject.transition) setTransition(currentProject.transition);
+      if (currentProject.videoEffect) setVideoEffect(currentProject.videoEffect);
+      if (currentProject.activeTemplateId !== undefined) setActiveTemplateId(currentProject.activeTemplateId);
       setCurrentAyahIndex(0);
       setAudioCurrentTime(0);
     }
@@ -365,6 +374,9 @@ export const EditorPage: React.FC = () => {
         updateProject(currentProject.id, {
           backgroundUrl: tpl.backgroundUrl || currentProject.backgroundUrl,
           backgroundOpacity: tpl.backgroundOpacity ?? currentProject.backgroundOpacity,
+          transition: tpl.transition || currentProject.transition || 'fadeScale',
+          videoEffect: tpl.videoEffect || currentProject.videoEffect || 'none',
+          activeTemplateId: tpl.id,
           textSettings: {
             ...currentProject.textSettings,
             ...tpl.textSettings,
@@ -789,6 +801,9 @@ export const EditorPage: React.FC = () => {
         fromAyah,
         toAyah,
         aspectRatio,
+        transition,
+        videoEffect,
+        activeTemplateId,
         updatedAt: new Date().toISOString(),
         status: 'editing',
       });
@@ -810,6 +825,9 @@ export const EditorPage: React.FC = () => {
     fromAyah,
     toAyah,
     aspectRatio,
+    transition,
+    videoEffect,
+    activeTemplateId,
     addToast,
   ]);
 
@@ -944,6 +962,9 @@ export const EditorPage: React.FC = () => {
           fromAyah,
           toAyah,
           aspectRatio,
+          transition,
+          videoEffect,
+          activeTemplateId,
           thumbnail: thumb,
           updatedAt: new Date().toISOString(),
         });
@@ -973,6 +994,9 @@ export const EditorPage: React.FC = () => {
     fromAyah,
     toAyah,
     aspectRatio,
+    transition,
+    videoEffect,
+    activeTemplateId,
   ]);
 
   // Periodic background autosave interval (Heartbeat based on settings.autoSaveInterval)
