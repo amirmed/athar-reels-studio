@@ -383,6 +383,7 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
           },
           error: (e) => {
             console.warn('[WebCodecsExport] AudioEncoder error:', e);
+            encoderError = new Error(`AudioEncoder failure: ${e.message}`);
           },
         });
 
@@ -398,152 +399,187 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
     }
   }
 
-  // 6. Encode Audio Track in Chunks (if AudioEncoder active)
-  if (audioEncoder && masterBuffer) {
-    const channel0 = masterBuffer.getChannelData(0);
-    const channel1 = numberOfChannels > 1 ? masterBuffer.getChannelData(1) : null;
-    const totalSamples = masterBuffer.length;
-    const frameSize = 1024; // Standard AAC frame size
+  try {
+    // 6. Encode Audio Track in Chunks (if AudioEncoder active)
+    if (audioEncoder && masterBuffer) {
+      const channel0 = masterBuffer.getChannelData(0);
+      const channel1 = numberOfChannels > 1 ? masterBuffer.getChannelData(1) : null;
+      const totalSamples = masterBuffer.length;
+      const frameSize = 1024; // Standard AAC frame size
 
-    for (let offset = 0; offset < totalSamples; offset += frameSize) {
-      if (signal?.aborted) break;
+      for (let offset = 0; offset < totalSamples; offset += frameSize) {
+        if (signal?.aborted) throw new Error('تم إلغاء عملية التصدير من قِبل المستخدم');
+        if (encoderError) throw encoderError;
 
-      const currentFrameCount = Math.min(frameSize, totalSamples - offset);
-      const planarData = new Float32Array(currentFrameCount * numberOfChannels);
+        const currentFrameCount = Math.min(frameSize, totalSamples - offset);
+        const planarData = new Float32Array(currentFrameCount * numberOfChannels);
 
-      // Copy planar channel 0
-      planarData.set(channel0.subarray(offset, offset + currentFrameCount), 0);
+        // Copy planar channel 0
+        planarData.set(channel0.subarray(offset, offset + currentFrameCount), 0);
 
-      // Copy planar channel 1 if stereo
-      if (numberOfChannels > 1 && channel1) {
-        planarData.set(channel1.subarray(offset, offset + currentFrameCount), currentFrameCount);
+        // Copy planar channel 1 if stereo
+        if (numberOfChannels > 1 && channel1) {
+          planarData.set(channel1.subarray(offset, offset + currentFrameCount), currentFrameCount);
+        }
+
+        const timestampUs = Math.round((offset / sampleRate) * 1_000_000);
+
+        const audioData = new AudioData({
+          format: 'f32-planar',
+          sampleRate,
+          numberOfChannels,
+          numberOfFrames: currentFrameCount,
+          timestamp: timestampUs,
+          data: planarData,
+        });
+
+        audioEncoder.encode(audioData);
+        audioData.close();
+      }
+    }
+
+    // 7. Setup Offscreen or standard Canvas for ultra-fast rendering
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
+    if (!ctx) {
+      throw new Error('Failed to create canvas 2D rendering context for export');
+    }
+
+    const totalFrames = Math.max(fps * 2, Math.round(fps * totalDurationSec));
+    const startTime = performance.now();
+    let lastReportedTime = 0;
+
+    // 8. Faster-Than-Realtime Frame Loop
+    for (let frameIdx = 0; frameIdx < totalFrames; frameIdx++) {
+      if (signal?.aborted) {
+        throw new Error('تم إلغاء عملية التصدير من قِبل المستخدم');
       }
 
-      const timestampUs = Math.round((offset / sampleRate) * 1_000_000);
+      if (encoderError) {
+        throw encoderError;
+      }
 
-      const audioData = new AudioData({
-        format: 'f32-planar',
-        sampleRate,
-        numberOfChannels,
-        numberOfFrames: currentFrameCount,
-        timestamp: timestampUs,
-        data: planarData,
+      if ((videoEncoder.state as string) === 'closed') {
+        throw new Error('VideoEncoder closed unexpectedly');
+      }
+
+      const currentTimeSec = frameIdx / fps;
+      const timestampUs = Math.round(currentTimeSec * 1_000_000);
+      const durationUs = Math.round((1 / fps) * 1_000_000);
+
+      // Find active timeline segment
+      let activeSegmentIndex = timeline.findIndex(
+        (s) => currentTimeSec >= s.start && currentTimeSec < s.end
+      );
+      if (activeSegmentIndex === -1 && timeline.length > 0) {
+        activeSegmentIndex =
+          currentTimeSec >= timeline[timeline.length - 1].end ? timeline.length - 1 : 0;
+      }
+
+      const activeSegment = timeline[activeSegmentIndex];
+      const currentAyah = activeSegment ? activeSegment.ayah : params.ayahs[0];
+
+      // Render frame to canvas with full visual parity
+      renderVideoExportFrame({
+        ctx,
+        width,
+        height,
+        frame: frameIdx,
+        totalFrames,
+        currentTimeSec,
+        bgImage,
+        sceneBgImages: params.sceneBgImages,
+        currentAyahIndex: activeSegmentIndex >= 0 ? activeSegmentIndex : 0,
+        bgOpacity,
+        currentAyah,
+        textSettings,
+        watermark,
+        projectName,
+        surahName,
+        reciterName,
+        showTranslation,
+        audioPeaks: effectiveAudioPeaks,
+        totalDurationSec,
       });
 
-      audioEncoder.encode(audioData);
-      audioData.close();
-    }
-  }
+      // Create VideoFrame from Canvas
+      const videoFrame = new VideoFrame(canvas, {
+        timestamp: timestampUs,
+        duration: durationUs,
+      });
 
-  // 7. Setup Offscreen or standard Canvas for ultra-fast rendering
-  const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
-  const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
-  if (!ctx) {
-    throw new Error('Failed to create canvas 2D rendering context for export');
-  }
+      const isKeyFrame = frameIdx % (fps * 2) === 0;
+      videoEncoder.encode(videoFrame, { keyFrame: isKeyFrame });
+      videoFrame.close();
 
-  const totalFrames = Math.max(fps * 2, Math.round(fps * totalDurationSec));
-  const startTime = performance.now();
-  let lastReportedTime = 0;
+      // Backpressure: prevent encoder queue overflow with error and state checks
+      let waitIterations = 0;
+      while (videoEncoder.encodeQueueSize > 6) {
+        if (encoderError) throw encoderError;
+        if ((videoEncoder.state as string) === 'closed') {
+          throw new Error('VideoEncoder closed unexpectedly during encoding');
+        }
+        if (signal?.aborted) {
+          throw new Error('تم إلغاء عملية التصدير من قِبل المستخدم');
+        }
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        waitIterations++;
+        if (waitIterations > 5000) {
+          throw new Error('VideoEncoder queue drain timed out');
+        }
+      }
 
-  // 8. Faster-Than-Realtime Frame Loop
-  for (let frameIdx = 0; frameIdx < totalFrames; frameIdx++) {
-    if (signal?.aborted) {
-      videoEncoder.close();
-      if (audioEncoder) audioEncoder.close();
-      throw new Error('Export cancelled by user');
+      // Progress updates
+      const now = performance.now();
+      if (now - lastReportedTime >= 80 || frameIdx === totalFrames - 1) {
+        lastReportedTime = now;
+        const elapsedSec = Math.max(0.01, (now - startTime) / 1000);
+        const currentFps = Math.round((frameIdx + 1) / elapsedSec);
+        const percent = Math.min(99, Math.round(((frameIdx + 1) / totalFrames) * 100));
+
+        if (onProgress) {
+          onProgress({
+            percent,
+            currentFrame: frameIdx + 1,
+            totalFrames,
+            fps: currentFps,
+          });
+        }
+      }
     }
 
     if (encoderError) {
       throw encoderError;
     }
 
-    const currentTimeSec = frameIdx / fps;
-    const timestampUs = Math.round(currentTimeSec * 1_000_000);
-    const durationUs = Math.round((1 / fps) * 1_000_000);
+    // 9. Flush Encoders and Finalize MP4 File
+    await videoEncoder.flush();
 
-    // Find active timeline segment
-    let activeSegmentIndex = timeline.findIndex(
-      (s) => currentTimeSec >= s.start && currentTimeSec < s.end
-    );
-    if (activeSegmentIndex === -1 && timeline.length > 0) {
-      activeSegmentIndex =
-        currentTimeSec >= timeline[timeline.length - 1].end ? timeline.length - 1 : 0;
+    if (audioEncoder && (audioEncoder.state as string) === 'configured') {
+      await audioEncoder.flush();
     }
 
-    const activeSegment = timeline[activeSegmentIndex];
-    const currentAyah = activeSegment ? activeSegment.ayah : params.ayahs[0];
+    muxer.finalize();
 
-    // Render frame to canvas with full visual parity
-    renderVideoExportFrame({
-      ctx,
-      width,
-      height,
-      frame: frameIdx,
-      totalFrames,
-      currentTimeSec,
-      bgImage,
-      sceneBgImages: params.sceneBgImages,
-      currentAyahIndex: activeSegmentIndex >= 0 ? activeSegmentIndex : 0,
-      bgOpacity,
-      currentAyah,
-      textSettings,
-      watermark,
-      projectName,
-      surahName,
-      reciterName,
-      showTranslation,
-      audioPeaks: effectiveAudioPeaks,
-      totalDurationSec,
-    });
-
-    // Create VideoFrame from Canvas
-    const videoFrame = new VideoFrame(canvas, {
-      timestamp: timestampUs,
-      duration: durationUs,
-    });
-
-    const isKeyFrame = frameIdx % (fps * 2) === 0;
-    videoEncoder.encode(videoFrame, { keyFrame: isKeyFrame });
-    videoFrame.close();
-
-    // Backpressure: prevent encoder queue overflow
-    while (videoEncoder.encodeQueueSize > 6) {
-      await new Promise((resolve) => setTimeout(resolve, 0));
-    }
-
-    // Progress updates
-    const now = performance.now();
-    if (now - lastReportedTime >= 80 || frameIdx === totalFrames - 1) {
-      lastReportedTime = now;
-      const elapsedSec = Math.max(0.01, (now - startTime) / 1000);
-      const currentFps = Math.round((frameIdx + 1) / elapsedSec);
-      const percent = Math.min(99, Math.round(((frameIdx + 1) / totalFrames) * 100));
-
-      if (onProgress) {
-        onProgress({
-          percent,
-          currentFrame: frameIdx + 1,
-          totalFrames,
-          fps: currentFps,
-        });
+    const mp4Blob = new Blob([target.buffer], { type: 'video/mp4' });
+    return mp4Blob;
+  } finally {
+    // Release native codec hardware handles reliably
+    try {
+      if ((videoEncoder.state as string) !== 'closed') {
+        videoEncoder.close();
       }
+    } catch (e) {
+      console.debug('[WebCodecsExport] VideoEncoder close error:', e);
+    }
+    try {
+      if (audioEncoder && (audioEncoder.state as string) !== 'closed') {
+        audioEncoder.close();
+      }
+    } catch (e) {
+      console.debug('[WebCodecsExport] AudioEncoder close error:', e);
     }
   }
-
-  // 9. Flush Encoders and Finalize MP4 File
-  await videoEncoder.flush();
-  videoEncoder.close();
-
-  if (audioEncoder) {
-    await audioEncoder.flush();
-    audioEncoder.close();
-  }
-
-  muxer.finalize();
-
-  const mp4Blob = new Blob([target.buffer], { type: 'video/mp4' });
-  return mp4Blob;
 }
