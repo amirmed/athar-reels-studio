@@ -5,7 +5,6 @@ import { CharityRibbonFooter } from './CharityRibbonFooter';
 import { GlobalSearchModal } from '../ui/GlobalSearchModal';
 import { MotherDuaModal } from '../ui/MotherDuaModal';
 import { KeyboardShortcutsModal } from '../ui/KeyboardShortcutsModal';
-import { ToastContainer } from '../ui/Toast';
 import { InteractiveTourGuide } from '../ui/InteractiveTourGuide';
 
 import { useHotkeys } from '../../hooks/useHotkeys';
@@ -79,7 +78,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         onClose={() => setIsShortcutsOpen(false)}
       />
 
-      <ToastContainer />
       <InteractiveTourGuide />
     </div>
   );
