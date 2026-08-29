@@ -317,7 +317,24 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
     chosenVideoCodec = 'avc1.4d002a';
   }
 
-  // 3. Initialize MP4 Muxer with FastStart for instant playback
+  // 3. Verify AudioEncoder support first before registering audio track with Muxer
+  let audioEncoderSupported = false;
+  if (hasAudio && typeof AudioEncoder !== 'undefined') {
+    try {
+      const audioSupport = await AudioEncoder.isConfigSupported({
+        codec: 'mp4a.40.2', // AAC-LC
+        sampleRate,
+        numberOfChannels,
+        bitrate: 192_000,
+      });
+      audioEncoderSupported = !!audioSupport.supported;
+    } catch (err) {
+      console.warn('[WebCodecsExport] AudioEncoder support probe failed:', err);
+      audioEncoderSupported = false;
+    }
+  }
+
+  // 4. Initialize MP4 Muxer (audio track enabled strictly if AudioEncoder is supported)
   const target = new ArrayBufferTarget();
   const muxer = new Muxer({
     target,
@@ -327,7 +344,7 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
       height,
       frameRate: fps,
     },
-    audio: hasAudio
+    audio: audioEncoderSupported
       ? {
           codec: 'aac',
           numberOfChannels,
@@ -337,7 +354,7 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
     fastStart: 'in-memory',
   });
 
-  // 4. Initialize VideoEncoder
+  // 5. Initialize VideoEncoder
   let encoderError: Error | null = null;
   const videoEncoder = new VideoEncoder({
     output: (chunk, meta) => {
@@ -361,41 +378,33 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
     framerate: fps,
   });
 
-  // 5. Initialize AudioEncoder (if audio track exists)
+  // 6. Initialize AudioEncoder (only if Muxer audio track is active)
   let audioEncoder: AudioEncoder | null = null;
-  if (hasAudio && typeof AudioEncoder !== 'undefined') {
+  if (audioEncoderSupported) {
     try {
-      const audioSupport = await AudioEncoder.isConfigSupported({
-        codec: 'mp4a.40.2', // AAC-LC
+      audioEncoder = new AudioEncoder({
+        output: (chunk, meta) => {
+          try {
+            muxer.addAudioChunk(chunk, meta);
+          } catch (err) {
+            console.warn('[WebCodecsExport] Error adding audio chunk:', err);
+          }
+        },
+        error: (e) => {
+          console.warn('[WebCodecsExport] AudioEncoder error:', e);
+          encoderError = new Error(`AudioEncoder failure: ${e.message}`);
+        },
+      });
+
+      audioEncoder.configure({
+        codec: 'mp4a.40.2',
         sampleRate,
         numberOfChannels,
         bitrate: 192_000,
       });
-
-      if (audioSupport.supported) {
-        audioEncoder = new AudioEncoder({
-          output: (chunk, meta) => {
-            try {
-              muxer.addAudioChunk(chunk, meta);
-            } catch (err) {
-              console.warn('[WebCodecsExport] Error adding audio chunk:', err);
-            }
-          },
-          error: (e) => {
-            console.warn('[WebCodecsExport] AudioEncoder error:', e);
-            encoderError = new Error(`AudioEncoder failure: ${e.message}`);
-          },
-        });
-
-        audioEncoder.configure({
-          codec: 'mp4a.40.2',
-          sampleRate,
-          numberOfChannels,
-          bitrate: 192_000,
-        });
-      }
     } catch (err) {
-      console.warn('[WebCodecsExport] AudioEncoder setup skipped:', err);
+      console.warn('[WebCodecsExport] AudioEncoder initialization failed:', err);
+      audioEncoder = null;
     }
   }
 
