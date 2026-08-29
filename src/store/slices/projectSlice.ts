@@ -201,17 +201,19 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
         }
       });
 
-      // 2. Single Owner: Electron IPC is primary, localStorage is web fallback
+      // 2. Sanitize projects: Strip heavy base64 data URLs from persistent JSON storage
+      const sanitizedProjects = projects.map((p) => {
+        if (p.thumbnail && p.thumbnail.startsWith('data:image/')) {
+          const { thumbnail: _t, ...rest } = p;
+          return rest as Project;
+        }
+        return p;
+      });
+
+      // 3. Single Owner: Electron IPC is primary, localStorage is web fallback
       if (isElectron() && window.electronAPI?.projects) {
-        await window.electronAPI.projects.saveAll(projects);
+        await window.electronAPI.projects.saveAll(sanitizedProjects);
       } else {
-        const sanitizedProjects = projects.map((p) => {
-          if (p.thumbnail && p.thumbnail.startsWith('data:image/')) {
-            const { thumbnail: _t, ...rest } = p;
-            return rest as Project;
-          }
-          return p;
-        });
         saveToLocal(STORAGE_KEY_PROJECTS, sanitizedProjects);
       }
     } catch (e) {

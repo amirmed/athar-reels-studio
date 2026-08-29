@@ -228,6 +228,15 @@ ipcMain.handle('projects:loadAll', async () => {
 
 ipcMain.handle('projects:save', async (_event, projectOrProjects: any) => {
   try {
+    const sanitizeForDisk = (item: any) => {
+      if (!item || typeof item !== 'object') return item;
+      if (item.thumbnail && typeof item.thumbnail === 'string' && item.thumbnail.startsWith('data:image/')) {
+        const { thumbnail: _t, ...rest } = item;
+        return rest;
+      }
+      return item;
+    };
+
     const projectsDir = getProjectsPath();
     if (Array.isArray(projectOrProjects)) {
       for (const p of projectOrProjects) {
@@ -235,7 +244,7 @@ ipcMain.handle('projects:save', async (_event, projectOrProjects: any) => {
         if (safeId) {
           const filePath = path.join(projectsDir, `${safeId}.json`);
           if (isSafeUserPath(filePath)) {
-            atomicWriteFileSync(filePath, JSON.stringify(p, null, 2));
+            atomicWriteFileSync(filePath, JSON.stringify(sanitizeForDisk(p), null, 2));
           }
         }
       }
@@ -249,7 +258,7 @@ ipcMain.handle('projects:save', async (_event, projectOrProjects: any) => {
     if (!isSafeUserPath(filePath)) {
       return { success: false, error: 'Unsafe path destination' };
     }
-    atomicWriteFileSync(filePath, JSON.stringify(projectOrProjects, null, 2));
+    atomicWriteFileSync(filePath, JSON.stringify(sanitizeForDisk(projectOrProjects), null, 2));
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -258,13 +267,22 @@ ipcMain.handle('projects:save', async (_event, projectOrProjects: any) => {
 
 ipcMain.handle('projects:saveAll', async (_event, projects: any[]) => {
   try {
+    const sanitizeForDisk = (item: any) => {
+      if (!item || typeof item !== 'object') return item;
+      if (item.thumbnail && typeof item.thumbnail === 'string' && item.thumbnail.startsWith('data:image/')) {
+        const { thumbnail: _t, ...rest } = item;
+        return rest;
+      }
+      return item;
+    };
+
     const projectsDir = getProjectsPath();
     for (const p of projects) {
       const safeId = sanitizeProjectId(p?.id);
       if (safeId) {
         const filePath = path.join(projectsDir, `${safeId}.json`);
         if (isSafeUserPath(filePath)) {
-          atomicWriteFileSync(filePath, JSON.stringify(p, null, 2));
+          atomicWriteFileSync(filePath, JSON.stringify(sanitizeForDisk(p), null, 2));
         }
       }
     }
