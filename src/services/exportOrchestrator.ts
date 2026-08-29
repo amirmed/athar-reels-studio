@@ -577,58 +577,59 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
   }
 
   try {
-    // 1. Decode all Ayah audio buffers
-  const validAudioUrls = audioUrls.filter(Boolean);
-  const loadedBuffers: AudioBuffer[] = [];
+    // 1. Decode all Ayah audio buffers with exact index tracking
+    const validAudioUrls = audioUrls.filter(Boolean);
+    const loadedBuffersMap = new Map<number, AudioBuffer>();
 
-  for (let i = 0; i < validAudioUrls.length; i++) {
-    if (signal?.aborted) throw new Error('تم إلغاء عملية التصدير');
-    reportProgress(`جاري قراءة الصوت (${i + 1}/${validAudioUrls.length})...`, 10 + Math.round((i / validAudioUrls.length) * 15));
-    const buf = await fetchAndDecodeAudio(audioCtx, validAudioUrls[i]);
-    if (buf) loadedBuffers.push(buf);
-  }
+    for (let i = 0; i < validAudioUrls.length; i++) {
+      if (signal?.aborted) throw new Error('تم إلغاء عملية التصدير');
+      reportProgress(`جاري قراءة الصوت (${i + 1}/${validAudioUrls.length})...`, 10 + Math.round((i / validAudioUrls.length) * 15));
+      const buf = await fetchAndDecodeAudio(audioCtx, validAudioUrls[i]);
+      if (buf) loadedBuffersMap.set(i, buf);
+    }
 
-  // 2. Stitch and Process Master Audio Buffer
-  let masterBuffer: AudioBuffer | null = null;
-  if (loadedBuffers.length > 0) {
-    masterBuffer = concatenateAudioBuffers(audioCtx, loadedBuffers);
-  }
+    // 2. Stitch and Process Master Audio Buffer
+    let masterBuffer: AudioBuffer | null = null;
+    const loadedBuffersList = Array.from(loadedBuffersMap.values());
+    if (loadedBuffersList.length > 0) {
+      masterBuffer = concatenateAudioBuffers(audioCtx, loadedBuffersList);
+    }
 
-  // 3. Build Precise Timeline Ranges & Trim Continuous Audio Tracks
-  const hasAyahTimestamps =
-    validAyahs.length > 0 &&
-    validAyahs[0].startTimeMs !== undefined &&
-    validAyahs[validAyahs.length - 1].endTimeMs !== undefined;
+    // 3. Build Precise Timeline Ranges & Trim Continuous Audio Tracks
+    const hasAyahTimestamps =
+      validAyahs.length > 0 &&
+      validAyahs[0].startTimeMs !== undefined &&
+      validAyahs[validAyahs.length - 1].endTimeMs !== undefined;
 
-  const isContinuousTrack =
-    validAudioUrls.length === 1 && (validAyahs.length > 1 || hasAyahTimestamps);
+    const isContinuousTrack =
+      validAudioUrls.length === 1 && (validAyahs.length > 1 || hasAyahTimestamps);
 
-  let baseStartSec = 0;
-  if (isContinuousTrack && hasAyahTimestamps) {
-    baseStartSec = Math.max(0, (validAyahs[0].startTimeMs ?? 0) / 1000);
-  }
+    let baseStartSec = 0;
+    if (isContinuousTrack && hasAyahTimestamps) {
+      baseStartSec = Math.max(0, (validAyahs[0].startTimeMs ?? 0) / 1000);
+    }
 
-  let cumulativeTime = 0;
-  const ayahTimeRanges = validAyahs.map((a, idx) => {
-    let start = cumulativeTime;
-    let end = cumulativeTime;
-    let dur = a.duration || 6;
+    let cumulativeTime = 0;
+    const ayahTimeRanges = validAyahs.map((a, idx) => {
+      let start = cumulativeTime;
+      let end = cumulativeTime;
+      let dur = a.duration || 6;
 
-    if (isContinuousTrack && a.startTimeMs !== undefined && a.endTimeMs !== undefined) {
-      start = Math.max(0, a.startTimeMs / 1000 - baseStartSec);
-      end = Math.max(start + 0.1, a.endTimeMs / 1000 - baseStartSec);
-      dur = Math.max(0.1, end - start);
-      cumulativeTime = end;
-    } else {
-      const bufDur = loadedBuffers[idx]?.duration;
-      dur =
-        bufDur && !isNaN(bufDur) && bufDur > 0
-          ? bufDur
-          : a.duration && !isNaN(a.duration) && a.duration > 0
-            ? a.duration
-            : totalDuration
-              ? totalDuration / Math.max(1, validAyahs.length)
-              : 6;
+      if (isContinuousTrack && a.startTimeMs !== undefined && a.endTimeMs !== undefined) {
+        start = Math.max(0, a.startTimeMs / 1000 - baseStartSec);
+        end = Math.max(start + 0.1, a.endTimeMs / 1000 - baseStartSec);
+        dur = Math.max(0.1, end - start);
+        cumulativeTime = end;
+      } else {
+        const bufDur = loadedBuffersMap.get(idx)?.duration;
+        dur =
+          bufDur && !isNaN(bufDur) && bufDur > 0
+            ? bufDur
+            : a.duration && !isNaN(a.duration) && a.duration > 0
+              ? a.duration
+              : totalDuration
+                ? totalDuration / Math.max(1, validAyahs.length)
+                : 6;
       start = cumulativeTime;
       cumulativeTime += dur;
       end = cumulativeTime;
