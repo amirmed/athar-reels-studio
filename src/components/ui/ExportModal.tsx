@@ -31,6 +31,7 @@ import {
 import { isVideoMedia } from '../../utils/imageUtils';
 import { useHotkeys } from '../../hooks/useHotkeys';
 import { useAppStore } from '../../store/useAppStore';
+import { useTranslation } from '../../i18n';
 import {
   PLATFORM_PRESETS,
   exportProject,
@@ -84,6 +85,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
   surahName = 'سورة قرآنية',
   reciterName,
 }) => {
+  const { t } = useTranslation();
   const addToast = useAppStore((s) => s.addToast);
   const [status, setStatus] = useState<ExportStatus>('idle');
   const [progress, setProgress] = useState(0);
@@ -297,7 +299,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
     if (audioUrls.length === 1 && ayahs.length > 1) {
       addToast({
-        message: '🎙️ تنبيه: سيتم استخدام تسجيلك الصوتي المخصص كمسار موحد لكافة آيات الفيديو.',
+        message: t('exportModal.multiAyahCustomVoice', '🎙️ تنبيه: سيتم استخدام تسجيلك الصوتي المخصص كمسار موحد لكافة آيات الفيديو.'),
         type: 'info',
       });
     }
@@ -360,7 +362,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         setProgress(100);
         setPhase('اكتمل التصدير بنجاح وبأعلى جودة ✅');
       } else {
-        throw new Error(result.error || 'فشلت عملية تصدير الفيديو');
+        throw new Error(result.error || t('exportModal.errorDefault', 'فشلت عملية تصدير الفيديو'));
       }
     } catch (err: unknown) {
       if (abortControllerRef.current?.signal.aborted) {
@@ -370,7 +372,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         return;
       }
       console.error('[ExportModal] Export failed:', err);
-      const errMsg = err instanceof Error ? err.message : 'حدث خطأ أثناء تصدير الفيديو';
+      const errMsg = err instanceof Error ? err.message : t('exportModal.errorDefault', 'حدث خطأ أثناء تصدير الفيديو');
       setError(errMsg);
       setStatus('error');
     }
@@ -394,7 +396,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
   const handleUserCancelClick = () => {
     if (typeof window !== 'undefined' && window.confirm) {
-      if (!window.confirm('هل أنت متأكد من رغبتك في إلغاء عملية تصدير الفيديو الجارية؟')) {
+      if (!window.confirm(t('exportModal.cancelConfirm', 'هل أنت متأكد من رغبتك في إلغاء عملية تصدير الفيديو الجارية؟'))) {
         return;
       }
     }
@@ -404,7 +406,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
   const handleModalClose = () => {
     if (status === 'exporting') {
       if (typeof window !== 'undefined' && window.confirm) {
-        if (!window.confirm('عملية التصدير جارية حالياً. هل أنت متأكد من إلغاء التصدير وإغلاق النافذة؟')) {
+        if (!window.confirm(t('exportModal.modalCloseConfirm', 'عملية التصدير جارية حالياً. هل أنت متأكد من إلغاء التصدير وإغلاق النافذة؟'))) {
           return;
         }
       }
@@ -421,7 +423,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         isOpen={isOpen}
         onClose={handleModalClose}
         size="lg"
-        title="🚀 تصدير الفيديو الذكي (Studio Export)"
+        title={t('exportModal.title', '🚀 تصدير الفيديو الذكي (Studio Export)')}
         headerIcon={<Film size={18} />}
         closeOnBackdropClick={status !== 'exporting'}
         closeOnEscape={status !== 'exporting'}
@@ -443,7 +445,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                 }`}
               >
                 <Settings size={14} />
-                <span>إعدادات ومنصات التصدير 📐</span>
+                <span>{t('exportModal.tabSettings', 'إعدادات ومنصات التصدير 📐')}</span>
               </button>
               <button
                 type="button"
@@ -455,7 +457,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                 }`}
               >
                 <Eye size={14} />
-                <span>معاينة حية دقيقة قبل التصدير 🎥</span>
+                <span>{t('exportModal.tabPreview', 'معاينة حية دقيقة قبل التصدير 🎥')}</span>
               </button>
             </div>
 
@@ -463,7 +465,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             {activeTab === 'export' && (
               <div className="space-y-3">
                 <label className="block text-surface-300 text-xs font-bold">
-                  اختر المنصة المستهدفة (تحسين تلقائي للدقة والبت-ريت) 🎯:
+                  {t('exportModal.selectPlatform', 'اختر المنصة المستهدفة (تحسين تلقائي للدقة والبت-ريت) 🎯:')}
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                   {PLATFORM_PRESETS.map((preset) => {
@@ -522,7 +524,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                 <div className="relative rounded-2xl overflow-hidden border border-gold-500/40 shadow-2xl bg-black flex items-center justify-center max-h-[280px]">
                   <canvas ref={previewCanvasRef} className="max-h-[280px] w-auto object-contain" />
                   <div className="absolute top-2 end-2 px-2 py-0.5 rounded-full bg-black/70 backdrop-blur-md border border-white/10 text-[11px] text-gold-300 font-bold">
-                    معاينة حية 1:1 🎬
+                    {t('exportModal.livePreviewBadge', 'معاينة حية 1:1 🎬')}
                   </div>
                 </div>
 
@@ -533,7 +535,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                     className="p-2 rounded-xl bg-gold-500 text-surface-950 font-bold text-xs flex items-center gap-1 cursor-pointer active:scale-95 shadow"
                   >
                     {isPreviewPlaying ? <Pause size={14} /> : <Play size={14} />}
-                    <span>{isPreviewPlaying ? 'إيقاف المعاينة' : 'تشغيل المعاينة'}</span>
+                    <span>{isPreviewPlaying ? t('exportModal.pausePreview', 'إيقاف المعاينة') : t('exportModal.playPreview', 'تشغيل المعاينة')}</span>
                   </button>
                   <span className="text-xs text-surface-400 font-mono">
                     {previewTimeSec.toFixed(1)}s / 6.0s
@@ -549,7 +551,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-gold-500 via-amber-400 to-gold-500 hover:from-gold-400 hover:to-amber-300 text-surface-950 font-extrabold text-sm flex items-center justify-center gap-2 shadow-xl shadow-gold-500/25 active:scale-98 transition-all cursor-pointer"
             >
               <Download size={18} />
-              <span>بدء تصدير الفيديو لمنصة «{activePreset.name}» 🚀</span>
+              <span>{t('exportModal.startExportBtn', `بدء تصدير الفيديو لمنصة «${activePreset.name}» 🚀`).replace('{name}', activePreset.name)}</span>
             </button>
           </div>
         )}
@@ -580,21 +582,21 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             {/* 5.2 📊 Live Metrics Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
               <div className="p-2.5 rounded-xl bg-surface-950/70 border border-surface-700/30">
-                <div className="text-surface-400 text-[11px]">الآية الحالية</div>
+                <div className="text-surface-400 text-[11px]">{t('exportModal.currentAyahLabel', 'الآية الحالية')}</div>
                 <div className="font-bold text-surface-50 mt-0.5">
-                  {currentAyahNumber} من {ayahs.length}
+                  {currentAyahNumber} {t('exportModal.ofAyahs', 'من')} {ayahs.length}
                 </div>
               </div>
               <div className="p-2.5 rounded-xl bg-surface-950/70 border border-surface-700/30">
-                <div className="text-surface-400 text-[11px]">سرعة الإطارات</div>
+                <div className="text-surface-400 text-[11px]">{t('exportModal.fpsLabel', 'سرعة الإطارات')}</div>
                 <div className="font-bold text-gold-300 font-mono mt-0.5">{realtimeFps} FPS</div>
               </div>
               <div className="p-2.5 rounded-xl bg-surface-950/70 border border-surface-700/30">
-                <div className="text-surface-400 text-[11px]">الوقت المنقضي</div>
+                <div className="text-surface-400 text-[11px]">{t('exportModal.elapsedLabel', 'الوقت المنقضي')}</div>
                 <div className="font-bold text-surface-50 font-mono mt-0.5">{elapsedSeconds}s</div>
               </div>
               <div className="p-2.5 rounded-xl bg-surface-950/70 border border-surface-700/30">
-                <div className="text-surface-400 text-[11px]">الوقت المتبقي (ETA)</div>
+                <div className="text-surface-400 text-[11px]">{t('exportModal.etaLabel', 'الوقت المتبقي (ETA)')}</div>
                 <div className="font-bold text-emerald-300 font-mono mt-0.5">
                   ~{estimatedSecondsRemaining}s
                 </div>
@@ -602,13 +604,13 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             </div>
 
             <div className="flex items-center justify-between text-xs text-surface-400 px-1">
-              <span>الحجم التقريبي للملف: ~{estimatedSizeMb} MB</span>
+              <span>{t('exportModal.approxSize', `الحجم التقريبي للملف: ~${estimatedSizeMb} MB`).replace('{size}', String(estimatedSizeMb))}</span>
               <button
                 type="button"
                 onClick={handleUserCancelClick}
                 className="text-rose-400 hover:underline cursor-pointer"
               >
-                إلغاء التصدير ✕
+                {t('exportModal.cancelExport', 'إلغاء التصدير ✕')}
               </button>
             </div>
           </div>
@@ -621,9 +623,9 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               <CheckCircle2 size={32} />
             </div>
             <div>
-              <h4 className="font-extrabold text-base text-surface-50">تم تصدير الفيديو بنجاح! 🎉</h4>
+              <h4 className="font-extrabold text-base text-surface-50">{t('exportModal.successTitle', 'تم تصدير الفيديو بنجاح! 🎉')}</h4>
               <p className="text-xs text-emerald-400/90 mt-0.5">
-                الفيديو جاهز بأعلى جودة وصوت نقي 100%
+                {t('exportModal.successSubtitle', 'الفيديو جاهز بأعلى جودة وصوت نقي 100%')}
               </p>
             </div>
 
@@ -640,7 +642,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                     className="py-3 px-4 rounded-xl bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-surface-950 font-black text-xs flex items-center justify-center gap-1.5 shadow-md active:scale-98 transition-all cursor-pointer"
                   >
                     <FolderOpen size={15} />
-                    <span>فتح مكان الملف 📁</span>
+                    <span>{t('exportModal.openFolder', 'فتح مكان الملف 📁')}</span>
                   </button>
                   <button
                     type="button"
@@ -648,7 +650,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                     className="py-3 px-4 rounded-xl bg-surface-800 hover:bg-surface-700 text-surface-50 font-bold text-xs flex items-center justify-center gap-1.5 border border-surface-700/40 active:scale-98 transition-all cursor-pointer"
                   >
                     <Play size={14} />
-                    <span>تشغيل الفيديو 🎬</span>
+                    <span>{t('exportModal.playVideo', 'تشغيل الفيديو 🎬')}</span>
                   </button>
                 </div>
               </div>
@@ -697,7 +699,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                   className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-surface-950 font-extrabold text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 active:scale-98 transition-all cursor-pointer"
                 >
                   <Download size={18} />
-                  <span>حفظ باسم / تحميل ملف الفيديو 📥</span>
+                  <span>{t('exportModal.saveAsDownload', 'حفظ باسم / تحميل ملف الفيديو 📥')}</span>
                 </button>
               </div>
             )}
@@ -709,7 +711,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-gold-500/25 via-amber-500/20 to-gold-400/20 text-gold-300 hover:text-gold-200 border border-gold-400/40 hover:border-gold-300 font-extrabold text-xs flex items-center justify-center gap-2 shadow-md hover:scale-[1.02] transition-all cursor-pointer"
             >
               <Share2 size={15} className="text-gold-400" />
-              <span>عدة النشر المباشر في TikTok و Reels و YouTube 🚀</span>
+              <span>{t('exportModal.publishKitBtn', 'عدة النشر المباشر في TikTok و Reels و YouTube 🚀')}</span>
             </button>
 
             {/* Quick Actions */}
@@ -720,7 +722,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                 className="py-2.5 px-3 rounded-xl bg-surface-950 border border-surface-700/40 hover:border-gold-500/30 text-surface-50 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <ImageIcon size={14} className="text-gold-400" />
-                <span>تصميم غلاف الريلز 🖼️</span>
+                <span>{t('exportModal.designThumbnail', 'تصميم غلاف الريلز 🖼️')}</span>
               </button>
 
               <button
@@ -732,7 +734,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                 className="py-2.5 px-3 rounded-xl bg-surface-950 border border-surface-700/40 hover:border-surface-700/60 text-surface-300 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <RotateCcw size={14} />
-                <span>تصدير لمنصة أخرى 🔄</span>
+                <span>{t('exportModal.exportAnother', 'تصدير لمنصة أخرى 🔄')}</span>
               </button>
             </div>
           </div>
@@ -745,9 +747,9 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               <AlertCircle size={32} />
             </div>
             <div>
-              <h4 className="font-bold text-sm text-surface-50">تعذر إكمال تصدير الفيديو</h4>
+              <h4 className="font-bold text-sm text-surface-50">{t('exportModal.errorTitle', 'تعذر إكمال تصدير الفيديو')}</h4>
               <p className="text-xs text-rose-400 mt-1">
-                {error || 'حدث خطأ غير متوقع أثناء معالجة الإطارات'}
+                {error || t('exportModal.errorDefault', 'حدث خطأ غير متوقع أثناء معالجة الإطارات')}
               </p>
             </div>
 
@@ -756,7 +758,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               onClick={() => setStatus('idle')}
               className="px-6 py-2.5 rounded-xl bg-surface-800 hover:bg-surface-700 text-surface-50 font-bold text-xs cursor-pointer border border-surface-700/40"
             >
-              إعادة المحاولة 🔄
+              {t('exportModal.retryBtn', 'إعادة المحاولة 🔄')}
             </button>
           </div>
         )}
