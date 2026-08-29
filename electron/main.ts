@@ -522,8 +522,27 @@ ipcMain.handle('shell:openExternal', async (_event, targetUrl: string) => {
   }
 });
 
+const ALLOWED_APP_PATHS = new Set([
+  'videos',
+  'pictures',
+  'documents',
+  'downloads',
+  'desktop',
+  'temp',
+  'userData',
+]);
+
 ipcMain.handle('app:getPath', async (_event, name: string) => {
-  return app.getPath(name as any);
+  if (!name || typeof name !== 'string' || !ALLOWED_APP_PATHS.has(name)) {
+    console.warn(`[Main] Security: Access to app path '${name}' is restricted or invalid.`);
+    return '';
+  }
+  try {
+    return app.getPath(name as any);
+  } catch (err) {
+    console.warn(`[Main] Failed to get app path for '${name}':`, err);
+    return '';
+  }
 });
 
 ipcMain.handle('app:getDataPath', async () => {
