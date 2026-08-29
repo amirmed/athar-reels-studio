@@ -249,10 +249,14 @@ export const Sidebar: React.FC = React.memo(() => {
           onClick={toggleSidebar}
           className="w-full flex items-center justify-center py-2 rounded-lg text-surface-400 hover:text-surface-50 hover:bg-surface-800/60 transition-all duration-200 cursor-pointer"
           title={
-            sidebarCollapsed ? t('common.next', 'توسيع القائمة') : t('common.back', 'تصغير القائمة')
+            sidebarCollapsed
+              ? t('common.expandSidebar', 'توسيع القائمة')
+              : t('common.collapseSidebar', 'تصغير القائمة')
           }
           aria-label={
-            sidebarCollapsed ? t('common.next', 'توسيع القائمة') : t('common.back', 'تصغير القائمة')
+            sidebarCollapsed
+              ? t('common.expandSidebar', 'توسيع القائمة')
+              : t('common.collapseSidebar', 'تصغير القائمة')
           }
         >
           {sidebarCollapsed ? (

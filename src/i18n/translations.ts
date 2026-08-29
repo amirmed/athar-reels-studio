@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Athar Studio Universal i18n Translation Dictionary
  * Comprehensive localization support for Arabic (ar), English (en), and French (fr).
  */
@@ -64,6 +64,8 @@ export const translations = {
       duration: 'المدة',
       resolution: 'الدقة',
       confirm: 'تأكيد',
+      expandSidebar: 'توسيع القائمة',
+      collapseSidebar: 'تصغير القائمة',
     },
 
     // Topbar & Header
@@ -75,6 +77,13 @@ export const translations = {
       searchPlaceholder: 'بحث سريع عن سورة، قارئ، أو قالب (Ctrl+K)...',
       tourGuide: 'الجولة التعليمية',
       globalSearch: 'البحث الشامل',
+      shortcutsGuide: 'دليل اختصارات لوحة المفاتيح (?)',
+      notifications: 'الإشعارات والتنبيهات',
+      markAllAsRead: 'تحديد الكل كمقروء',
+      exportCompleted: 'اكتمل التصدير بنجاح',
+      newBadge: 'جديد',
+      noNotifications: 'لا توجد إشعارات جديدة',
+      settings: 'الإعدادات',
     },
 
     // Dashboard Page
@@ -336,6 +345,8 @@ export const translations = {
       duration: 'Duration',
       resolution: 'Resolution',
       confirm: 'Confirm',
+      expandSidebar: 'Expand Sidebar',
+      collapseSidebar: 'Collapse Sidebar',
     },
 
     // Topbar & Header
@@ -347,6 +358,13 @@ export const translations = {
       searchPlaceholder: 'Quick search surah, reciter, or template (Ctrl+K)...',
       tourGuide: 'Interactive Tour',
       globalSearch: 'Global Search',
+      shortcutsGuide: 'Keyboard Shortcuts Guide (?)',
+      notifications: 'Notifications & Alerts',
+      markAllAsRead: 'Mark all as read',
+      exportCompleted: 'Export completed successfully',
+      newBadge: 'New',
+      noNotifications: 'No new notifications',
+      settings: 'Settings',
     },
 
     // Dashboard Page
@@ -610,6 +628,8 @@ export const translations = {
       duration: 'Durée',
       resolution: 'Résolution',
       confirm: 'Confirmer',
+      expandSidebar: 'Développer le menu',
+      collapseSidebar: 'Réduire le menu',
     },
 
     // Topbar & Header
@@ -621,6 +641,13 @@ export const translations = {
       searchPlaceholder: 'Recherche rapide de sourate, récitateur ou modèle (Ctrl+K)...',
       tourGuide: 'Visite Guidée',
       globalSearch: 'Recherche Globale',
+      shortcutsGuide: 'Guide des raccourcis clavier (?)',
+      notifications: 'Notifications & Alertes',
+      markAllAsRead: 'Tout marquer comme lu',
+      exportCompleted: 'Exportation terminée avec succès',
+      newBadge: 'Nouveau',
+      noNotifications: 'Aucune nouvelle notification',
+      settings: 'Paramètres',
     },
 
     // Dashboard Page

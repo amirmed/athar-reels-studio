@@ -1,5 +1,5 @@
 import { Page, QuoteCardSettings } from '../../types';
-import { AppSlice, Toast, UiSlice } from '../types';
+import { AppSlice, Toast, UiSlice, ModalName } from '../types';
 
 function generateUniqueId(prefix = 'id'): string {
   try {
@@ -30,9 +30,9 @@ export const createUiSlice: AppSlice<UiSlice> = (set, get) => ({
   toggleSidebar: () => set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
 
   // Modals with typed payloads
-  activeModal: null,
+  activeModal: null as ModalName | null,
   modalData: null,
-  openModal: <T = unknown>(name: string, data: T = null as T) =>
+  openModal: <T = unknown>(name: ModalName, data: T = null as T) =>
     set({ activeModal: name, modalData: data }),
   closeModal: () => set({ activeModal: null, modalData: null }),
 

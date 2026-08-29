@@ -36,7 +36,7 @@ export const Topbar: React.FC<TopbarProps> = ({
   const exportJobs = useAppStore((s) => s.exportJobs);
   const setCurrentPage = useAppStore((s) => s.setCurrentPage);
   const startTour = useAppStore((s) => s.startTour);
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
 
   const [showNotifications, setShowNotifications] = useState(false);
 
@@ -122,8 +122,8 @@ export const Topbar: React.FC<TopbarProps> = ({
           <button
             type="button"
             onClick={onOpenShortcuts}
-            aria-label="دليل اختصارات لوحة المفاتيح (?)"
-            title="اختصارات لوحة المفاتيح (? / Shift+?)"
+            aria-label={t('topbar.shortcutsGuide', 'دليل اختصارات لوحة المفاتيح (?)')}
+            title={t('topbar.shortcutsGuide', 'اختصارات لوحة المفاتيح (? / Shift+?)')}
             className="w-9 h-9 rounded-xl bg-surface-800/40 border border-surface-700/40 flex items-center justify-center text-surface-400 hover:text-gold-300 hover:bg-surface-700/50 hover:border-gold-400/30 transition-all duration-200 cursor-pointer shadow-sm active:scale-95"
           >
             <Keyboard size={16} />
@@ -175,8 +175,10 @@ export const Topbar: React.FC<TopbarProps> = ({
                 markAllAsSeen();
               }
             }}
-            aria-label={`الإشعارات ${unreadExportsCount > 0 ? `(${unreadExportsCount} جديدة)` : ''}`}
-            title="الإشعارات والتنبيهات"
+            aria-label={`${t('topbar.notifications', 'الإشعارات والتنبيهات')} ${
+              unreadExportsCount > 0 ? `(${unreadExportsCount})` : ''
+            }`}
+            title={t('topbar.notifications', 'الإشعارات والتنبيهات')}
             className="w-9 h-9 rounded-xl bg-surface-800/40 border border-surface-700/40 flex items-center justify-center text-surface-400 hover:text-surface-50 hover:bg-surface-700/50 hover:border-surface-600 transition-all duration-200 relative cursor-pointer"
           >
             <Bell size={16} />
@@ -196,14 +198,16 @@ export const Topbar: React.FC<TopbarProps> = ({
                   className="absolute start-0 top-full mt-2 w-80 bg-surface-900 border border-surface-700/50 rounded-2xl shadow-2xl z-50 overflow-hidden text-start"
                 >
                   <div className="p-3.5 border-b border-surface-700/30 flex items-center justify-between">
-                    <h3 className="text-xs font-bold text-surface-50">الإشعارات والتنبيهات 🔔</h3>
+                    <h3 className="text-xs font-bold text-surface-50">
+                      {t('topbar.notifications', 'الإشعارات والتنبيهات')} 🔔
+                    </h3>
                     {recentExports.length > 0 && unreadExportsCount > 0 && (
                       <button
                         type="button"
                         onClick={markAllAsSeen}
                         className="text-[11px] text-accent-400 hover:text-accent-300 font-bold hover:underline cursor-pointer"
                       >
-                        تحديد الكل كمقروء ✓
+                        {t('topbar.markAllAsRead', 'تحديد الكل كمقروء')} ✓
                       </button>
                     )}
                   </div>
@@ -235,12 +239,12 @@ export const Topbar: React.FC<TopbarProps> = ({
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center justify-between">
                                 <p className="text-xs font-bold text-surface-50">
-                                  اكتمل التصدير بنجاح
+                                  {t('topbar.exportCompleted', 'اكتمل التصدير بنجاح')}
                                 </p>
                                 {isUnread && (
                                   <span
                                     className="w-2 h-2 rounded-full bg-accent-400 shrink-0"
-                                    title="جديد"
+                                    title={t('topbar.newBadge', 'جديد')}
                                   />
                                 )}
                               </div>
@@ -248,10 +252,13 @@ export const Topbar: React.FC<TopbarProps> = ({
                                 {job.projectName} • {job.aspectRatio}
                               </p>
                               <p className="text-[10px] text-surface-400 mt-1 font-mono">
-                                {new Date(job.createdAt).toLocaleTimeString('ar-EG', {
-                                  hour: '2-digit',
-                                  minute: '2-digit',
-                                })}
+                                {new Date(job.createdAt).toLocaleTimeString(
+                                  language === 'ar' ? 'ar-EG' : language === 'fr' ? 'fr-FR' : 'en-US',
+                                  {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                  }
+                                )}
                               </p>
                             </div>
                           </div>
@@ -259,7 +266,7 @@ export const Topbar: React.FC<TopbarProps> = ({
                       })
                     ) : (
                       <div className="p-6 text-center text-xs text-surface-400">
-                        لا توجد إشعارات جديدة
+                        {t('topbar.noNotifications', 'لا توجد إشعارات جديدة')}
                       </div>
                     )}
                   </div>
@@ -276,15 +283,15 @@ export const Topbar: React.FC<TopbarProps> = ({
         <button
           type="button"
           onClick={() => setCurrentPage('settings')}
-          aria-label="إعدادات التطبيق"
-          title="إعدادات التطبيق"
+          aria-label={t('topbar.settings', 'الإعدادات')}
+          title={t('topbar.settings', 'إعدادات التطبيق')}
           className="flex items-center gap-2 bg-surface-800/40 border border-surface-700/40 rounded-xl px-3 py-2 hover:bg-surface-700/50 hover:border-surface-600 transition-all duration-200 group cursor-pointer"
         >
           <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center">
             <User size={13} className="text-white" />
           </div>
           <span className="text-sm text-surface-300 group-hover:text-surface-50 transition-colors">
-            الإعدادات
+            {t('topbar.settings', 'الإعدادات')}
           </span>
           <ChevronDown size={13} className="text-surface-400" />
         </button>

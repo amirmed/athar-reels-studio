@@ -24,7 +24,7 @@ export type ModalName =
   | 'aiVoice'
   | 'onboarding'
   | 'globalSearch'
-  | string;
+  | 'presetTemplates';
 
 export interface DeleteProjectModalData {
   projectId?: string;
@@ -45,9 +45,9 @@ export interface UiSlice {
   toggleSidebar: () => void;
 
   // Modals with typed payloads
-  activeModal: string | null;
+  activeModal: ModalName | null;
   modalData: DeleteProjectModalData | Record<string, unknown> | unknown;
-  openModal: <T = unknown>(name: string, data?: T) => void;
+  openModal: <T = unknown>(name: ModalName, data?: T) => void;
   closeModal: () => void;
 
   // Quotes
