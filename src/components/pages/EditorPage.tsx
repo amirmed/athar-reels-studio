@@ -1468,18 +1468,33 @@ export const EditorPage: React.FC = () => {
             });
           }
           if (ayahs.length > 0) {
+            const perAyahDur = audioData.duration && ayahs.length > 0
+              ? audioData.duration / ayahs.length
+              : undefined;
             setAyahs((prev) =>
-              prev.map((a, idx) =>
-                idx === 0 || prev.length === 1
-                  ? { ...a, audioUrl: audioData.audioUrl, duration: audioData.duration }
-                  : a
-              )
+              prev.map((a) => ({
+                ...a,
+                audioUrl: audioData.audioUrl,
+                duration: perAyahDur || a.duration || 5,
+              }))
             );
+            if (ayahs.length > 1) {
+              addToast({
+                message: '🎙️ تم ربط تلاوتك المسجلة كمسار صوتي موحد لكافة آيات الريلز بنجاح!',
+                type: 'success',
+              });
+            } else {
+              addToast({
+                message: 'تم ربط تلاوتك المسجلة مع مشروع الريلز بنجاح! 🎙️✨',
+                type: 'success',
+              });
+            }
+          } else {
+            addToast({
+              message: 'تم ربط تلاوتك المسجلة مع مشروع الريلز بنجاح! 🎙️✨',
+              type: 'success',
+            });
           }
-          addToast({
-            message: 'تم ربط تلاوتك المسجلة مع مشروع الريلز بنجاح! 🎙️✨',
-            type: 'success',
-          });
         }}
       />
 

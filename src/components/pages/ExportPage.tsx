@@ -123,17 +123,31 @@ export const ExportPage: React.FC = () => {
           );
           const customVoice =
             currentProject.audioSettings?.customRecordedAudioUrl || currentProject.customAudioUrl;
-          if (
+          const isUsingCustomVoice = Boolean(
             customVoice &&
             (currentProject.reciterId === 'custom_voice' ||
               currentProject.audioSettings?.customRecordedAudioUrl ||
               currentProject.customAudioUrl)
-          ) {
-            ayahs.forEach((a, idx) => {
-              if (idx === 0 || ayahs.length === 1) {
-                a.audioUrl = customVoice;
+          );
+          if (isUsingCustomVoice && customVoice) {
+            const customDur = currentProject.audioSettings?.customAudioDuration;
+            const perAyahDur = customDur && ayahs.length > 0
+              ? customDur / ayahs.length
+              : undefined;
+
+            ayahs.forEach((a) => {
+              a.audioUrl = customVoice;
+              if (perAyahDur && (!a.duration || a.duration <= 0)) {
+                a.duration = perAyahDur;
               }
             });
+
+            if (ayahs.length > 1) {
+              addToast({
+                message: '🎙️ تنبيه: سيتم استخدام تسجيلك الصوتي المخصص كمسار موحد لكافة آيات الفيديو.',
+                type: 'info',
+              });
+            }
           }
         }
 
@@ -153,6 +167,12 @@ export const ExportPage: React.FC = () => {
           translationText: translations[idx]?.text,
         }));
 
+        const customVoiceUrl =
+          currentProject.audioSettings?.customRecordedAudioUrl || currentProject.customAudioUrl;
+        const isCustomReciter =
+          currentProject.reciterId === 'custom_voice' ||
+          Boolean(currentProject.audioSettings?.customRecordedAudioUrl || currentProject.customAudioUrl);
+
         const result = await exportProject({
           projectName: currentProject.name,
           surahName: currentProject.surah || '',
@@ -161,6 +181,8 @@ export const ExportPage: React.FC = () => {
           quality,
           backgroundPath: currentProject.backgroundUrl,
           backgroundOpacity: currentProject.backgroundOpacity ?? 0.6,
+          audioUrls: isCustomReciter && customVoiceUrl ? [customVoiceUrl] : (enrichedAyahs.map((a) => a.audioUrl).filter(Boolean) as string[]),
+          totalDuration: currentProject.audioSettings?.customAudioDuration || undefined,
           ayahs: enrichedAyahs,
           textSettings: currentProject.textSettings,
           audioSettings: currentProject.audioSettings,

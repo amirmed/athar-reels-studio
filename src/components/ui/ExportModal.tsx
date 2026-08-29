@@ -84,6 +84,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
   surahName = 'سورة قرآنية',
   reciterName,
 }) => {
+  const addToast = useAppStore((s) => s.addToast);
   const [status, setStatus] = useState<ExportStatus>('idle');
   const [progress, setProgress] = useState(0);
   const [phase, setPhase] = useState('جاري التجهيز...');
@@ -293,6 +294,13 @@ export const ExportModal: React.FC<ExportModalProps> = ({
     setError(null);
     setPhase('جاري تهيئة منصة التصيير والموارد...');
     abortControllerRef.current = new AbortController();
+
+    if (audioUrls.length === 1 && ayahs.length > 1) {
+      addToast({
+        message: '🎙️ تنبيه: سيتم استخدام تسجيلك الصوتي المخصص كمسار موحد لكافة آيات الفيديو.',
+        type: 'info',
+      });
+    }
 
     // Estimated size calculation: (bitrate * seconds) / 8 / 1024 / 1024
     const totalDurationSec = totalDuration || ayahs.reduce((sum, a) => sum + (a.duration || 6), 0) || 15;
