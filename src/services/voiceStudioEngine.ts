@@ -51,6 +51,17 @@ export class VoiceStudioEngine {
     return url;
   }
 
+  public cleanUpAllUrls(): void {
+    for (const url of this.activeUrls) {
+      try {
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        console.debug('[VoiceStudioEngine] Clean up URL error:', err);
+      }
+    }
+    this.activeUrls.clear();
+  }
+
   public cancelRecording(): void {
     if (this.stream) {
       this.stream.getTracks().forEach((track) => {

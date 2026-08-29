@@ -331,9 +331,12 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
       ) : (
         <div className="space-y-2">
           {/* Mode tabs */}
-          <div className="flex gap-1 p-1 bg-surface-800/40 rounded-xl border border-surface-700/40">
+          <div className="flex bg-surface-950 p-1 rounded-xl border border-surface-700/40" role="tablist" aria-label="طريقة اختيار الوسائط">
             <button
               type="button"
+              role="tab"
+              aria-selected={mode === 'upload'}
+              aria-label="رفع وسائط من الجهاز"
               onClick={() => setMode('upload')}
               className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 mode === 'upload'
@@ -346,6 +349,9 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
             </button>
             <button
               type="button"
+              role="tab"
+              aria-selected={mode === 'url'}
+              aria-label="إدخال رابط مباشر للوسائط"
               onClick={() => setMode('url')}
               className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 mode === 'url'
@@ -358,6 +364,9 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
             </button>
             <button
               type="button"
+              role="tab"
+              aria-selected={mode === 'search'}
+              aria-label="تصفح مكتبة الوسائط الجاهزة"
               onClick={() => setMode('search')}
               className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 mode === 'search'

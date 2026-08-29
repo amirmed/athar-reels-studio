@@ -118,13 +118,30 @@ export const ExportModal: React.FC<ExportModalProps> = ({
       setProgress(0);
       setPhase('');
       setError(null);
-      setDownloadBlobUrl(null);
+      setDownloadBlobUrl((prevUrl) => {
+        if (prevUrl && prevUrl.startsWith('blob:')) {
+          try {
+            URL.revokeObjectURL(prevUrl);
+          } catch {}
+        }
+        return null;
+      });
       abortControllerRef.current = null;
       if (previewAnimRef.current) {
         cancelAnimationFrame(previewAnimRef.current);
       }
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    return () => {
+      if (downloadBlobUrl && downloadBlobUrl.startsWith('blob:')) {
+        try {
+          URL.revokeObjectURL(downloadBlobUrl);
+        } catch {}
+      }
+    };
+  }, [downloadBlobUrl]);
 
   const activePreset =
     PLATFORM_PRESETS.find((p) => p.id === selectedPlatformPreset) || PLATFORM_PRESETS[0];

@@ -168,10 +168,11 @@ export const VoiceStudioPage: React.FC = () => {
     }
   };
 
-  // Clean up audio preview, stream & timers on unmount (keep audioBlobUrl alive for project usage)
+  // Clean up audio preview, stream, timers & blob URLs on unmount
   useEffect(() => {
     return () => {
       voiceStudioEngine.stopPreview();
+      voiceStudioEngine.cleanUpAllUrls();
       proceduralAmbientEngine.stop();
       if (timerRef.current) clearInterval(timerRef.current);
       if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
@@ -1302,14 +1303,26 @@ export const VoiceStudioPage: React.FC = () => {
                     onClick={() => {
                       setReverbPreset(rev.id as MosqueReverbPreset);
                       if (isPlayingPreview) {
-                        voiceStudioEngine.playPreview({
-                          reverbPreset: rev.id as MosqueReverbPreset,
-                          reverbLevel,
-                          enableNoiseGate,
-                          enableClarity,
-                          enableWarmth,
-                          recitationVolume,
-                        });
+                        voiceStudioEngine.playPreview(
+                          {
+                            reverbPreset: rev.id as MosqueReverbPreset,
+                            reverbLevel,
+                            enableNoiseGate,
+                            enableClarity,
+                            enableWarmth,
+                            recitationVolume,
+                            enablePitchPolish,
+                            pitchPolishLevel,
+                            enable8DAudio,
+                            eightDSpeed,
+                            eightDDepth,
+                            eightDStyle,
+                          },
+                          () => {
+                            setIsPlayingPreview(false);
+                            proceduralAmbientEngine.stop();
+                          }
+                        );
                       }
                     }}
                     className={`p-2 rounded-xl text-start transition-all cursor-pointer border flex items-center gap-1.5 ${

@@ -392,14 +392,17 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
                           onClick={() => {
                             setReverbPreset(rev.id);
                             if (isPlaying) {
-                              voiceStudioEngine.playPreview({
-                                reverbPreset: rev.id,
-                                reverbLevel,
-                                enableNoiseGate,
-                                enableClarity,
-                                enableWarmth,
-                                recitationVolume,
-                              });
+                              voiceStudioEngine.playPreview(
+                                {
+                                  reverbPreset: rev.id,
+                                  reverbLevel,
+                                  enableNoiseGate,
+                                  enableClarity,
+                                  enableWarmth,
+                                  recitationVolume,
+                                },
+                                () => setIsPlaying(false)
+                              );
                             }
                           }}
                           className={`p-2.5 rounded-xl border text-start transition-all cursor-pointer flex flex-col justify-between ${

@@ -81,8 +81,10 @@ export const SettingsPage: React.FC = () => {
   const [quranStorageStats, setQuranStorageStats] = useState<QuranStorageStats | null>(null);
   const [isCleaningStorage, setIsCleaningStorage] = useState(false);
   const [isCleaningQuranCache, setIsCleaningQuranCache] = useState(false);
+  const [storageError, setStorageError] = useState<string | null>(null);
 
   const loadStorageStats = useCallback(async () => {
+    setStorageError(null);
     try {
       const [stats, quranStats] = await Promise.all([
         getAudioStorageStats(),
@@ -91,7 +93,8 @@ export const SettingsPage: React.FC = () => {
       setAudioStorageStats(stats);
       setQuranStorageStats(quranStats);
     } catch (err) {
-      console.debug('[SettingsPage] Error loading storage stats:', err);
+      console.warn('[SettingsPage] Error loading storage stats:', err);
+      setStorageError('تعذر الوصول إلى قاعدة بيانات التخزين المحلية');
     }
   }, []);
 
@@ -329,12 +332,27 @@ export const SettingsPage: React.FC = () => {
             </SettingRow>
           )}
 
+          {storageError && (
+            <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-xs text-red-400 flex items-center justify-between">
+              <span>⚠️ {storageError}</span>
+              <button
+                type="button"
+                onClick={loadStorageStats}
+                className="px-2.5 py-1 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-300 font-bold transition-all"
+              >
+                إعادة المحاولة 🔄
+              </button>
+            </div>
+          )}
+
           {/* IndexedDB Audio Storage Quota & Eviction */}
           <SettingRow
             label="ذاكرة التسجيلات الصوتية (IndexedDB Cache)"
             description={
               audioStorageStats
                 ? `${audioStorageStats.totalCount} تسجيل صوتي مخزن • الحجم: ${audioStorageStats.formattedSize} / 100 MB`
+                : storageError
+                ? 'تعذر قراءة إحصائيات التخزين'
                 : 'إدارة وتفريغ الملفات الصوتية والتسجيلات المهملة لتفادي امتلاء الذاكرة'
             }
           >

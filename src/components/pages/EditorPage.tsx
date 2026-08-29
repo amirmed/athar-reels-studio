@@ -396,11 +396,18 @@ export const EditorPage: React.FC = () => {
     [addToast, currentProject, updateProject]
   );
 
-  // Ambient sound playback with strict cleanup
+  // Ambient sound playback with strict lifecycle management (no restart glitches on volume drag)
   useEffect(() => {
     if (isPlaying && audioSettings.ambientSoundId && audioSettings.ambientSoundId !== 'none') {
       const vol = audioSettings.ambientSoundVolume ?? 28;
-      proceduralAmbientEngine.play(audioSettings.ambientSoundId, vol);
+      if (
+        proceduralAmbientEngine.getCurrentSoundId() === audioSettings.ambientSoundId &&
+        proceduralAmbientEngine.getIsPlaying()
+      ) {
+        proceduralAmbientEngine.setVolume(vol);
+      } else {
+        proceduralAmbientEngine.play(audioSettings.ambientSoundId, vol);
+      }
     } else if (!isTestingAmbient) {
       proceduralAmbientEngine.stop();
     }
@@ -409,7 +416,14 @@ export const EditorPage: React.FC = () => {
         proceduralAmbientEngine.stop();
       }
     };
-  }, [isPlaying, audioSettings.ambientSoundId, audioSettings.ambientSoundVolume, isTestingAmbient]);
+  }, [isPlaying, audioSettings.ambientSoundId, isTestingAmbient]);
+
+  // Smooth real-time volume modulation without audio stutter
+  useEffect(() => {
+    if (proceduralAmbientEngine.getIsPlaying()) {
+      proceduralAmbientEngine.setVolume(audioSettings.ambientSoundVolume ?? 28);
+    }
+  }, [audioSettings.ambientSoundVolume]);
 
   // Fetch Ayahs & Audio with offline cache resilience and key-based de-duplication
   const loadAyahs = useCallback(async () => {
@@ -1021,20 +1035,7 @@ export const EditorPage: React.FC = () => {
     activeTemplateId,
   ]);
 
-  // Periodic background autosave interval (Heartbeat based on settings.autoSaveInterval)
-  useEffect(() => {
-    if (!currentProject || settings.autoSave === false) return;
 
-    const intervalMs = Math.max(30000, (settings.autoSaveInterval || 1) * 60 * 1000);
-    const intervalTimer = setInterval(() => {
-      updateProject(currentProject.id, {
-        updatedAt: new Date().toISOString(),
-      });
-      setSaveStatus('saved');
-    }, intervalMs);
-
-    return () => clearInterval(intervalTimer);
-  }, [currentProject?.id, settings.autoSave, settings.autoSaveInterval]);
 
 
   return (

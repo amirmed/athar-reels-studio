@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../../store/useAppStore';
 import { useTranslation } from '../../i18n';
@@ -42,11 +42,15 @@ export const AzkarStudioPage: React.FC = () => {
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [selectedVoiceItem, setSelectedVoiceItem] = useState<AzkarItem | null>(null);
+  const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Cleanup audio when switching pages
+  // Cleanup audio & timers when switching pages
   useEffect(() => {
     return () => {
       stopAzkarAudio();
+      if (copyTimeoutRef.current) {
+        clearTimeout(copyTimeoutRef.current);
+      }
     };
   }, []);
 
@@ -116,7 +120,8 @@ export const AzkarStudioPage: React.FC = () => {
     navigator.clipboard.writeText(fullText);
     setCopiedId(item.id);
     addToast({ message: 'تم نسخ الذكر والمصدر بنجاح ✓', type: 'success' });
-    setTimeout(() => setCopiedId(null), 2000);
+    if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current);
+    copyTimeoutRef.current = setTimeout(() => setCopiedId(null), 2000);
   };
 
   // 1-Click Convert to Video Reel Project
