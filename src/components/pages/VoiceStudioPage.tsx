@@ -915,7 +915,14 @@ export const VoiceStudioPage: React.FC = () => {
                     min={1}
                     max={selectedSurah?.ayahCount || 7}
                     value={fromAyah}
-                    onChange={(e) => setFromAyah(Math.max(1, Number(e.target.value)))}
+                    onChange={(e) => {
+                      const maxAyah = selectedSurah?.ayahCount || 7;
+                      const val = Math.max(1, Math.min(maxAyah, Number(e.target.value) || 1));
+                      setFromAyah(val);
+                      if (val > toAyah) {
+                        setToAyah(val);
+                      }
+                    }}
                     className="w-14 p-1 rounded-xl bg-surface-800 border border-surface-700/50 text-xs font-bold text-center text-surface-50 shadow-sm"
                   />
                   <label className="text-xs text-surface-400 font-bold">إلى:</label>
@@ -924,9 +931,11 @@ export const VoiceStudioPage: React.FC = () => {
                     min={fromAyah}
                     max={selectedSurah?.ayahCount || 7}
                     value={toAyah}
-                    onChange={(e) =>
-                      setToAyah(Math.min(selectedSurah?.ayahCount || 7, Number(e.target.value)))
-                    }
+                    onChange={(e) => {
+                      const maxAyah = selectedSurah?.ayahCount || 7;
+                      const val = Math.max(fromAyah, Math.min(maxAyah, Number(e.target.value) || fromAyah));
+                      setToAyah(val);
+                    }}
                     className="w-14 p-1 rounded-xl bg-surface-800 border border-surface-700/50 text-xs font-bold text-center text-surface-50 shadow-sm"
                   />
                 </div>

@@ -557,9 +557,14 @@ export const CreateProjectPage: React.FC = () => {
                 <input
                   type="number"
                   value={fromAyah}
-                  onChange={(e) =>
-                    setFromAyah(Math.max(1, Math.min(Number(e.target.value), toAyah)))
-                  }
+                  onChange={(e) => {
+                    const maxAyah = selectedSurah.ayahCount;
+                    const val = Math.max(1, Math.min(maxAyah, Number(e.target.value) || 1));
+                    setFromAyah(val);
+                    if (val > toAyah) {
+                      setToAyah(val);
+                    }
+                  }}
                   min={1}
                   max={selectedSurah.ayahCount}
                   className="glass-input w-full"
@@ -573,11 +578,11 @@ export const CreateProjectPage: React.FC = () => {
                 <input
                   type="number"
                   value={toAyah}
-                  onChange={(e) =>
-                    setToAyah(
-                      Math.max(fromAyah, Math.min(Number(e.target.value), selectedSurah.ayahCount))
-                    )
-                  }
+                  onChange={(e) => {
+                    const maxAyah = selectedSurah.ayahCount;
+                    const val = Math.max(fromAyah, Math.min(maxAyah, Number(e.target.value) || fromAyah));
+                    setToAyah(val);
+                  }}
                   min={1}
                   max={selectedSurah.ayahCount}
                   className="glass-input w-full"
