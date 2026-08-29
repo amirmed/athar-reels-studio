@@ -80,35 +80,35 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClos
       <div className="space-y-5">
         {/* 3 Simple Steps Highlight */}
         <div className="space-y-2.5">
-          <div className="p-3 rounded-2xl bg-surface-950/60 border border-white/[0.06] flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-accent-500/20 text-accent-300 flex items-center justify-center shrink-0 font-bold text-xs">
+          <div className="p-3 rounded-2xl bg-surface-900 border border-surface-700/40 flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-accent-500/20 text-accent-600 dark:text-accent-300 flex items-center justify-center shrink-0 font-bold text-xs">
               1
             </div>
             <div className="text-start min-w-0">
-              <h4 className="text-xs font-bold text-white">اختر السورة والآيات</h4>
-              <p className="text-[11px] text-white/65">أكثر من 70+ قارئ معتمد بمصاحف كاملة</p>
+              <h4 className="text-xs font-bold text-surface-50">اختر السورة والآيات</h4>
+              <p className="text-[11px] text-surface-400">أكثر من 70+ قارئ معتمد بمصاحف كاملة</p>
             </div>
           </div>
 
-          <div className="p-3 rounded-2xl bg-surface-950/60 border border-white/[0.06] flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-gold-500/20 text-gold-300 flex items-center justify-center shrink-0 font-bold text-xs">
+          <div className="p-3 rounded-2xl bg-surface-900 border border-surface-700/40 flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-gold-500/20 text-gold-600 dark:text-gold-300 flex items-center justify-center shrink-0 font-bold text-xs">
               2
             </div>
             <div className="text-start min-w-0">
-              <h4 className="text-xs font-bold text-white">اختر القالب والخلفية السينمائية</h4>
-              <p className="text-[11px] text-white/65">
+              <h4 className="text-xs font-bold text-surface-50">اختر القالب والخلفية السينمائية</h4>
+              <p className="text-[11px] text-surface-400">
                 قوالب سينمائية جاهزة، مطر، كعبة، نجوم، وصوت 8D
               </p>
             </div>
           </div>
 
-          <div className="p-3 rounded-2xl bg-surface-950/60 border border-white/[0.06] flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-300 flex items-center justify-center shrink-0 font-bold text-xs">
+          <div className="p-3 rounded-2xl bg-surface-900 border border-surface-700/40 flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-600 dark:text-purple-300 flex items-center justify-center shrink-0 font-bold text-xs">
               3
             </div>
             <div className="text-start min-w-0">
-              <h4 className="text-xs font-bold text-white">تصدير فوري بنقرة واحدة</h4>
-              <p className="text-[11px] text-white/65">
+              <h4 className="text-xs font-bold text-surface-50">تصدير فوري بنقرة واحدة</h4>
+              <p className="text-[11px] text-surface-400">
                 جاهز للتيك توك، إنستغرام ريلز، وشورتس يوتيوب
               </p>
             </div>
@@ -116,7 +116,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClos
         </div>
 
         {/* Action CTAs */}
-        <div className="space-y-2 pt-2 border-t border-white/[0.06]">
+        <div className="space-y-2 pt-2 border-t border-surface-700/40">
           <button
             onClick={handleInstantDemoReel}
             className="btn-gold w-full py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg"

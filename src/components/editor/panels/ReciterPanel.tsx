@@ -77,9 +77,9 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
                   🎙️
                 </div>
                 <div>
-                  <div className="font-bold text-gold-300 text-xs flex items-center gap-1">
+                  <div className="font-bold text-gold-700 dark:text-gold-300 text-xs flex items-center gap-1">
                     <span>تلاوتك المسجلة نشطة</span>
-                    <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
                       مفعل
                     </span>
                   </div>
@@ -134,7 +134,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
 
             {/* Custom Reciter Name Input Field */}
             <div className="pt-2 border-t border-gold-400/20 space-y-1">
-              <label className="text-[11px] font-bold text-gold-300 flex items-center justify-between">
+              <label className="text-[11px] font-bold text-gold-700 dark:text-gold-300 flex items-center justify-between">
                 <span>اسمك / اسم القارئ (يظهر في الفيديو والغلاف):</span>
                 <span className="text-[9px] text-surface-400">تعديل</span>
               </label>
@@ -152,7 +152,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
                   }
                 }}
                 placeholder="مثال: القارئ محمد طه / تلاوتي الخاصة"
-                className="glass-input w-full p-2 rounded-xl text-xs bg-surface-950/90 border border-gold-400/30 text-surface-50 placeholder-surface-500 focus:border-gold-400 focus:outline-none"
+                className="glass-input w-full p-2 rounded-xl text-xs bg-surface-900 border border-gold-400/30 text-surface-50 placeholder-surface-500 focus:border-gold-400 focus:outline-none"
               />
             </div>
           </div>
@@ -165,11 +165,11 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
               const avail = getAvailableSurahsForReciter(reciterId);
               const isFull = avail.length === 114;
               return isFull ? (
-                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
+                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold border border-emerald-500/30">
                   🟢 114 سورة كاملة
                 </span>
               ) : (
-                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30">
+                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 font-bold border border-amber-500/30">
                   🟡 {avail.length} سورة مسجلة
                 </span>
               );
@@ -178,7 +178,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
           <button
             type="button"
             onClick={onOpenReciterModal}
-            className="text-[11px] text-gold-400 hover:text-gold-300 font-bold flex items-center gap-1 hover:underline bg-gold-400/10 px-2 py-0.5 rounded-lg border border-gold-400/20 cursor-pointer"
+            className="text-[11px] text-gold-600 dark:text-gold-400 hover:text-gold-500 font-bold flex items-center gap-1 hover:underline bg-gold-400/10 px-2 py-0.5 rounded-lg border border-gold-400/20 cursor-pointer"
           >
             <Sparkles size={11} />
             <span>تصفح ({reciters.length}) 🎙️</span>
@@ -207,7 +207,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
           className="glass-input w-full p-2 rounded-xl text-xs bg-surface-900"
         >
           {(reciterId === 'custom_voice' || audioSettings.customRecordedAudioUrl) && (
-            <option value="custom_voice" className="bg-surface-900 text-gold-400 font-bold">
+            <option value="custom_voice" className="bg-surface-900 text-gold-500 dark:text-gold-400 font-bold">
               🎙️ تسجيلي الصوتي الخاص (أنا)
             </option>
           )}
@@ -215,7 +215,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
             const rSurahs = getAvailableSurahsForReciter(r.id);
             const isFull = rSurahs.length === 114;
             return (
-              <option key={r.id} value={r.id} className="bg-surface-900 text-white">
+              <option key={r.id} value={r.id} className="bg-surface-900 text-surface-50">
                 {r.name} — {r.style} ({isFull ? '114 سورة ✓' : `${rSurahs.length} سورة`})
               </option>
             );
@@ -227,13 +227,13 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
       {currentProject?.contentType === 'custom' ||
       currentProject?.contentType === 'hadith' ||
       currentProject?.contentType === 'azkar' ? (
-        <div className="space-y-3 p-3.5 rounded-2xl bg-surface-900/90 border border-gold-400/20">
+        <div className="space-y-3 p-3.5 rounded-2xl bg-surface-900 border border-gold-400/20">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-bold text-gold-300 flex items-center gap-1.5">
+            <label className="text-xs font-bold text-gold-700 dark:text-gold-300 flex items-center gap-1.5">
               <FileText size={14} />
               <span>نص المقطع (حديث / موعظة / كلمة) ✍️</span>
             </label>
-            <span className="text-[11px] px-2 py-0.5 rounded bg-gold-400/10 text-gold-400 border border-gold-400/20 font-bold">
+            <span className="text-[11px] px-2 py-0.5 rounded bg-gold-400/10 text-gold-600 dark:text-gold-400 border border-gold-400/20 font-bold">
               {currentProject?.contentType === 'hadith'
                 ? 'حديث نبوي 📜'
                 : currentProject?.contentType === 'azkar'
@@ -277,7 +277,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
               ]);
             }}
             rows={4}
-            className="w-full p-2.5 rounded-xl bg-surface-950/80 border border-surface-700/40 text-surface-50 text-xs leading-relaxed focus:outline-none focus:border-gold-400 resize-none font-medium"
+            className="w-full p-2.5 rounded-xl bg-surface-950 border border-surface-700/40 text-surface-50 text-xs leading-relaxed focus:outline-none focus:border-gold-400 resize-none font-medium"
             placeholder="اكتب أو عدل نص الموعظة أو الحديث هنا..."
           />
         </div>
@@ -291,7 +291,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
                 const isFull = avail.length === 114;
                 if (isFull) return null;
                 return (
-                  <label className="flex items-center gap-1 text-[11px] text-gold-300 font-bold cursor-pointer bg-gold-500/10 px-1.5 py-0.5 rounded-md border border-gold-500/20">
+                  <label className="flex items-center gap-1 text-[11px] text-gold-700 dark:text-gold-300 font-bold cursor-pointer bg-gold-500/10 px-1.5 py-0.5 rounded-md border border-gold-500/20">
                     <input
                       type="checkbox"
                       checked={filterEditorAvailableOnly}
@@ -346,7 +346,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
 
               return (
                 <div className="mt-2 p-2.5 rounded-xl bg-amber-500/15 border border-amber-500/30 space-y-1.5 animate-in">
-                  <p className="text-[11px] text-amber-200 leading-snug">
+                  <p className="text-[11px] text-amber-800 dark:text-amber-200 leading-snug">
                     ⚠️ <span className="font-bold">سورة {curSurahName}</span> غير مسجلة بصوت{' '}
                     <span className="font-bold">{curReciterName}</span>.
                   </p>
@@ -357,7 +357,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
                         setReciterId('alafasy_128');
                         stopAudio();
                       }}
-                      className="px-2 py-0.5 rounded-lg bg-surface-900 hover:bg-surface-800 text-gold-300 font-bold text-[10px] border border-gold-400/30 cursor-pointer"
+                      className="px-2 py-0.5 rounded-lg bg-surface-900 hover:bg-surface-800 text-gold-600 dark:text-gold-300 font-bold text-[10px] border border-gold-400/30 cursor-pointer"
                     >
                       تبديل لمشاري العفاسي (مصحف كامل) 🔄
                     </button>

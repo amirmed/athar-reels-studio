@@ -51,7 +51,7 @@ export const BrandingPanel: React.FC<BrandingPanelProps> = ({
             }
             className={`px-2 py-0.5 rounded-full text-[11px] font-bold border transition-all cursor-pointer ${
               textSettings.showWatermark !== false
-                ? 'bg-gold-400/20 border-gold-400 text-gold-300'
+                ? 'bg-gold-400/20 border-gold-400 text-gold-700 dark:text-gold-300 font-black'
                 : 'bg-surface-900 border-surface-700/40 text-surface-400'
             }`}
           >

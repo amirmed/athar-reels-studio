@@ -124,10 +124,10 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
 
       {/* Target Scope Switcher (All Scenes vs Current Scene) */}
       {ayahs.length > 1 && (
-        <div className="p-3 rounded-2xl bg-surface-900/90 border border-gold-400/30 space-y-2">
+        <div className="p-3 rounded-2xl bg-surface-900 border border-gold-400/30 space-y-2">
           <div className="flex items-center justify-between text-xs font-bold text-surface-50">
             <span>نطاق تطبيق الصورة المختارة:</span>
-            <span className="text-[11px] text-gold-300 font-mono">
+            <span className="text-[11px] text-gold-700 dark:text-gold-300 font-mono font-bold">
               {applyScope === 'all' ? '🌟 كامل الريلز' : `🎬 مشهد ${currentAyahIndex + 1}`}
             </span>
           </div>

@@ -101,18 +101,18 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
               {currentProject?.name || 'مشروع ريلز قرآني'}
             </h1>
             {saveStatus === 'saving' ? (
-              <span className="hidden md:inline-flex items-center gap-1.5 text-[11px] px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-300 font-bold border border-amber-500/20 animate-pulse shrink-0">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+              <span className="hidden md:inline-flex items-center gap-1.5 text-[11px] px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-300 font-bold border border-amber-500/20 animate-pulse shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
                 <span>جارٍ الحفظ...</span>
               </span>
             ) : (
-              <span className="hidden md:inline-flex items-center gap-1 text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 font-bold border border-emerald-500/20 shrink-0">
-                <Database size={11} className="text-emerald-400" />
+              <span className="hidden md:inline-flex items-center gap-1 text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-bold border border-emerald-500/20 shrink-0">
+                <Database size={11} className="text-emerald-500 dark:text-emerald-400" />
                 <span>✓ تم الحفظ</span>
               </span>
             )}
           </div>
-          <p className="text-[11px] text-gold-400 font-medium truncate">
+          <p className="text-[11px] text-gold-600 dark:text-gold-400 font-bold truncate">
             {currentProject?.aspectRatio === '9:16'
               ? 'ريلز عمودي 9:16'
               : currentProject?.aspectRatio === '1:1'
@@ -122,15 +122,15 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
         </div>
 
         {/* Undo / Redo Buttons */}
-        <div className="flex items-center bg-surface-950/80 p-0.5 sm:p-1 rounded-xl border border-surface-700/40 gap-0.5 sm:gap-1 shrink-0">
+        <div className="flex items-center bg-surface-800 p-0.5 sm:p-1 rounded-xl border border-surface-700/40 gap-0.5 sm:gap-1 shrink-0">
           <button
             type="button"
             onClick={onUndo}
             disabled={!canUndo}
             className={`p-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
               canUndo
-                ? 'text-surface-50 hover:text-gold-300 hover:bg-surface-800 cursor-pointer active:scale-95'
-                : 'text-surface-500 cursor-not-allowed'
+                ? 'text-surface-50 hover:text-gold-500 hover:bg-surface-700 cursor-pointer active:scale-95'
+                : 'text-surface-400 cursor-not-allowed'
             }`}
             title="تراجع (Ctrl + Z)"
             aria-label="تراجع (Ctrl + Z)"
@@ -144,8 +144,8 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
             disabled={!canRedo}
             className={`p-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
               canRedo
-                ? 'text-surface-50 hover:text-gold-300 hover:bg-surface-800 cursor-pointer active:scale-95'
-                : 'text-surface-500 cursor-not-allowed'
+                ? 'text-surface-50 hover:text-gold-500 hover:bg-surface-700 cursor-pointer active:scale-95'
+                : 'text-surface-400 cursor-not-allowed'
             }`}
             title="إعادة (Ctrl + Y)"
             aria-label="إعادة (Ctrl + Y)"
@@ -166,7 +166,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
             onClick={onToggleProMode}
             className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
               isProMode
-                ? 'bg-purple-500/20 text-purple-300 border-purple-500/40 shadow-sm'
+                ? 'bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-500/40 shadow-sm'
                 : 'bg-surface-800 text-surface-200 border-surface-700/40 hover:border-gold-400/40 hover:text-surface-50'
             }`}
             title="التبديل بين الوضع المبسط والوضع المتقدم"
@@ -180,11 +180,11 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
         <button
           type="button"
           onClick={onOpenAutoReel}
-          className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600/30 to-gold-500/30 hover:from-purple-600/40 hover:to-gold-500/40 text-purple-200 text-xs font-bold border border-purple-400/30 transition-all cursor-pointer shadow-sm active:scale-95"
+          className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600/20 to-gold-500/20 hover:from-purple-600/30 hover:to-gold-500/30 text-purple-700 dark:text-purple-200 text-xs font-bold border border-purple-400/30 transition-all cursor-pointer shadow-sm active:scale-95"
           title="توليد ريلز تلقائي بالذكاء الاصطناعي"
           aria-label="توليد ريلز تلقائي بالذكاء الاصطناعي"
         >
-          <Sparkles size={13} className="text-purple-300 animate-pulse" />
+          <Sparkles size={13} className="text-purple-500 dark:text-purple-300 animate-pulse" />
           <span className="hidden sm:inline">Auto-Reel AI</span>
         </button>
 
@@ -195,8 +195,8 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
             onClick={() => setIsToolsMenuOpen(!isToolsMenuOpen)}
             className={`p-2 rounded-xl border transition-all cursor-pointer flex items-center gap-1 text-xs font-bold ${
               isToolsMenuOpen
-                ? 'bg-gold-500/20 text-gold-300 border-gold-500/40'
-                : 'bg-surface-800/80 hover:bg-surface-700 text-surface-200 hover:text-surface-50 border-surface-700/40'
+                ? 'bg-gold-500/20 text-gold-700 dark:text-gold-300 border-gold-500/40'
+                : 'bg-surface-800 hover:bg-surface-700 text-surface-200 hover:text-surface-50 border-surface-700/40'
             }`}
             title="المزيد من الأدوات الإبداعية والاستوديوهات"
             aria-label="المزيد من الأدوات الإبداعية والاستوديوهات"
@@ -214,7 +214,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.96 }}
                 transition={{ duration: 0.15 }}
-                className="absolute start-0 sm:end-auto mt-2 w-56 bg-surface-900/95 backdrop-blur-xl border border-gold-500/30 rounded-2xl p-2 shadow-2xl z-50 space-y-1 text-start"
+                className="absolute start-0 sm:end-auto mt-2 w-56 bg-surface-900 border border-gold-500/30 rounded-2xl p-2 shadow-2xl z-50 space-y-1 text-start"
               >
                 <div className="px-3 py-1.5 border-b border-surface-700/40 text-[11px] font-bold text-surface-400">
                   استوديوهات وأدوات إضافية:
@@ -226,10 +226,10 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                     setIsToolsMenuOpen(false);
                     onOpenPlaylists();
                   }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-gold-300 hover:bg-gold-500/15 transition-all text-start cursor-pointer"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-gold-600 dark:text-gold-300 hover:bg-gold-500/15 transition-all text-start cursor-pointer"
                   aria-label="مزاجات وقوائم قرآنية"
                 >
-                  <BookOpen size={15} className="text-gold-400" />
+                  <BookOpen size={15} className="text-gold-500 dark:text-gold-400" />
                   <span>مزاجات وقوائم قرآنية 🎧</span>
                 </button>
 
@@ -239,10 +239,10 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                     setIsToolsMenuOpen(false);
                     onOpenEvents();
                   }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-emerald-300 hover:bg-emerald-500/15 transition-all text-start cursor-pointer"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/15 transition-all text-start cursor-pointer"
                   aria-label="مواسم ومناسبات إسلامية"
                 >
-                  <Crown size={15} className="text-emerald-400" />
+                  <Crown size={15} className="text-emerald-500 dark:text-emerald-400" />
                   <span>مواسم ومناسبات إسلامية 🌙</span>
                 </button>
 
@@ -253,10 +253,10 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                       setIsToolsMenuOpen(false);
                       onOpenQuotes();
                     }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-sky-300 hover:bg-sky-500/15 transition-all text-start cursor-pointer"
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-sky-700 dark:text-sky-300 hover:bg-sky-500/15 transition-all text-start cursor-pointer"
                     aria-label="تصميم بوست وبطاقة صورة"
                   >
-                    <ImageIcon size={15} className="text-sky-400" />
+                    <ImageIcon size={15} className="text-sky-500 dark:text-sky-400" />
                     <span>تصميم بوست وبطاقة صورة 🖼️</span>
                   </button>
                 )}
@@ -267,10 +267,10 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                     setIsToolsMenuOpen(false);
                     onOpenVoiceRecorder();
                   }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-amber-300 hover:bg-amber-500/15 transition-all text-start cursor-pointer"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-amber-700 dark:text-amber-300 hover:bg-amber-500/15 transition-all text-start cursor-pointer"
                   aria-label="تسجيل صوتك وتلاوتك"
                 >
-                  <Mic size={15} className="text-amber-400" />
+                  <Mic size={15} className="text-amber-500 dark:text-amber-400" />
                   <span>تسجيل صوتك وتلاوتك 🎙️</span>
                 </button>
 

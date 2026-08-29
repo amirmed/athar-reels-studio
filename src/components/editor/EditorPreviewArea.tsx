@@ -137,11 +137,11 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
     };
 
     return (
-      <main className="flex-1 flex flex-col items-center justify-between p-2 md:p-3 overflow-hidden bg-surface-950/60 relative">
+      <main className="flex-1 flex flex-col items-center justify-between p-2 md:p-3 overflow-hidden bg-surface-950 relative">
         {/* Top Floating Control Bar */}
-        <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-surface-900/90 border border-white/10 backdrop-blur-md z-20 shadow-lg flex-wrap justify-center">
+        <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-surface-900 border border-surface-700/50 backdrop-blur-md z-20 shadow-xl flex-wrap justify-center">
           {/* Aspect Ratio Selector */}
-          <div className="flex items-center gap-1 bg-surface-950/80 p-1 rounded-xl border border-white/5">
+          <div className="flex items-center gap-1 bg-surface-800 p-1 rounded-xl border border-surface-700/40">
             {[
               { id: '9:16' as const, label: '9:16 ريلز', icon: Smartphone },
               { id: '1:1' as const, label: '1:1 بوست', icon: Square },
@@ -156,8 +156,8 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
                   onClick={() => setAspectRatio(r.id)}
                   className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                     isSelected
-                      ? 'bg-gradient-to-r from-gold-500 to-gold-400 text-surface-950 shadow-md'
-                      : 'text-white/50 hover:text-white hover:bg-white/5'
+                      ? 'bg-gradient-to-r from-gold-500 to-amber-500 text-surface-950 shadow-md font-black'
+                      : 'text-surface-300 hover:text-surface-50 hover:bg-surface-700'
                   }`}
                 >
                   <Icon size={13} />
@@ -167,12 +167,12 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
             })}
           </div>
 
-          <div className="w-px h-3.5 bg-white/[0.08]" />
+          <div className="w-px h-3.5 bg-surface-700/40" />
 
           {/* Platform Mockup Overlay Selector (Only for 9:16) */}
           {aspectRatio === '9:16' && (
             <>
-              <div className="flex items-center gap-1 bg-surface-950/80 p-1 rounded-xl border border-white/5">
+              <div className="flex items-center gap-1 bg-surface-800 p-1 rounded-xl border border-surface-700/40">
                 {[
                   { id: 'none', label: 'بدون', icon: '🚫' },
                   { id: 'tiktok', label: 'تيك توك', icon: '🎵' },
@@ -188,8 +188,8 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
                       onClick={() => setPlatformOverlay(p.id as PlatformOverlayType)}
                       className={`px-2 py-0.5 rounded-md text-[11px] font-bold transition-all flex items-center gap-1 cursor-pointer ${
                         isSelected
-                          ? 'bg-sky-500/25 text-sky-200 border border-sky-400/40 shadow-sm'
-                          : 'text-white/40 hover:text-white'
+                          ? 'bg-sky-500/20 text-sky-700 dark:text-sky-200 border border-sky-400/40 shadow-sm font-black'
+                          : 'text-surface-400 hover:text-surface-50'
                       }`}
                       title={`معاينة بحجم وواجهة ${p.label}`}
                     >
@@ -206,8 +206,8 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
                     onClick={() => setShowSafeZones(!showSafeZones)}
                     className={`px-1.5 py-0.5 rounded text-[11px] transition-all flex items-center gap-1 cursor-pointer ${
                       showSafeZones
-                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                        : 'text-white/30 hover:text-white/60'
+                        ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 font-bold'
+                        : 'text-surface-400 hover:text-surface-50'
                     }`}
                     title={
                       showSafeZones
@@ -221,7 +221,7 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
                 )}
               </div>
 
-              <div className="w-px h-3.5 bg-white/[0.08]" />
+              <div className="w-px h-3.5 bg-surface-700/40" />
             </>
           )}
 
@@ -231,10 +231,10 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
             onClick={cyclePerformanceMode}
             className={`px-2 py-1 rounded-xl text-[11px] font-bold transition-all flex items-center gap-1.5 border cursor-pointer ${
               currentPerfMode === 'performance'
-                ? 'bg-amber-500/15 border-amber-400/30 text-amber-300'
+                ? 'bg-amber-500/15 border-amber-400/30 text-amber-700 dark:text-amber-300'
                 : currentPerfMode === 'quality'
-                  ? 'bg-purple-500/15 border-purple-400/30 text-purple-300'
-                  : 'bg-emerald-500/15 border-emerald-400/30 text-emerald-300'
+                  ? 'bg-purple-500/15 border-purple-400/30 text-purple-700 dark:text-purple-300'
+                  : 'bg-emerald-500/15 border-emerald-400/30 text-emerald-700 dark:text-emerald-300'
             }`}
             title="انقر للتبديل بين أوضاع الأداء والجودة (سريع / متوازن / جودة فائقة)"
             aria-label="التبديل بين أوضاع الأداء والجودة"
@@ -249,14 +249,14 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
             </span>
           </button>
 
-          <div className="w-px h-3.5 bg-white/[0.08]" />
+          <div className="w-px h-3.5 bg-surface-700/40" />
 
           {/* Zoom Controls */}
-          <div className="flex items-center gap-1 bg-surface-950/80 p-1 rounded-xl border border-white/5 text-xs">
+          <div className="flex items-center gap-1 bg-surface-800 p-1 rounded-xl border border-surface-700/40 text-xs">
             <button
               type="button"
               onClick={() => setPreviewZoom((z) => Math.max(50, z - 15))}
-              className="p-1 rounded-lg text-white/50 hover:text-white hover:bg-surface-800 transition-colors active:scale-95 cursor-pointer"
+              className="p-1 rounded-lg text-surface-400 hover:text-surface-50 hover:bg-surface-700 transition-colors active:scale-95 cursor-pointer"
               title="تصغير شاشة المعاينة (-)"
               aria-label="تصغير شاشة المعاينة"
             >
@@ -266,7 +266,7 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
             <button
               type="button"
               onClick={() => setPreviewZoom(100)}
-              className="px-1.5 py-0.5 rounded text-[11px] font-mono text-gold-400 hover:bg-surface-800 transition-colors cursor-pointer"
+              className="px-1.5 py-0.5 rounded text-[11px] font-mono text-gold-600 dark:text-gold-400 font-bold hover:bg-surface-700 transition-colors cursor-pointer"
               title="إعادة ضبط الحجم (100%)"
               aria-label="إعادة ضبط حجم شاشة المعاينة (100%)"
             >
@@ -276,7 +276,7 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
             <button
               type="button"
               onClick={() => setPreviewZoom((z) => Math.min(180, z + 15))}
-              className="p-1 rounded-lg text-white/50 hover:text-white hover:bg-surface-800 transition-colors active:scale-95 cursor-pointer"
+              className="p-1 rounded-lg text-surface-400 hover:text-surface-50 hover:bg-surface-700 transition-colors active:scale-95 cursor-pointer"
               title="تكبير شاشة المعاينة (+)"
               aria-label="تكبير شاشة المعاينة"
             >
@@ -287,15 +287,15 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
           {/* 1-Click Viral Preset Styles Trigger */}
           {onOpenPresetModal && (
             <>
-              <div className="w-px h-3.5 bg-white/[0.08]" />
+              <div className="w-px h-3.5 bg-surface-700/40" />
               <button
                 type="button"
                 onClick={onOpenPresetModal}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gold-500/15 hover:bg-gold-500/25 border border-gold-400/30 text-xs font-bold text-gold-300 hover:text-gold-200 transition-all active:scale-95 shadow-sm cursor-pointer"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gold-500/15 hover:bg-gold-500/25 border border-gold-400/30 text-xs font-bold text-gold-700 dark:text-gold-300 transition-all active:scale-95 shadow-sm cursor-pointer"
                 title="تطبيق قوالب سينمائية جاهزة بنقرة واحدة"
                 aria-label="تطبيق قوالب سينمائية جاهزة"
               >
-                <Sparkles size={12} className="text-gold-400 animate-pulse" />
+                <Sparkles size={12} className="text-gold-500 dark:text-gold-400 animate-pulse" />
                 <span>القوالب 🎬</span>
               </button>
             </>
@@ -304,15 +304,15 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
           {/* 1-Click 4K Viral Thumbnail Cover Trigger */}
           {onOpenThumbnailModal && (
             <>
-              <div className="w-px h-3.5 bg-white/[0.08]" />
+              <div className="w-px h-3.5 bg-surface-700/40" />
               <button
                 type="button"
                 onClick={onOpenThumbnailModal}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 border border-sky-400/30 text-xs font-bold text-sky-300 hover:text-sky-200 transition-all active:scale-95 shadow-sm cursor-pointer"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 border border-sky-400/30 text-xs font-bold text-sky-700 dark:text-sky-300 transition-all active:scale-95 shadow-sm cursor-pointer"
                 title="توليد وتصدير غلاف فيديو 4K احترافي بنقرة واحدة"
                 aria-label="توليد وتصدير غلاف فيديو 4K احترافي"
               >
-                <ImageIcon size={12} className="text-sky-400" />
+                <ImageIcon size={12} className="text-sky-500 dark:text-sky-400" />
                 <span>الغلاف 4K</span>
               </button>
             </>
@@ -321,15 +321,15 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
           {/* 1-Click Viral Caption / Hashtags Generator Trigger */}
           {onOpenViralCaption && (
             <>
-              <div className="w-px h-3.5 bg-white/[0.08]" />
+              <div className="w-px h-3.5 bg-surface-700/40" />
               <button
                 type="button"
                 onClick={onOpenViralCaption}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-400/30 text-xs font-bold text-emerald-300 hover:text-emerald-200 transition-all active:scale-95 shadow-sm cursor-pointer"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-400/30 text-xs font-bold text-emerald-700 dark:text-emerald-300 transition-all active:scale-95 shadow-sm cursor-pointer"
                 title="توليد كابشن متصدر وهاشتاجات فيروسية للنشر على تيك توك وإنستغرام"
                 aria-label="توليد كابشن متصدر وهاشتاجات فيروسية"
               >
-                <Share2 size={12} className="text-emerald-400" />
+                <Share2 size={12} className="text-emerald-500 dark:text-emerald-400" />
                 <span>الكابشن 🔥</span>
               </button>
             </>
@@ -338,11 +338,11 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
           {/* Fullscreen Studio Preview Trigger */}
           {onOpenFullscreen && (
             <>
-              <div className="w-px h-3.5 bg-white/[0.08]" />
+              <div className="w-px h-3.5 bg-surface-700/40" />
               <button
                 type="button"
                 onClick={onOpenFullscreen}
-                className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-all active:scale-95 cursor-pointer"
+                className="p-1.5 rounded-lg bg-surface-800 hover:bg-surface-700 text-surface-400 hover:text-surface-50 border border-surface-700/40 transition-all active:scale-95 cursor-pointer"
                 title="معاينة بملء الشاشة (مسرح سينمائي)"
                 aria-label="معاينة بملء الشاشة"
               >
@@ -433,7 +433,7 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
         {/* Bottom Audio Timeline & Transport Bar */}
         <div className="w-full max-w-2xl floating-toolbar p-3 z-20 mt-2 space-y-2">
           {/* Overall Progress bar */}
-          <div className="relative h-1.5 rounded-full bg-white/[0.08] overflow-hidden cursor-pointer">
+          <div className="relative h-1.5 rounded-full bg-surface-800 overflow-hidden cursor-pointer">
             <motion.div
               className="absolute top-0 bottom-0 start-0 bg-gradient-to-r from-accent-500 to-gold-400 rounded-full"
               style={{ width: `${overallProgress}%` }}
@@ -442,8 +442,8 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
 
           <div className="flex items-center justify-between gap-3">
             {/* Left: Time & Progress */}
-            <div className="flex items-center gap-2 text-xs font-mono text-white/50">
-              <span className="text-white font-bold">{formatAudioTime(audioCurrentTime)}</span>
+            <div className="flex items-center gap-2 text-xs font-mono text-surface-400">
+              <span className="text-surface-50 font-bold">{formatAudioTime(audioCurrentTime)}</span>
               <span>/</span>
               <span>{formatAudioTime(audioDuration)}</span>
             </div>
@@ -454,7 +454,7 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
                 type="button"
                 onClick={() => seekToAyah(Math.max(0, currentAyahIndex - 1))}
                 disabled={currentAyahIndex <= 0}
-                className="p-2 rounded-xl bg-surface-800/60 hover:bg-surface-700 text-white/60 hover:text-white disabled:opacity-30 transition-all cursor-pointer"
+                className="p-2 rounded-xl bg-surface-800 hover:bg-surface-700 text-surface-300 hover:text-surface-50 disabled:opacity-30 transition-all cursor-pointer border border-surface-700/40"
                 title="الآية السابقة"
                 aria-label="الآية السابقة"
               >
@@ -464,14 +464,14 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
               <button
                 type="button"
                 onClick={togglePlay}
-                className="w-11 h-11 rounded-full bg-gradient-to-tr from-accent-500 to-gold-400 hover:from-accent-400 hover:to-gold-300 text-black flex items-center justify-center shadow-lg shadow-accent-500/30 hover:scale-110 active:scale-95 transition-all cursor-pointer"
+                className="w-11 h-11 rounded-full bg-gradient-to-tr from-accent-500 to-gold-400 hover:from-accent-400 hover:to-gold-300 text-surface-950 flex items-center justify-center shadow-lg shadow-accent-500/30 hover:scale-110 active:scale-95 transition-all cursor-pointer"
                 title={isPlaying ? 'إيقاف مؤقت' : 'تشغيل المعاينة'}
                 aria-label={isPlaying ? 'إيقاف مؤقت' : 'تشغيل المعاينة'}
               >
                 {isPlaying ? (
-                  <Pause size={18} className="fill-black" />
+                  <Pause size={18} className="fill-surface-950" />
                 ) : (
-                  <Play size={18} className="fill-black -scale-x-100 ms-0.5" />
+                  <Play size={18} className="fill-surface-950 -scale-x-100 ms-0.5" />
                 )}
               </button>
 
@@ -479,7 +479,7 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
                 type="button"
                 onClick={() => seekToAyah(Math.min(ayahs.length - 1, currentAyahIndex + 1))}
                 disabled={currentAyahIndex >= ayahs.length - 1}
-                className="p-2 rounded-xl bg-surface-800/60 hover:bg-surface-700 text-white/60 hover:text-white disabled:opacity-30 transition-all cursor-pointer"
+                className="p-2 rounded-xl bg-surface-800 hover:bg-surface-700 text-surface-300 hover:text-surface-50 disabled:opacity-30 transition-all cursor-pointer border border-surface-700/40"
                 title="الآية التالية"
                 aria-label="الآية التالية"
               >
@@ -489,8 +489,8 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
 
             {/* Right: Ambient Sound Indicator */}
             <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-800/80 border border-white/[0.06] text-xs text-white/60">
-                <Volume2 size={13} className="text-accent-400" />
+              <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-800 border border-surface-700/40 text-xs text-surface-300 font-bold">
+                <Volume2 size={13} className="text-accent-500 dark:text-accent-400" />
                 <span className="truncate max-w-[80px]">
                   {ambientSounds.find((s) => s.id === audioSettings.ambientSoundId)?.name ||
                     'طبيعي'}

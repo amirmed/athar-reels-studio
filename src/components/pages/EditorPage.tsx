@@ -1032,19 +1032,19 @@ export const EditorPage: React.FC = () => {
 
         {/* Load Error Notification with Retry Button */}
         {loadError && ayahs.length === 0 && (
-          <div className="absolute top-6 left-1/2 -translate-x-1/2 z-40 max-w-md w-full mx-auto px-5 py-4 rounded-2xl bg-surface-950/95 border border-red-500/40 text-white shadow-2xl backdrop-blur-xl flex flex-col items-center text-center gap-3 animate-in fade-in zoom-in-95">
-            <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 text-xl font-black">
+          <div className="absolute top-6 left-1/2 -translate-x-1/2 z-40 max-w-md w-full mx-auto px-5 py-4 rounded-2xl bg-surface-950 border border-red-500/40 text-surface-50 shadow-2xl backdrop-blur-xl flex flex-col items-center text-center gap-3 animate-in fade-in zoom-in-95">
+            <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-500 text-xl font-black">
               ⚠️
             </div>
             <div>
-              <h4 className="font-bold text-sm text-red-300">تعذر تحميل بيانات الآيات والصوت</h4>
+              <h4 className="font-bold text-sm text-red-600 dark:text-red-300">تعذر تحميل بيانات الآيات والصوت</h4>
               <p className="text-xs text-surface-400 mt-1">
                 يرجى التحقق من اتصال الإنترنت أو اختيار قارئ آخر
               </p>
             </div>
             <button
               onClick={() => loadAyahs()}
-              className="px-4 py-2 rounded-xl bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 text-red-200 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+              className="px-4 py-2 rounded-xl bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 text-red-700 dark:text-red-200 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
             >
               <RotateCcw size={13} />
               <span>إعادة المحاولة الآن</span>
@@ -1092,10 +1092,10 @@ export const EditorPage: React.FC = () => {
               animate={{ width: 340, opacity: 1 }}
               exit={{ width: 0, opacity: 0 }}
               transition={{ duration: 0.2, ease: 'easeInOut' }}
-              className="glass-inspector h-full flex flex-col shrink-0 overflow-hidden z-20 border-r border-white/10"
+              className="glass-inspector h-full flex flex-col shrink-0 overflow-hidden z-20 border-r border-surface-700/40"
             >
               {/* Panel Header */}
-              <div className="p-4 border-b border-white/10 flex items-center justify-between bg-surface-950/80">
+              <div className="p-4 border-b border-surface-700/40 flex items-center justify-between bg-surface-900">
                 <div className="flex items-center gap-2">
                   {activeDockTab === 'reciter' && <Mic size={16} className="text-gold-400" />}
                   {activeDockTab === 'bg' && <ImageIcon size={16} className="text-sky-400" />}
@@ -1108,7 +1108,7 @@ export const EditorPage: React.FC = () => {
                   )}
                   {activeDockTab === 'templates' && <Palette size={16} className="text-pink-400" />}
                   {activeDockTab === 'branding' && <Sliders size={16} className="text-amber-400" />}
-                  <span className="font-bold text-xs text-white">
+                  <span className="font-bold text-xs text-surface-50">
                     {activeDockTab === 'reciter' && 'القارئ والسورة القرآنية'}
                     {activeDockTab === 'bg' && 'الخلفيات السينمائية'}
                     {activeDockTab === 'text' && 'تنسيق النص والخطوط'}

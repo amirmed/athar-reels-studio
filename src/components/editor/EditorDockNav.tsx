@@ -61,7 +61,7 @@ export const EditorDockNav: React.FC<EditorDockNavProps> = ({
               }}
               className={`w-full py-2.5 rounded-xl flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer relative group ${
                 isActive
-                  ? 'bg-gold-500/15 text-gold-300 font-bold border border-gold-400/40 shadow-md shadow-gold-500/10'
+                  ? 'bg-gold-500/15 text-gold-600 dark:text-gold-300 font-bold border border-gold-400/40 shadow-md shadow-gold-500/10'
                   : 'text-surface-400 hover:text-surface-50 hover:bg-surface-800/60'
               }`}
               title={tab.label}
@@ -71,7 +71,7 @@ export const EditorDockNav: React.FC<EditorDockNavProps> = ({
               <Icon size={19} />
               <span className="text-xs font-bold tracking-tight">{tab.label}</span>
               {tab.isPro && (
-                <span className="absolute -top-1 -end-1 text-[10px] px-1.5 py-0.2 rounded-full bg-purple-500/30 text-purple-300 font-bold">
+                <span className="absolute -top-1 -end-1 text-[10px] px-1.5 py-0.2 rounded-full bg-purple-500/20 text-purple-700 dark:text-purple-300 font-bold border border-purple-400/30">
                   PRO
                 </span>
               )}
@@ -86,13 +86,13 @@ export const EditorDockNav: React.FC<EditorDockNavProps> = ({
             onClick={onToggleProMode}
             className={`w-full mt-2 py-2 rounded-xl border flex flex-col items-center justify-center gap-1 transition-all cursor-pointer ${
               isProMode
-                ? 'bg-purple-500/20 border-purple-500/40 text-purple-300 hover:bg-purple-500/30'
-                : 'bg-surface-800/80 border-surface-700/40 text-surface-400 hover:text-surface-50 hover:border-gold-400/40'
+                ? 'bg-purple-500/20 border-purple-500/40 text-purple-700 dark:text-purple-300 hover:bg-purple-500/30'
+                : 'bg-surface-800 border-surface-700/40 text-surface-400 hover:text-surface-50 hover:border-gold-400/40'
             }`}
             title={isProMode ? 'تبديل للوضع المبسط' : 'فتح الوضع الاحترافي الكامل (Pro)'}
             aria-label={isProMode ? 'تبديل للوضع المبسط' : 'فتح الوضع الاحترافي الكامل (Pro)'}
           >
-            <Zap size={14} className={isProMode ? 'text-purple-400' : 'text-gold-400'} />
+            <Zap size={14} className={isProMode ? 'text-purple-500 dark:text-purple-400' : 'text-gold-500 dark:text-gold-400'} />
             <span className="text-[11px] font-bold">{isProMode ? 'PRO' : 'متقدم'}</span>
           </button>
         )}

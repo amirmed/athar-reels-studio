@@ -276,18 +276,18 @@ export const WelcomePage: React.FC = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="mt-6 p-5 rounded-2xl bg-surface-900 border border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-start"
+          className="mt-6 p-5 rounded-2xl bg-surface-900 border border-surface-700/40 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-start"
         >
           <div>
-            <h4 className="text-sm font-bold text-white">جاهز لنشر آيات الله وإحياء أثرك؟</h4>
-            <p className="text-xs text-white/60 mt-0.5">
+            <h4 className="text-sm font-bold text-surface-50">جاهز لنشر آيات الله وإحياء أثرك؟</h4>
+            <p className="text-xs text-surface-400 mt-0.5">
               ادخل مباشرة إلى لوحة التحكم واستكشف القوالب الرائجة
             </p>
           </div>
           <button
             type="button"
             onClick={handleStartNow}
-            className="px-5 py-2.5 rounded-xl bg-surface-800 hover:bg-surface-700 text-white hover:text-accent-400 border border-white/[0.08] text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
+            className="px-5 py-2.5 rounded-xl bg-surface-800 hover:bg-surface-700 text-surface-50 hover:text-accent-500 border border-surface-700/40 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
           >
             <span>انطلق إلى لوحة التحكم</span>
             <ArrowLeft size={14} />

@@ -32,9 +32,9 @@ export const TemplatesPanel: React.FC<TemplatesPanelProps> = ({
       <button
         type="button"
         onClick={onOpenPresetModal}
-        className="w-full py-2 px-3 rounded-xl bg-surface-900/90 border border-gold-400/30 hover:border-gold-400/60 text-gold-300 hover:text-gold-200 font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95 cursor-pointer"
+        className="w-full py-2 px-3 rounded-xl bg-surface-900 border border-gold-400/30 hover:border-gold-400/60 text-gold-700 dark:text-gold-300 hover:text-gold-600 dark:hover:text-gold-200 font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95 cursor-pointer"
       >
-        <Sparkles size={14} className="text-gold-400" />
+        <Sparkles size={14} className="text-gold-500 dark:text-gold-400" />
         <span>معاينة القوالب السينمائية بالصور 🖼️</span>
       </button>
 
@@ -47,7 +47,7 @@ export const TemplatesPanel: React.FC<TemplatesPanelProps> = ({
             className={`p-3 rounded-2xl border cursor-pointer transition-all flex items-center gap-3 group ${
               activeTemplateId === tpl.id
                 ? 'bg-gold-500/15 border-gold-400/50 shadow-sm'
-                : 'bg-surface-900/80 hover:bg-surface-800 border-surface-700/40 hover:border-gold-400/40'
+                : 'bg-surface-900 hover:bg-surface-800 border-surface-700/40 hover:border-gold-400/40'
             }`}
           >
             <div className="w-10 h-10 rounded-xl overflow-hidden bg-surface-950 shrink-0 border border-surface-700/40 relative">

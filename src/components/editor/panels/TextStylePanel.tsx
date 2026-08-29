@@ -126,10 +126,10 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
             defaultOpen={true}
           >
             {/* Display Mode (Chunked vs Single Ayah) */}
-            <div className="p-3 rounded-2xl bg-surface-900/90 border border-gold-500/20 space-y-2">
+            <div className="p-3 rounded-2xl bg-surface-900 border border-gold-500/20 space-y-2">
               <div className="flex items-center justify-between">
                 <label className="block text-surface-50 font-bold text-xs">نمط تقسيم الآيات 🎬</label>
-                <span className="text-[11px] px-2 py-0.5 rounded-md bg-gold-500/15 text-gold-300 font-bold border border-gold-400/20">
+                <span className="text-[11px] px-2 py-0.5 rounded-md bg-gold-500/15 text-gold-700 dark:text-gold-300 font-bold border border-gold-400/20">
                   {textSettings.displayMode === 'single_ayah' ? 'الآية كاملة 📜' : 'تقسيم ذكي ⚡'}
                 </span>
               </div>
@@ -534,7 +534,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                           onClick={() => setTextSettings((s) => ({ ...s, glowColor: g.color }))}
                           className={`p-1.5 rounded-xl border text-center text-[11px] font-bold transition-all cursor-pointer ${
                             (textSettings.glowColor || '#fbbf24') === g.color
-                              ? 'ring-2 ring-gold-400 border-white text-white shadow-md'
+                              ? 'ring-2 ring-gold-400 border-gold-500 text-surface-50 shadow-md font-black'
                               : 'border-surface-700/40 text-surface-400 hover:text-surface-50'
                           }`}
                           style={{ backgroundColor: `${g.color}22` }}
