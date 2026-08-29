@@ -2,11 +2,12 @@ import { ipcMain, dialog } from 'electron';
 import path from 'path';
 import fs from 'fs';
 import https from 'https';
+import dns from 'dns';
 import type { IncomingHttpHeaders } from 'http';
 import { createWriteStream } from 'fs';
 import { spawn } from 'child_process';
 import { buildAudioFilters, ExportAudioSettings } from '../src/services/audioDspFilters';
-import { isSafeUserPath, isSafeRemoteDownloadUrl } from './pathSecurity.js';
+import { isSafeUserPath, isSafeRemoteDownloadUrl, validateSafeDownloadUrlAsync } from './pathSecurity.js';
 
 let ffmpeg: any;
 let ffmpegBinaryPath = '';
@@ -196,32 +197,38 @@ function getMediaDurationSeconds(filePath: string): Promise<number> {
   });
 }
 
-function downloadFile(url: string, destPath: string, redirects = 0): Promise<DownloadResult> {
-  return new Promise((resolve, reject) => {
-    if (redirects > 5) {
-      reject(new Error(`عدد التحويلات كبير أثناء تحميل: ${url}`));
-      return;
-    }
+async function downloadFile(url: string, destPath: string, redirects = 0): Promise<DownloadResult> {
+  if (redirects > 5) {
+    throw new Error(`عدد التحويلات كبير أثناء تحميل: ${url}`);
+  }
 
-    if (!isSafeRemoteDownloadUrl(url)) {
-      reject(new Error(`الرابط غير آمن أو محظور أمنياً: ${url}`));
-      return;
-    }
-
-    let parsedUrl: URL;
+  const isSafe = await validateSafeDownloadUrlAsync(url, async (host) => {
     try {
-      parsedUrl = new URL(url);
+      const records = await dns.promises.lookup(host, { all: true });
+      return records.map((r) => r.address);
     } catch {
-      reject(new Error(`رابط غير صالح: ${url}`));
-      return;
+      return [];
     }
+  });
 
+  if (!isSafe) {
+    throw new Error(`الرابط غير آمن أو محظور أمنياً: ${url}`);
+  }
+
+  let parsedUrl: URL;
+  try {
+    parsedUrl = new URL(url);
+  } catch {
+    throw new Error(`رابط غير صالح: ${url}`);
+  }
+
+  return new Promise((resolve, reject) => {
     const req = https.get(parsedUrl, {
       headers: {
         'User-Agent': 'IslamicReelsStudio/1.0',
         Accept: '*/*',
       },
-    }, (res) => {
+    }, async (res) => {
       const status = res.statusCode || 0;
       const location = res.headers.location;
 
@@ -232,11 +239,6 @@ function downloadFile(url: string, destPath: string, redirects = 0): Promise<Dow
           nextUrl = new URL(location, url).toString();
         } catch {
           reject(new Error(`رابط التحويل غير صالح: ${location}`));
-          return;
-        }
-
-        if (!isSafeRemoteDownloadUrl(nextUrl)) {
-          reject(new Error(`رابط التحويل غير آمن ومحظور: ${nextUrl}`));
           return;
         }
 

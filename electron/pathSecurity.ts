@@ -1,7 +1,7 @@
 import { app } from 'electron';
 import path from 'path';
-import { isSafeRemoteDownloadUrl, SENSITIVE_PATH_PATTERNS } from '../src/utils/securityUtils';
-export { isSafeRemoteDownloadUrl };
+import { isSafeRemoteDownloadUrl, validateSafeDownloadUrlAsync, SENSITIVE_PATH_PATTERNS } from '../src/utils/securityUtils';
+export { isSafeRemoteDownloadUrl, validateSafeDownloadUrlAsync };
 
 /**
  * Path validation helper against Path Traversal & Unauthorized Access vulnerabilities.
