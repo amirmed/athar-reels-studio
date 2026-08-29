@@ -297,5 +297,45 @@ describe('Zustand Modular Store (Slices & Persist)', () => {
         expect.stringContaining('proj-web')
       );
     });
+
+    it('automatically migrates legacy web projects from localStorage into Electron disk storage on startup', async () => {
+      const mockSaveAll = vi.fn().mockResolvedValue({ success: true });
+      const mockLoadAll = vi.fn().mockResolvedValue([]); // Electron disk currently empty on first launch
+
+      const api = {
+        projects: {
+          loadAll: mockLoadAll,
+          saveAll: mockSaveAll,
+        },
+      };
+
+      (globalThis as any).electronAPI = api;
+      (window as any).electronAPI = api;
+
+      // Seed localStorage with legacy web project
+      (globalThis as any).localStorage.getItem = vi.fn((key) => {
+        if (key === 'ayahStudio_projects') {
+          return JSON.stringify([
+            { id: 'proj-legacy-web', name: 'مشروع ويب قديم', createdAt: '2025-01-01' },
+          ]);
+        }
+        return null;
+      });
+
+      await useAppStore.getState().loadProjects();
+
+      // Verify that the legacy project was loaded into store
+      const loaded = useAppStore.getState().projects;
+      expect(loaded.some((p) => p.id === 'proj-legacy-web')).toBe(true);
+
+      // Verify that it was saved to Electron disk storage
+      expect(mockSaveAll).toHaveBeenCalledWith(
+        expect.arrayContaining([expect.objectContaining({ id: 'proj-legacy-web' })])
+      );
+
+      // Clean up mock
+      delete (globalThis as any).electronAPI;
+      delete (window as any).electronAPI;
+    });
   });
 });

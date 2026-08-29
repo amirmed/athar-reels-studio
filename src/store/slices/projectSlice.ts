@@ -164,8 +164,54 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
         if (Array.isArray(loaded)) {
           baseProjects = loaded;
         }
+
+        // Automatic Web-to-Electron Migration:
+        // Check localStorage for legacy web projects (ayahStudio_projects, athar_projects, projects)
+        // and migrate them to Electron disk storage on first launch so users never lose their web projects!
+        const legacyLocalProjects =
+          loadFromLocal<Project[]>(STORAGE_KEY_PROJECTS) ||
+          loadFromLocal<Project[]>('athar_projects') ||
+          loadFromLocal<Project[]>('projects');
+
+        if (
+          legacyLocalProjects &&
+          Array.isArray(legacyLocalProjects) &&
+          legacyLocalProjects.length > 0
+        ) {
+          const existingIds = new Set(baseProjects.map((p) => p.id));
+          const migratedProjects: Project[] = [];
+
+          for (const legacyP of legacyLocalProjects) {
+            if (legacyP && legacyP.id && !existingIds.has(legacyP.id)) {
+              migratedProjects.push(legacyP);
+              baseProjects.push(legacyP);
+              existingIds.add(legacyP.id);
+            }
+          }
+
+          if (migratedProjects.length > 0) {
+            console.info(
+              `[ProjectSlice] Migrated ${migratedProjects.length} legacy project(s) from web localStorage into Electron disk.`
+            );
+            // Offload thumbnails to IndexedDB and save clean projects to Electron disk
+            const sanitizedMigrated = migratedProjects.map((p) => {
+              if (p.thumbnail && p.thumbnail.startsWith('data:image/')) {
+                saveProjectThumbnail(p.id, p.thumbnail).catch(() => {});
+                const { thumbnail: _t, ...rest } = p;
+                return rest as Project;
+              }
+              return p;
+            });
+            window.electronAPI.projects.saveAll(sanitizedMigrated).catch((err) => {
+              console.warn('[ProjectSlice] Failed to save migrated projects to Electron:', err);
+            });
+          }
+        }
       } else {
-        const local = loadFromLocal<Project[]>(STORAGE_KEY_PROJECTS);
+        const local =
+          loadFromLocal<Project[]>(STORAGE_KEY_PROJECTS) ||
+          loadFromLocal<Project[]>('athar_projects') ||
+          loadFromLocal<Project[]>('projects');
         baseProjects = local || [];
       }
 
