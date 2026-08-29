@@ -444,6 +444,13 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
     typeof window.electronAPI?.videoExport?.start === 'function';
 
   if (isElectronAvailable && window.electronAPI && preferEngine !== 'webcodecs' && preferEngine !== 'mediarecorder') {
+    if (signal?.aborted) {
+      return {
+        success: false,
+        error: 'تم إلغاء عملية التصدير',
+      };
+    }
+
     reportProgress('جاري التصدير عبر محرك FFmpeg فائق السرعة 🚀...', 5, { engine: 'ffmpeg' });
 
     const unbindProgress = window.electronAPI.videoExport.onProgress((data) => {
@@ -454,8 +461,25 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
       });
     });
 
+    const onAbort = () => {
+      try {
+        window.electronAPI?.videoExport?.cancel?.();
+      } catch (err) {
+        console.debug('[ExportOrchestrator] FFmpeg cancel error:', err);
+      }
+    };
+    signal?.addEventListener('abort', onAbort, { once: true });
+
     try {
       const resolvedAudioUrls = await resolveAudioUrlsForIpc(audioUrls);
+
+      if (signal?.aborted) {
+        onAbort();
+        return {
+          success: false,
+          error: 'تم إلغاء عملية التصدير',
+        };
+      }
 
       const exportAyahs = validAyahs.map((a) => {
         const sTime =
@@ -502,6 +526,14 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
       });
 
       unbindProgress();
+      signal?.removeEventListener('abort', onAbort);
+
+      if (signal?.aborted) {
+        return {
+          success: false,
+          error: 'تم إلغاء عملية التصدير',
+        };
+      }
 
       if (exportResult?.success && exportResult.outputPath) {
         reportProgress('اكتمل التصدير بنجاح عبر محرك FFmpeg ✅', 100, { engine: 'ffmpeg' });
@@ -512,9 +544,15 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
           blobUrl: exportResult.blobUrl,
           durationSec: exportResult.durationSec || totalDuration || 15,
         };
+      } else if (exportResult && !exportResult.success && exportResult.error?.includes('إلغاء')) {
+        return {
+          success: false,
+          error: exportResult.error || 'تم إلغاء عملية التصدير',
+        };
       }
     } catch (nativeErr) {
       unbindProgress();
+      signal?.removeEventListener('abort', onAbort);
       console.warn('[ExportOrchestrator] Native FFmpeg failed, falling back to WebCodecs:', nativeErr);
       if (signal?.aborted) {
         return {
@@ -522,6 +560,8 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
           error: 'تم إلغاء عملية التصدير',
         };
       }
+    } finally {
+      signal?.removeEventListener('abort', onAbort);
     }
   }
 
