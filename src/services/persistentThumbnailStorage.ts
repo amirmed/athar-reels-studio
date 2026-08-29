@@ -47,6 +47,12 @@ function openDB(): Promise<IDBDatabase> {
       dbPromise = null;
       reject(err);
     };
+
+    request.onblocked = () => {
+      console.warn('[PersistentThumbnailStorage] IndexedDB open blocked by another open connection');
+      dbPromise = null;
+      reject(new Error('IndexedDB open request was blocked by another tab or connection'));
+    };
   });
 
   return dbPromise;

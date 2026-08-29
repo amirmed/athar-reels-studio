@@ -129,8 +129,9 @@ class QuranCacheService {
         };
 
         req.onblocked = () => {
-          console.warn('[QuranCache] IndexedDB open blocked');
+          console.warn('[QuranCache] IndexedDB open blocked by another open connection');
           this.dbPromise = null;
+          reject(new Error('IndexedDB open request was blocked by another tab or connection'));
         };
       } catch (err) {
         this.dbPromise = null;

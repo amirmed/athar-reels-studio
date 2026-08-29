@@ -100,8 +100,9 @@ function openDB(): Promise<IDBDatabase> {
     };
 
     request.onblocked = () => {
-      console.warn('[PersistentAudioStorage] IndexedDB open blocked');
+      console.warn('[PersistentAudioStorage] IndexedDB open blocked by another open connection');
       dbPromise = null;
+      reject(new Error('IndexedDB open request was blocked by another tab or connection'));
     };
   });
 
