@@ -177,6 +177,7 @@ export const EditorPage: React.FC = () => {
   const [audioCurrentTime, setAudioCurrentTime] = useState(0);
   const [isTestingAmbient, setIsTestingAmbient] = useState(false);
   const playingRef = useRef(false);
+  const autoAdvanceTimersRef = useRef<Set<number>>(new Set());
 
   // Undo/Redo Engine
   const handleApplySnapshot = useCallback((snapshot: EditorSnapshot) => {
@@ -705,7 +706,11 @@ export const EditorPage: React.FC = () => {
       setCurrentAyahIndex((prevIdx) => {
         const nextIdx = prevIdx + 1;
         if (nextIdx < ayahs.length) {
-          setTimeout(() => playFromIndex(nextIdx), 25);
+          const t = window.setTimeout(() => {
+            autoAdvanceTimersRef.current.delete(t);
+            playFromIndex(nextIdx);
+          }, 25);
+          autoAdvanceTimersRef.current.add(t);
           return nextIdx;
         } else {
           playingRef.current = false;
@@ -753,6 +758,8 @@ export const EditorPage: React.FC = () => {
       unsubState();
       unsubComplete();
       unsubError();
+      autoAdvanceTimersRef.current.forEach((t) => window.clearTimeout(t));
+      autoAdvanceTimersRef.current.clear();
       unifiedAudioEngine.setProgressListener(null);
       unifiedAudioEngine.stop();
       proceduralAmbientEngine.stop();
@@ -800,6 +807,8 @@ export const EditorPage: React.FC = () => {
   };
 
   const stopAudio = () => {
+    autoAdvanceTimersRef.current.forEach((t) => window.clearTimeout(t));
+    autoAdvanceTimersRef.current.clear();
     playingRef.current = false;
     setIsPlaying(false);
     unifiedAudioEngine.stop();
