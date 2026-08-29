@@ -288,13 +288,13 @@ export async function render8DSpatialBuffer(
   // Connect merger to destination
   merger.connect(offlineCtx.destination);
 
-  // Schedule 8D automation curves across the entire duration
+  // Schedule 8D automation curves across the entire duration with smooth interpolation
   const totalDuration = sourceBuffer.duration;
-  const stepInterval = 0.05; // Update every 50ms
+  const stepInterval = 0.025; // 25ms interpolation steps
   const steps = Math.ceil(totalDuration / stepInterval);
 
   for (let s = 0; s <= steps; s++) {
-    const time = s * stepInterval;
+    const time = Math.min(totalDuration, s * stepInterval);
     const phase = time * speedHz * Math.PI * 2;
 
     let panX = 0;
@@ -321,22 +321,40 @@ export async function render8DSpatialBuffer(
     const lGainVal = Math.cos(angleRad);
     const rGainVal = Math.sin(angleRad);
 
-    leftGain.gain.setValueAtTime(lGainVal, time);
-    rightGain.gain.setValueAtTime(rGainVal, time);
-
-    // ITD Delay automation
+    // ITD Delay & Head-shadowing Filter Values
     const maxDelay = 0.00065 * depth;
+    let lDelayVal = 0;
+    let rDelayVal = 0;
+    let lFreqVal = 18000;
+    let rFreqVal = 18000;
+
     if (clampedPan > 0) {
-      leftDelay.delayTime.setValueAtTime(clampedPan * maxDelay, time);
-      rightDelay.delayTime.setValueAtTime(0, time);
-      leftFilter.frequency.setValueAtTime(18000 - clampedPan * 6000, time);
-      rightFilter.frequency.setValueAtTime(18000, time);
+      lDelayVal = clampedPan * maxDelay;
+      rDelayVal = 0;
+      lFreqVal = 18000 - clampedPan * 6000;
+      rFreqVal = 18000;
     } else {
       const absPan = Math.abs(clampedPan);
-      rightDelay.delayTime.setValueAtTime(absPan * maxDelay, time);
-      leftDelay.delayTime.setValueAtTime(0, time);
-      rightFilter.frequency.setValueAtTime(18000 - absPan * 6000, time);
-      leftFilter.frequency.setValueAtTime(18000, time);
+      rDelayVal = absPan * maxDelay;
+      lDelayVal = 0;
+      rFreqVal = 18000 - absPan * 6000;
+      lFreqVal = 18000;
+    }
+
+    if (s === 0) {
+      leftGain.gain.setValueAtTime(lGainVal, 0);
+      rightGain.gain.setValueAtTime(rGainVal, 0);
+      leftDelay.delayTime.setValueAtTime(lDelayVal, 0);
+      rightDelay.delayTime.setValueAtTime(rDelayVal, 0);
+      leftFilter.frequency.setValueAtTime(lFreqVal, 0);
+      rightFilter.frequency.setValueAtTime(rFreqVal, 0);
+    } else {
+      leftGain.gain.linearRampToValueAtTime(lGainVal, time);
+      rightGain.gain.linearRampToValueAtTime(rGainVal, time);
+      leftDelay.delayTime.linearRampToValueAtTime(lDelayVal, time);
+      rightDelay.delayTime.linearRampToValueAtTime(rDelayVal, time);
+      leftFilter.frequency.linearRampToValueAtTime(lFreqVal, time);
+      rightFilter.frequency.linearRampToValueAtTime(rFreqVal, time);
     }
   }
 
