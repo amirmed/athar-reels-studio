@@ -30,6 +30,8 @@ import { ViralCaptionGenerator } from '../ui/ViralCaptionGenerator';
 import { PublishKitModal } from '../ui/PublishKitModal';
 import { exportProject } from '../../services/exportOrchestrator';
 import { synthesizeArabicSpeech } from '../../services/arabicTtsService';
+import { resolveValidAudioUrl } from '../../services/persistentAudioStorage';
+import { applyCustomVoiceToAyahs } from '../../utils/customVoiceDistribution';
 
 // ==================== Export Page Component ====================
 export const ExportPage: React.FC = () => {
@@ -62,6 +64,7 @@ export const ExportPage: React.FC = () => {
         updateExportJob(jobId, { status: 'processing', progress: 5 });
 
         let ayahs: AyahData[] = [];
+        let resolvedCustomVoice: string | undefined = undefined;
         if (
           currentProject.customText ||
           currentProject.contentType === 'hadith' ||
@@ -130,23 +133,27 @@ export const ExportPage: React.FC = () => {
               currentProject.customAudioUrl)
           );
           if (isUsingCustomVoice && customVoice) {
-            const customDur = currentProject.audioSettings?.customAudioDuration;
-            const perAyahDur = customDur && ayahs.length > 0
-              ? customDur / ayahs.length
-              : undefined;
-
-            ayahs.forEach((a) => {
-              a.audioUrl = customVoice;
-              if (perAyahDur && (!a.duration || a.duration <= 0)) {
-                a.duration = perAyahDur;
+            const customKey =
+              currentProject.audioSettings?.customAudioKey ||
+              currentProject.customAudioKey ||
+              currentProject.id;
+            // Revive recording from IndexedDB if blob: was invalidated
+            resolvedCustomVoice = await resolveValidAudioUrl(customVoice, currentProject.id, customKey);
+            if (resolvedCustomVoice) {
+              applyCustomVoiceToAyahs(
+                ayahs,
+                resolvedCustomVoice,
+                currentProject.audioSettings?.customAudioDuration || 0
+              );
+              if (ayahs.length > 1) {
+                addToast({
+                  message: t(
+                    'exportModal.multiAyahCustomVoice',
+                    '🎙️ تنبيه: سيتم استخدام تسجيلك الصوتي المخصص كمسار موحد لكافة آيات الفيديو.'
+                  ),
+                  type: 'info',
+                });
               }
-            });
-
-            if (ayahs.length > 1) {
-              addToast({
-                message: '🎙️ تنبيه: سيتم استخدام تسجيلك الصوتي المخصص كمسار موحد لكافة آيات الفيديو.',
-                type: 'info',
-              });
             }
           }
         }
@@ -168,7 +175,9 @@ export const ExportPage: React.FC = () => {
         }));
 
         const customVoiceUrl =
-          currentProject.audioSettings?.customRecordedAudioUrl || currentProject.customAudioUrl;
+          resolvedCustomVoice ||
+          currentProject.audioSettings?.customRecordedAudioUrl ||
+          currentProject.customAudioUrl;
         const isCustomReciter =
           currentProject.reciterId === 'custom_voice' ||
           Boolean(currentProject.audioSettings?.customRecordedAudioUrl || currentProject.customAudioUrl);

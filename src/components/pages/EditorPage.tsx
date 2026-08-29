@@ -27,6 +27,7 @@ import {
 import { proceduralAmbientEngine } from '../../data/ambientSounds';
 import { unifiedAudioEngine } from '../../services/unifiedAudioEngine';
 import { resolveValidAudioUrl } from '../../services/persistentAudioStorage';
+import { applyCustomVoiceToAyahs } from '../../utils/customVoiceDistribution';
 import { generateProjectThumbnailDataUrl } from '../../services/thumbnailGeneratorService';
 import { synthesizeArabicSpeech } from '../../services/arabicTtsService';
 
@@ -567,72 +568,7 @@ export const EditorPage: React.FC = () => {
       }
 
       if (customVoice && ayahData.length > 0) {
-        if (ayahData.length === 1) {
-          const a = ayahData[0];
-          a.audioUrl = customVoice;
-          a.fallbackUrls = [];
-          if (recordedDuration && recordedDuration > 0) {
-            a.duration = recordedDuration;
-            a.startTimeMs = 0;
-            a.endTimeMs = Math.round(recordedDuration * 1000);
-            a.isFullSurahFile = false;
-            if (a.words && a.words.length > 0) {
-              const origLastWordEnd = a.words[a.words.length - 1]?.endTime || a.duration || 1;
-              const scale = recordedDuration / origLastWordEnd;
-              a.words.forEach((w) => {
-                w.startTime = Math.round(w.startTime * scale * 1000) / 1000;
-                w.endTime = Math.round(w.endTime * scale * 1000) / 1000;
-              });
-            }
-          }
-        } else {
-          // Multiple Ayahs sharing a single continuous custom recording
-          const totalTargetDuration =
-            recordedDuration && recordedDuration > 0
-              ? recordedDuration
-              : ayahData.reduce((acc, cur) => acc + (cur.duration || 5), 0);
-
-          const standardDurations = ayahData.map((a) => {
-            if (a.duration && a.duration > 0) return a.duration;
-            const wc =
-              a.words && a.words.length > 0 ? a.words.length : (a.text || '').split(/\s+/).length;
-            return Math.max(1, wc);
-          });
-          const standardTotal = standardDurations.reduce((acc, d) => acc + d, 0) || 1;
-
-          let accumulatedSec = 0;
-
-          ayahData.forEach((a, idx) => {
-            const fraction = standardDurations[idx] / standardTotal;
-            const ayahAllocatedDur = Math.round(totalTargetDuration * fraction * 1000) / 1000;
-            const startSec = accumulatedSec;
-            const endSec =
-              idx === ayahData.length - 1
-                ? totalTargetDuration
-                : Math.round((startSec + ayahAllocatedDur) * 1000) / 1000;
-            const actualDur = Math.max(0.5, Math.round((endSec - startSec) * 1000) / 1000);
-
-            accumulatedSec = endSec;
-
-            a.audioUrl = customVoice;
-            a.fallbackUrls = [];
-            a.duration = actualDur;
-            a.startTimeMs = Math.round(startSec * 1000);
-            a.endTimeMs = Math.round(endSec * 1000);
-            a.isFullSurahFile = true; // Enables slice playback in continuous audio track
-
-            // Scale words for this ayah to fit its allocated slice [0, actualDur]
-            if (a.words && a.words.length > 0) {
-              const origLastWordEnd =
-                a.words[a.words.length - 1]?.endTime || standardDurations[idx] || 1;
-              const scale = actualDur / origLastWordEnd;
-              a.words.forEach((w) => {
-                w.startTime = Math.round(w.startTime * scale * 1000) / 1000;
-                w.endTime = Math.round(w.endTime * scale * 1000) / 1000;
-              });
-            }
-          });
-        }
+        applyCustomVoiceToAyahs(ayahData, customVoice, recordedDuration || 0);
       }
 
       if (loadRequestIdRef.current !== currentRequestId) {
