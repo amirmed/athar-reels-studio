@@ -34,6 +34,7 @@ import { useAppStore } from '../../store/useAppStore';
 import {
   PLATFORM_PRESETS,
   exportProject,
+  isProjectExporting,
 } from '../../services/exportOrchestrator';
 
 interface ExportModalProps {
@@ -266,6 +267,9 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
   // Main Export Process
   const handleStartExport = async () => {
+    if (status === 'exporting' || isProjectExporting()) {
+      return;
+    }
     setStatus('exporting');
     setProgress(0);
     setError(null);

@@ -335,44 +335,70 @@ export async function preloadSceneBackgrounds(
   return result;
 }
 
+let isExportActiveMutex = false;
+
+/**
+ * Check if an export job is currently running across any thread/modal
+ */
+export function isProjectExporting(): boolean {
+  return isExportActiveMutex;
+}
+
+/**
+ * Reset export mutex (e.g. for testing or emergency recovery)
+ */
+export function resetExportMutex(): void {
+  isExportActiveMutex = false;
+}
+
 /**
  * Main Export Orchestration Function
  * Executes the three-tier waterfall: Native Electron FFmpeg -> WebCodecs MP4 -> MediaRecorder
  */
 export async function exportProject(options: ExportProjectOptions): Promise<ExportResult> {
-  const {
-    projectName,
-    surahName = 'سورة قرآنية',
-    reciterName,
-    aspectRatio = '9:16',
-    quality = '1080p',
-    backgroundPath,
-    backgroundOpacity = 0.6,
-    audioUrls: rawAudioUrls = [],
-    ayahs,
-    textSettings,
-    audioSettings,
-    watermark,
-    showTranslation = false,
-    showTafsir: _showTafsir = false,
-    totalDuration,
-    savePathPref,
-    preferEngine = 'auto',
-    signal,
-    onProgress,
-  } = options;
-
-  if (signal?.aborted) {
+  if (isExportActiveMutex) {
     return {
       success: false,
-      error: 'تم إلغاء عملية التصدير من قِبل المستخدم',
+      error: 'عملية تصدير أخرى قيد المعالجة حالياً. يرجى الانتظار حتى تكتمل أو إلغاؤها.',
     };
   }
 
-  const startWallTime = Date.now();
+  isExportActiveMutex = true;
 
-  const reportProgress = (
-    phase: string,
+  try {
+    const {
+      projectName,
+      surahName = 'سورة قرآنية',
+      reciterName,
+      aspectRatio = '9:16',
+      quality = 'high',
+      backgroundPath,
+      backgroundOpacity = 0.6,
+      audioUrls: rawAudioUrls = [],
+      ayahs,
+      textSettings,
+      audioSettings,
+      watermark,
+      showTranslation = false,
+      showTafsir: _showTafsir = false,
+      totalDuration,
+      savePathPref,
+      preferEngine = 'auto',
+      signal,
+      onProgress,
+    } = options;
+
+    if (signal?.aborted) {
+      return {
+        success: false,
+        error: 'تم إلغاء عملية التصدير من قِبل المستخدم',
+      };
+    }
+
+    const startWallTime = Date.now();
+
+    const reportProgress = (
+      phase: string,
     percent: number,
     extra?: Partial<ExportProgressEvent>
   ) => {
@@ -913,6 +939,9 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
         console.debug('[ExportOrchestrator] AudioContext close error:', err);
       }
     }
+  }
+  } finally {
+    isExportActiveMutex = false;
   }
 }
 

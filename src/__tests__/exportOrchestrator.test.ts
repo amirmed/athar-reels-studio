@@ -7,6 +7,8 @@ import {
   sliceAudioBuffer,
   exportProject,
   resolveTargetOutputPath,
+  isProjectExporting,
+  resetExportMutex,
 } from '../services/exportOrchestrator';
 
 describe('ExportOrchestrator Service', () => {
@@ -252,6 +254,55 @@ describe('ExportOrchestrator Service', () => {
 
       expect(result.success).toBe(false);
       expect(result.error).toContain('إلغاء');
+    });
+
+    it('prevents concurrent exports using mutex lock', async () => {
+      resetExportMutex();
+      expect(isProjectExporting()).toBe(false);
+
+      let resolveSlowExport: (value: any) => void = () => {};
+      const slowPromise = new Promise((resolve) => {
+        resolveSlowExport = resolve;
+      });
+
+      const mockStart = vi.fn().mockImplementation(() => slowPromise);
+      const api = {
+        videoExport: {
+          start: mockStart,
+          onProgress: vi.fn(() => () => {}),
+          cancel: vi.fn(),
+        },
+      };
+
+      (globalThis as any).electronAPI = api;
+      if (typeof window !== 'undefined') {
+        (window as any).electronAPI = api;
+      }
+
+      // First export starts
+      const firstExportPromise = exportProject({
+        projectName: 'First Project',
+        aspectRatio: '9:16',
+        ayahs: [{ number: 1, numberInSurah: 1, surahNumber: 1, surahName: 'الفاتحة', juz: 1, page: 1, audioUrl: '', text: 'الحمد لله', duration: 3 }],
+      });
+
+      expect(isProjectExporting()).toBe(true);
+
+      // Second export attempts to run concurrently
+      const secondExportResult = await exportProject({
+        projectName: 'Second Project',
+        aspectRatio: '9:16',
+        ayahs: [{ number: 1, numberInSurah: 1, surahNumber: 1, surahName: 'الفاتحة', juz: 1, page: 1, audioUrl: '', text: 'الرحمن الرحيم', duration: 3 }],
+      });
+
+      expect(secondExportResult.success).toBe(false);
+      expect(secondExportResult.error).toContain('عملية تصدير أخرى قيد المعالجة');
+
+      // Resolve first export
+      resolveSlowExport({ success: true, outputPath: 'C:/exports/first.mp4' });
+      const firstExportResult = await firstExportPromise;
+      expect(firstExportResult.success).toBe(true);
+      expect(isProjectExporting()).toBe(false);
     });
   });
 });

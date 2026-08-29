@@ -861,6 +861,8 @@ function safeSendProgress(sender: Electron.WebContents | null | undefined, data:
 
 export function setupExportHandlers(tempDir: string) {
   let activeFfmpegCmd: any = null;
+  let isNativeExportActive = false;
+  let activeJobTempDir: string | null = null;
 
   ipcMain.handle('export:choosePath', async (_event, projectName: string) => {
     const result = await dialog.showSaveDialog({
@@ -878,26 +880,69 @@ export function setupExportHandlers(tempDir: string) {
     if (activeFfmpegCmd) {
       try {
         activeFfmpegCmd.kill('SIGKILL');
-        activeFfmpegCmd = null;
       } catch (err) {
         console.warn('[Export] Cancel kill error:', err);
       }
+      activeFfmpegCmd = null;
+    }
+    isNativeExportActive = false;
+    if (activeJobTempDir) {
+      try {
+        if (fs.existsSync(activeJobTempDir)) {
+          fs.rmSync(activeJobTempDir, { recursive: true, force: true });
+        }
+      } catch (e) {
+        console.debug('[Export] Cleanup error on cancel:', e);
+      }
+      activeJobTempDir = null;
     }
     return { success: true };
   });
 
   ipcMain.handle('export:start', async (_event, options: ExportOptions) => {
+    if (isNativeExportActive) {
+      return {
+        success: false,
+        error: 'هناك عملية تصدير قيد التنفيذ حالياً. يرجى الانتظار حتى تكتمل أو إلغاؤها أولاً.',
+      };
+    }
+
+    isNativeExportActive = true;
+
     try {
       await initFFmpeg();
     } catch (err: any) {
+      isNativeExportActive = false;
       console.error('[Export] FFmpeg init failed:', err);
       return { success: false, error: `فشل تحميل FFmpeg: ${err.message}` };
     }
 
     // Validate and sanitize output path
     const cleanProjectName = (options.projectName || 'ayah_reel').replace(/[/\\?%*:|"<>]/g, '_').trim() || 'ayah_reel';
+    const ts = Date.now();
+    const jobId = `job_${ts}_${Math.random().toString(36).substring(2, 7)}`;
+    const jobTempDir = path.join(tempDir, jobId);
+    activeJobTempDir = jobTempDir;
+
+    if (!fs.existsSync(jobTempDir)) {
+      fs.mkdirSync(jobTempDir, { recursive: true });
+    }
+
+    const cleanup = () => {
+      isNativeExportActive = false;
+      activeFfmpegCmd = null;
+      activeJobTempDir = null;
+      try {
+        if (fs.existsSync(jobTempDir)) {
+          fs.rmSync(jobTempDir, { recursive: true, force: true });
+        }
+      } catch (e) {
+        console.debug('[Export] Cleanup error:', e);
+      }
+    };
+
     if (!options.outputPath || typeof options.outputPath !== 'string') {
-      options.outputPath = path.join(tempDir, `${cleanProjectName}_${Date.now()}.mp4`);
+      options.outputPath = path.join(tempDir, `${cleanProjectName}_${ts}.mp4`);
     } else {
       let resolved = path.resolve(options.outputPath);
       try {
@@ -916,6 +961,7 @@ export function setupExportHandlers(tempDir: string) {
 
       // Security validation against unauthorized paths
       if (!isSafeUserPath(options.outputPath)) {
+        cleanup();
         return {
           success: false,
           error: `مسار حفظ الفيديو غير مصرح به أو خارج المجلدات المسموحة: ${options.outputPath}`,
@@ -933,8 +979,6 @@ export function setupExportHandlers(tempDir: string) {
     const crf     = crfMap[options.quality]    || 20;
     const preset  = presetMap[options.quality] || 'slow';
     const abitrate= bitrateMap[options.quality]|| '192k';
-    const ts      = Date.now();
-    const tmpFiles: string[] = [];
 
     try {
       // ── 1. Download audio files ────────────────────────────────────────────
@@ -960,8 +1004,7 @@ export function setupExportHandlers(tempDir: string) {
         const downloaded: string[] = [];
         const failedAudio: string[] = [];
         for (let i = 0; i < urls.length; i++) {
-          const dest = path.join(tempDir, `ayah_${ts}_${i}.mp3`);
-          tmpFiles.push(dest);
+          const dest = path.join(jobTempDir, `ayah_${ts}_${i}.mp3`);
           try {
             if (isDataUrl(urls[i])) {
               const base64Data = urls[i].replace(/^data:[^;]+;base64,/, '');
@@ -996,8 +1039,7 @@ export function setupExportHandlers(tempDir: string) {
           mergedAudio = downloaded[0];
         } else if (downloaded.length > 1) {
           safeSendProgress(_event.sender, { phase: 'دمج ملفات الصوت...', percent: 28 });
-          mergedAudio = path.join(tempDir, `merged_${ts}.aac`);
-          tmpFiles.push(mergedAudio);
+          mergedAudio = path.join(jobTempDir, `merged_${ts}.aac`);
           await concatAudio(downloaded, mergedAudio);
         }
       }
@@ -1013,8 +1055,7 @@ export function setupExportHandlers(tempDir: string) {
         if (isRemoteUrl) {
           safeSendProgress(_event.sender, { phase: 'تحميل الخلفية...', percent: 30 });
           const ext = extensionForBackground(bgPath, backgroundKind);
-          const dest = path.join(tempDir, `bg_${ts}${ext}`);
-          tmpFiles.push(dest);
+          const dest = path.join(jobTempDir, `bg_${ts}${ext}`);
           try {
             const download = await downloadFile(bgPath, dest);
             localBgPath = download.filePath;
@@ -1058,8 +1099,7 @@ export function setupExportHandlers(tempDir: string) {
       }
 
       // Generate ASS Subtitle file for ultra-crisp word-by-word karaoke & font shaping
-      const assDest = path.join(tempDir, `subtitles_${ts}.ass`);
-      tmpFiles.push(assDest);
+      const assDest = path.join(jobTempDir, `subtitles_${ts}.ass`);
       const assGenerated = generateAssSubtitleFile(timedAyahs, options, w, h, assDest);
 
       const textFilters: string[] = [];
@@ -1075,12 +1115,6 @@ export function setupExportHandlers(tempDir: string) {
         const contentCenterY = getContentCenterY(settings, h);
         const boxY = Math.round(contentCenterY - boxHeight / 2);
 
-        // Glass backdrop card
-        textFilters.push(`drawbox=x=${boxX}:y=${boxY}:w=${boxWidth}:h=${boxHeight}:color=${boxColor}:t=fill`);
-
-        // Corner accents
-        const cornerMargin = Math.round(w * 0.03);
-        const cornerLength = Math.round(w * 0.06);
         const cornerThickness = Math.max(3, Math.round(w * 0.006));
         const cornerColor = '0x14b8a6@0.25';
         textFilters.push(`drawbox=x=${cornerMargin}:y=${cornerMargin}:w=${cornerLength}:h=${cornerThickness}:color=${cornerColor}:t=fill`);
@@ -1192,14 +1226,12 @@ export function setupExportHandlers(tempDir: string) {
             });
           })
           .on('end', () => {
-            activeFfmpegCmd = null;
-            tmpFiles.forEach(f => { try { fs.unlinkSync(f); } catch (e) { console.debug('[Cleanup] unlink error:', e); } });
+            cleanup();
             safeSendProgress(_event.sender, { phase: 'اكتمل التصدير ✅', percent: 100 });
             resolve({ success: true, outputPath: options.outputPath });
           })
           .on('error', (err: any) => {
-            activeFfmpegCmd = null;
-            tmpFiles.forEach(f => { try { fs.unlinkSync(f); } catch (e) { console.debug('[Cleanup] unlink error:', e); } });
+            cleanup();
             console.error('[FFmpeg Error]', err.message);
             resolve({ success: false, error: err.message });
           })
@@ -1207,7 +1239,7 @@ export function setupExportHandlers(tempDir: string) {
       });
 
     } catch (err: any) {
-      tmpFiles.forEach(f => { try { fs.unlinkSync(f); } catch (e) { console.debug('[Cleanup] unlink error:', e); } });
+      cleanup();
       return { success: false, error: err.message };
     }
   });
