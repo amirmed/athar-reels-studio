@@ -4,6 +4,7 @@ import { AyahData, TranslationData } from '../../../services/quranApi';
 import { ViralCaptionGenerator } from '../../ui/ViralCaptionGenerator';
 import { Sparkles } from 'lucide-react';
 import { Slider } from '../../ui/Slider';
+import { useTranslation } from '../../../i18n';
 
 interface BrandingPanelProps {
   currentProject: Project | null;
@@ -32,6 +33,26 @@ export const BrandingPanel: React.FC<BrandingPanelProps> = ({
   ayahs,
   translations,
 }) => {
+  const { t } = useTranslation();
+
+  const watermarkPositions = [
+    { id: 'topLeft', label: t('editor.posTopLeft', '↖️ أعلى اليسار') },
+    { id: 'top', label: t('editor.posTop', '⬆️ أعلى الوسط') },
+    { id: 'topRight', label: t('editor.posTopRight', '↗️ أعلى اليمين') },
+    { id: 'bottomLeft', label: t('editor.posBottomLeft', '↙️ أسفل اليسار') },
+    { id: 'bottom', label: t('editor.posBottom', '⬇️ أسفل الوسط') },
+    { id: 'bottomRight', label: t('editor.posBottomRight', '↘️ أسفل اليمين') },
+    { id: 'center', label: t('editor.posCenter', '🎯 في المنتصف') },
+  ];
+
+  const watermarkColors = [
+    { color: '#ffffff', name: t('editor.colorWhite', 'أبيض') },
+    { color: '#fbbf24', name: t('editor.colorGold', 'ذهبي') },
+    { color: '#34d399', name: t('editor.colorEmerald', 'زمردي') },
+    { color: '#38bdf8', name: t('editor.colorSky', 'سماوي') },
+    { color: '#e2e8f0', name: t('editor.colorSilver', 'فضي') },
+  ];
+
   return (
     <div className="space-y-4 animate-in">
       {/* Watermark Main Card */}
@@ -39,7 +60,7 @@ export const BrandingPanel: React.FC<BrandingPanelProps> = ({
         <div className="flex items-center justify-between">
           <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
             <Sparkles size={14} className="text-gold-400" />
-            <span>العلامة المائية والتوقيع (Watermark)</span>
+            <span>{t('editor.watermarkTitle', 'العلامة المائية والتوقيع (Watermark)')}</span>
           </label>
           <button
             type="button"
@@ -55,7 +76,7 @@ export const BrandingPanel: React.FC<BrandingPanelProps> = ({
                 : 'bg-surface-900 border-surface-700/40 text-surface-400'
             }`}
           >
-            {textSettings.showWatermark !== false ? 'مفعلة ✓' : 'مخفية'}
+            {textSettings.showWatermark !== false ? t('editor.watermarkActive', 'مفعلة ✓') : t('editor.watermarkHidden', 'مخفية')}
           </button>
         </div>
 
@@ -66,7 +87,7 @@ export const BrandingPanel: React.FC<BrandingPanelProps> = ({
                 type="text"
                 value={watermark}
                 onChange={(e) => setWatermark(e.target.value)}
-                placeholder="مثال: @athar_studio أو اسم القناة"
+                placeholder={t('editor.watermarkPlaceholderInput', 'مثال: @athar_studio أو اسم القناة')}
                 className="glass-input w-full p-2.5 rounded-xl text-xs font-medium"
               />
             </div>
@@ -75,7 +96,7 @@ export const BrandingPanel: React.FC<BrandingPanelProps> = ({
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="text-xs font-bold text-surface-400">
-                  موضع العلامة المائية (أو اسحبها باليد في الشاشة ✋):
+                  {t('editor.watermarkPosLabel', 'موضع العلامة المائية (أو اسحبها باليد في الشاشة ✋):')}
                 </label>
                 {(textSettings.watermarkX || textSettings.watermarkY) && (
                   <button
@@ -89,20 +110,12 @@ export const BrandingPanel: React.FC<BrandingPanelProps> = ({
                     }
                     className="text-[11px] text-gold-400 hover:text-gold-300 font-bold underline cursor-pointer"
                   >
-                    إعادة للزاوية 🔄
+                    {t('editor.watermarkResetPos', 'إعادة للزاوية 🔄')}
                   </button>
                 )}
               </div>
               <div className="grid grid-cols-3 gap-1.5 max-w-xs mx-auto p-1.5 rounded-xl bg-surface-900/80 border border-surface-700/40">
-                {[
-                  { id: 'topLeft', label: '↖️ أعلى اليسار' },
-                  { id: 'top', label: '⬆️ أعلى الوسط' },
-                  { id: 'topRight', label: '↗️ أعلى اليمين' },
-                  { id: 'bottomLeft', label: '↙️ أسفل اليسار' },
-                  { id: 'bottom', label: '⬇️ أسفل الوسط' },
-                  { id: 'bottomRight', label: '↘️ أسفل اليمين' },
-                  { id: 'center', label: '🎯 في المنتصف' },
-                ].map((pos) => (
+                {watermarkPositions.map((pos) => (
                   <button
                     key={pos.id}
                     type="button"
@@ -131,7 +144,7 @@ export const BrandingPanel: React.FC<BrandingPanelProps> = ({
             {/* Opacity & Size Sliders */}
             <div className="space-y-2.5 pt-1 border-t border-surface-700/30">
               <Slider
-                label="شفافية العلامة المائية"
+                label={t('editor.watermarkOpacityLabel', 'شفافية العلامة المائية')}
                 min={10}
                 max={100}
                 value={Math.round((textSettings.watermarkOpacity ?? 0.55) * 100)}
@@ -146,7 +159,7 @@ export const BrandingPanel: React.FC<BrandingPanelProps> = ({
               />
 
               <Slider
-                label="حجم خط العلامة المائية"
+                label={t('editor.watermarkSizeLabel', 'حجم خط العلامة المائية')}
                 min={8}
                 max={24}
                 value={textSettings.watermarkFontSize || 11}
@@ -164,16 +177,10 @@ export const BrandingPanel: React.FC<BrandingPanelProps> = ({
             {/* Watermark Color Preset */}
             <div className="pt-1 border-t border-surface-700/30">
               <label className="block text-xs font-bold text-surface-400 mb-1.5">
-                لون العلامة المائية:
+                {t('editor.watermarkColorLabel', 'لون العلامة المائية:')}
               </label>
               <div className="flex items-center gap-2">
-                {[
-                  { color: '#ffffff', name: 'أبيض' },
-                  { color: '#fbbf24', name: 'ذهبي' },
-                  { color: '#34d399', name: 'زمردي' },
-                  { color: '#38bdf8', name: 'سماوي' },
-                  { color: '#e2e8f0', name: 'فضي' },
-                ].map((c) => (
+                {watermarkColors.map((c) => (
                   <button
                     key={c.color}
                     type="button"

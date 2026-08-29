@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Project } from '../../types';
 import { useHotkeys } from '../../hooks/useHotkeys';
+import { useTranslation } from '../../i18n';
 import {
   ArrowRight,
   Save,
@@ -57,6 +58,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
   isProMode = false,
   onToggleProMode,
 }) => {
+  const { t } = useTranslation();
   const [isToolsMenuOpen, setIsToolsMenuOpen] = useState(false);
   const toolsMenuRef = useRef<HTMLDivElement>(null);
 
@@ -86,11 +88,11 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           type="button"
           onClick={onBack}
           className="p-2 rounded-xl bg-surface-800/60 hover:bg-surface-800 text-surface-300 hover:text-surface-50 transition-all cursor-pointer flex items-center gap-1.5 text-xs font-bold shrink-0"
-          title="الرجوع للرئيسية"
-          aria-label="الرجوع للرئيسية"
+          title={t('editor.backToHome', 'الرجوع للرئيسية')}
+          aria-label={t('editor.backToHome', 'الرجوع للرئيسية')}
         >
           <ArrowRight size={18} />
-          <span className="hidden sm:inline">الرئيسية</span>
+          <span className="hidden sm:inline">{t('editor.home', 'الرئيسية')}</span>
         </button>
 
         <div className="h-5 w-[1px] bg-surface-700/40 mx-1 hidden sm:block shrink-0" />
@@ -98,26 +100,26 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             <h1 className="text-xs sm:text-sm md:text-base font-bold text-surface-50 max-w-[120px] sm:max-w-[180px] md:max-w-[240px] lg:max-w-[320px] truncate">
-              {currentProject?.name || 'مشروع ريلز قرآني'}
+              {currentProject?.name || t('editor.defaultProjectName', 'مشروع ريلز قرآني')}
             </h1>
             {saveStatus === 'saving' ? (
               <span className="hidden md:inline-flex items-center gap-1.5 text-[11px] px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-300 font-bold border border-amber-500/20 animate-pulse shrink-0">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                <span>جارٍ الحفظ...</span>
+                <span>{t('editor.saving', 'جارٍ الحفظ...')}</span>
               </span>
             ) : (
               <span className="hidden md:inline-flex items-center gap-1 text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-bold border border-emerald-500/20 shrink-0">
                 <Database size={11} className="text-emerald-500 dark:text-emerald-400" />
-                <span>✓ تم الحفظ</span>
+                <span>{t('editor.saved', '✓ تم الحفظ')}</span>
               </span>
             )}
           </div>
           <p className="text-[11px] text-gold-600 dark:text-gold-400 font-bold truncate">
             {currentProject?.aspectRatio === '9:16'
-              ? 'ريلز عمودي 9:16'
+              ? t('editor.ratioVertical', 'ريلز عمودي 9:16')
               : currentProject?.aspectRatio === '1:1'
-                ? 'مربع 1:1'
-                : 'أفقي 16:9'}
+                ? t('editor.ratioSquare', 'مربع 1:1')
+                : t('editor.ratioHorizontal', 'أفقي 16:9')}
           </p>
         </div>
 
@@ -132,11 +134,11 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                 ? 'text-surface-50 hover:text-gold-500 hover:bg-surface-700 cursor-pointer active:scale-95'
                 : 'text-surface-400 cursor-not-allowed'
             }`}
-            title="تراجع (Ctrl + Z)"
-            aria-label="تراجع (Ctrl + Z)"
+            title={t('editor.undo', 'تراجع (Ctrl + Z)')}
+            aria-label={t('editor.undo', 'تراجع (Ctrl + Z)')}
           >
             <Undo2 size={14} />
-            <span className="hidden xl:inline text-xs">تراجع</span>
+            <span className="hidden xl:inline text-xs">{t('editor.undoLabel', 'تراجع')}</span>
           </button>
           <button
             type="button"
@@ -147,11 +149,11 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                 ? 'text-surface-50 hover:text-gold-500 hover:bg-surface-700 cursor-pointer active:scale-95'
                 : 'text-surface-400 cursor-not-allowed'
             }`}
-            title="إعادة (Ctrl + Y)"
-            aria-label="إعادة (Ctrl + Y)"
+            title={t('editor.redo', 'إعادة (Ctrl + Y)')}
+            aria-label={t('editor.redo', 'إعادة (Ctrl + Y)')}
           >
             <Redo2 size={14} />
-            <span className="hidden xl:inline text-xs">إعادة</span>
+            <span className="hidden xl:inline text-xs">{t('editor.redoLabel', 'إعادة')}</span>
           </button>
         </div>
       </div>
@@ -169,10 +171,10 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                 ? 'bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-500/40 shadow-sm'
                 : 'bg-surface-800 text-surface-200 border-surface-700/40 hover:border-gold-400/40 hover:text-surface-50'
             }`}
-            title="التبديل بين الوضع المبسط والوضع المتقدم"
-            aria-label="التبديل بين الوضع المبسط والوضع المتقدم"
+            title={t('editor.modeToggleTooltip', 'التبديل بين الوضع المبسط والوضع المتقدم')}
+            aria-label={t('editor.modeToggleTooltip', 'التبديل بين الوضع المبسط والوضع المتقدم')}
           >
-            <span>{isProMode ? '⚡ وضع Pro' : '🎯 مبسط'}</span>
+            <span>{isProMode ? t('editor.proModeBadge', '⚡ وضع Pro') : t('editor.simpleModeBadge', '🎯 مبسط')}</span>
           </button>
         )}
 
@@ -181,8 +183,8 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           type="button"
           onClick={onOpenAutoReel}
           className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600/20 to-gold-500/20 hover:from-purple-600/30 hover:to-gold-500/30 text-purple-700 dark:text-purple-200 text-xs font-bold border border-purple-400/30 transition-all cursor-pointer shadow-sm active:scale-95"
-          title="توليد ريلز تلقائي بالذكاء الاصطناعي"
-          aria-label="توليد ريلز تلقائي بالذكاء الاصطناعي"
+          title={t('editor.autoReelTooltip', 'توليد ريلز تلقائي بالذكاء الاصطناعي')}
+          aria-label={t('editor.autoReelTooltip', 'توليد ريلز تلقائي بالذكاء الاصطناعي')}
         >
           <Sparkles size={13} className="text-purple-500 dark:text-purple-300 animate-pulse" />
           <span className="hidden sm:inline">Auto-Reel AI</span>
@@ -198,13 +200,13 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                 ? 'bg-gold-500/20 text-gold-700 dark:text-gold-300 border-gold-500/40'
                 : 'bg-surface-800 hover:bg-surface-700 text-surface-200 hover:text-surface-50 border-surface-700/40'
             }`}
-            title="المزيد من الأدوات الإبداعية والاستوديوهات"
-            aria-label="المزيد من الأدوات الإبداعية والاستوديوهات"
+            title={t('editor.creativeToolsMore', 'المزيد من الأدوات الإبداعية والاستوديوهات')}
+            aria-label={t('editor.creativeToolsMore', 'المزيد من الأدوات الإبداعية والاستوديوهات')}
             aria-expanded={isToolsMenuOpen}
             aria-haspopup="true"
           >
             <MoreHorizontal size={16} />
-            <span className="hidden lg:inline text-xs">أدوات إبداعية</span>
+            <span className="hidden lg:inline text-xs">{t('editor.creativeTools', 'أدوات إبداعية')}</span>
           </button>
 
           <AnimatePresence>
@@ -217,7 +219,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                 className="absolute start-0 sm:end-auto mt-2 w-56 bg-surface-900 border border-gold-500/30 rounded-2xl p-2 shadow-2xl z-50 space-y-1 text-start"
               >
                 <div className="px-3 py-1.5 border-b border-surface-700/40 text-[11px] font-bold text-surface-400">
-                  استوديوهات وأدوات إضافية:
+                  {t('editor.additionalStudios', 'استوديوهات وأدوات إضافية:')}
                 </div>
 
                 <button
@@ -227,10 +229,10 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                     onOpenPlaylists();
                   }}
                   className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-gold-600 dark:text-gold-300 hover:bg-gold-500/15 transition-all text-start cursor-pointer"
-                  aria-label="مزاجات وقوائم قرآنية"
+                  aria-label={t('editor.quranPlaylists', 'مزاجات وقوائم قرآنية 🎧')}
                 >
                   <BookOpen size={15} className="text-gold-500 dark:text-gold-400" />
-                  <span>مزاجات وقوائم قرآنية 🎧</span>
+                  <span>{t('editor.quranPlaylists', 'مزاجات وقوائم قرآنية 🎧')}</span>
                 </button>
 
                 <button
@@ -240,10 +242,10 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                     onOpenEvents();
                   }}
                   className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/15 transition-all text-start cursor-pointer"
-                  aria-label="مواسم ومناسبات إسلامية"
+                  aria-label={t('editor.islamicEvents', 'مواسم ومناسبات إسلامية 🌙')}
                 >
                   <Crown size={15} className="text-emerald-500 dark:text-emerald-400" />
-                  <span>مواسم ومناسبات إسلامية 🌙</span>
+                  <span>{t('editor.islamicEvents', 'مواسم ومناسبات إسلامية 🌙')}</span>
                 </button>
 
                 {onOpenQuotes && (
@@ -254,10 +256,10 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                       onOpenQuotes();
                     }}
                     className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-sky-700 dark:text-sky-300 hover:bg-sky-500/15 transition-all text-start cursor-pointer"
-                    aria-label="تصميم بوست وبطاقة صورة"
+                    aria-label={t('editor.designQuote', 'تصميم بوست وبطاقة صورة 🖼️')}
                   >
                     <ImageIcon size={15} className="text-sky-500 dark:text-sky-400" />
-                    <span>تصميم بوست وبطاقة صورة 🖼️</span>
+                    <span>{t('editor.designQuote', 'تصميم بوست وبطاقة صورة 🖼️')}</span>
                   </button>
                 )}
 
@@ -268,10 +270,10 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                     onOpenVoiceRecorder();
                   }}
                   className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-amber-700 dark:text-amber-300 hover:bg-amber-500/15 transition-all text-start cursor-pointer"
-                  aria-label="تسجيل صوتك وتلاوتك"
+                  aria-label={t('editor.recordVoice', 'تسجيل صوتك وتلاوتك 🎙️')}
                 >
                   <Mic size={15} className="text-amber-500 dark:text-amber-400" />
-                  <span>تسجيل صوتك وتلاوتك 🎙️</span>
+                  <span>{t('editor.recordVoice', 'تسجيل صوتك وتلاوتك 🎙️')}</span>
                 </button>
 
                 {onOpenKeyboardShortcuts && (
@@ -282,10 +284,10 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                       onOpenKeyboardShortcuts();
                     }}
                     className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-surface-300 hover:bg-surface-800 hover:text-surface-50 transition-all text-start cursor-pointer border-t border-surface-700/30 pt-2"
-                    aria-label="اختصارات لوحة المفاتيح"
+                    aria-label={t('editor.keyboardShortcuts', 'اختصارات لوحة المفاتيح ⌨️')}
                   >
                     <Keyboard size={15} className="text-surface-400" />
-                    <span>اختصارات لوحة المفاتيح ⌨️</span>
+                    <span>{t('editor.keyboardShortcuts', 'اختصارات لوحة المفاتيح ⌨️')}</span>
                   </button>
                 )}
               </motion.div>
@@ -298,11 +300,11 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           type="button"
           onClick={onSave}
           className="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-surface-800 hover:bg-surface-700 text-surface-50 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer border border-surface-700/40 active:scale-95"
-          title="حفظ المشروع (Ctrl + S)"
-          aria-label="حفظ المشروع (Ctrl + S)"
+          title={t('editor.saveTooltip', 'حفظ المشروع (Ctrl + S)')}
+          aria-label={t('editor.saveTooltip', 'حفظ المشروع (Ctrl + S)')}
         >
           <Save size={14} className="text-gold-400" />
-          <span className="hidden sm:inline">حفظ</span>
+          <span className="hidden sm:inline">{t('editor.saveBtn', 'حفظ')}</span>
         </button>
 
         {/* Export Video Button */}
@@ -310,10 +312,10 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           type="button"
           onClick={onOpenExport}
           className="px-3 sm:px-4 py-1.5 rounded-xl bg-gradient-to-r from-gold-500 to-amber-400 hover:from-gold-400 hover:to-amber-300 text-surface-950 font-black text-xs flex items-center gap-1.5 shadow-lg shadow-gold-500/20 transition-all cursor-pointer active:scale-95 shrink-0"
-          aria-label="تصدير الفيديو النهائي"
+          aria-label={t('editor.exportTooltip', 'تصدير الفيديو النهائي')}
         >
           <Download size={14} />
-          <span>تصدير 🚀</span>
+          <span>{t('editor.exportBtn', 'تصدير 🚀')}</span>
         </button>
       </div>
     </header>

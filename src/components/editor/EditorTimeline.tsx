@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { AyahData } from '../../services/quranApi';
 import { AudioSettings } from '../../types';
 import { ambientSounds } from '../../data/ambientSounds';
+import { useTranslation } from '../../i18n';
 import {
   Clock,
   ZoomIn,
@@ -37,6 +38,7 @@ export const EditorTimeline: React.FC<EditorTimelineProps> = React.memo(
     formatAudioTime,
     onOpenWaveformEditor,
   }) => {
+    const { t } = useTranslation();
     const [isExpanded, setIsExpanded] = useState(true);
     const [zoomLevel, setZoomLevel] = useState<number>(1);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -75,7 +77,7 @@ export const EditorTimeline: React.FC<EditorTimelineProps> = React.memo(
     );
 
     const ambientName =
-      ambientSounds.find((s) => s.id === audioSettings.ambientSoundId)?.name || 'بدون صوت طبيعة';
+      ambientSounds.find((s) => s.id === audioSettings.ambientSoundId)?.name || t('editor.noAmbient', 'بدون صوت طبيعة');
 
     return (
       <div className="w-full bg-surface-900/95 backdrop-blur-xl border-t border-surface-700/40 rounded-t-2xl shadow-2xl transition-all duration-300 z-20">
@@ -88,12 +90,12 @@ export const EditorTimeline: React.FC<EditorTimelineProps> = React.memo(
               className="flex items-center gap-1.5 text-xs font-bold text-surface-200 hover:text-gold-400 transition-colors cursor-pointer"
             >
               <Clock size={13} className="text-gold-400" />
-              <span>الشريط الزمني للآيات والصوت (Timeline)</span>
+              <span>{t('editor.timelineTitle', 'الشريط الزمني للآيات والصوت (Timeline)')}</span>
               {isExpanded ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
             </button>
 
             <span className="text-[11px] px-2 py-0.5 rounded-md bg-surface-800/60 text-surface-400 font-mono">
-              {ayahs.length} {ayahs.length === 1 ? 'آية' : 'آيات'} •{' '}
+              {ayahs.length} {ayahs.length === 1 ? t('editor.ayahUnit', 'آية') : t('editor.ayahsUnit', 'آيات')} •{' '}
               {formatAudioTime(currentGlobalTime)} / {formatAudioTime(totalDuration)}
             </span>
           </div>
@@ -106,11 +108,11 @@ export const EditorTimeline: React.FC<EditorTimelineProps> = React.memo(
                   type="button"
                   onClick={onOpenWaveformEditor}
                   className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-gradient-to-r from-gold-400/20 to-amber-500/20 hover:from-gold-400/30 hover:to-amber-500/30 border border-gold-400/30 text-gold-300 text-[11px] font-bold transition-all shadow-sm active:scale-95 cursor-pointer"
-                  title="تعديل توقيت الكلمات بالسحب على الموجة الصوتية بدقة"
-                  aria-label="تعديل توقيت الكلمات بالسحب على الموجة الصوتية بدقة"
+                  title={t('editor.adjustWaveformTooltip', 'تعديل توقيت الكلمات بالسحب على الموجة الصوتية بدقة')}
+                  aria-label={t('editor.adjustWaveformTooltip', 'تعديل توقيت الكلمات بالسحب على الموجة الصوتية بدقة')}
                 >
                   <Sliders size={12} className="text-gold-400" />
-                  <span>ضبط توقيت الكلمات والموجة 🎙️⏱️</span>
+                  <span>{t('editor.adjustWaveformTiming', 'ضبط توقيت الكلمات والموجة 🎙️⏱️')}</span>
                 </button>
               )}
 
@@ -126,8 +128,8 @@ export const EditorTimeline: React.FC<EditorTimelineProps> = React.memo(
                   type="button"
                   onClick={() => setZoomLevel((z) => Math.max(1, z - 0.25))}
                   className="p-1 text-surface-400 hover:text-surface-50 cursor-pointer"
-                  title="تصغير التايم لاين"
-                  aria-label="تصغير التايم لاين"
+                  title={t('editor.zoomOut', 'تصغير التايم لاين')}
+                  aria-label={t('editor.zoomOut', 'تصغير التايم لاين')}
                 >
                   <ZoomOut size={12} />
                 </button>
@@ -136,8 +138,8 @@ export const EditorTimeline: React.FC<EditorTimelineProps> = React.memo(
                   type="button"
                   onClick={() => setZoomLevel((z) => Math.min(2.5, z + 0.25))}
                   className="p-1 text-surface-400 hover:text-surface-50 cursor-pointer"
-                  title="تكبير التايم لاين"
-                  aria-label="تكبير التايم لاين"
+                  title={t('editor.zoomIn', 'تكبير التايم لاين')}
+                  aria-label={t('editor.zoomIn', 'تكبير التايم لاين')}
                 >
                   <ZoomIn size={12} />
                 </button>
@@ -183,14 +185,14 @@ export const EditorTimeline: React.FC<EditorTimelineProps> = React.memo(
                           onSeekToAyah(seg.index);
                         }
                       }}
-                      aria-label={`انقر للانتقال للآية ${seg.ayahNumber}`}
+                      aria-label={t('editor.jumpToAyah', 'انقر للانتقال للآية {number}').replace('{number}', String(seg.ayahNumber))}
                       style={{ width: `${Math.max(8, widthPercent)}%` }}
                       className={`h-full rounded-xl border p-1.5 flex flex-col justify-between cursor-pointer transition-all relative overflow-hidden group focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 ${
                         isActive
                           ? 'bg-gradient-to-r from-gold-500/30 to-amber-500/25 border-gold-400 shadow-md shadow-gold-500/20 ring-1 ring-gold-400/40'
                           : 'bg-surface-800/80 hover:bg-surface-700/80 border-surface-700/40 hover:border-surface-600'
                       }`}
-                      title={`انقر للانتقال للآية ${seg.ayahNumber}`}
+                      title={t('editor.jumpToAyah', 'انقر للانتقال للآية {number}').replace('{number}', String(seg.ayahNumber))}
                     >
                       {/* Top Row: Ayah Badge & Duration */}
                       <div className="flex items-center justify-between text-[11px]">
@@ -203,7 +205,7 @@ export const EditorTimeline: React.FC<EditorTimelineProps> = React.memo(
                           )}
                         </span>
                         <span className="font-mono text-[10px] text-surface-400">
-                          {Math.round(seg.duration)}ث
+                          {Math.round(seg.duration)}{t('editor.secUnit', 'ث')}
                         </span>
                       </div>
 
@@ -231,7 +233,7 @@ export const EditorTimeline: React.FC<EditorTimelineProps> = React.memo(
                 <div className="h-6 w-full rounded-lg bg-purple-950/40 border border-purple-500/20 flex items-center px-2.5 justify-between text-[11px] text-purple-300">
                   <div className="flex items-center gap-1.5">
                     <Volume2 size={11} className="text-purple-400" />
-                    <span className="font-bold">طبقة الطبيعة: {ambientName}</span>
+                    <span className="font-bold">{t('editor.ambientLayer', 'طبقة الطبيعة:')} {ambientName}</span>
                   </div>
                   <span className="font-mono text-[10px] text-purple-400/70">
                     {audioSettings.ambientSoundVolume ?? 22}%

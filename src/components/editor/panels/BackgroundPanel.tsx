@@ -8,6 +8,7 @@ import { MediaUploader } from '../../ui/MediaUploader';
 import { isVideoMedia } from '../../../utils/imageUtils';
 import { Slider } from '../../ui/Slider';
 import { Layers, Sparkles, Film, Wand2 } from 'lucide-react';
+import { useTranslation } from '../../../i18n';
 
 interface BackgroundPanelProps {
   ayahs: AyahData[];
@@ -38,8 +39,25 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
   aspectRatio,
   addToast,
 }) => {
+  const { t } = useTranslation();
   const [bgTab, setBgTab] = useState<'pexels' | 'ai' | 'upload'>('pexels');
   const [applyScope, setApplyScope] = useState<'all' | 'current'>('all');
+
+  const colorFilters = [
+    { id: 'none' as const, label: t('editor.bgFilterNone', 'بدون فلتر'), icon: '⚪' },
+    { id: 'royalGold' as const, label: t('editor.bgFilterRoyalGold', 'الذهب الملكي'), icon: '👑' },
+    { id: 'andalusianTwilight' as const, label: t('editor.bgFilterAndalusian', 'أندلسي ليلي'), icon: '🌌' },
+    { id: 'dawnMist' as const, label: t('editor.bgFilterDawnMist', 'نسيم الفجر'), icon: '🌅' },
+    { id: 'matteSilver' as const, label: t('editor.bgFilterMatteSilver', 'فضي مطفي'), icon: '🪙' },
+    { id: 'emeraldNoor' as const, label: t('editor.bgFilterEmeraldNoor', 'الزمردي النوراني'), icon: '🌿' },
+  ];
+
+  const cameraMotions = [
+    { id: 'none' as const, label: t('editor.bgMotionStatic', 'ثابت'), icon: '⏹️' },
+    { id: 'slowZoom' as const, label: t('editor.bgMotionSlowZoom', 'تقريب بطيء (Zoom)'), icon: '🔍' },
+    { id: 'panRight' as const, label: t('editor.bgMotionPanRight', 'انزلاق لليمين (Drift)'), icon: '➡️' },
+    { id: 'subtle3D' as const, label: t('editor.bgMotionSubtle3D', 'حركة 3D بارالاكس'), icon: '✨' },
+  ];
 
   const handleApplyBackgroundUrl = (url: string) => {
     const isVideo = isVideoMedia(url);
@@ -108,16 +126,16 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
           className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-surface-950 font-extrabold text-xs flex items-center gap-1.5 shadow-md shadow-gold-500/20 active:scale-95 transition-all cursor-pointer"
         >
           <Wand2 size={15} />
-          <span>مطابقة تلقائية لسياق الآية ✨</span>
+          <span>{t('editor.bgAutoMatchBtn', 'مطابقة تلقائية لسياق الآية ✨')}</span>
         </button>
 
         <div className="text-start">
           <div className="text-xs font-bold text-surface-50 flex items-center justify-start gap-1">
-            <span>الذكاء القرآني للسياق</span>
+            <span>{t('editor.bgAiQuranicTitle', 'الذكاء القرآني للسياق')}</span>
             <Sparkles size={13} className="text-gold-400" />
           </div>
           <div className="text-[11px] text-surface-400">
-            يقرأ معاني الآية ويختار الخلفية والتدرج المناسبين
+            {t('editor.bgAiQuranicDesc', 'يقرأ معاني الآية ويختار الخلفية والتدرج المناسبين')}
           </div>
         </div>
       </div>
@@ -126,9 +144,11 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
       {ayahs.length > 1 && (
         <div className="p-3 rounded-2xl bg-surface-900 border border-gold-400/30 space-y-2">
           <div className="flex items-center justify-between text-xs font-bold text-surface-50">
-            <span>نطاق تطبيق الصورة المختارة:</span>
+            <span>{t('editor.bgScopeTitle', 'نطاق تطبيق الصورة المختارة:')}</span>
             <span className="text-[11px] text-gold-700 dark:text-gold-300 font-mono font-bold">
-              {applyScope === 'all' ? '🌟 كامل الريلز' : `🎬 مشهد ${currentAyahIndex + 1}`}
+              {applyScope === 'all'
+                ? t('editor.bgScopeAllLabel', '🌟 كامل الريلز')
+                : t('editor.bgScopeSceneLabel', '🎬 مشهد {index}').replace('{index}', String(currentAyahIndex + 1))}
             </span>
           </div>
 
@@ -142,7 +162,7 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
                   : 'text-surface-400 hover:text-surface-50'
               }`}
             >
-              <span>🌟 جميع الآيات (الكل)</span>
+              <span>{t('editor.bgAllAyahsBtn', '🌟 جميع الآيات (الكل)')}</span>
             </button>
 
             <button
@@ -154,7 +174,7 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
                   : 'text-surface-400 hover:text-surface-50'
               }`}
             >
-              <span>🎬 المشهد الحالي ({currentAyahIndex + 1})</span>
+              <span>{t('editor.bgCurrentSceneBtn', '🎬 المشهد الحالي ({index})').replace('{index}', String(currentAyahIndex + 1))}</span>
             </button>
           </div>
 
@@ -165,7 +185,7 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
                 onClick={handleResetAllToMain}
                 className="w-full py-1 text-[11px] text-gold-400 hover:text-gold-300 hover:underline flex items-center justify-center gap-1 cursor-pointer"
               >
-                <span>🔄 توحيد وحذف المشاهد المنفصلة وتطبيق الصورة الرئيسية</span>
+                <span>{t('editor.bgResetMultiScene', '🔄 توحيد وحذف المشاهد المنفصلة وتطبيق الصورة الرئيسية')}</span>
               </button>
             )}
         </div>
@@ -181,10 +201,10 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
               </div>
               <div>
                 <span className="font-bold text-surface-50 text-xs block">
-                  تغيير المشاهد مع كل آية (Story Mode) 🎬
+                  {t('editor.bgStoryModeTitle', 'تغيير المشاهد مع كل آية (Story Mode) 🎬')}
                 </span>
                 <span className="text-[11px] text-sky-300/70">
-                  مشاهد سينمائية متتابعة مع كل آية
+                  {t('editor.bgStoryModeDesc', 'مشاهد سينمائية متتابعة مع كل آية')}
                 </span>
               </div>
             </div>
@@ -207,8 +227,7 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
           {(textSettings.enableMultiScene ?? false) && (
             <div className="space-y-2 pt-1 border-t border-surface-700/40">
               <p className="text-[11px] text-surface-400 leading-relaxed">
-                اضغط على أي مشهد لتخصيص صورته المنفردة أو اختر «جميع الآيات» لتبديل الخلفية للجميع
-                دفعة واحدة.
+                {t('editor.bgStoryModeInstructions', 'اضغط على أي مشهد لتخصيص صورته المنفردة أو اختر «جميع الآيات» لتبديل الخلفية للجميع دفعة واحدة.')}
               </p>
               <div className="flex items-center gap-1.5 overflow-x-auto pb-1 custom-scrollbar">
                 {ayahs.map((_a, aIdx) => {
@@ -227,7 +246,7 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
                           : 'bg-surface-800/80 border-surface-700/40 text-surface-400 hover:text-surface-50'
                       }`}
                     >
-                      <span>مشهد {aIdx + 1}</span>
+                      <span>{t('editor.bgSceneBadge', 'مشهد {index}').replace('{index}', String(aIdx + 1))}</span>
                       {hasCustomBg && <span className="text-[10px] text-emerald-400">●</span>}
                     </button>
                   );
@@ -241,19 +260,19 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
       {/* Background source selector */}
       <div className="flex items-center gap-1 p-1 bg-surface-900/90 rounded-xl border border-surface-700/40">
         {[
-          { id: 'pexels' as const, label: 'Pexels 4K' },
-          { id: 'ai' as const, label: 'توليد AI' },
-          { id: 'upload' as const, label: 'رفع ملف' },
-        ].map((t) => (
+          { id: 'pexels' as const, label: t('editor.bgTabPexels', 'Pexels 4K') },
+          { id: 'ai' as const, label: t('editor.bgTabAi', 'توليد AI') },
+          { id: 'upload' as const, label: t('editor.bgTabUpload', 'رفع ملف') },
+        ].map((tabItem) => (
           <button
-            key={t.id}
+            key={tabItem.id}
             type="button"
-            onClick={() => setBgTab(t.id)}
+            onClick={() => setBgTab(tabItem.id)}
             className={`flex-1 py-1.5 rounded-lg font-bold text-center transition-all cursor-pointer text-xs ${
-              bgTab === t.id ? 'bg-sky-500 text-white shadow-sm' : 'text-surface-400 hover:text-surface-50'
+              bgTab === tabItem.id ? 'bg-sky-500 text-white shadow-sm' : 'text-surface-400 hover:text-surface-50'
             }`}
           >
-            {t.label}
+            {tabItem.label}
           </button>
         ))}
       </div>
@@ -307,7 +326,7 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
 
       <div className="pt-2 border-t border-surface-700/40">
         <Slider
-          label="عتامة وتغميق الخلفية"
+          label={t('editor.bgOpacitySlider', 'عتامة وتغميق الخلفية')}
           min={0.1}
           max={1.0}
           step={0.05}
@@ -322,20 +341,13 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
         <div className="flex items-center justify-between">
           <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
             <Sparkles size={14} className="text-gold-400" />
-            <span>فلاتر التدرج والتصحيح اللوني السينمائي 🎨</span>
+            <span>{t('editor.bgColorGradingTitle', 'فلاتر التدرج والتصحيح اللوني السينمائي 🎨')}</span>
           </label>
           <span className="text-[11px] text-surface-400">Color Moods</span>
         </div>
 
         <div className="grid grid-cols-3 gap-1.5">
-          {[
-            { id: 'none' as const, label: 'بدون فلتر', icon: '⚪' },
-            { id: 'royalGold' as const, label: 'الذهب الملكي', icon: '👑' },
-            { id: 'andalusianTwilight' as const, label: 'أندلسي ليلي', icon: '🌌' },
-            { id: 'dawnMist' as const, label: 'نسيم الفجر', icon: '🌅' },
-            { id: 'matteSilver' as const, label: 'فضي مطفي', icon: '🪙' },
-            { id: 'emeraldNoor' as const, label: 'الزمردي النوراني', icon: '🌿' },
-          ].map((filter) => (
+          {colorFilters.map((filter) => (
             <button
               key={filter.id}
               type="button"
@@ -361,18 +373,13 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
         <div className="flex items-center justify-between">
           <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
             <Film size={14} className="text-sky-400" />
-            <span>حركة الكاميرا السينمائية البطيئة 🎥</span>
+            <span>{t('editor.bgCameraMotionTitle', 'حركة الكاميرا السينمائية البطيئة 🎥')}</span>
           </label>
           <span className="text-[11px] text-surface-400">3D Camera Drift</span>
         </div>
 
         <div className="grid grid-cols-2 gap-1.5">
-          {[
-            { id: 'none' as const, label: 'ثابت', icon: '⏹️' },
-            { id: 'slowZoom' as const, label: 'تقريب بطيء (Zoom)', icon: '🔍' },
-            { id: 'panRight' as const, label: 'انزلاق لليمين (Drift)', icon: '➡️' },
-            { id: 'subtle3D' as const, label: 'حركة 3D بارالاكس', icon: '✨' },
-          ].map((motionItem) => (
+          {cameraMotions.map((motionItem) => (
             <button
               key={motionItem.id}
               type="button"

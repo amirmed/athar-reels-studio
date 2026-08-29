@@ -7,6 +7,7 @@ import {
   isSurahAvailableForReciter,
 } from '../../../services/quranApi';
 import { Sparkles, FileText, Globe, Trash2 } from 'lucide-react';
+import { useTranslation } from '../../../i18n';
 
 interface ReciterPanelProps {
   currentProject: Project | null;
@@ -63,6 +64,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
   updateProject,
   addToast,
 }) => {
+  const { t } = useTranslation();
   const selectedSurah = surahs.find((s) => s.number === surahNumber);
 
   return (
@@ -78,13 +80,13 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
                 </div>
                 <div>
                   <div className="font-bold text-gold-700 dark:text-gold-300 text-xs flex items-center gap-1">
-                    <span>تلاوتك المسجلة نشطة</span>
+                    <span>{t('editor.customVoiceBannerTitle', 'تلاوتك المسجلة نشطة')}</span>
                     <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
-                      مفعل
+                      {t('editor.customVoiceBannerActive', 'مفعل')}
                     </span>
                   </div>
                   <div className="text-[11px] text-surface-400">
-                    {Math.round(audioSettings.customAudioDuration || 0)}ث • مع صدى الحرم
+                    {t('editor.customVoiceBannerDesc', '{duration}ث • مع صدى الحرم').replace('{duration}', String(Math.round(audioSettings.customAudioDuration || 0)))}
                   </div>
                 </div>
               </div>
@@ -94,7 +96,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
                   onClick={onOpenVoiceRecorder}
                   className="px-2.5 py-1 rounded-xl bg-gold-400 hover:bg-gold-300 text-surface-950 font-bold text-[11px] shadow-sm transition-all cursor-pointer"
                 >
-                  تغيير / تسجيل 🎙️
+                  {t('editor.customVoiceChangeBtn', 'تغيير / تسجيل 🎙️')}
                 </button>
                 <button
                   type="button"
@@ -120,12 +122,12 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
                     }
                     stopAudio();
                     addToast({
-                      message: 'تم إلغاء التسجيل والعودة لصوت القارئ المعتمد',
+                      message: t('editor.customVoiceRevertToast', 'تم إلغاء التسجيل والعودة لصوت القارئ المعتمد'),
                       type: 'info',
                     });
                   }}
                   className="p-1.5 rounded-xl bg-surface-800 hover:bg-red-500/20 text-surface-400 hover:text-red-300 border border-surface-700/40 transition-all cursor-pointer"
-                  title="حذف التسجيل الصوتي والعودة للقارئ المعتمد"
+                  title={t('editor.customVoiceDeleteTooltip', 'حذف التسجيل الصوتي والعودة للقارئ المعتمد')}
                 >
                   <Trash2 size={13} />
                 </button>
@@ -135,8 +137,8 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
             {/* Custom Reciter Name Input Field */}
             <div className="pt-2 border-t border-gold-400/20 space-y-1">
               <label className="text-[11px] font-bold text-gold-700 dark:text-gold-300 flex items-center justify-between">
-                <span>اسمك / اسم القارئ (يظهر في الفيديو والغلاف):</span>
-                <span className="text-[9px] text-surface-400">تعديل</span>
+                <span>{t('editor.customReciterLabel', 'اسمك / اسم القارئ (يظهر في الفيديو والغلاف):')}</span>
+                <span className="text-[9px] text-surface-400">{t('editor.customReciterEditHint', 'تعديل')}</span>
               </label>
               <input
                 type="text"
@@ -151,7 +153,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
                     });
                   }
                 }}
-                placeholder="مثال: القارئ محمد طه / تلاوتي الخاصة"
+                placeholder={t('editor.customReciterPlaceholder', 'مثال: القارئ محمد طه / تلاوتي الخاصة')}
                 className="glass-input w-full p-2 rounded-xl text-xs bg-surface-900 border border-gold-400/30 text-surface-50 placeholder-surface-500 focus:border-gold-400 focus:outline-none"
               />
             </div>
@@ -160,17 +162,17 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
 
         <div className="flex items-center justify-between mb-1.5">
           <div className="flex items-center gap-1.5">
-            <label className="text-surface-300 font-bold">اختيار القارئ</label>
+            <label className="text-surface-300 font-bold">{t('editor.selectReciterLabel', 'اختيار القارئ')}</label>
             {(() => {
               const avail = getAvailableSurahsForReciter(reciterId);
               const isFull = avail.length === 114;
               return isFull ? (
                 <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold border border-emerald-500/30">
-                  🟢 114 سورة كاملة
+                  {t('editor.fullSurahsBadge', '🟢 114 سورة كاملة')}
                 </span>
               ) : (
                 <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 font-bold border border-amber-500/30">
-                  🟡 {avail.length} سورة مسجلة
+                  {t('editor.partialSurahsBadge', '🟡 {count} سورة مسجلة').replace('{count}', String(avail.length))}
                 </span>
               );
             })()}
@@ -181,7 +183,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
             className="text-[11px] text-gold-600 dark:text-gold-400 hover:text-gold-500 font-bold flex items-center gap-1 hover:underline bg-gold-400/10 px-2 py-0.5 rounded-lg border border-gold-400/20 cursor-pointer"
           >
             <Sparkles size={11} />
-            <span>تصفح ({reciters.length}) 🎙️</span>
+            <span>{t('editor.browseRecitersBtn', 'تصفح ({count}) 🎙️').replace('{count}', String(reciters.length))}</span>
           </button>
         </div>
         <select
@@ -208,7 +210,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
         >
           {(reciterId === 'custom_voice' || audioSettings.customRecordedAudioUrl) && (
             <option value="custom_voice" className="bg-surface-900 text-gold-500 dark:text-gold-400 font-bold">
-              🎙️ تسجيلي الصوتي الخاص (أنا)
+              {t('editor.myCustomRecitationOption', '🎙️ تسجيلي الصوتي الخاص (أنا)')}
             </option>
           )}
           {reciters.map((r) => {
@@ -231,14 +233,14 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
           <div className="flex items-center justify-between">
             <label className="text-xs font-bold text-gold-700 dark:text-gold-300 flex items-center gap-1.5">
               <FileText size={14} />
-              <span>نص المقطع (حديث / موعظة / كلمة) ✍️</span>
+              <span>{t('editor.customTextContentTitle', 'نص المقطع (حديث / موعظة / كلمة) ✍️')}</span>
             </label>
             <span className="text-[11px] px-2 py-0.5 rounded bg-gold-400/10 text-gold-600 dark:text-gold-400 border border-gold-400/20 font-bold">
               {currentProject?.contentType === 'hadith'
-                ? 'حديث نبوي 📜'
+                ? t('editor.hadithBadge', 'حديث نبوي 📜')
                 : currentProject?.contentType === 'azkar'
-                  ? 'دعاء وذكر 🤲'
-                  : 'موعظة وكلام حر 🎙️'}
+                  ? t('editor.azkarBadge', 'دعاء وذكر 🤲')
+                  : t('editor.speechBadge', 'موعظة وكلام حر 🎙️')}
             </span>
           </div>
 
@@ -278,14 +280,14 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
             }}
             rows={4}
             className="w-full p-2.5 rounded-xl bg-surface-950 border border-surface-700/40 text-surface-50 text-xs leading-relaxed focus:outline-none focus:border-gold-400 resize-none font-medium"
-            placeholder="اكتب أو عدل نص الموعظة أو الحديث هنا..."
+            placeholder={t('editor.customTextPlaceholder', 'اكتب أو عدل نص الموعظة أو الحديث هنا...')}
           />
         </div>
       ) : (
         <>
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="block text-surface-400 font-bold">السورة القرآنية</label>
+              <label className="block text-surface-400 font-bold">{t('editor.quranSurahLabel', 'السورة القرآنية')}</label>
               {(() => {
                 const avail = getAvailableSurahsForReciter(reciterId);
                 const isFull = avail.length === 114;
@@ -298,7 +300,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
                       onChange={(e) => setFilterEditorAvailableOnly(e.target.checked)}
                       className="checkbox checkbox-xs accent-gold-400"
                     />
-                    <span>المتوفرة فقط ({avail.length})</span>
+                    <span>{t('editor.availableOnlyFilter', 'المتوفرة فقط ({count})').replace('{count}', String(avail.length))}</span>
                   </label>
                 );
               })()}
@@ -347,8 +349,9 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
               return (
                 <div className="mt-2 p-2.5 rounded-xl bg-amber-500/15 border border-amber-500/30 space-y-1.5 animate-in">
                   <p className="text-[11px] text-amber-800 dark:text-amber-200 leading-snug">
-                    ⚠️ <span className="font-bold">سورة {curSurahName}</span> غير مسجلة بصوت{' '}
-                    <span className="font-bold">{curReciterName}</span>.
+                    {t('editor.surahMissingWarning', '⚠️ سورة {surah} غير مسجلة بصوت {reciter}.')
+                      .replace('{surah}', curSurahName || '')
+                      .replace('{reciter}', curReciterName || '')}
                   </p>
                   <div className="flex items-center gap-1.5 flex-wrap">
                     <button
@@ -359,7 +362,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
                       }}
                       className="px-2 py-0.5 rounded-lg bg-surface-900 hover:bg-surface-800 text-gold-600 dark:text-gold-300 font-bold text-[10px] border border-gold-400/30 cursor-pointer"
                     >
-                      تبديل لمشاري العفاسي (مصحف كامل) 🔄
+                      {t('editor.switchAlafasyFull', 'تبديل لمشاري العفاسي (مصحف كامل) 🔄')}
                     </button>
                     <button
                       type="button"
@@ -369,7 +372,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
                       }}
                       className="px-2 py-0.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-surface-950 font-bold text-[10px] cursor-pointer"
                     >
-                      اختيار سورة {fallbackSurahName} 📖
+                      {t('editor.pickSurahFallback', 'اختيار سورة {surah} 📖').replace('{surah}', fallbackSurahName || '')}
                     </button>
                   </div>
                 </div>
@@ -379,7 +382,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
 
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-surface-400 mb-1 font-bold">من آية</label>
+              <label className="block text-surface-400 mb-1 font-bold">{t('editor.fromAyahLabel', 'من آية')}</label>
               <input
                 type="number"
                 min={1}
@@ -397,7 +400,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
               />
             </div>
             <div>
-              <label className="block text-surface-400 mb-1 font-bold">إلى آية</label>
+              <label className="block text-surface-400 mb-1 font-bold">{t('editor.toAyahLabel', 'إلى آية')}</label>
               <input
                 type="number"
                 min={fromAyah}
@@ -420,7 +423,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
         <div className="flex items-center justify-between">
           <span className="text-surface-300 font-bold flex items-center gap-1.5">
             <Globe size={13} className="text-gold-400" />
-            <span>عرض الترجمة الإنجليزية</span>
+            <span>{t('editor.showTranslationToggle', 'عرض الترجمة الإنجليزية')}</span>
           </span>
           <input
             type="checkbox"
@@ -433,7 +436,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
         <div className="flex items-center justify-between">
           <span className="text-surface-300 font-bold flex items-center gap-1.5">
             <span className="text-xs">📜</span>
-            <span>عرض التفسير الميسر</span>
+            <span>{t('editor.showTafsirToggle', 'عرض التفسير الميسر')}</span>
           </span>
           <input
             type="checkbox"

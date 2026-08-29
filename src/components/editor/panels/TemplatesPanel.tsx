@@ -2,6 +2,7 @@ import React from 'react';
 import { StudioTemplate } from '../../../types';
 import { studioTemplates } from '../../../data/templates';
 import { Sparkles, Film } from 'lucide-react';
+import { useTranslation } from '../../../i18n';
 
 interface TemplatesPanelProps {
   activeTemplateId: string | null;
@@ -16,6 +17,8 @@ export const TemplatesPanel: React.FC<TemplatesPanelProps> = ({
   onOpenPresetModal,
   onOpenClipLibrary,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-2.5 animate-in">
       {onOpenClipLibrary && (
@@ -25,7 +28,7 @@ export const TemplatesPanel: React.FC<TemplatesPanelProps> = ({
           className="w-full py-2.5 px-3.5 rounded-2xl bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-surface-950 font-extrabold text-xs flex items-center justify-center gap-2 shadow-md shadow-gold-500/20 transition-all active:scale-95 mb-1 cursor-pointer"
         >
           <Film size={15} />
-          <span>مكتبة المقاطع الجاهزة (أذكار وجمعة) 🎬</span>
+          <span>{t('editor.clipLibraryBtn', 'مكتبة المقاطع الجاهزة (أذكار وجمعة) 🎬')}</span>
         </button>
       )}
 
@@ -35,10 +38,12 @@ export const TemplatesPanel: React.FC<TemplatesPanelProps> = ({
         className="w-full py-2 px-3 rounded-xl bg-surface-900 border border-gold-400/30 hover:border-gold-400/60 text-gold-700 dark:text-gold-300 hover:text-gold-600 dark:hover:text-gold-200 font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95 cursor-pointer"
       >
         <Sparkles size={14} className="text-gold-500 dark:text-gold-400" />
-        <span>معاينة القوالب السينمائية بالصور 🖼️</span>
+        <span>{t('editor.previewCinematicBtn', 'معاينة القوالب السينمائية بالصور 🖼️')}</span>
       </button>
 
-      <p className="text-xs text-surface-300 pt-1 font-medium">أو اختر قالباً سريعاً بنقرة واحدة:</p>
+      <p className="text-xs text-surface-300 pt-1 font-medium">
+        {t('editor.orPickQuickTemplate', 'أو اختر قالباً سريعاً بنقرة واحدة:')}
+      </p>
       <div className="space-y-2">
         {studioTemplates.map((tpl) => (
           <div

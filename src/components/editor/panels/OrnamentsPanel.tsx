@@ -2,6 +2,7 @@ import React from 'react';
 import { TextSettings } from '../../../types';
 import { Frame } from 'lucide-react';
 import { Slider } from '../../ui/Slider';
+import { useTranslation } from '../../../i18n';
 
 interface OrnamentsPanelProps {
   textSettings: TextSettings;
@@ -12,12 +13,23 @@ export const OrnamentsPanel: React.FC<OrnamentsPanelProps> = ({
   textSettings,
   setTextSettings,
 }) => {
+  const { t } = useTranslation();
+
+  const ornamentStyles = [
+    { id: 'royalFrame', name: t('editor.frameRoyalGold', 'إطار ملكي ذهبي') },
+    { id: 'geometricArabesque', name: t('editor.frameGeometric', 'زخرفة هندسية') },
+    { id: 'floralCorners', name: t('editor.frameFloral', 'أركان زهرية') },
+    { id: 'domeCrescent', name: t('editor.frameDomeCrescent', 'قبة وهلال') },
+  ];
+
   return (
     <div className="space-y-4 animate-in">
       <div className="flex items-center justify-between p-3 rounded-xl bg-surface-900/90 border border-surface-700/40">
         <div className="flex items-center gap-1.5">
           <Frame size={14} className="text-emerald-400" />
-          <span className="font-bold text-surface-50 text-xs">تفعيل الإطارات الملكية</span>
+          <span className="font-bold text-surface-50 text-xs">
+            {t('editor.toggleRoyalFrames', 'تفعيل الإطارات الملكية')}
+          </span>
         </div>
         <input
           type="checkbox"
@@ -32,14 +44,11 @@ export const OrnamentsPanel: React.FC<OrnamentsPanelProps> = ({
       {textSettings.showIslamicOrnaments && (
         <>
           <div>
-            <label className="text-xs font-bold text-surface-400 mb-2 block">نوع الإطار الملكي</label>
+            <label className="text-xs font-bold text-surface-400 mb-2 block">
+              {t('editor.frameStyleLabel', 'نوع الإطار الملكي')}
+            </label>
             <div className="grid grid-cols-2 gap-2">
-              {[
-                { id: 'royalFrame', name: 'إطار ملكي ذهبي' },
-                { id: 'geometricArabesque', name: 'زخرفة هندسية' },
-                { id: 'floralCorners', name: 'أركان زهرية' },
-                { id: 'domeCrescent', name: 'قبة وهلال' },
-              ].map((o) => (
+              {ornamentStyles.map((o) => (
                 <button
                   key={o.id}
                   type="button"
@@ -57,7 +66,7 @@ export const OrnamentsPanel: React.FC<OrnamentsPanelProps> = ({
           </div>
 
           <Slider
-            label="شفافية الإطار"
+            label={t('editor.frameOpacityLabel', 'شفافية الإطار')}
             min={0.2}
             max={1.0}
             step={0.05}

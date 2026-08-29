@@ -12,6 +12,7 @@ import {
   LucideIcon,
   Zap,
 } from 'lucide-react';
+import { useTranslation } from '../../i18n';
 
 export type DockTabType =
   'reciter' | 'bg' | 'text' | 'ornaments' | 'ambient' | 'templates' | 'branding';
@@ -25,16 +26,6 @@ interface EditorDockNavProps {
   onToggleProMode?: () => void;
 }
 
-const ALL_TABS: { id: DockTabType; label: string; icon: LucideIcon; isPro?: boolean }[] = [
-  { id: 'reciter', label: 'القارئ', icon: Mic },
-  { id: 'bg', label: 'الخلفية', icon: ImageIcon },
-  { id: 'text', label: 'الخطوط', icon: Type },
-  { id: 'templates', label: 'القوالب', icon: Palette },
-  { id: 'ornaments', label: 'الزخارف', icon: Layers, isPro: true },
-  { id: 'ambient', label: 'صوت 8D', icon: Headphones, isPro: true },
-  { id: 'branding', label: 'الحقوق', icon: Sliders, isPro: true },
-];
-
 export const EditorDockNav: React.FC<EditorDockNavProps> = ({
   activeTab,
   onTabChange,
@@ -43,7 +34,19 @@ export const EditorDockNav: React.FC<EditorDockNavProps> = ({
   isProMode = false,
   onToggleProMode,
 }) => {
-  const visibleTabs = isProMode ? ALL_TABS : ALL_TABS.filter((t) => !t.isPro);
+  const { t } = useTranslation();
+
+  const allTabs: { id: DockTabType; label: string; icon: LucideIcon; isPro?: boolean }[] = [
+    { id: 'reciter', label: t('editor.tabReciter', 'القارئ'), icon: Mic },
+    { id: 'bg', label: t('editor.tabBackground', 'الخلفية'), icon: ImageIcon },
+    { id: 'text', label: t('editor.tabText', 'الخطوط'), icon: Type },
+    { id: 'templates', label: t('editor.tabTemplates', 'القوالب'), icon: Palette },
+    { id: 'ornaments', label: t('editor.tabOrnaments', 'الزخارف'), icon: Layers, isPro: true },
+    { id: 'ambient', label: t('editor.tabAmbient', 'صوت 8D'), icon: Headphones, isPro: true },
+    { id: 'branding', label: t('editor.tabBranding', 'الحقوق'), icon: Sliders, isPro: true },
+  ];
+
+  const visibleTabs = isProMode ? allTabs : allTabs.filter((t) => !t.isPro);
 
   return (
     <aside className="w-20 border-e border-surface-700/40 bg-surface-900 flex flex-col items-center py-3 gap-2 shrink-0 z-20">
@@ -72,7 +75,7 @@ export const EditorDockNav: React.FC<EditorDockNavProps> = ({
               <span className="text-xs font-bold tracking-tight">{tab.label}</span>
               {tab.isPro && (
                 <span className="absolute -top-1 -end-1 text-[10px] px-1.5 py-0.2 rounded-full bg-purple-500/20 text-purple-700 dark:text-purple-300 font-bold border border-purple-400/30">
-                  PRO
+                  {t('editor.proLabel', 'PRO')}
                 </span>
               )}
             </button>
@@ -89,11 +92,11 @@ export const EditorDockNav: React.FC<EditorDockNavProps> = ({
                 ? 'bg-purple-500/20 border-purple-500/40 text-purple-700 dark:text-purple-300 hover:bg-purple-500/30'
                 : 'bg-surface-800 border-surface-700/40 text-surface-400 hover:text-surface-50 hover:border-gold-400/40'
             }`}
-            title={isProMode ? 'تبديل للوضع المبسط' : 'فتح الوضع الاحترافي الكامل (Pro)'}
-            aria-label={isProMode ? 'تبديل للوضع المبسط' : 'فتح الوضع الاحترافي الكامل (Pro)'}
+            title={isProMode ? t('editor.switchToSimple', 'تبديل للوضع المبسط') : t('editor.switchToPro', 'فتح الوضع الاحترافي الكامل (Pro)')}
+            aria-label={isProMode ? t('editor.switchToSimple', 'تبديل للوضع المبسط') : t('editor.switchToPro', 'فتح الوضع الاحترافي الكامل (Pro)')}
           >
             <Zap size={14} className={isProMode ? 'text-purple-500 dark:text-purple-400' : 'text-gold-500 dark:text-gold-400'} />
-            <span className="text-[11px] font-bold">{isProMode ? 'PRO' : 'متقدم'}</span>
+            <span className="text-[11px] font-bold">{isProMode ? t('editor.proLabel', 'PRO') : t('editor.advancedLabel', 'متقدم')}</span>
           </button>
         )}
       </div>
@@ -104,8 +107,8 @@ export const EditorDockNav: React.FC<EditorDockNavProps> = ({
           type="button"
           onClick={onToggleInspector}
           className="w-full py-2 rounded-xl bg-surface-800/60 hover:bg-surface-800 text-surface-400 hover:text-surface-50 flex items-center justify-center transition-all cursor-pointer"
-          title={isInspectorOpen ? 'إخفاء لوحة التحكم' : 'إظهار لوحة التحكم'}
-          aria-label={isInspectorOpen ? 'إخفاء لوحة التحكم' : 'إظهار لوحة التحكم'}
+          title={isInspectorOpen ? t('editor.hideInspector', 'إخفاء لوحة التحكم') : t('editor.showInspector', 'إظهار لوحة التحكم')}
+          aria-label={isInspectorOpen ? t('editor.hideInspector', 'إخفاء لوحة التحكم') : t('editor.showInspector', 'إظهار لوحة التحكم')}
         >
           {isInspectorOpen ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </button>
