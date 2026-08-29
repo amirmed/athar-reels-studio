@@ -788,10 +788,32 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
   }
 
   const canvasStream = canvas.captureStream(fps);
-  const combinedStream = new MediaStream([
-    ...canvasStream.getVideoTracks(),
-    ...dest.stream.getAudioTracks(),
-  ]);
+  const audioTracks = dest.stream.getAudioTracks();
+  const videoTracks = canvasStream.getVideoTracks();
+  const combinedStream = new MediaStream([...videoTracks, ...audioTracks]);
+
+  const stopAllTracks = () => {
+    try {
+      videoTracks.forEach((t) => t.stop());
+      audioTracks.forEach((t) => t.stop());
+      canvasStream.getTracks().forEach((t) => t.stop());
+      combinedStream.getTracks().forEach((t) => t.stop());
+    } catch (err) {
+      console.debug('[ExportOrchestrator] Track stop error:', err);
+    }
+    if (bgVideo) {
+      try {
+        bgVideo.pause();
+        bgVideo.src = '';
+      } catch {}
+    }
+    if (activeBufferSource) {
+      try {
+        activeBufferSource.stop();
+        activeBufferSource.disconnect();
+      } catch {}
+    }
+  };
 
   let selectedMime = 'video/webm;codecs=vp9,opus';
   if (!MediaRecorder.isTypeSupported(selectedMime)) selectedMime = 'video/webm;codecs=vp8,opus';
@@ -804,34 +826,83 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
   });
 
   const chunks: Blob[] = [];
-  recorder.ondataavailable = (e) => {
-    if (e.data && e.data.size > 0) chunks.push(e.data);
-  };
 
-  recorder.start(100);
+  const finalBlob = await new Promise<Blob>((resolve, reject) => {
+    let animFrameId: number | null = null;
+    let isFinished = false;
 
-  const exportStartTime = audioCtx.currentTime;
-  if (activeBufferSource) {
-    activeBufferSource.start(exportStartTime);
-  }
+    const cleanup = () => {
+      if (animFrameId !== null) {
+        cancelAnimationFrame(animFrameId);
+        animFrameId = null;
+      }
+      stopAllTracks();
+    };
 
-  const totalFrames = Math.max(fps * 3, Math.round(fps * totalDurationSec));
+    recorder.ondataavailable = (e) => {
+      if (e.data && e.data.size > 0) {
+        chunks.push(e.data);
+      }
+    };
 
-  await new Promise<void>((resolve, reject) => {
+    recorder.onerror = (e) => {
+      cleanup();
+      reject(new Error(`MediaRecorder error: ${(e as any)?.error?.message || 'فشل في تسجيل الفيديو'}`));
+    };
+
+    recorder.onstop = () => {
+      cleanup();
+      if (signal?.aborted) {
+        reject(new Error('تم إلغاء عملية التصدير من قِبل المستخدم'));
+        return;
+      }
+      const mimeType = selectedMime.includes('mp4') ? 'video/mp4' : 'video/webm';
+      resolve(new Blob(chunks, { type: mimeType }));
+    };
+
+    const handleAbort = () => {
+      if (isFinished) return;
+      isFinished = true;
+      cleanup();
+      if (recorder.state !== 'inactive') {
+        try {
+          recorder.stop();
+        } catch {}
+      }
+      reject(new Error('تم إلغاء عملية التصدير من قِبل المستخدم'));
+    };
+
+    if (signal?.aborted) {
+      handleAbort();
+      return;
+    }
+
+    signal?.addEventListener('abort', handleAbort, { once: true });
+
+    recorder.start(100);
+
+    const exportStartTime = audioCtx.currentTime;
+    if (activeBufferSource) {
+      activeBufferSource.start(exportStartTime);
+    }
+
+    const totalFrames = Math.max(fps * 3, Math.round(fps * totalDurationSec));
     let lastUiUpdateWallTime = 0;
     let lastReportedPercent = -1;
 
     const renderLoop = () => {
-      if (signal?.aborted) {
-        recorder.stop();
-        reject(new Error('تم إلغاء عملية التصدير'));
+      if (isFinished || signal?.aborted) {
+        handleAbort();
         return;
       }
 
       const elapsedAudioTime = audioCtx.currentTime - exportStartTime;
 
       if (elapsedAudioTime >= totalDurationSec) {
-        resolve();
+        isFinished = true;
+        if (recorder.state !== 'inactive') {
+          recorder.stop();
+        }
         return;
       }
 
@@ -881,18 +952,10 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
         });
       }
 
-      requestAnimationFrame(renderLoop);
+      animFrameId = requestAnimationFrame(renderLoop);
     };
 
-    requestAnimationFrame(renderLoop);
-  });
-
-  const finalBlob = await new Promise<Blob>((resolve) => {
-    recorder.onstop = () => {
-      const ext = selectedMime.includes('mp4') ? 'video/mp4' : 'video/webm';
-      resolve(new Blob(chunks, { type: ext }));
-    };
-    recorder.stop();
+    animFrameId = requestAnimationFrame(renderLoop);
   });
 
   const ext = selectedMime.includes('mp4') ? 'mp4' : 'webm';
