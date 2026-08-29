@@ -83,12 +83,27 @@ export function getCachedCanvasTextWidth(
   return w;
 }
 
-// LRU-style layout cache (Key: ayahId + chunkIndex + width + fontSize + fontFamily)
+// Fast string hash for layout cache keys
+function simpleStringHash(str: string): string {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return (hash >>> 0).toString(36);
+}
+
+// LRU-style layout cache (Key: textIdentifier + chunkKey + width + fontSize + fontFamily + weight + align)
 const layoutCache = new Map<string, CachedTextLayout>();
-const MAX_LAYOUT_CACHE_SIZE = 100;
+const MAX_LAYOUT_CACHE_SIZE = 150;
+
+export function clearLayoutCache(): void {
+  layoutCache.clear();
+  textMeasurementCache.clear();
+}
 
 function getLayoutCacheKey(
-  ayahId: string | number,
+  textIdentifier: string,
   chunkKey: string,
   width: number,
   height: number,
@@ -99,7 +114,7 @@ function getLayoutCacheKey(
   fontWeight: string = 'bold',
   textAlign: string = 'center'
 ): string {
-  return `${ayahId}_${chunkKey}_${width}x${height}_${fontFamily}_${fontWeight}_${textAlign}_${fontSize}_w${wordSpacing}_lh${lineHeight}`;
+  return `${textIdentifier}_${chunkKey}_${width}x${height}_${fontFamily}_${fontWeight}_${textAlign}_${fontSize}_w${wordSpacing}_lh${lineHeight}`;
 }
 
 export function renderVideoExportFrame(opts: FrameRenderOptions): void {
@@ -415,9 +430,17 @@ export function renderVideoExportFrame(opts: FrameRenderOptions): void {
   const canvasFontWeight =
     fontWeight === 'light' ? '300' : fontWeight === 'normal' ? '500' : 'bold';
 
+  const rawText = currentAyah?.text || projectName || '';
+  const textPayloadForHash =
+    wordsToRender.length > 0 ? wordsToRender.map((w) => w.text).join(' ') : rawText;
+  const textHash = simpleStringHash(textPayloadForHash);
+  const surahId = currentAyah?.surahNumber ?? 'cust';
+  const ayahNum = currentAyah?.numberInSurah ?? '0';
+  const textIdentifier = `${surahId}_${ayahNum}_h${textHash}`;
+
   // Retrieve or compute cached text layout
   const cacheKey = getLayoutCacheKey(
-    currentAyah?.numberInSurah ?? 'curr',
+    textIdentifier,
     chunkKey,
     width,
     height,
@@ -432,7 +455,6 @@ export function renderVideoExportFrame(opts: FrameRenderOptions): void {
   let layout = layoutCache.get(cacheKey);
 
   if (!layout) {
-    const rawText = currentAyah?.text || projectName;
     const maxCardWidth = width * 0.86;
 
     const wordTokens: QuranWord[] =
