@@ -4,6 +4,7 @@ import {
   ASPECT_RATIO_DIMENSIONS,
   QUALITY_BITRATES,
   concatenateAudioBuffers,
+  sliceAudioBuffer,
   exportProject,
   resolveTargetOutputPath,
 } from '../services/exportOrchestrator';
@@ -48,7 +49,7 @@ describe('ExportOrchestrator Service', () => {
     });
   });
 
-  describe('Audio Buffer Concatenation', () => {
+  describe('Audio Buffer Concatenation and Slicing', () => {
     it('returns null for empty buffer array', () => {
       const mockCtx = {} as AudioContext;
       const result = concatenateAudioBuffers(mockCtx, []);
@@ -100,6 +101,37 @@ describe('ExportOrchestrator Service', () => {
       expect(mockOutChannelData[2]).toBeCloseTo(0.3);
       expect(mockOutChannelData[3]).toBeCloseTo(0.4);
       expect(mockOutChannelData[4]).toBeCloseTo(0.5);
+    });
+
+    it('slices an AudioBuffer into a precise sub-range', () => {
+      const sourceChannelData = new Float32Array([0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]);
+      const sourceBuffer = {
+        length: 10,
+        numberOfChannels: 1,
+        sampleRate: 1, // 1 sample per second for easy calculation
+        getChannelData: vi.fn(() => sourceChannelData),
+      } as unknown as AudioBuffer;
+
+      const mockOutChannelData = new Float32Array(4);
+      const mockOutBuffer = {
+        length: 4,
+        numberOfChannels: 1,
+        sampleRate: 1,
+        getChannelData: vi.fn(() => mockOutChannelData),
+      } as unknown as AudioBuffer;
+
+      const mockCtx = {
+        createBuffer: vi.fn((_channels, _length, _rate) => mockOutBuffer),
+      } as unknown as AudioContext;
+
+      // Slice from 3s to 7s -> samples 3, 4, 5, 6 (length 4)
+      const sliced = sliceAudioBuffer(mockCtx, sourceBuffer, 3, 7);
+      expect(mockCtx.createBuffer).toHaveBeenCalledWith(1, 4, 1);
+      expect(sliced).toBe(mockOutBuffer);
+      expect(mockOutChannelData[0]).toBeCloseTo(0.3);
+      expect(mockOutChannelData[1]).toBeCloseTo(0.4);
+      expect(mockOutChannelData[2]).toBeCloseTo(0.5);
+      expect(mockOutChannelData[3]).toBeCloseTo(0.6);
     });
   });
 

@@ -248,6 +248,32 @@ export function concatenateAudioBuffers(
 }
 
 /**
+ * Slice an AudioBuffer to extract a precise segment [startSec, endSec]
+ */
+export function sliceAudioBuffer(
+  audioCtx: AudioContext | BaseAudioContext,
+  buffer: AudioBuffer,
+  startSec: number,
+  endSec: number
+): AudioBuffer {
+  const sampleRate = buffer.sampleRate;
+  const totalLength = buffer.length;
+  const startSample = Math.max(0, Math.min(totalLength, Math.floor(startSec * sampleRate)));
+  const endSample = Math.max(startSample, Math.min(totalLength, Math.ceil(endSec * sampleRate)));
+  const frameCount = Math.max(1, endSample - startSample);
+  const numberOfChannels = buffer.numberOfChannels;
+
+  const outBuffer = audioCtx.createBuffer(numberOfChannels, frameCount, sampleRate);
+  for (let channel = 0; channel < numberOfChannels; channel++) {
+    const inData = buffer.getChannelData(channel);
+    const outData = outBuffer.getChannelData(channel);
+    outData.set(inData.subarray(startSample, endSample), 0);
+  }
+
+  return outBuffer;
+}
+
+/**
  * Resolve blob URLs into base64 Data URLs for IPC transfer if needed
  */
 export async function resolveAudioUrlsForIpc(urls: string[]): Promise<string[]> {
@@ -500,33 +526,31 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
   let masterBuffer: AudioBuffer | null = null;
   if (loadedBuffers.length > 0) {
     masterBuffer = concatenateAudioBuffers(audioCtx, loadedBuffers);
-
-    if (audioSettings?.enable8DAudio && masterBuffer) {
-      reportProgress('جاري معالجة الصوت المكاني 8D ومعايرة المدار 360° 🎧...', 26);
-      try {
-        masterBuffer = await render8DSpatialBuffer(audioCtx, masterBuffer, {
-          speedHz: audioSettings.eightDSpeed ?? 0.12,
-          depth: (audioSettings.eightDDepth ?? 85) / 100,
-          style: audioSettings.eightDStyle ?? 'orbit360',
-        });
-      } catch (e8d) {
-        console.warn('[ExportOrchestrator] 8D rendering fallback:', e8d);
-      }
-    }
   }
 
-  // 3. Build Precise Timeline Ranges
-  let cumulativeTime = 0;
-  const isSingleContinuousAudio = validAudioUrls.length === 1 && validAyahs.length > 1;
+  // 3. Build Precise Timeline Ranges & Trim Continuous Audio Tracks
+  const hasAyahTimestamps =
+    validAyahs.length > 0 &&
+    validAyahs[0].startTimeMs !== undefined &&
+    validAyahs[validAyahs.length - 1].endTimeMs !== undefined;
 
+  const isContinuousTrack =
+    validAudioUrls.length === 1 && (validAyahs.length > 1 || hasAyahTimestamps);
+
+  let baseStartSec = 0;
+  if (isContinuousTrack && hasAyahTimestamps) {
+    baseStartSec = Math.max(0, (validAyahs[0].startTimeMs ?? 0) / 1000);
+  }
+
+  let cumulativeTime = 0;
   const ayahTimeRanges = validAyahs.map((a, idx) => {
     let start = cumulativeTime;
     let end = cumulativeTime;
     let dur = a.duration || 6;
 
-    if (isSingleContinuousAudio && a.startTimeMs !== undefined && a.endTimeMs !== undefined) {
-      start = a.startTimeMs / 1000;
-      end = a.endTimeMs / 1000;
+    if (isContinuousTrack && a.startTimeMs !== undefined && a.endTimeMs !== undefined) {
+      start = Math.max(0, a.startTimeMs / 1000 - baseStartSec);
+      end = Math.max(start + 0.1, a.endTimeMs / 1000 - baseStartSec);
       dur = Math.max(0.1, end - start);
       cumulativeTime = end;
     } else {
@@ -553,8 +577,42 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
     };
   });
 
+  // Trim master audio buffer to match selected Ayah range if continuous audio was provided
+  if (masterBuffer) {
+    if (isContinuousTrack && hasAyahTimestamps && cumulativeTime > 0) {
+      const rangeStartSec = baseStartSec;
+      const rangeEndSec = baseStartSec + cumulativeTime;
+      if (rangeStartSec > 0 || masterBuffer.duration > cumulativeTime + 0.5) {
+        masterBuffer = sliceAudioBuffer(audioCtx, masterBuffer, rangeStartSec, rangeEndSec);
+      }
+    } else if (
+      validAudioUrls.length === 1 &&
+      cumulativeTime > 0 &&
+      masterBuffer.duration > cumulativeTime + 0.5
+    ) {
+      masterBuffer = sliceAudioBuffer(audioCtx, masterBuffer, 0, cumulativeTime);
+    }
+  }
+
+  // Calculate strict total duration: Selected ayahs range duration takes precedence over full source file
   const totalDurationSec =
-    masterBuffer?.duration || (cumulativeTime > 0 ? cumulativeTime : totalDuration || 15);
+    cumulativeTime > 0
+      ? cumulativeTime
+      : masterBuffer?.duration || totalDuration || 15;
+
+  // Process 8D Spatial Audio on trimmed master buffer
+  if (audioSettings?.enable8DAudio && masterBuffer) {
+    reportProgress('جاري معالجة الصوت المكاني 8D ومعايرة المدار 360° 🎧...', 26);
+    try {
+      masterBuffer = await render8DSpatialBuffer(audioCtx, masterBuffer, {
+        speedHz: audioSettings.eightDSpeed ?? 0.12,
+        depth: (audioSettings.eightDDepth ?? 85) / 100,
+        style: audioSettings.eightDStyle ?? 'orbit360',
+      });
+    } catch (e8d) {
+      console.warn('[ExportOrchestrator] 8D rendering fallback:', e8d);
+    }
+  }
 
   // 4. Preload Visual Assets
   reportProgress('جاري تجهيز الخلفيات والصور...', 30);
