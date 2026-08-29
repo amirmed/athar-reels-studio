@@ -137,8 +137,10 @@ export const EditorPage: React.FC = () => {
   );
   const [reciterId, setReciterId] = useState(currentProject?.reciterId || 'alafasy_128');
   const [surahNumber, setSurahNumber] = useState(currentProject?.surahNumber || 1);
-  const [fromAyah, setFromAyah] = useState(currentProject?.fromAyah || 1);
-  const [toAyah, setToAyah] = useState(currentProject?.toAyah || 7);
+  const initialFrom = Math.max(1, currentProject?.fromAyah || 1);
+  const initialTo = Math.max(initialFrom, currentProject?.toAyah || 7);
+  const [fromAyah, setFromAyah] = useState(initialFrom);
+  const [toAyah, setToAyah] = useState(initialTo);
   const [filterEditorAvailableOnly, setFilterEditorAvailableOnly] = useState(true);
 
   // Modals state
@@ -260,8 +262,12 @@ export const EditorPage: React.FC = () => {
   useEffect(() => {
     if (currentProject) {
       if (currentProject.surahNumber) setSurahNumber(currentProject.surahNumber);
-      if (currentProject.fromAyah !== undefined) setFromAyah(currentProject.fromAyah);
-      if (currentProject.toAyah !== undefined) setToAyah(currentProject.toAyah);
+      if (currentProject.fromAyah !== undefined || currentProject.toAyah !== undefined) {
+        const rawPFrom = Math.max(1, currentProject.fromAyah ?? 1);
+        const rawPTo = Math.max(1, currentProject.toAyah ?? 7);
+        setFromAyah(Math.min(rawPFrom, rawPTo));
+        setToAyah(Math.max(rawPFrom, rawPTo));
+      }
       if (currentProject.reciterId) setReciterId(currentProject.reciterId);
       if (currentProject.aspectRatio) setAspectRatio(currentProject.aspectRatio as '9:16' | '1:1' | '16:9');
       if (currentProject.backgroundUrl !== undefined)
@@ -435,9 +441,11 @@ export const EditorPage: React.FC = () => {
           currentProject?.contentType === 'azkar' ||
           currentProject?.contentType === 'custom'));
 
+    const rawFrom = Math.max(1, fromAyah || currentProject?.fromAyah || 1);
+    const rawTo = Math.max(1, toAyah || currentProject?.toAyah || 7);
     const effectiveSurahNumber = surahNumber || currentProject?.surahNumber || 1;
-    const effectiveFromAyah = fromAyah || currentProject?.fromAyah || 1;
-    const effectiveToAyah = toAyah || currentProject?.toAyah || 7;
+    const effectiveFromAyah = Math.min(rawFrom, rawTo);
+    const effectiveToAyah = Math.max(rawFrom, rawTo);
     const effectiveReciter =
       reciterId === 'custom_voice' ||
       audioSettings.customRecordedAudioUrl ||

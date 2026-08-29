@@ -385,7 +385,14 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
                 min={1}
                 max={selectedSurah?.ayahCount || 286}
                 value={fromAyah}
-                onChange={(e) => setFromAyah(Number(e.target.value))}
+                onChange={(e) => {
+                  const maxAyah = selectedSurah?.ayahCount || 286;
+                  const val = Math.max(1, Math.min(maxAyah, Number(e.target.value) || 1));
+                  setFromAyah(val);
+                  if (val > toAyah) {
+                    setToAyah(val);
+                  }
+                }}
                 className="glass-input w-full p-2 rounded-xl text-xs"
               />
             </div>
@@ -396,7 +403,11 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
                 min={fromAyah}
                 max={selectedSurah?.ayahCount || 286}
                 value={toAyah}
-                onChange={(e) => setToAyah(Number(e.target.value))}
+                onChange={(e) => {
+                  const maxAyah = selectedSurah?.ayahCount || 286;
+                  const val = Math.max(fromAyah, Math.min(maxAyah, Number(e.target.value) || fromAyah));
+                  setToAyah(val);
+                }}
                 className="glass-input w-full p-2 rounded-xl text-xs"
               />
             </div>
