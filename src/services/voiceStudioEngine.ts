@@ -28,6 +28,7 @@ export class VoiceStudioEngine {
   private currentBuffer: AudioBuffer | null = null;
   private isPlayingPreview: boolean = false;
   private spatial8DProcessor: Spatial8DAudioProcessor | null = null;
+  private activePreviewNodes: AudioNode[] = [];
   private impulseCache = new Map<string, AudioBuffer>();
   private activeUrls = new Set<string>();
   private recordingStartTime: number = 0;
@@ -52,6 +53,7 @@ export class VoiceStudioEngine {
   }
 
   public cleanUpAllUrls(): void {
+    this.stopPreview();
     for (const url of this.activeUrls) {
       try {
         URL.revokeObjectURL(url);
@@ -82,6 +84,7 @@ export class VoiceStudioEngine {
   }
 
   public cleanup(): void {
+    this.stopPreview();
     this.cancelRecording();
     this.activeUrls.forEach((url) => {
       try {
@@ -438,6 +441,24 @@ export class VoiceStudioEngine {
     // Connect SubMaster to Master
     subMasterGain.connect(masterGain);
 
+    // Track all created nodes to clean them up on stopPreview
+    this.activePreviewNodes = [
+      source,
+      highpass,
+      clarity,
+      warmth,
+      compressor,
+      pitchSheen,
+      formantSweetener,
+      dryGain,
+      wetGain,
+      subMasterGain,
+      masterGain,
+    ];
+    if (convolver) {
+      this.activePreviewNodes.push(convolver);
+    }
+
     // 7. 8D Binaural Spatial Audio Processor (360-Degree Orbital Panning)
     if (options.enable8DAudio) {
       if (!this.spatial8DProcessor) {
@@ -460,7 +481,7 @@ export class VoiceStudioEngine {
     }
 
     source.onended = () => {
-      this.isPlayingPreview = false;
+      this.stopPreview();
       if (onEnded) onEnded();
     };
 
@@ -470,21 +491,39 @@ export class VoiceStudioEngine {
   }
 
   /**
-   * Stop Active Audio Preview
+   * Stop Active Audio Preview and Tear Down DSP Audio Graph
    */
   public stopPreview(): void {
     if (this.previewSource) {
       try {
         this.previewSource.stop();
-        this.previewSource.disconnect();
       } catch {
         // Source already stopped
       }
       this.previewSource = null;
     }
+
+    if (this.activePreviewNodes.length > 0) {
+      for (const node of this.activePreviewNodes) {
+        try {
+          node.disconnect();
+        } catch {
+          // Ignore disconnection errors
+        }
+      }
+      this.activePreviewNodes = [];
+    }
+
     if (this.spatial8DProcessor) {
+      try {
+        this.spatial8DProcessor.getInput().disconnect();
+        this.spatial8DProcessor.getOutput().disconnect();
+      } catch {
+        // Ignore
+      }
       this.spatial8DProcessor.setEnabled(false);
     }
+
     this.isPlayingPreview = false;
   }
 
