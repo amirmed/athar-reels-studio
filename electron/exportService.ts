@@ -855,7 +855,17 @@ function addPreviewOverlayFilters(
   }
 }
 
-function safeSendProgress(sender: Electron.WebContents | null | undefined, data: { phase: string; percent: number; timemark?: string }) {
+function safeSendProgress(
+  sender: Electron.WebContents | null | undefined,
+  data: {
+    phase: string;
+    percent: number;
+    timemark?: string;
+    currentFrame?: number;
+    totalFrames?: number;
+    fps?: number;
+  }
+) {
   try {
     if (sender && !sender.isDestroyed()) {
       sender.send('export:progress', data);
@@ -1225,17 +1235,37 @@ export function setupExportHandlers(tempDir: string) {
 
         activeFfmpegCmd = cmd;
 
+        const totalExpectedFrames = Math.max(1, Math.round(totalDur * effectiveFps));
+
         cmd
           .output(options.outputPath)
           .on('start', () => {
             // Started export safely
           })
           .on('progress', (prog: any) => {
-            const pct = Math.min(97, 35 + Math.round((prog.percent || 0) * 0.62));
+            let calculatedPercent = 0;
+            if (typeof prog.percent === 'number' && prog.percent > 0 && !isNaN(prog.percent)) {
+              calculatedPercent = prog.percent;
+            } else if (typeof prog.frames === 'number' && prog.frames > 0 && totalExpectedFrames > 0) {
+              calculatedPercent = Math.min(100, Math.max(0, (prog.frames / totalExpectedFrames) * 100));
+            } else if (prog.timemark && typeof prog.timemark === 'string') {
+              const parts = prog.timemark.split(':');
+              if (parts.length === 3) {
+                const elapsed = parseFloat(parts[0]) * 3600 + parseFloat(parts[1]) * 60 + parseFloat(parts[2]);
+                if (!isNaN(elapsed) && totalDur > 0) {
+                  calculatedPercent = Math.min(100, Math.max(0, (elapsed / totalDur) * 100));
+                }
+              }
+            }
+
+            const pct = Math.min(98, Math.max(35, 35 + Math.round(calculatedPercent * 0.62)));
             safeSendProgress(_event.sender, {
-              phase: `جاري التصدير... ${Math.round(prog.percent || 0)}%`,
+              phase: `جاري التصدير... ${Math.round(calculatedPercent)}%`,
               percent: pct,
               timemark: prog.timemark,
+              currentFrame: prog.frames,
+              totalFrames: totalExpectedFrames,
+              fps: prog.currentFps,
             });
           })
           .on('end', () => {
