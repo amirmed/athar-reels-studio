@@ -604,7 +604,7 @@ function generateAssSubtitleFile(
       }
 
       // Generate Dialogue events for each word highlight in each chunk
-      wordChunks.forEach((chunk) => {
+      wordChunks.forEach((chunk, cIdx) => {
         if (chunk.length === 0) return;
         const _chunkStart = chunk[0].startTime;
         const chunkEnd = chunk[chunk.length - 1].endTime;
