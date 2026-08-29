@@ -11,6 +11,7 @@ import {
   getCurrentLiveOccasion,
 } from '../../data/islamicEventsData';
 import { Modal } from './Modal';
+import { useTranslation } from '../../i18n';
 
 interface IslamicEventsModalProps {
   isOpen: boolean;
@@ -23,6 +24,7 @@ export const IslamicEventsModal: React.FC<IslamicEventsModalProps> = ({
   onClose,
   onSelectEvent,
 }) => {
+  const { t } = useTranslation();
   const [selectedSeasonId, setSelectedSeasonId] = useState<string>('friday');
   const liveOccasion = getCurrentLiveOccasion();
 
@@ -33,8 +35,8 @@ export const IslamicEventsModal: React.FC<IslamicEventsModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="مركز المناسبات والمواسم الهجرية 🌙✨"
-      subtitle="قوالب حصرية متوافقة مع التقويم الهجري، يوم الجمعة، رمضان، ومواقيت اليوم"
+      title={t('islamicEventsModal.title', 'مركز المناسبات والمواسم الهجرية 🌙✨')}
+      subtitle={t('islamicEventsModal.subtitle', 'قوالب حصرية متوافقة مع التقويم الهجري، يوم الجمعة، رمضان، ومواقيت اليوم')}
       headerIcon={<Calendar size={20} className="text-gold-400" />}
       size="xl"
     >
@@ -51,7 +53,7 @@ export const IslamicEventsModal: React.FC<IslamicEventsModalProps> = ({
                   {liveOccasion.badgeLabel}
                 </span>
                 <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-gold-400/20 text-gold-200 border border-gold-400/30">
-                  مقترح الآن ⚡
+                  {t('islamicEventsModal.recommendedNow', 'مقترح الآن ⚡')}
                 </span>
               </div>
               <h4 className="text-sm font-bold text-surface-50 mt-0.5">
@@ -69,7 +71,7 @@ export const IslamicEventsModal: React.FC<IslamicEventsModalProps> = ({
             }}
             className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-gradient-to-r from-gold-400 to-accent-500 hover:from-gold-300 hover:to-accent-400 text-surface-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-md transition-all active:scale-95 cursor-pointer shrink-0"
           >
-            <span>تطبيق مقترح اليوم الآن 🚀</span>
+            <span>{t('islamicEventsModal.applyTodayRecommendation', 'تطبيق مقترح اليوم الآن 🚀')}</span>
             <ArrowRight size={14} className="rotate-180" />
           </button>
         </div>
@@ -120,7 +122,7 @@ export const IslamicEventsModal: React.FC<IslamicEventsModalProps> = ({
             <p className="text-xs text-surface-400">{currentCategory.description}</p>
           </div>
           <span className="text-xs text-gold-400 font-bold">
-            {currentCategory.items.length} قوالب جاهزة
+            {t('islamicEventsModal.readyTemplatesCount', '{count} قوالب جاهزة').replace('{count}', String(currentCategory.items.length))}
           </span>
         </div>
 
@@ -182,7 +184,7 @@ export const IslamicEventsModal: React.FC<IslamicEventsModalProps> = ({
                     className="btn-gold w-full py-2.5 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm"
                   >
                     <Zap size={14} />
-                    <span>تطبيق القالب وتصميم الريلز 🚀</span>
+                    <span>{t('editor.previewCinematicBtn', 'تطبيق القالب وتصميم الريلز 🚀')}</span>
                   </button>
                 </div>
               </div>
@@ -200,7 +202,7 @@ export const IslamicEventsModal: React.FC<IslamicEventsModalProps> = ({
             onClick={onClose}
             className="btn-ghost px-5 py-2 text-xs font-bold"
           >
-            إغلاق
+            {t('common.close', 'إغلاق')}
           </button>
         </div>
       </div>

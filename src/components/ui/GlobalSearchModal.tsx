@@ -19,6 +19,7 @@ import { useAppStore } from '../../store/useAppStore';
 import { surahs } from '../../data/mockData';
 import { everyAyahReciters } from '../../services/quranApi';
 import { Page } from '../../types';
+import { useTranslation } from '../../i18n';
 
 interface GlobalSearchModalProps {
   isOpen: boolean;
@@ -31,6 +32,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
   onClose,
   onOpenMotherDua: _onOpenMotherDua,
 }) => {
+  const { t } = useTranslation();
   const setCurrentPage = useAppStore((s) => s.setCurrentPage);
   const projects = useAppStore((s) => s.projects);
   const setCurrentProject = useAppStore((s) => s.setCurrentProject);
@@ -54,45 +56,45 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
   const pagesList = [
     {
       id: 'dashboard',
-      label: 'الرئيسية ولوحة التحكم',
+      label: t('globalSearchModal.pageDashboard', 'الرئيسية ولوحة التحكم'),
       icon: <Home size={16} />,
-      category: 'الصفحات',
+      category: t('globalSearchModal.catPages', 'صفحات وأدوات'),
     },
     {
       id: 'create',
-      label: 'إنشاء ريل مخصص جديد',
+      label: t('globalSearchModal.pageCreate', 'إنشاء ريل مخصص جديد'),
       icon: <PlusCircle size={16} />,
-      category: 'الصفحات',
+      category: t('globalSearchModal.catPages', 'صفحات وأدوات'),
     },
     {
       id: 'azkar',
-      label: 'استوديو الأذكار والأحاديث',
+      label: t('globalSearchModal.pageAzkar', 'استوديو الأذكار والأحاديث'),
       icon: <BookHeart size={16} />,
-      category: 'الصفحات',
+      category: t('globalSearchModal.catPages', 'صفحات وأدوات'),
     },
     {
       id: 'quotes',
-      label: 'استوديو كروت وبوستات الصور',
+      label: t('globalSearchModal.pageQuotes', 'استوديو كروت وبوستات الصور'),
       icon: <ImageIcon size={16} />,
-      category: 'الصفحات',
+      category: t('globalSearchModal.catPages', 'صفحات وأدوات'),
     },
     {
       id: 'projects',
-      label: 'مشاريعي المحفوظة',
+      label: t('globalSearchModal.pageProjects', 'مشاريعي المحفوظة'),
       icon: <FolderOpen size={16} />,
-      category: 'الصفحات',
+      category: t('globalSearchModal.catPages', 'صفحات وأدوات'),
     },
     {
       id: 'settings',
-      label: 'الإعدادات العامة واللغات',
+      label: t('globalSearchModal.pageSettings', 'الإعدادات العامة واللغات'),
       icon: <Settings size={16} />,
-      category: 'الصفحات',
+      category: t('globalSearchModal.catPages', 'صفحات وأدوات'),
     },
     {
       id: 'welcome',
-      label: 'صفحة البداية والترحيب',
+      label: t('globalSearchModal.pageWelcome', 'صفحة البداية والترحيب'),
       icon: <Sparkles size={16} />,
-      category: 'الصفحات',
+      category: t('globalSearchModal.catPages', 'صفحات وأدوات'),
     },
   ];
 
@@ -103,7 +105,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
       id: string;
       title: string;
       subtitle: string;
-      category: 'سور قرآنية' | 'قراء وأصوات' | 'مشاريعي' | 'صفحات وأدوات' | 'إجراءات سريعة';
+      category: string;
       icon: React.ReactNode;
       action: () => void;
     }> = [];
@@ -113,10 +115,10 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
       id: 'action-theme',
       title:
         theme === 'dark'
-          ? 'التحويل إلى الوضع الفاتح (Light Mode)'
-          : 'التحويل إلى الوضع الداكن (Dark Mode)',
-      subtitle: 'تبديل مظهر واجهة التطبيق',
-      category: 'إجراءات سريعة',
+          ? t('globalSearchModal.switchToLight', 'التحويل إلى الوضع الفاتح (Light Mode)')
+          : t('globalSearchModal.switchToDark', 'التحويل إلى الوضع الداكن (Dark Mode)'),
+      subtitle: t('globalSearchModal.toggleThemeSub', 'تبديل مظهر واجهة التطبيق'),
+      category: t('globalSearchModal.catQuickActions', 'إجراءات سريعة'),
       icon:
         theme === 'dark' ? (
           <Sun size={16} className="text-amber-400" />
@@ -134,8 +136,8 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
       results.push({
         id: `page-${p.id}`,
         title: p.label,
-        subtitle: `الانتقال إلى ${p.label}`,
-        category: 'صفحات وأدوات',
+        subtitle: t('globalSearchModal.goToPage', 'الانتقال إلى {name}').replace('{name}', p.label),
+        category: t('globalSearchModal.catPages', 'صفحات وأدوات'),
         icon: p.icon,
         action: () => {
           setCurrentPage(p.id as Page);
@@ -150,7 +152,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
         id: `proj-${proj.id}`,
         title: proj.name,
         subtitle: `مشروع: ${proj.surah || 'ريل إسلامي'} (آيات ${proj.fromAyah} - ${proj.toAyah})`,
-        category: 'مشاريعي',
+        category: t('globalSearchModal.catProjects', 'مشاريعي'),
         icon: <FolderOpen size={16} className="text-gold-400" />,
         action: () => {
           setCurrentProject(proj);
@@ -166,7 +168,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
         id: `surah-${s.number}`,
         title: `سورة ${s.name} (${s.englishName})`,
         subtitle: `رقم ${s.number} • ${s.ayahCount} آية • ${s.revelationType}`,
-        category: 'سور قرآنية',
+        category: t('globalSearchModal.catSurahs', 'سور قرآنية'),
         icon: <BookOpen size={16} className="text-emerald-400" />,
         action: () => {
           setCurrentPage('create');
@@ -182,7 +184,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
         id: `reciter-${r.id}`,
         title: r.nameAr,
         subtitle: `${r.nameEn} • ${r.style} • ${r.bitrate}`,
-        category: 'قراء وأصوات',
+        category: t('globalSearchModal.catReciters', 'قراء وأصوات'),
         icon: <Mic size={16} className="text-accent-400" />,
         action: () => {
           setCurrentPage('create');
@@ -205,7 +207,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
           r.category.toLowerCase().includes(q)
       )
       .slice(0, 20);
-  }, [query, projects, theme]);
+  }, [query, projects, theme, t]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -252,7 +254,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
             setQuery(e.target.value);
             setSelectedIndex(0);
           }}
-          placeholder="ابحث عن سورة، قارئ، مشروع، صفحة أو أمر سريع..."
+          placeholder={t('globalSearchModal.placeholder', 'ابحث عن سورة، قارئ، مشروع، صفحة أو أمر سريع...')}
           className="flex-1 bg-transparent text-surface-50 text-sm placeholder:text-surface-400 focus:outline-none"
         />
         {query && (
@@ -266,7 +268,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
           </button>
         )}
         <div className="px-2 py-1 rounded-lg bg-surface-800 border border-surface-700/40 text-[11px] font-bold text-surface-400">
-          ESC للإغلاق
+          {t('globalSearchModal.escToClose', 'ESC للإغلاق')}
         </div>
       </div>
 
@@ -274,7 +276,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
       <div className="p-3 space-y-1 overflow-y-auto flex-1 custom-scrollbar">
         {searchResults.length === 0 ? (
           <div className="py-12 text-center text-surface-400 text-xs">
-            لا توجد نتائج تطابق "{query}"
+            {t('globalSearchModal.noResults', 'لا توجد نتائج تطابق "{query}"').replace('{query}', query)}
           </div>
         ) : (
           searchResults.map((item, idx) => {
@@ -326,15 +328,15 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
       <div className="px-4 py-2.5 bg-surface-950/80 border-t border-surface-700/40 flex items-center justify-between text-xs text-surface-400">
         <div className="flex items-center gap-4">
           <span>
-            استخدم الأسهم <strong>↑ ↓</strong> للتنقل
+            {t('globalSearchModal.navHint', 'استخدم الأسهم ↑ ↓ للتنقل')}
           </span>
           <span>
-            <strong>Enter</strong> للاختيار
+            {t('globalSearchModal.selectHint', 'Enter للاختيار')}
           </span>
         </div>
         <div className="flex items-center gap-1 text-gold-400 font-bold">
           <Sparkles size={12} />
-          <span>أَثَــر ستوديو البحث الشامل</span>
+          <span>{t('globalSearchModal.brandingBadge', 'أَثَــر ستوديو البحث الشامل')}</span>
         </div>
       </div>
     </Modal>

@@ -11,6 +11,7 @@ import {
   Maximize2,
 } from 'lucide-react';
 import { Modal } from './Modal';
+import { useTranslation } from '../../i18n';
 
 interface KeyboardShortcutsModalProps {
   isOpen: boolean;
@@ -21,60 +22,62 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  const { t } = useTranslation();
+
   const shortcuts = [
     {
       icon: <Play size={16} className="text-gold-400" />,
-      title: 'تشغيل / إيقاف التلاوة',
-      keys: ['المسافة (Space)'],
-      category: 'التشغيل',
+      title: t('shortcutsModal.playPause', 'تشغيل / إيقاف التلاوة'),
+      keys: [t('shortcutsModal.spaceKey', 'المسافة (Space)')],
+      category: t('shortcutsModal.catPlayback', 'التشغيل'),
     },
     {
       icon: <SkipForward size={16} className="text-emerald-400" />,
-      title: 'الآية التالية',
-      keys: ['← السهم الأيسر'],
-      category: 'التنقل',
+      title: t('shortcutsModal.nextAyah', 'الآية التالية'),
+      keys: [t('shortcutsModal.leftArrowKey', '← السهم الأيسر')],
+      category: t('shortcutsModal.catNav', 'التنقل'),
     },
     {
       icon: <SkipBack size={16} className="text-emerald-400" />,
-      title: 'الآية السابقة',
-      keys: ['→ السهم الأيمن'],
-      category: 'التنقل',
+      title: t('shortcutsModal.prevAyah', 'الآية السابقة'),
+      keys: [t('shortcutsModal.rightArrowKey', '→ السهم الأيمن')],
+      category: t('shortcutsModal.catNav', 'التنقل'),
     },
     {
       icon: <Undo size={16} className="text-sky-400" />,
-      title: 'تراجع (Undo)',
+      title: t('shortcutsModal.undo', 'تراجع (Undo)'),
       keys: ['Ctrl', 'Z'],
-      category: 'التحرير',
+      category: t('shortcutsModal.catEdit', 'التحرير'),
     },
     {
       icon: <Redo size={16} className="text-sky-400" />,
-      title: 'إعادة (Redo)',
+      title: t('shortcutsModal.redo', 'إعادة (Redo)'),
       keys: ['Ctrl', 'Y'],
-      category: 'التحرير',
+      category: t('shortcutsModal.catEdit', 'التحرير'),
     },
     {
       icon: <Download size={16} className="text-purple-400" />,
-      title: 'فتح نافذة التصدير',
+      title: t('shortcutsModal.openExport', 'فتح نافذة التصدير'),
       keys: ['Ctrl', 'E'],
-      category: 'التصدير',
+      category: t('shortcutsModal.catExport', 'التصدير'),
     },
     {
       icon: <VolumeX size={16} className="text-amber-400" />,
-      title: 'كتم / تشغيل صوت الطبيعة',
+      title: t('shortcutsModal.muteAmbient', 'كتم / تشغيل صوت الطبيعة'),
       keys: ['M'],
-      category: 'الصوت',
+      category: t('shortcutsModal.catAudio', 'الصوت'),
     },
     {
       icon: <Maximize2 size={16} className="text-blue-400" />,
-      title: 'ملء الشاشة للمعاينة',
+      title: t('shortcutsModal.fullscreenPreview', 'ملء الشاشة للمعاينة'),
       keys: ['F'],
-      category: 'العرض',
+      category: t('shortcutsModal.catView', 'العرض'),
     },
     {
       icon: <Keyboard size={16} className="text-gold-400" />,
-      title: 'فتح دليل الاختصارات',
+      title: t('shortcutsModal.openShortcutsGuide', 'فتح دليل الاختصارات'),
       keys: ['?'],
-      category: 'المساعدة',
+      category: t('shortcutsModal.catHelp', 'المساعدة'),
     },
   ];
 
@@ -82,8 +85,8 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="دليل اختصارات لوحة المفاتيح"
-      subtitle="التحكم السريع في تشغيل وتعديل وتصدير الآيات"
+      title={t('shortcutsModal.title', 'دليل اختصارات لوحة المفاتيح')}
+      subtitle={t('shortcutsModal.subtitle', 'التحكم السريع في تشغيل وتعديل وتصدير الآيات')}
       headerIcon={<Keyboard size={18} />}
       size="md"
     >
@@ -123,13 +126,12 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
         {/* Footer info */}
         <div className="pt-2 flex items-center justify-between border-t border-surface-700/40 text-[11px] text-surface-400">
           <span>
-            اضغط{' '}
+            {t('shortcutsModal.escToClose', 'اضغط {key} للإغلاق').replace('{key}', '')}{' '}
             <kbd className="px-1.5 py-0.5 bg-surface-800 border border-surface-700/40 rounded font-mono text-surface-200">
               Esc
-            </kbd>{' '}
-            للإغلاق
+            </kbd>
           </span>
-          <span>⚡ تتيح لك العمل بسرعة واحترافية</span>
+          <span>{t('shortcutsModal.proTip', '⚡ تتيح لك العمل بسرعة واحترافية')}</span>
         </div>
       </div>
     </Modal>
