@@ -47,15 +47,23 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
   const addToast = useAppStore((s) => s.addToast);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const createdBlobUrlsRef = useRef<Set<string>>(new Set());
+  const currentFileRef = useRef(currentFile);
 
-  // Clean up any blob URLs created by this component on unmount
+  useEffect(() => {
+    currentFileRef.current = currentFile;
+  }, [currentFile]);
+
+  // Clean up only orphaned blob URLs that are not currently active in the project on unmount
   useEffect(() => {
     return () => {
       createdBlobUrlsRef.current.forEach((url) => {
-        try {
-          URL.revokeObjectURL(url);
-        } catch {
-          // ignore
+        // NEVER revoke the active media URL currently assigned to the project
+        if (url !== currentFileRef.current) {
+          try {
+            URL.revokeObjectURL(url);
+          } catch {
+            // ignore
+          }
         }
       });
       createdBlobUrlsRef.current.clear();
@@ -64,12 +72,14 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
 
   const revokeOldBlobUrl = useCallback((url?: string) => {
     if (url && url.startsWith('blob:') && createdBlobUrlsRef.current.has(url)) {
-      try {
-        URL.revokeObjectURL(url);
-      } catch {
-        // ignore
+      if (url !== currentFileRef.current) {
+        try {
+          URL.revokeObjectURL(url);
+        } catch {
+          // ignore
+        }
+        createdBlobUrlsRef.current.delete(url);
       }
-      createdBlobUrlsRef.current.delete(url);
     }
   }, []);
 
