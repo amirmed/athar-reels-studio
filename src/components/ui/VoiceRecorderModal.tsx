@@ -167,14 +167,33 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
     setIsPlaying(false);
 
     const audioKey = `voice_rec_${Date.now()}`;
-    let permanentUrl = audioBlobUrl;
+    let permanentUrl: string | null = null;
 
     if (recordedBlobRef.current) {
       try {
         permanentUrl = await savePersistentAudio(audioKey, recordedBlobRef.current, audioDuration);
       } catch (err) {
-        console.warn('[VoiceRecorderModal] Error persisting to IndexedDB:', err);
+        console.warn('[VoiceRecorderModal] Error persisting audio to IndexedDB, attempting DataURL fallback:', err);
+        try {
+          permanentUrl = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(recordedBlobRef.current!);
+          });
+        } catch (dataUrlErr) {
+          console.error('[VoiceRecorderModal] DataURL fallback failed:', dataUrlErr);
+          permanentUrl = null;
+        }
       }
+    }
+
+    if (!permanentUrl) {
+      addToast({
+        message: '⚠️ تعذر حفظ المقطع الصوتي بشكل دائم في مساحة التخزين. يرجى إعادة المحاولة.',
+        type: 'error',
+      });
+      return;
     }
 
     onApplyAudio({

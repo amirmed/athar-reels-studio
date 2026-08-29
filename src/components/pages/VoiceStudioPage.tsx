@@ -467,7 +467,7 @@ export const VoiceStudioPage: React.FC = () => {
 
     const resolvedReciter = customReciterName.trim() || 'تلاوتي الخاصة 🎙️';
     const newProjectId = `voice-reel-${Date.now()}`;
-    let permanentAudioUrl = audioBlobUrl;
+    let permanentAudioUrl: string | null = null;
 
     if (currentAudioBlobRef.current) {
       try {
@@ -477,8 +477,27 @@ export const VoiceStudioPage: React.FC = () => {
           audioDuration
         );
       } catch (err) {
-        console.warn('[VoiceStudioPage] Error saving to IndexedDB:', err);
+        console.warn('[VoiceStudioPage] Error saving audio to IndexedDB, attempting DataURL fallback:', err);
+        try {
+          permanentAudioUrl = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(currentAudioBlobRef.current!);
+          });
+        } catch (dataUrlErr) {
+          console.error('[VoiceStudioPage] DataURL fallback failed:', dataUrlErr);
+          permanentAudioUrl = null;
+        }
       }
+    }
+
+    if (!permanentAudioUrl) {
+      addToast({
+        message: '⚠️ تعذر حفظ المقطع الصوتي بشكل دائم في مساحة التخزين. يرجى المحاولة مرة أخرى.',
+        type: 'error',
+      });
+      return;
     }
 
     const newProject: Project = createDefaultProject({
