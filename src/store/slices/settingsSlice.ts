@@ -122,8 +122,24 @@ export const createSettingsSlice: AppSlice<SettingsSlice> = (set, get) => {
             set({ settings: { ...defaultSettings, ...loaded, theme: loadedTheme }, theme: loadedTheme });
             return;
           }
+
+          // First-run migration for Electron: Check localStorage if settings.json does not exist yet
+          const legacyWebSettings =
+            loadFromLocal<AppSettings>(STORAGE_KEY_SETTINGS) ||
+            (loadFromLocal<{ state?: { settings?: AppSettings } }>('athar_app_storage')?.state?.settings);
+
+          if (legacyWebSettings && typeof legacyWebSettings === 'object') {
+            const mergedSettings: AppSettings = { ...defaultSettings, ...legacyWebSettings };
+            const loadedTheme = mergedSettings.theme || get().theme || getInitialTheme();
+            applyThemeToDom(loadedTheme);
+            set({ settings: mergedSettings, theme: loadedTheme });
+            window.electronAPI.settings.save(mergedSettings).catch(() => {});
+            return;
+          }
         } else {
-          const local = loadFromLocal<AppSettings>(STORAGE_KEY_SETTINGS);
+          const local =
+            loadFromLocal<AppSettings>(STORAGE_KEY_SETTINGS) ||
+            (loadFromLocal<{ state?: { settings?: AppSettings } }>('athar_app_storage')?.state?.settings);
           if (local) {
             const localTheme = local.theme || get().theme || getInitialTheme();
             applyThemeToDom(localTheme);

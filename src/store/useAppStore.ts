@@ -31,12 +31,10 @@ export const useAppStore = create<AppStoreState>()(
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         sidebarCollapsed: state.sidebarCollapsed,
-        settings: state.settings,
       }),
       onRehydrateStorage: () => (state) => {
-        if (state?.settings?.theme) {
-          useAppStore.setState({ theme: state.settings.theme });
-          applyThemeToDom(state.settings.theme);
+        if (state?.theme) {
+          applyThemeToDom(state.theme);
         }
       },
     }
