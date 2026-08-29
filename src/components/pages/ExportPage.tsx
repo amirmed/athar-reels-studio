@@ -37,6 +37,7 @@ import { applyCustomVoiceToAyahs } from '../../utils/customVoiceDistribution';
 export const ExportPage: React.FC = () => {
   const exportJobs = useAppStore((s) => s.exportJobs);
   const currentProject = useAppStore((s) => s.currentProject);
+  const updateProject = useAppStore((s) => s.updateProject);
   const addExportJob = useAppStore((s) => s.addExportJob);
   const updateExportJob = useAppStore((s) => s.updateExportJob);
   const addToast = useAppStore((s) => s.addToast);
@@ -71,8 +72,30 @@ export const ExportPage: React.FC = () => {
           currentProject.contentType === 'azkar'
         ) {
           const text = currentProject.customText || currentProject.name;
-          let audioUrl = currentProject.customAudioUrl;
+          let audioUrl =
+            currentProject.audioSettings?.customRecordedAudioUrl || currentProject.customAudioUrl;
           let estimatedTotalSec = 10;
+
+          if (audioUrl) {
+            const customKey =
+              currentProject.audioSettings?.customAudioKey ||
+              currentProject.customAudioKey ||
+              currentProject.id;
+            const valid = await resolveValidAudioUrl(audioUrl, currentProject.id, customKey);
+            if (valid) {
+              audioUrl = valid;
+              resolvedCustomVoice = valid;
+              if (valid !== currentProject.customAudioUrl) {
+                updateProject(currentProject.id, {
+                  customAudioUrl: valid,
+                  audioSettings: {
+                    ...currentProject.audioSettings,
+                    customRecordedAudioUrl: valid,
+                  },
+                });
+              }
+            }
+          }
 
           if (!audioUrl && text) {
             try {
@@ -140,6 +163,15 @@ export const ExportPage: React.FC = () => {
             // Revive recording from IndexedDB if blob: was invalidated
             resolvedCustomVoice = await resolveValidAudioUrl(customVoice, currentProject.id, customKey);
             if (resolvedCustomVoice) {
+              if (resolvedCustomVoice !== customVoice) {
+                updateProject(currentProject.id, {
+                  customAudioUrl: resolvedCustomVoice,
+                  audioSettings: {
+                    ...currentProject.audioSettings,
+                    customRecordedAudioUrl: resolvedCustomVoice,
+                  },
+                });
+              }
               applyCustomVoiceToAyahs(
                 ayahs,
                 resolvedCustomVoice,

@@ -1298,8 +1298,14 @@ export const EditorPage: React.FC = () => {
         projectName={currentProject?.name || 'ريلز إسلامي'}
         backgroundPath={backgroundFile}
         audioUrls={
-          currentProject?.customAudioUrl || audioSettings.customRecordedAudioUrl
-            ? [currentProject?.customAudioUrl || audioSettings.customRecordedAudioUrl!]
+          audioSettings.customRecordedAudioUrl ||
+          currentProject?.audioSettings?.customRecordedAudioUrl ||
+          currentProject?.customAudioUrl
+            ? [
+                (audioSettings.customRecordedAudioUrl ||
+                  currentProject?.audioSettings?.customRecordedAudioUrl ||
+                  currentProject?.customAudioUrl)!,
+              ]
             : (ayahs.map((a) => a.audioUrl).filter(Boolean) as string[])
         }
         ayahs={ayahs
@@ -1505,6 +1511,7 @@ export const EditorPage: React.FC = () => {
           currentAyahIndex={currentAyahIndex}
           audioUrl={
             audioSettings.customRecordedAudioUrl ||
+            currentProject?.audioSettings?.customRecordedAudioUrl ||
             currentProject?.customAudioUrl ||
             ayahs[0]?.audioUrl
           }
