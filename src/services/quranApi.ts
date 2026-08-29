@@ -539,12 +539,17 @@ export const TOTAL_RECITERS_COUNT = everyAyahReciters.length;
 
 // Backwards compatibility alias resolution for any old saved projects
 const RECITER_ID_ALIASES: Record<string, string> = {
+  alafasy: 'alafasy_128',
+  alafasy_64: 'alafasy_128',
   sudais_64: 'sudais_192',
   shuraim_64: 'shuraim_128',
   maher_64: 'maher_128',
   husary_64: 'husary_128',
   husary_mujawwad_64: 'husary_mujawwad_128',
   minshawi_mujawwad_64: 'minshawi_mujawwad_192',
+  minshawy_mujawwad_192: 'minshawi_mujawwad_192',
+  minshawy_mujawwad_64: 'minshawi_mujawwad_192',
+  minshawy_murattal: 'minshawi_murattal',
   menshawi_32: 'minshawi_murattal',
   abdulbasit_murat_64: 'abdulbasit_murat_192',
   basfar_64: 'basfar_192',
@@ -1010,7 +1015,11 @@ export async function fetchQuranComTimestamps(
   >();
 
   // Only query Quran.com if this reciter has an authentic, verified Quran.com recitation mapping
-  const qdcReciterId = EVERYAYAH_TO_QURANCOM_RECITERS[reciterId];
+  const resolvedReciter = resolveReciter(reciterId);
+  const canonicalReciterId = resolvedReciter?.id || reciterId;
+  const qdcReciterId =
+    EVERYAYAH_TO_QURANCOM_RECITERS[canonicalReciterId] ||
+    EVERYAYAH_TO_QURANCOM_RECITERS[reciterId];
   if (!qdcReciterId) {
     // Return empty map so unmapped reciters use accurate phonetic syllable-weighted timing rather than Alafasy's mismatched rhythm!
     return map;
@@ -1083,7 +1092,8 @@ export async function fetchAyahsWithAudio(
       ),
     ]);
 
-    const reciter = everyAyahReciters.find((r) => r.id === reciterId);
+    const reciter = resolveReciter(reciterId);
+    const canonicalReciterId = reciter?.id || reciterId;
     const subfolder = reciter?.subfolder || 'Alafasy_128kbps';
 
     const ayahs: AyahData[] = surahData.ayahs
@@ -1098,7 +1108,7 @@ export async function fetchAyahsWithAudio(
           surahNumber,
           a.numberInSurah,
           reciter?.serverUrl,
-          reciterId
+          canonicalReciterId
         );
 
         const fallbackUrls = getMultiCdnFallbackAudioUrls(
@@ -1106,7 +1116,7 @@ export async function fetchAyahsWithAudio(
           surahNumber,
           a.numberInSurah,
           reciter?.serverUrl,
-          reciterId
+          canonicalReciterId
         );
 
         // Smart Phonetic Duration Calculation if Quran.com timestamp is unavailable
@@ -1363,7 +1373,7 @@ export async function fetchAllSurahs(): Promise<SurahMetadata[]> {
  * Check if a specific Surah is recorded/available for a given reciter
  */
 export function isSurahAvailableForReciter(reciterId: string, surahNumber: number): boolean {
-  const reciter = everyAyahReciters.find((r) => r.id === reciterId);
+  const reciter = resolveReciter(reciterId);
   if (!reciter) return true;
   if (reciter.isCompleteQuran !== false && !reciter.availableSurahs) return true; // Full 114 Surahs
   return reciter.availableSurahs ? reciter.availableSurahs.includes(surahNumber) : true;
@@ -1373,7 +1383,7 @@ export function isSurahAvailableForReciter(reciterId: string, surahNumber: numbe
  * Get all available Surah numbers for a given reciter
  */
 export function getAvailableSurahsForReciter(reciterId: string): number[] {
-  const reciter = everyAyahReciters.find((r) => r.id === reciterId);
+  const reciter = resolveReciter(reciterId);
   if (!reciter || (reciter.isCompleteQuran !== false && !reciter.availableSurahs)) {
     return Array.from({ length: 114 }, (_, i) => i + 1);
   }
