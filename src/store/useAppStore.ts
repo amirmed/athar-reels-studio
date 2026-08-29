@@ -10,6 +10,8 @@ export type AppState = AppStoreState;
 export type { Toast, DeleteProjectModalData, ModalDataMap, ModalName };
 export { defaultSettings, applyThemeToDom, getInitialTheme };
 
+export const CURRENT_STORAGE_VERSION = 1;
+
 export const useAppStore = create<AppStoreState>()(
   persist(
     (set, get, api) => ({
@@ -28,10 +30,24 @@ export const useAppStore = create<AppStoreState>()(
     }),
     {
       name: 'athar_app_storage',
+      version: CURRENT_STORAGE_VERSION,
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         sidebarCollapsed: state.sidebarCollapsed,
       }),
+      migrate: (persistedState: any, version: number) => {
+        if (!persistedState || typeof persistedState !== 'object') {
+          return { sidebarCollapsed: false };
+        }
+        if (version === 0) {
+          // Migration from unversioned legacy state to v1
+          return {
+            ...persistedState,
+            sidebarCollapsed: typeof persistedState.sidebarCollapsed === 'boolean' ? persistedState.sidebarCollapsed : false,
+          };
+        }
+        return persistedState;
+      },
       onRehydrateStorage: () => (state) => {
         if (state?.theme) {
           applyThemeToDom(state.theme);

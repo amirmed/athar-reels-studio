@@ -293,7 +293,7 @@ describe('Zustand Modular Store (Slices & Persist)', () => {
       await new Promise((resolve) => setTimeout(resolve, 10));
 
       expect((globalThis as any).localStorage.setItem).toHaveBeenCalledWith(
-        'ayahStudio_projects',
+        'ayahStudio_projects_v1',
         expect.stringContaining('proj-web')
       );
     });

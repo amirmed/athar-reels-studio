@@ -2,7 +2,8 @@ import { ExportJob } from '../../types';
 import { AppSlice, ExportSlice } from '../types';
 
 const isElectron = () => typeof window !== 'undefined' && !!window.electronAPI;
-const STORAGE_KEY_EXPORTS = 'ayahStudio_exportJobs';
+const STORAGE_KEY_EXPORTS_V1 = 'ayahStudio_exportJobs_v1';
+const LEGACY_EXPORTS_KEYS = ['ayahStudio_exportJobs', 'athar_exportJobs', 'exportJobs'];
 
 function loadFromLocal<T>(key: string): T | null {
   try {
@@ -13,13 +14,16 @@ function loadFromLocal<T>(key: string): T | null {
   }
 }
 
-function saveToLocal(key: string, data: unknown) {
+function saveToLocal(key: string, data: unknown): boolean {
   try {
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem(key, JSON.stringify(data));
+      return true;
     }
+    return false;
   } catch (e) {
     console.warn('localStorage save failed:', e);
+    return false;
   }
 }
 
@@ -47,7 +51,18 @@ export const createExportSlice: AppSlice<ExportSlice> = (set, get) => ({
           rawJobs = loaded;
         }
       } else {
-        const local = loadFromLocal<ExportJob[]>(STORAGE_KEY_EXPORTS);
+        let local = loadFromLocal<ExportJob[]>(STORAGE_KEY_EXPORTS_V1);
+        if (!local || local.length === 0) {
+          for (const k of LEGACY_EXPORTS_KEYS) {
+            const found = loadFromLocal<ExportJob[]>(k);
+            if (found && Array.isArray(found) && found.length > 0) {
+              local = found;
+              // Migrate to v1 key
+              saveToLocal(STORAGE_KEY_EXPORTS_V1, found);
+              break;
+            }
+          }
+        }
         if (local && Array.isArray(local)) {
           rawJobs = local;
         }
@@ -82,7 +97,7 @@ export const createExportSlice: AppSlice<ExportSlice> = (set, get) => ({
       if (isElectron() && window.electronAPI?.exports) {
         await window.electronAPI.exports.save(exportJobs);
       } else {
-        saveToLocal(STORAGE_KEY_EXPORTS, exportJobs);
+        saveToLocal(STORAGE_KEY_EXPORTS_V1, exportJobs);
       }
     } catch (e) {
       console.warn('Failed to save export jobs:', e);

@@ -12,7 +12,8 @@ import {
 } from '../../services/persistentThumbnailStorage';
 
 const isElectron = () => typeof window !== 'undefined' && !!window.electronAPI;
-const STORAGE_KEY_PROJECTS = 'ayahStudio_projects';
+const STORAGE_KEY_PROJECTS_V1 = 'ayahStudio_projects_v1';
+const LEGACY_PROJECTS_KEYS = ['ayahStudio_projects', 'athar_projects', 'projects'];
 
 function generateUniqueId(prefix = 'proj'): string {
   try {
@@ -171,12 +172,17 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
         }
 
         // Automatic Web-to-Electron Migration:
-        // Check localStorage for legacy web projects (ayahStudio_projects, athar_projects, projects)
-        // and migrate them to Electron disk storage on first launch so users never lose their web projects!
-        const legacyLocalProjects =
-          loadFromLocal<Project[]>(STORAGE_KEY_PROJECTS) ||
-          loadFromLocal<Project[]>('athar_projects') ||
-          loadFromLocal<Project[]>('projects');
+        // Check localStorage for legacy web projects and migrate them
+        let legacyLocalProjects = loadFromLocal<Project[]>(STORAGE_KEY_PROJECTS_V1);
+        if (!legacyLocalProjects || legacyLocalProjects.length === 0) {
+          for (const k of LEGACY_PROJECTS_KEYS) {
+            const found = loadFromLocal<Project[]>(k);
+            if (found && Array.isArray(found) && found.length > 0) {
+              legacyLocalProjects = found;
+              break;
+            }
+          }
+        }
 
         if (
           legacyLocalProjects &&
@@ -196,16 +202,22 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
 
           if (migratedProjects.length > 0) {
             console.info(
-              `[ProjectSlice] Migrated ${migratedProjects.length} legacy project(s) from web localStorage into Electron disk.`
+              `[ProjectSlice] Migrated ${migratedProjects.length} legacy project(s) into Electron disk.`
             );
-            // Offload thumbnails to IndexedDB and save clean projects to Electron disk
+            // Offload thumbnails and backgrounds to IndexedDB and save clean projects to Electron disk
             const sanitizedMigrated = migratedProjects.map((p) => {
-              if (p.thumbnail && p.thumbnail.startsWith('data:image/')) {
-                saveProjectThumbnail(p.id, p.thumbnail).catch(() => {});
-                const { thumbnail: _t, ...rest } = p;
-                return rest as Project;
+              const clean = { ...p };
+              const t = clean.thumbnail;
+              if (t && typeof t === 'string' && t.startsWith('data:')) {
+                saveProjectThumbnail(p.id, t).catch(() => {});
+                delete clean.thumbnail;
               }
-              return p;
+              const bg = clean.backgroundUrl;
+              if (bg && typeof bg === 'string' && bg.startsWith('data:')) {
+                saveProjectBackground(p.id, bg).catch(() => {});
+                delete clean.backgroundUrl;
+              }
+              return clean as Project;
             });
             window.electronAPI.projects.saveAll(sanitizedMigrated).catch((err) => {
               console.warn('[ProjectSlice] Failed to save migrated projects to Electron:', err);
@@ -213,10 +225,18 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
           }
         }
       } else {
-        const local =
-          loadFromLocal<Project[]>(STORAGE_KEY_PROJECTS) ||
-          loadFromLocal<Project[]>('athar_projects') ||
-          loadFromLocal<Project[]>('projects');
+        let local = loadFromLocal<Project[]>(STORAGE_KEY_PROJECTS_V1);
+        if (!local || local.length === 0) {
+          for (const k of LEGACY_PROJECTS_KEYS) {
+            const found = loadFromLocal<Project[]>(k);
+            if (found && Array.isArray(found) && found.length > 0) {
+              local = found;
+              // Migrate to v1 key
+              saveToLocal(STORAGE_KEY_PROJECTS_V1, found);
+              break;
+            }
+          }
+        }
         baseProjects = local || [];
       }
 
@@ -297,7 +317,7 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
           });
         }
       } else {
-        const success = saveToLocal(STORAGE_KEY_PROJECTS, sanitizedProjects);
+        const success = saveToLocal(STORAGE_KEY_PROJECTS_V1, sanitizedProjects);
         if (!success) {
           get().addToast?.({
             message: '⚠️ تحذير: تعذر حفظ المشروع محلياً بسبب امتلاء مساحة التخزين في المتصفح!',

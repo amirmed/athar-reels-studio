@@ -13,7 +13,8 @@ export const defaultSettings: AppSettings = {
 };
 
 const isElectron = () => typeof window !== 'undefined' && !!window.electronAPI;
-const STORAGE_KEY_SETTINGS = 'ayahStudio_settings';
+const STORAGE_KEY_SETTINGS_V1 = 'ayahStudio_settings_v1';
+const LEGACY_SETTINGS_KEYS = ['ayahStudio_settings', 'athar_settings', 'settings'];
 
 export function applyThemeToDom(theme: 'dark' | 'light') {
   if (typeof document === 'undefined') return;
@@ -124,9 +125,19 @@ export const createSettingsSlice: AppSlice<SettingsSlice> = (set, get) => {
           }
 
           // First-run migration for Electron: Check localStorage if settings.json does not exist yet
-          const legacyWebSettings =
-            loadFromLocal<AppSettings>(STORAGE_KEY_SETTINGS) ||
-            (loadFromLocal<{ state?: { settings?: AppSettings } }>('athar_app_storage')?.state?.settings);
+          let legacyWebSettings: AppSettings | null | undefined = loadFromLocal<AppSettings>(STORAGE_KEY_SETTINGS_V1);
+          if (!legacyWebSettings) {
+            for (const k of LEGACY_SETTINGS_KEYS) {
+              const found = loadFromLocal<AppSettings>(k);
+              if (found && typeof found === 'object') {
+                legacyWebSettings = found;
+                break;
+              }
+            }
+          }
+          if (!legacyWebSettings) {
+            legacyWebSettings = loadFromLocal<{ state?: { settings?: AppSettings } }>('athar_app_storage')?.state?.settings ?? null;
+          }
 
           if (legacyWebSettings && typeof legacyWebSettings === 'object') {
             const mergedSettings: AppSettings = { ...defaultSettings, ...legacyWebSettings };
@@ -137,9 +148,21 @@ export const createSettingsSlice: AppSlice<SettingsSlice> = (set, get) => {
             return;
           }
         } else {
-          const local =
-            loadFromLocal<AppSettings>(STORAGE_KEY_SETTINGS) ||
-            (loadFromLocal<{ state?: { settings?: AppSettings } }>('athar_app_storage')?.state?.settings);
+          let local: AppSettings | null | undefined = loadFromLocal<AppSettings>(STORAGE_KEY_SETTINGS_V1);
+          if (!local) {
+            for (const k of LEGACY_SETTINGS_KEYS) {
+              const found = loadFromLocal<AppSettings>(k);
+              if (found && typeof found === 'object') {
+                local = found;
+                // Migrate to v1 key
+                saveToLocal(STORAGE_KEY_SETTINGS_V1, found);
+                break;
+              }
+            }
+          }
+          if (!local) {
+            local = loadFromLocal<{ state?: { settings?: AppSettings } }>('athar_app_storage')?.state?.settings ?? null;
+          }
           if (local) {
             const localTheme = local.theme || get().theme || getInitialTheme();
             applyThemeToDom(localTheme);
@@ -157,7 +180,7 @@ export const createSettingsSlice: AppSlice<SettingsSlice> = (set, get) => {
         if (isElectron() && window.electronAPI?.settings) {
           await window.electronAPI.settings.save(settings);
         } else {
-          saveToLocal(STORAGE_KEY_SETTINGS, settings);
+          saveToLocal(STORAGE_KEY_SETTINGS_V1, settings);
         }
       } catch (e) {
         console.warn('Failed to save settings:', e);
