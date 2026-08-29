@@ -3,6 +3,7 @@ import { AudioSettings, TextSettings } from '../../../types';
 import { ambientSounds, proceduralAmbientEngine } from '../../../data/ambientSounds';
 import { Spatial8DRadar } from '../../ui/Spatial8DRadar';
 import { Sparkles, Mic, Sliders, Headphones, Activity, Volume2, Square, Play } from 'lucide-react';
+import { useTranslation } from '../../../i18n';
 
 interface AmbientAudioPanelProps {
   audioSettings: AudioSettings;
@@ -23,6 +24,66 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
   setIsTestingAmbient,
   onOpenVoiceRecorder,
 }) => {
+  const { t } = useTranslation();
+
+  const atmospherePresets = [
+    {
+      id: 'makkah_haram',
+      name: t('editor.presetMakkahHaramName', '🕋 الحرم المكي الشريف'),
+      desc: t('editor.presetMakkahHaramDesc', 'صدى الحرم + دوران 8D بطيء'),
+    },
+    {
+      id: 'madinah_peace',
+      name: t('editor.presetMadinahPeaceName', '🕌 المسجد النبوي'),
+      desc: t('editor.presetMadinahPeaceDesc', 'سكينة المسجد + دفء الصوت'),
+    },
+    {
+      id: 'rain_serenity',
+      name: t('editor.presetRainSerenityName', '🌧️ السكينة والمطر'),
+      desc: t('editor.presetRainSerenityDesc', 'مطر خفيف + بندول مكاني'),
+    },
+    {
+      id: 'studio_clean',
+      name: t('editor.presetStudioCleanName', '🎬 استوديو نقي بدون صدى'),
+      desc: t('editor.presetStudioCleanDesc', 'وضوح فائق + مانع التشويش'),
+    },
+    {
+      id: 'viral_8d',
+      name: t('editor.presetViral8dName', '⚡ ريلز تيك توك 8D'),
+      desc: t('editor.presetViral8dDesc', 'دوران سريع ملفت للسماعات'),
+    },
+  ];
+
+  const mosqueReverbs = [
+    { id: 'none' as const, name: t('editor.reverbNone', 'بدون صدى'), icon: '🎙️' },
+    { id: 'smallRoom' as const, name: t('editor.reverbSmallRoom', 'غرفة هادئة'), icon: '🏠' },
+    { id: 'grandMosque' as const, name: t('editor.reverbGrandMosque', 'المسجد الكبير'), icon: '🕌' },
+    { id: 'makkahHaram' as const, name: t('editor.reverbMakkahHaram', 'الحرم المكي'), icon: '🕋' },
+    { id: 'celestialEcho' as const, name: t('editor.reverbCelestialEcho', 'صدى واسع'), icon: '✨' },
+  ];
+
+  const spatialPaths = [
+    { id: 'orbit360' as const, name: t('editor.pathOrbit360', '🕋 طواف الكعبة 360°') },
+    { id: 'makkahDome' as const, name: t('editor.pathMakkahDome', '🕌 قبة الحرم العلوية') },
+    { id: 'pendulum' as const, name: t('editor.pathPendulum', '🕊️ بندول السكينة') },
+    { id: 'floatingClouds' as const, name: t('editor.pathFloatingClouds', '☁️ سحب النور') },
+  ];
+
+  const waveformStyles = [
+    { id: 'bars' as const, name: t('editor.wfBars', '📊 أعمدة نيون (Bars)') },
+    { id: 'wave' as const, name: t('editor.wfWave', '〰️ موجة انسيابية (Wave)') },
+    { id: 'dots' as const, name: t('editor.wfDots', '🎚️ نقاط ترددية (Dots)') },
+    { id: 'pulse' as const, name: t('editor.wfPulse', '💫 نبضات قلب (Pulse)') },
+  ];
+
+  const waveformGlowColors = [
+    { id: '#fbbf24', name: t('editor.colorGold', 'ذهبي') },
+    { id: '#10b981', name: t('editor.colorEmerald', 'زمردي') },
+    { id: '#38bdf8', name: t('editor.colorSky', 'سماوي') },
+    { id: '#ffffff', name: t('editor.colorWhite', 'أبيض') },
+    { id: '#a855f7', name: 'بنفسجي' },
+  ];
+
   const applyAudioPreset = (presetKey: string) => {
     switch (presetKey) {
       case 'makkah_haram':
@@ -108,27 +169,15 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
         <div className="flex items-center justify-between">
           <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
             <Sparkles size={14} className="text-gold-400" />
-            <span>أجواء صوتية متكاملة بضغطة زر 🪄</span>
+            <span>{t('editor.ambientPresetsTitle', 'أجواء صوتية متكاملة بضغطة زر 🪄')}</span>
           </label>
-          <span className="text-[11px] text-gold-400/80 font-medium">جاهزة وموزونة 100%</span>
+          <span className="text-[11px] text-gold-400/80 font-medium">
+            {t('editor.ambientPresetsSubtitle', 'جاهزة وموزونة 100%')}
+          </span>
         </div>
 
         <div className="grid grid-cols-2 gap-1.5">
-          {[
-            {
-              id: 'makkah_haram',
-              name: '🕋 الحرم المكي الشريف',
-              desc: 'صدى الحرم + دوران 8D بطيء',
-            },
-            { id: 'madinah_peace', name: '🕌 المسجد النبوي', desc: 'سكينة المسجد + دفء الصوت' },
-            { id: 'rain_serenity', name: '🌧️ السكينة والمطر', desc: 'مطر خفيف + بندول مكاني' },
-            {
-              id: 'studio_clean',
-              name: '🎬 استوديو نقي بدون صدى',
-              desc: 'وضوح فائق + مانع التشويش',
-            },
-            { id: 'viral_8d', name: '⚡ ريلز تيك توك 8D', desc: 'دوران سريع ملفت للسماعات' },
-          ].map((preset) => (
+          {atmospherePresets.map((preset) => (
             <button
               key={preset.id}
               type="button"
@@ -151,7 +200,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
         <div className="flex items-center justify-between">
           <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
             <Volume2 size={14} className="text-purple-400" />
-            <span>أجواء الطبيعة والسكينة (Ambient Atmosphere) 🌿</span>
+            <span>{t('editor.ambientNatureTitle', 'أجواء الطبيعة والسكينة (Ambient Atmosphere) 🌿')}</span>
           </label>
           <div className="flex items-center gap-1">
             <button
@@ -172,11 +221,11 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
             >
               {isTestingAmbient ? (
                 <>
-                  <Square size={9} /> إيقاف
+                  <Square size={9} /> {t('editor.ambientStop', 'إيقاف')}
                 </>
               ) : (
                 <>
-                  <Play size={9} /> استماع
+                  <Play size={9} /> {t('editor.ambientListen', 'استماع')}
                 </>
               )}
             </button>
@@ -218,7 +267,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
 
       <div>
         <div className="flex items-center justify-between text-xs font-bold text-surface-400 mb-1">
-          <span>مستوى صوت الطبيعة</span>
+          <span>{t('editor.ambientVolumeLabel', 'مستوى صوت الطبيعة')}</span>
           <span className="font-mono text-purple-400">
             {audioSettings.ambientSoundVolume ?? 22}%
           </span>
@@ -243,8 +292,8 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
               <Mic size={16} />
             </div>
             <div>
-              <h4 className="text-xs font-bold text-surface-50">تسجيل تلاوتك الخاصة أو رفع MP3 🎙️</h4>
-              <p className="text-[11px] text-surface-400">مع محاكاة صدى الحرم المكي الشريف</p>
+              <h4 className="text-xs font-bold text-surface-50">{t('editor.recordVoiceCustomTitle', 'تسجيل تلاوتك الخاصة أو رفع MP3 🎙️')}</h4>
+              <p className="text-[11px] text-surface-400">{t('editor.recordVoiceCustomSubtitle', 'مع محاكاة صدى الحرم المكي الشريف')}</p>
             </div>
           </div>
         </div>
@@ -255,14 +304,14 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
           className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-gold-400 to-amber-500 hover:from-gold-300 hover:to-amber-400 text-surface-950 font-bold text-xs flex items-center justify-center gap-2 shadow-md transition-all active:scale-95 cursor-pointer"
         >
           <Mic size={14} />
-          <span>فتح استوديو التسجيل والمايكروفون 🎙️</span>
+          <span>{t('editor.openVoiceRecorderBtn', 'فتح استوديو التسجيل والمايكروفون 🎙️')}</span>
         </button>
 
         {audioSettings.customRecordedAudioUrl && (
           <div className="flex items-center justify-between p-2 rounded-xl bg-surface-950 border border-emerald-500/30 text-xs text-emerald-700 dark:text-emerald-300">
             <span className="flex items-center gap-1 font-bold">
               <span>✓</span>
-              <span>تلاوتك المخصصة مفعلة في المشروع</span>
+              <span>{t('editor.customVoiceProjectActive', 'تلاوتك المخصصة مفعلة في المشروع')}</span>
             </span>
             <span className="font-mono text-[11px] text-surface-400">
               {Math.round(audioSettings.customAudioDuration || 0)}ث
@@ -276,7 +325,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
         <div className="flex items-center justify-between">
           <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
             <Sparkles size={14} className="text-purple-400" />
-            <span>صدى المسجد الحرام (Mosque Spatial Reverb) 🕌</span>
+            <span>{t('editor.mosqueReverbTitle', 'صدى المسجد الحرام (Mosque Spatial Reverb) 🕌')}</span>
           </label>
           <span className="text-[11px] text-purple-700 dark:text-purple-300 font-bold px-2 py-0.5 rounded-full bg-purple-500/15">
             3D Sound
@@ -284,13 +333,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
-          {[
-            { id: 'none' as const, name: 'بدون صدى', icon: '🎙️' },
-            { id: 'smallRoom' as const, name: 'غرفة هادئة', icon: '🏠' },
-            { id: 'grandMosque' as const, name: 'المسجد الكبير', icon: '🕌' },
-            { id: 'makkahHaram' as const, name: 'الحرم المكي', icon: '🕋' },
-            { id: 'celestialEcho' as const, name: 'صدى واسع', icon: '✨' },
-          ].map((rev) => {
+          {mosqueReverbs.map((rev) => {
             const isSelected = (audioSettings.reverbPreset || 'none') === rev.id;
             return (
               <button
@@ -313,7 +356,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
         {audioSettings.reverbPreset && audioSettings.reverbPreset !== 'none' && (
           <div className="pt-2 border-t border-surface-700/40">
             <div className="flex items-center justify-between text-xs font-bold text-surface-400 mb-1">
-              <span>قوة الصدى وعمق الارتداد</span>
+              <span>{t('editor.reverbLevelLabel', 'قوة الصدى وعمق الارتداد')}</span>
               <span className="font-mono text-purple-400">{audioSettings.reverbLevel ?? 45}%</span>
             </div>
             <input
@@ -335,7 +378,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
         <div className="flex items-center justify-between">
           <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
             <Sliders size={14} className="text-emerald-400" />
-            <span>فلاتر الاستوديو ونقاء الصوت 🎛️</span>
+            <span>{t('editor.studioDspTitle', 'فلاتر الاستوديو ونقاء الصوت 🎛️')}</span>
           </label>
           <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold">Studio DSP</span>
         </div>
@@ -350,9 +393,9 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
                 : 'bg-surface-950 border-surface-700/40 text-surface-400'
             }`}
           >
-            <div>⚡ عزل الضوضاء</div>
+            <div>{t('editor.noiseGateLabel', '⚡ عزل الضوضاء')}</div>
             <div className="text-[10px] text-surface-400">
-              {(audioSettings.enableNoiseGate ?? true) ? 'مفعل ✓' : 'معطل'}
+              {(audioSettings.enableNoiseGate ?? true) ? t('editor.stateActive', 'مفعل ✓') : t('editor.stateDisabled', 'معطل')}
             </div>
           </button>
 
@@ -367,9 +410,9 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
                 : 'bg-surface-950 border-surface-700/40 text-surface-400'
             }`}
           >
-            <div>💎 نقاء التجويد</div>
+            <div>{t('editor.studioClarityLabel', '💎 نقاء التجويد')}</div>
             <div className="text-[10px] text-surface-400">
-              {(audioSettings.enableStudioClarity ?? true) ? 'مفعل ✓' : 'معطل'}
+              {(audioSettings.enableStudioClarity ?? true) ? t('editor.stateActive', 'مفعل ✓') : t('editor.stateDisabled', 'معطل')}
             </div>
           </button>
 
@@ -384,9 +427,9 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
                 : 'bg-surface-950 border-surface-700/40 text-surface-400'
             }`}
           >
-            <div>🎙️ دفء الصوت</div>
+            <div>{t('editor.voiceWarmthLabel', '🎙️ دفء الصوت')}</div>
             <div className="text-[10px] text-surface-400">
-              {(audioSettings.enableVoiceWarmth ?? true) ? 'مفعل ✓' : 'معطل'}
+              {(audioSettings.enableVoiceWarmth ?? true) ? t('editor.stateActive', 'مفعل ✓') : t('editor.stateDisabled', 'معطل')}
             </div>
           </button>
         </div>
@@ -397,7 +440,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
         <div className="flex items-center justify-between">
           <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
             <Headphones size={14} className="text-gold-400" />
-            <span>صوت الحرم المكاني (8D Spatial Audio) 🎧</span>
+            <span>{t('editor.spatial8dTitle', 'صوت الحرم المكاني (8D Spatial Audio) 🎧')}</span>
           </label>
           <button
             type="button"
@@ -418,7 +461,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
                 : 'bg-surface-950 border-surface-700/40 text-surface-400'
             }`}
           >
-            {audioSettings.enable8DAudio ? 'مفعل ✓' : 'معطل'}
+            {audioSettings.enable8DAudio ? t('editor.stateActive', 'مفعل ✓') : t('editor.stateDisabled', 'معطل')}
           </button>
         </div>
 
@@ -434,15 +477,10 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
           <div className="space-y-2.5 pt-1">
             <div>
               <label className="block text-surface-300 text-xs font-bold mb-1.5">
-                مسار الطواف المكاني 360°
+                {t('editor.spatialPathLabel', 'مسار الطواف المكاني 360°')}
               </label>
               <div className="grid grid-cols-2 gap-1.5">
-                {[
-                  { id: 'orbit360' as const, name: '🕋 طواف الكعبة 360°' },
-                  { id: 'makkahDome' as const, name: '🕌 قبة الحرم العلوية' },
-                  { id: 'pendulum' as const, name: '🕊️ بندول السكينة' },
-                  { id: 'floatingClouds' as const, name: '☁️ سحب النور' },
-                ].map((st) => (
+                {spatialPaths.map((st) => (
                   <button
                     key={st.id}
                     type="button"
@@ -467,7 +505,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
                 return (
                   <>
                     <div className="flex items-center justify-between text-xs font-bold text-surface-400 mb-1">
-                      <span>سرعة دوران الصوت حول الرأس</span>
+                      <span>{t('editor.spatialSpeedLabel', 'سرعة دوران الصوت حول الرأس')}</span>
                       <span className="font-mono text-gold-600 dark:text-gold-400 font-bold">
                         {speedPercent}%
                       </span>
@@ -492,7 +530,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
 
             <div className="flex items-center justify-between pt-1 border-t border-surface-700/40">
               <span className="text-xs text-surface-300 font-medium">
-                إظهار شارة السماعات 🎧 على الفيديو
+                {t('editor.show8dBadgeToggle', 'إظهار شارة السماعات 🎧 على الفيديو')}
               </span>
               <input
                 type="checkbox"
@@ -510,7 +548,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Activity size={15} className="text-gold-400" />
-            <span className="font-bold text-surface-50 text-xs">شريط الموجات الصوتية التفاعلي 🎵</span>
+            <span className="font-bold text-surface-50 text-xs">{t('editor.waveformTitle', 'شريط الموجات الصوتية التفاعلي 🎵')}</span>
           </div>
           <input
             type="checkbox"
@@ -523,14 +561,9 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
         {(textSettings.showWaveform ?? true) && (
           <div className="space-y-3 pt-1">
             <div>
-              <label className="block text-surface-400 text-xs mb-1.5">شكل وحركة الموجات</label>
+              <label className="block text-surface-400 text-xs mb-1.5">{t('editor.waveformStyleLabel', 'شكل وحركة الموجات')}</label>
               <div className="grid grid-cols-2 gap-1.5">
-                {[
-                  { id: 'bars' as const, name: '📊 أعمدة نيون (Bars)' },
-                  { id: 'wave' as const, name: '〰️ موجة انسيابية (Wave)' },
-                  { id: 'dots' as const, name: '🎚️ نقاط ترددية (Dots)' },
-                  { id: 'pulse' as const, name: '💫 نبضات قلب (Pulse)' },
-                ].map((wf) => (
+                {waveformStyles.map((wf) => (
                   <button
                     key={wf.id}
                     type="button"
@@ -548,15 +581,9 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
             </div>
 
             <div>
-              <label className="block text-surface-400 text-xs mb-1.5">لون توهج الموجات</label>
+              <label className="block text-surface-400 text-xs mb-1.5">{t('editor.waveformGlowColor', 'لون توهج الموجات')}</label>
               <div className="flex items-center gap-2">
-                {[
-                  { id: '#fbbf24', name: 'ذهبي' },
-                  { id: '#10b981', name: 'زمردي' },
-                  { id: '#38bdf8', name: 'سماوي' },
-                  { id: '#ffffff', name: 'أبيض' },
-                  { id: '#a855f7', name: 'بنفسجي' },
-                ].map((c) => (
+                {waveformGlowColors.map((c) => (
                   <button
                     key={c.id}
                     type="button"
@@ -574,7 +601,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
 
             <div>
               <div className="flex items-center justify-between text-xs font-bold text-surface-400 mb-1">
-                <span>ارتفاع الموجات</span>
+                <span>{t('editor.waveformHeightLabel', 'ارتفاع الموجات')}</span>
                 <span className="font-mono text-gold-400">
                   {textSettings.waveformHeight || 24}px
                 </span>

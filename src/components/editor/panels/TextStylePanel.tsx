@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { Slider } from '../../ui/Slider';
 import { SectionAccordion } from '../../ui/SectionAccordion';
+import { useTranslation } from '../../../i18n';
 
 interface TextStylePanelProps {
   textSettings: TextSettings;
@@ -38,6 +39,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
   currentAyahText,
   addToast,
 }) => {
+  const { t } = useTranslation();
   const [activeSubTab, setActiveSubTab] = useState<
     'font' | 'spacing' | 'fx' | 'motion' | 'translation'
   >('font');
@@ -89,16 +91,108 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
     addToast({ message: 'تمت استعادة المسافات الافتراضية 🔄', type: 'info' });
   };
 
+  const fontCategories = [
+    { id: 'all', label: t('editor.catAllFonts', 'الكل (11 خط)') },
+    { id: 'quranic', label: t('editor.catQuranic', '🕌 خطوط قرآنية') },
+    { id: 'modern', label: t('editor.catModern', '⚡ خطوط ريلز') },
+    { id: 'kufi', label: t('editor.catKufi', '🏛️ كوفي') },
+    { id: 'artistic', label: t('editor.catArtistic', '🎨 فني') },
+    { id: 'ruqaa', label: t('editor.catRuqaa', '✍️ رقعة') },
+  ];
+
+  const fontWeights = [
+    { id: 'light', label: t('editor.weightLight', 'خفيف') },
+    { id: 'normal', label: t('editor.weightNormal', 'عادي') },
+    { id: 'bold', label: t('editor.weightBold', 'عريض') },
+  ];
+
+  const textAlignments = [
+    { id: 'right', icon: AlignRight, name: t('editor.alignRight', 'محاذاة لليمين') },
+    { id: 'center', icon: AlignCenter, name: t('editor.alignCenter', 'توسيط النص') },
+    { id: 'left', icon: AlignLeft, name: t('editor.alignLeft', 'محاذاة لليسار') },
+  ];
+
+  const textColors = [
+    { color: '#ffffff', name: t('editor.colorWhite', 'أبيض') },
+    { color: '#fef08a', name: 'أصفر ذهبي' },
+    { color: '#fbbf24', name: t('editor.colorGold', 'ذهبي') },
+    { color: '#a7f3d0', name: t('editor.colorEmerald', 'زمردي') },
+    { color: '#bae6fd', name: t('editor.colorSky', 'سماوي') },
+    { color: '#fed7aa', name: 'عنبر دافئ' },
+    { color: '#fbcfe8', name: 'وردي لطيف' },
+  ];
+
+  const glowColors = [
+    { color: '#fbbf24', label: 'ذهبي 👑' },
+    { color: '#ffffff', label: 'أبيض ⚪' },
+    { color: '#34d399', label: 'زمردي 🌿' },
+    { color: '#38bdf8', label: 'سماوي 🌌' },
+    { color: '#f472b6', label: 'وردي 🌸' },
+  ];
+
+  const strokeColors = [
+    { color: '#000000', label: t('editor.strokeBlack', 'أسود كاحل') },
+    { color: '#fbbf24', label: t('editor.colorGold', 'ذهبي') },
+    { color: '#ffffff', label: t('editor.colorWhite', 'أبيض') },
+    { color: '#0f172a', label: t('editor.strokeDarkNavy', 'كحلي داكن') },
+  ];
+
+  const textGradients = [
+    { id: 'none', label: t('editor.gradNone', 'أحادي اللون ⚪') },
+    { id: 'gold', label: t('editor.gradGold', 'ذهب ملكي 👑') },
+    { id: 'silver', label: t('editor.gradSilver', 'فضي لامع 🪙') },
+    { id: 'emerald', label: t('editor.gradEmerald', 'زمردي نوراني 🌿') },
+    { id: 'amber', label: t('editor.gradAmber', 'عنبر دافئ 🔥') },
+    { id: 'celestial', label: t('editor.gradCelestial', 'سماوي كوني 🌌') },
+  ];
+
+  const textAnimations = [
+    {
+      id: 'wordByWord',
+      label: t('editor.animWordByWord', 'كلمة بكلمة (كاريوكي)'),
+      sub: t('editor.animWordByWordSub', 'تزامن دقيق مع التلاوة'),
+      icon: '⚡',
+    },
+    { id: 'fadeIn', label: t('editor.animFadeIn', 'ظهور تدريجي ناعم'), sub: t('editor.animFadeInSub', 'انتقال سينمائي هادئ'), icon: '🕊️' },
+    { id: 'lineByLine', label: t('editor.animLineByLine', 'سطر بسطر'), sub: t('editor.animLineByLineSub', 'انزلاق متتابع'), icon: '📜' },
+    {
+      id: 'typewriter',
+      label: t('editor.animTypewriter', 'كتابة تلقائية (Typewriter)'),
+      sub: t('editor.animTypewriterSub', 'كتابة فورية حرف بحرف'),
+      icon: '⌨️',
+    },
+    {
+      id: 'scaleBounce',
+      label: t('editor.animScaleBounce', 'نبض وتكبير (Scale Pop)'),
+      sub: t('editor.animScaleBounceSub', 'حركة تفاعلية جذابة'),
+      icon: '💫',
+    },
+    {
+      id: 'glowPulse',
+      label: t('editor.animGlowPulse', 'نبض التوهج (Glow Pulse)'),
+      sub: t('editor.animGlowPulseSub', 'إشعاع نوراني مستمر'),
+      icon: '✨',
+    },
+  ];
+
+  const highlightStyles = [
+    { id: 'emeraldGlow', name: t('editor.hlEmeraldGlow', 'زمردي 🌿'), color: '#10b981' },
+    { id: 'radiantWhite', name: t('editor.hlRadiantWhite', 'أبيض ناصع ⚪'), color: '#ffffff' },
+    { id: 'amberEmber', name: t('editor.hlAmberEmber', 'عنبر دافئ 🔥'), color: '#f97316' },
+    { id: 'pillBadge', name: t('editor.hlPillBadge', 'كبسولة عائمة 💊'), color: '#38bdf8' },
+    { id: 'underlineWave', name: t('editor.hlUnderlineWave', 'تموج تحتي 〰️'), color: '#a855f7' },
+  ];
+
   return (
     <div className="space-y-4 animate-in">
       {/* Sub-Navigation Tabs */}
       <div className="grid grid-cols-5 gap-1 p-1 bg-surface-900/90 rounded-2xl border border-surface-700/40 text-xs font-bold">
         {[
-          { id: 'font', label: 'الخطوط', icon: '🔤' },
-          { id: 'spacing', label: 'المسافات', icon: '📐' },
-          { id: 'fx', label: 'المؤثرات', icon: '✨' },
-          { id: 'motion', label: 'الحركة', icon: '🎬' },
-          { id: 'translation', label: 'الترجمة', icon: '🌐' },
+          { id: 'font', label: t('editor.tabFonts', 'الخطوط'), icon: '🔤' },
+          { id: 'spacing', label: t('editor.tabSpacing', 'المسافات'), icon: '📐' },
+          { id: 'fx', label: t('editor.tabFx', 'المؤثرات'), icon: '✨' },
+          { id: 'motion', label: t('editor.tabMotion', 'الحركة'), icon: '🎬' },
+          { id: 'translation', label: t('editor.tabTranslation', 'الترجمة'), icon: '🌐' },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -121,23 +215,25 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
         <div className="space-y-3">
           {/* Display Mode & Font Picker */}
           <SectionAccordion
-            title="تقسيم الآيات ومكتبة الخطوط"
+            title={t('editor.splitAndFontsTitle', 'تقسيم الآيات ومكتبة الخطوط')}
             icon={<Wand2 size={16} className="text-gold-400" />}
             defaultOpen={true}
           >
             {/* Display Mode (Chunked vs Single Ayah) */}
             <div className="p-3 rounded-2xl bg-surface-900 border border-gold-500/20 space-y-2">
               <div className="flex items-center justify-between">
-                <label className="block text-surface-50 font-bold text-xs">نمط تقسيم الآيات 🎬</label>
+                <label className="block text-surface-50 font-bold text-xs">{t('editor.splitModeLabel', 'نمط تقسيم الآيات 🎬')}</label>
                 <span className="text-[11px] px-2 py-0.5 rounded-md bg-gold-500/15 text-gold-700 dark:text-gold-300 font-bold border border-gold-400/20">
-                  {textSettings.displayMode === 'single_ayah' ? 'الآية كاملة 📜' : 'تقسيم ذكي ⚡'}
+                  {textSettings.displayMode === 'single_ayah'
+                    ? t('editor.splitModeFullAyah', 'الآية كاملة 📜')
+                    : t('editor.splitModeChunked', 'تقسيم ذكي ⚡')}
                 </span>
               </div>
 
               <div className="grid grid-cols-2 gap-1.5">
                 {[
-                  { id: 'chunked', label: 'تقسيم ذكي (سريع للريلز)', icon: '✂️' },
-                  { id: 'single_ayah', label: 'الآية كاملة (متصلة)', icon: '📜' },
+                  { id: 'chunked', label: t('editor.splitChunkedBtn', 'تقسيم ذكي (سريع للريلز)'), icon: '✂️' },
+                  { id: 'single_ayah', label: t('editor.splitFullAyahBtn', 'الآية كاملة (متصلة)'), icon: '📜' },
                 ].map((m) => {
                   const isSelected = (textSettings.displayMode || 'chunked') === m.id;
                   return (
@@ -161,14 +257,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
 
             {/* Font Category Filter Chips */}
             <div className="flex items-center gap-1 overflow-x-auto pb-1 custom-scrollbar">
-              {[
-                { id: 'all', label: 'الكل (11 خط)' },
-                { id: 'quranic', label: '🕌 خطوط قرآنية' },
-                { id: 'modern', label: '⚡ خطوط ريلز' },
-                { id: 'kufi', label: '🏛️ كوفي' },
-                { id: 'artistic', label: '🎨 فني' },
-                { id: 'ruqaa', label: '✍️ رقعة' },
-              ].map((cat) => (
+              {fontCategories.map((cat) => (
                 <button
                   key={cat.id}
                   type="button"
@@ -230,13 +319,13 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
 
           {/* Size, Weight, Alignment, Color */}
           <SectionAccordion
-            title="حجم وسُمك ولون النص"
+            title={t('editor.sizeWeightColorTitle', 'حجم وسُمك ولون النص')}
             icon={<Sliders size={16} className="text-gold-400" />}
             defaultOpen={true}
           >
             <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-surface-700/40 space-y-3">
               <Slider
-                label="حجم الخط (Font Size)"
+                label={t('editor.fontSizeLabel', 'حجم الخط (Font Size)')}
                 min={16}
                 max={56}
                 value={textSettings.fontSize}
@@ -249,14 +338,10 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
               <div className="grid grid-cols-2 gap-3 pt-2 border-t border-surface-700/40">
                 <div>
                   <label className="block text-xs font-bold text-surface-300 mb-1.5">
-                    وزن وسُمك الخط
+                    {t('editor.fontWeightLabel', 'وزن وسُمك الخط')}
                   </label>
                   <div className="grid grid-cols-3 gap-1 bg-surface-950 p-1 rounded-xl border border-surface-700/30">
-                    {[
-                      { id: 'light', label: 'خفيف' },
-                      { id: 'normal', label: 'عادي' },
-                      { id: 'bold', label: 'عريض' },
-                    ].map((w) => (
+                    {fontWeights.map((w) => (
                       <button
                         key={w.id}
                         type="button"
@@ -276,13 +361,9 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-surface-300 mb-1.5">محاذاة النص</label>
+                  <label className="block text-xs font-bold text-surface-300 mb-1.5">{t('editor.textAlignLabel', 'محاذاة النص')}</label>
                   <div className="grid grid-cols-3 gap-1 bg-surface-950 p-1 rounded-xl border border-surface-700/30">
-                    {[
-                      { id: 'right', icon: AlignRight, name: 'محاذاة لليمين' },
-                      { id: 'center', icon: AlignCenter, name: 'توسيط النص' },
-                      { id: 'left', icon: AlignLeft, name: 'محاذاة لليسار' },
-                    ].map((a) => {
+                    {textAlignments.map((a) => {
                       const Icon = a.icon;
                       return (
                         <button
@@ -308,18 +389,10 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
               {/* Text Color Palettes */}
               <div className="pt-2 border-t border-surface-700/40">
                 <label className="block text-xs font-bold text-surface-300 mb-1.5">
-                  لون النص الأساسي
+                  {t('editor.textColorLabel', 'لون النص الأساسي')}
                 </label>
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  {[
-                    { color: '#ffffff', name: 'أبيض ناصع' },
-                    { color: '#fef08a', name: 'أصفر ذهبي' },
-                    { color: '#fbbf24', name: 'ذهب ملكي' },
-                    { color: '#a7f3d0', name: 'زمردي فاتح' },
-                    { color: '#bae6fd', name: 'سماوي' },
-                    { color: '#fed7aa', name: 'عنبر دافئ' },
-                    { color: '#fbcfe8', name: 'وردي لطيف' },
-                  ].map((c) => (
+                  {textColors.map((c) => (
                     <button
                       key={c.color}
                       type="button"
@@ -352,33 +425,33 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
       {activeSubTab === 'spacing' && (
         <div className="space-y-3">
           <SectionAccordion
-            title="التحكم الدقيق بالمسافات التايبوغرافية"
+            title={t('editor.spacingControlTitle', 'التحكم الدقيق بالمسافات التايبوغرافية')}
             icon={<Sliders size={16} className="text-gold-400" />}
             defaultOpen={true}
           >
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-surface-400">ضبط المسافات والارتفاع بالبكسل</span>
+              <span className="text-xs text-surface-400">{t('editor.spacingSubtitle', 'ضبط المسافات والارتفاع بالبكسل')}</span>
               <button
                 type="button"
                 onClick={handleResetSpacing}
                 className="text-[11px] text-gold-400 hover:text-gold-300 hover:underline flex items-center gap-1 cursor-pointer"
               >
                 <RotateCcw size={11} />
-                <span>استعادة الافتراضي</span>
+                <span>{t('editor.resetDefaultBtn', 'استعادة الافتراضي')}</span>
               </button>
             </div>
 
             {/* 1. Word Spacing */}
             <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-surface-700/40">
               <Slider
-                label="المسافة بين الكلمات (Word Spacing)"
+                label={t('editor.wordSpacingLabel', 'المسافة بين الكلمات (Word Spacing)')}
                 min={-2}
                 max={24}
                 step={1}
                 value={textSettings.wordSpacing ?? 0}
                 accentColor="blue"
                 unit="px"
-                hint="مضغوط (-2px) ← افتراضي (0px) ← متباعد (+24px)"
+                hint={t('editor.wordSpacingHint', 'مضغوط (-2px) ← افتراضي (0px) ← متباعد (+24px)')}
                 onChange={(val) => setTextSettings((s) => ({ ...s, wordSpacing: val }))}
               />
             </div>
@@ -386,14 +459,14 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
             {/* 2. Line Height */}
             <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-surface-700/40">
               <Slider
-                label="ارتفاع وتباعد الأسطر (Line Height)"
+                label={t('editor.lineHeightLabel', 'ارتفاع وتباعد الأسطر (Line Height)')}
                 min={1.2}
                 max={2.8}
                 step={0.1}
                 value={textSettings.lineHeight ?? 2.2}
                 accentColor="emerald"
                 formatValue={(v) => v.toFixed(1)}
-                hint="ضيق (1.2) ← مثالي (2.2) ← واسع ومريح (2.8)"
+                hint={t('editor.lineHeightHint', 'ضيق (1.2) ← مثالي (2.2) ← واسع ومريح (2.8)')}
                 onChange={(val) => setTextSettings((s) => ({ ...s, lineHeight: val }))}
               />
             </div>
@@ -401,14 +474,14 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
             {/* 3. Letter Spacing */}
             <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-surface-700/40">
               <Slider
-                label="المسافة بين الحروف (Letter Spacing)"
+                label={t('editor.letterSpacingLabel', 'المسافة بين الحروف (Letter Spacing)')}
                 min={-2}
                 max={10}
                 step={0.5}
                 value={textSettings.letterSpacing ?? 0}
                 accentColor="amber"
                 unit="px"
-                hint="متصل طبيعي (0px) ← متباعد (+10px)"
+                hint={t('editor.letterSpacingHint', 'متصل طبيعي (0px) ← متباعد (+10px)')}
                 onChange={(val) => setTextSettings((s) => ({ ...s, letterSpacing: val }))}
               />
             </div>
@@ -421,7 +494,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
         <div className="space-y-3">
           {/* Quick 1-Click Typography Presets */}
           <SectionAccordion
-            title="أنماط بصرية جاهزة (1-Click Presets)"
+            title={t('editor.visualPresetsTitle', 'أنماط بصرية جاهزة (1-Click Presets)')}
             icon={<Wand2 size={16} className="text-gold-400" />}
             defaultOpen={true}
           >
@@ -446,7 +519,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
 
           {/* 1. Drop Shadow Control */}
           <SectionAccordion
-            title="ظل النص السينمائي (Drop Shadow)"
+            title={t('editor.dropShadowTitle', 'ظل النص السينمائي (Drop Shadow)')}
             icon={<Sparkles size={16} className="text-gold-400" />}
             defaultOpen={true}
           >
@@ -454,9 +527,9 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
               <div className="flex items-center justify-between">
                 <div>
                   <span className="font-bold text-surface-50 text-xs block">
-                    تفعيل ظل النص
+                    {t('editor.toggleShadow', 'تفعيل ظل النص')}
                   </span>
-                  <span className="text-[11px] text-surface-400">يعزل الآية عن الخلفية بوضوح تام</span>
+                  <span className="text-[11px] text-surface-400">{t('editor.shadowDesc', 'يعزل الآية عن الخلفية بوضوح تام')}</span>
                 </div>
                 <input
                   type="checkbox"
@@ -469,7 +542,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
               {(textSettings.enableShadow ?? true) && (
                 <div className="space-y-3 pt-2 border-t border-surface-700/30">
                   <Slider
-                    label="شدة التمويه والانتشار (Shadow Blur)"
+                    label={t('editor.shadowBlurLabel', 'شدة التمويه والانتشار (Shadow Blur)')}
                     min={0}
                     max={35}
                     value={textSettings.shadowBlur ?? 14}
@@ -479,7 +552,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                   />
 
                   <Slider
-                    label="إزاحة الظل العمودي (Offset Y)"
+                    label={t('editor.shadowOffsetYLabel', 'إزاحة الظل العمودي (Offset Y)')}
                     min={-10}
                     max={20}
                     value={textSettings.shadowOffsetY ?? 3}
@@ -494,7 +567,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
 
           {/* 2. Glow Effect Control */}
           <SectionAccordion
-            title="التوهج والنور الإلهي (Glow Effect)"
+            title={t('editor.glowEffectTitle', 'التوهج والنور الإلهي (Glow Effect)')}
             icon={<Sparkles size={16} className="text-gold-400" />}
             defaultOpen={true}
           >
@@ -502,10 +575,10 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
               <div className="flex items-center justify-between">
                 <div>
                   <span className="font-bold text-surface-50 text-xs block">
-                    تفعيل التوهج
+                    {t('editor.toggleGlow', 'تفعيل التوهج')}
                   </span>
                   <span className="text-[11px] text-surface-400">
-                    هالة روحانية مشعة حول حروف الآية
+                    {t('editor.glowDesc', 'هالة روحانية مشعة حول حروف الآية')}
                   </span>
                 </div>
                 <input
@@ -519,15 +592,9 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
               {(textSettings.enableGlow ?? false) && (
                 <div className="space-y-3 pt-2 border-t border-surface-700/30">
                   <div>
-                    <label className="block text-xs font-bold text-surface-400 mb-1.5">لون التوهج</label>
+                    <label className="block text-xs font-bold text-surface-400 mb-1.5">{t('editor.glowColorLabel', 'لون التوهج')}</label>
                     <div className="grid grid-cols-5 gap-1.5">
-                      {[
-                        { color: '#fbbf24', label: 'ذهبي 👑' },
-                        { color: '#ffffff', label: 'أبيض ⚪' },
-                        { color: '#34d399', label: 'زمردي 🌿' },
-                        { color: '#38bdf8', label: 'سماوي 🌌' },
-                        { color: '#f472b6', label: 'وردي 🌸' },
-                      ].map((g) => (
+                      {glowColors.map((g) => (
                         <button
                           key={g.color}
                           type="button"
@@ -546,7 +613,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                   </div>
 
                   <Slider
-                    label="شدة التوهج والبريق (Glow Intensity)"
+                    label={t('editor.glowIntensityLabel', 'شدة التوهج والبريق (Glow Intensity)')}
                     min={4}
                     max={40}
                     value={textSettings.glowIntensity ?? 16}
@@ -561,7 +628,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
 
           {/* 3. Text Stroke / Outline */}
           <SectionAccordion
-            title="حدود النص (Text Stroke / Outline)"
+            title={t('editor.textStrokeTitle', 'حدود النص (Text Stroke / Outline)')}
             icon={<Sliders size={16} className="text-gold-400" />}
             defaultOpen={false}
           >
@@ -569,10 +636,10 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
               <div className="flex items-center justify-between">
                 <div>
                   <span className="font-bold text-surface-50 text-xs block">
-                    حدود النص (Stroke)
+                    {t('editor.toggleStroke', 'حدود النص (Stroke)')}
                   </span>
                   <span className="text-[11px] text-surface-400">
-                    إطار يحدد الحروف لمنع تشويش الخلفيات الصعبة
+                    {t('editor.strokeDesc', 'إطار يحدد الحروف لمنع تشويش الخلفيات الصعبة')}
                   </span>
                 </div>
                 <input
@@ -586,7 +653,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
               {(textSettings.enableStroke ?? false) && (
                 <div className="space-y-3 pt-2 border-t border-surface-700/30">
                   <Slider
-                    label="سُمك الحد الخارجي (Stroke Width)"
+                    label={t('editor.strokeWidthLabel', 'سُمك الحد الخارجي (Stroke Width)')}
                     min={0.5}
                     max={4.0}
                     step={0.5}
@@ -597,14 +664,9 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                   />
 
                   <div>
-                    <label className="block text-xs font-bold text-surface-400 mb-1.5">لون الحد</label>
+                    <label className="block text-xs font-bold text-surface-400 mb-1.5">{t('editor.strokeColorLabel', 'لون الحد')}</label>
                     <div className="flex items-center gap-2">
-                      {[
-                        { color: '#000000', label: 'أسود كاحل' },
-                        { color: '#fbbf24', label: 'ذهبي' },
-                        { color: '#ffffff', label: 'أبيض' },
-                        { color: '#0f172a', label: 'كحلي داكن' },
-                      ].map((st) => (
+                      {strokeColors.map((st) => (
                         <button
                           key={st.color}
                           type="button"
@@ -627,20 +689,13 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
 
           {/* 4. Text Gradient Fill */}
           <SectionAccordion
-            title="التدرج اللوني للنص (Gradient Fill)"
+            title={t('editor.textGradientTitle', 'التدرج اللوني للنص (Gradient Fill)')}
             icon={<Palette size={16} className="text-gold-400" />}
             defaultOpen={false}
           >
             <div className="p-3.5 rounded-2xl bg-surface-900/90 border border-surface-700/40 space-y-2.5">
               <div className="grid grid-cols-3 gap-1.5">
-                {[
-                  { id: 'none', label: 'أحادي اللون ⚪' },
-                  { id: 'gold', label: 'ذهب ملكي 👑' },
-                  { id: 'silver', label: 'فضي لامع 🪙' },
-                  { id: 'emerald', label: 'زمردي نوراني 🌿' },
-                  { id: 'amber', label: 'عنبر دافئ 🔥' },
-                  { id: 'celestial', label: 'سماوي كوني 🌌' },
-                ].map((grad) => (
+                {textGradients.map((grad) => (
                   <button
                     key={grad.id}
                     type="button"
@@ -665,39 +720,12 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
         <div className="space-y-3">
           {/* Text Motion Animation Selector */}
           <SectionAccordion
-            title="نمط حركة وظهور النص (Text Motion Animation)"
+            title={t('editor.motionAnimTitle', 'نمط حركة وظهور النص (Text Motion Animation)')}
             icon={<Play size={16} className="text-gold-400" />}
             defaultOpen={true}
           >
             <div className="grid grid-cols-2 gap-1.5">
-              {[
-                {
-                  id: 'wordByWord',
-                  label: 'كلمة بكلمة (كاريوكي)',
-                  sub: 'تزامن دقيق مع التلاوة',
-                  icon: '⚡',
-                },
-                { id: 'fadeIn', label: 'ظهور تدريجي ناعم', sub: 'انتقال سينمائي هادئ', icon: '🕊️' },
-                { id: 'lineByLine', label: 'سطر بسطر', sub: 'انزلاق متتابع', icon: '📜' },
-                {
-                  id: 'typewriter',
-                  label: 'كتابة تلقائية (Typewriter)',
-                  sub: 'كتابة فورية حرف بحرف',
-                  icon: '⌨️',
-                },
-                {
-                  id: 'scaleBounce',
-                  label: 'نبض وتكبير (Scale Pop)',
-                  sub: 'حركة تفاعلية جذابة',
-                  icon: '💫',
-                },
-                {
-                  id: 'glowPulse',
-                  label: 'نبض التوهج (Glow Pulse)',
-                  sub: 'إشعاع نوراني مستمر',
-                  icon: '✨',
-                },
-              ].map((anim) => (
+              {textAnimations.map((anim) => (
                 <button
                   key={anim.id}
                   type="button"
@@ -728,7 +756,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
 
           {/* Karaoke Word Highlight Settings */}
           <SectionAccordion
-            title="إبراز الكلمة المتلوّة (كاريوكي ذكي)"
+            title={t('editor.karaokeTitle', 'إبراز الكلمة المتلوّة (كاريوكي ذكي)')}
             icon={<Sparkles size={16} className="text-gold-400" />}
             defaultOpen={true}
           >
@@ -736,10 +764,10 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
               <div className="flex items-center justify-between">
                 <div>
                   <span className="font-bold text-surface-50 text-xs block">
-                    تفعيل كاريوكي الكلمات
+                    {t('editor.toggleKaraoke', 'تفعيل كاريوكي الكلمات')}
                   </span>
                   <span className="text-[11px] text-surface-400">
-                    تلوين وتكبير الكلمة لحظة نطقها من القارئ
+                    {t('editor.karaokeDesc', 'تلوين وتكبير الكلمة لحظة نطقها من القارئ')}
                   </span>
                 </div>
                 <input
@@ -756,16 +784,10 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                 <div className="space-y-3 pt-2 border-t border-surface-700/30">
                   <div>
                     <label className="block text-xs font-bold text-surface-400 mb-1.5">
-                      تأثير إبراز الكلمة
+                      {t('editor.highlightEffectLabel', 'تأثير إبراز الكلمة')}
                     </label>
                     <div className="grid grid-cols-2 gap-1.5">
-                      {[
-                        { id: 'emeraldGlow', name: 'زمردي 🌿', color: '#10b981' },
-                        { id: 'radiantWhite', name: 'أبيض ناصع ⚪', color: '#ffffff' },
-                        { id: 'amberEmber', name: 'عنبر دافئ 🔥', color: '#f97316' },
-                        { id: 'pillBadge', name: 'كبسولة عائمة 💊', color: '#38bdf8' },
-                        { id: 'underlineWave', name: 'تموج تحتي 〰️', color: '#a855f7' },
-                      ].map((h) => (
+                      {highlightStyles.map((h) => (
                         <button
                           key={h.id}
                           type="button"
@@ -790,7 +812,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
 
                   <div className="grid grid-cols-2 gap-2 pt-2 border-t border-surface-700/30 items-center">
                     <Slider
-                      label="عتامة باقي الكلمات"
+                      label={t('editor.inactiveWordOpacityLabel', 'عتامة باقي الكلمات')}
                       min={0.2}
                       max={1.0}
                       step={0.05}
@@ -816,7 +838,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                           className="rounded border-surface-700/40 text-gold-500 focus:ring-0"
                         />
                         <span className="text-[11px] font-bold text-surface-50">
-                          تكبير الكلمة النشطة 🔍
+                          {t('editor.highlightScaleToggle', 'تكبير الكلمة النشطة 🔍')}
                         </span>
                       </label>
                     </div>
@@ -832,7 +854,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
       {activeSubTab === 'translation' && (
         <div className="space-y-3">
           <SectionAccordion
-            title="ترجمة الآيات متعددة اللغات (Subtitles)"
+            title={t('editor.translationSubtitlesTitle', 'ترجمة الآيات متعددة اللغات (Subtitles)')}
             icon={<Sparkles size={16} className="text-gold-400" />}
             defaultOpen={true}
           >
@@ -840,10 +862,10 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
               <div className="flex items-center justify-between">
                 <div>
                   <span className="font-bold text-surface-50 text-xs block">
-                    عرض الترجمة الإنجليزية / العالمية
+                    {t('editor.toggleTranslationSubtitles', 'عرض الترجمة الإنجليزية / العالمية')}
                   </span>
                   <span className="text-[11px] text-surface-400">
-                    تظهر أسفل النص العربي بشكل سينمائي
+                    {t('editor.translationSubtitlesDesc', 'تظهر أسفل النص العربي بشكل سينمائي')}
                   </span>
                 </div>
                 <input
@@ -858,7 +880,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                 <div className="space-y-3 pt-2 border-t border-surface-700/30">
                   <div>
                     <label className="block text-xs font-bold text-surface-400 mb-1.5">
-                      لغة الترجمة
+                      {t('editor.translationLangLabel', 'لغة الترجمة')}
                     </label>
                     <select
                       value={textSettings.translationLanguage || 'en'}
@@ -877,7 +899,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                   </div>
 
                   <Slider
-                    label="حجم خط الترجمة"
+                    label={t('editor.translationFontSizeLabel', 'حجم خط الترجمة')}
                     min={10}
                     max={20}
                     value={textSettings.translationFontSize || 13}
