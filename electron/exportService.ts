@@ -875,11 +875,57 @@ function safeSendProgress(
   }
 }
 
-export function setupExportHandlers(tempDir: string) {
-  let activeFfmpegCmd: any = null;
-  let isNativeExportActive = false;
-  let activeJobTempDir: string | null = null;
+let activeFfmpegCmd: any = null;
+let isNativeExportActive = false;
+let activeJobTempDir: string | null = null;
 
+export function killActiveExport(): void {
+  if (activeFfmpegCmd) {
+    try {
+      activeFfmpegCmd.kill('SIGKILL');
+    } catch (err) {
+      console.warn('[Export] killActiveExport error:', err);
+    }
+    activeFfmpegCmd = null;
+  }
+  isNativeExportActive = false;
+  if (activeJobTempDir) {
+    try {
+      if (fs.existsSync(activeJobTempDir)) {
+        fs.rmSync(activeJobTempDir, { recursive: true, force: true });
+      }
+    } catch (e) {
+      console.debug('[Export] Cleanup error on killActiveExport:', e);
+    }
+    activeJobTempDir = null;
+  }
+}
+
+export function cleanOldExportJobs(exportsDir: string, maxAgeMs = 24 * 60 * 60 * 1000): void {
+  try {
+    if (!fs.existsSync(exportsDir)) return;
+    const entries = fs.readdirSync(exportsDir);
+    const now = Date.now();
+    for (const entry of entries) {
+      if (entry.startsWith('job_') || entry.endsWith('.tmp')) {
+        const fullPath = path.join(exportsDir, entry);
+        try {
+          const stat = fs.statSync(fullPath);
+          if (now - stat.mtimeMs > maxAgeMs) {
+            fs.rmSync(fullPath, { recursive: true, force: true });
+            console.debug('[Export] Cleaned orphaned export job:', entry);
+          }
+        } catch (e) {
+          console.debug('[Export] Clean job stat error:', e);
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('[Export] cleanOldExportJobs failed:', err);
+  }
+}
+
+export function setupExportHandlers(tempDir: string) {
   ipcMain.handle('export:choosePath', async (_event, projectName: string) => {
     const result = await dialog.showSaveDialog({
       title: 'حفظ الفيديو',
@@ -893,25 +939,7 @@ export function setupExportHandlers(tempDir: string) {
   });
 
   ipcMain.handle('export:cancel', async () => {
-    if (activeFfmpegCmd) {
-      try {
-        activeFfmpegCmd.kill('SIGKILL');
-      } catch (err) {
-        console.warn('[Export] Cancel kill error:', err);
-      }
-      activeFfmpegCmd = null;
-    }
-    isNativeExportActive = false;
-    if (activeJobTempDir) {
-      try {
-        if (fs.existsSync(activeJobTempDir)) {
-          fs.rmSync(activeJobTempDir, { recursive: true, force: true });
-        }
-      } catch (e) {
-        console.debug('[Export] Cleanup error on cancel:', e);
-      }
-      activeJobTempDir = null;
-    }
+    killActiveExport();
     return { success: true };
   });
 

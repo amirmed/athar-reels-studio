@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain, dialog, shell, Menu, nativeTheme, session 
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
-import { setupExportHandlers } from './exportService.js';
+import { setupExportHandlers, killActiveExport, cleanOldExportJobs } from './exportService.js';
 import { isSafeUserPath } from './pathSecurity.js';
 
 // ESM-compatible __dirname
@@ -135,11 +135,22 @@ function createWindow() {
 app.whenReady().then(() => {
   ensureDirectories();
   createWindow();
+  // Clean orphaned export jobs older than 24h on startup
+  cleanOldExportJobs(getExportsPath());
   // Setup FFmpeg export IPC handlers
   setupExportHandlers(getExportsPath());
 });
 
+app.on('before-quit', () => {
+  killActiveExport();
+});
+
+app.on('will-quit', () => {
+  killActiveExport();
+});
+
 app.on('window-all-closed', () => {
+  killActiveExport();
   if (process.platform !== 'darwin') {
     app.quit();
   }
