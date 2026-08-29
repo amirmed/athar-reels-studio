@@ -1,6 +1,7 @@
 import { ipcMain, dialog } from 'electron';
 import path from 'path';
 import fs from 'fs';
+import http from 'http';
 import https from 'https';
 import dns from 'dns';
 import type { IncomingHttpHeaders } from 'http';
@@ -248,7 +249,8 @@ async function downloadFile(url: string, destPath: string, redirects = 0): Promi
   }
 
   return new Promise((resolve, reject) => {
-    const req = https.get(parsedUrl, {
+    const client = parsedUrl.protocol === 'http:' ? http : https;
+    const req = client.get(parsedUrl, {
       headers: {
         'User-Agent': 'IslamicReelsStudio/1.0',
         Accept: '*/*',

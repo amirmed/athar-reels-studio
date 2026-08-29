@@ -65,6 +65,38 @@ function createWindow() {
   // Force dark mode for the native title bar
   nativeTheme.themeSource = 'dark';
 
+  // Content Security Policy (CSP): Strict HTTPS-only in production, dev-friendly in development
+  const prodCsp = [
+    "default-src 'self' blob: data:",
+    "script-src 'self' 'unsafe-inline' blob:",
+    "style-src 'self' 'unsafe-inline'",
+    "font-src 'self' data: blob:",
+    "img-src 'self' data: blob: https:",
+    "media-src 'self' data: blob: https:",
+    "connect-src 'self' https: blob: data:",
+    "worker-src 'self' blob:",
+  ].join('; ');
+
+  const devCsp = [
+    "default-src 'self' 'unsafe-inline' blob: data: http://localhost:*",
+    "script-src 'self' 'unsafe-inline' blob:",
+    "style-src 'self' 'unsafe-inline'",
+    "font-src 'self' data: blob:",
+    "img-src 'self' data: blob: https: http:",
+    "media-src 'self' data: blob: https: http:",
+    "connect-src 'self' https: http: ws: blob: data:",
+    "worker-src 'self' blob:",
+  ].join('; ');
+
+  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        'Content-Security-Policy': [isDev ? devCsp : prodCsp],
+      },
+    });
+  });
+
   // Secure default session permissions: deny untrusted device/camera/microphone requests by default
   session.defaultSession.setPermissionRequestHandler((_webContents, _permission, callback) => {
     callback(false);
