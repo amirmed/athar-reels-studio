@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { setupExportHandlers, killActiveExport, cleanOldExportJobs } from './exportService.js';
-import { isSafeUserPath } from './pathSecurity.js';
+import { isSafeUserPath, registerTrustedDirectory, loadTrustedDirectories } from './pathSecurity.js';
 
 // ESM-compatible __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -32,6 +32,7 @@ function getExportsPath(): string {
 
 // Ensure directories exist
 function ensureDirectories() {
+  loadTrustedDirectories();
   const dirs = [getAppDataPath(), getProjectsPath(), getExportsPath()];
   for (const dir of dirs) {
     if (!fs.existsSync(dir)) {
@@ -248,14 +249,18 @@ ipcMain.handle('dialog:saveFile', async (_event, options: { defaultPath?: string
       { name: 'Video', extensions: ['mp4'] },
     ],
   });
-  return result.canceled ? null : result.filePath;
+  if (result.canceled || !result.filePath) return null;
+  registerTrustedDirectory(path.dirname(result.filePath));
+  return result.filePath;
 });
 
 ipcMain.handle('dialog:openDirectory', async () => {
   const result = await dialog.showOpenDialog(mainWindow!, {
     properties: ['openDirectory'],
   });
-  return result.canceled ? null : result.filePaths[0];
+  if (result.canceled || !result.filePaths[0]) return null;
+  registerTrustedDirectory(result.filePaths[0]);
+  return result.filePaths[0];
 });
 
 // ==================== Project Persistence ====================

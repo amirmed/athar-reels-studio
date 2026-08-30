@@ -1104,9 +1104,9 @@ export function setupExportHandlers(tempDir: string) {
           const dest = path.join(jobTempDir, `ayah_${ts}_${i}.mp3`);
           try {
             if (isDataUrl(urls[i])) {
-              const base64Data = urls[i].replace(/^data:[^;]+;base64,/, '');
+              const base64Data = urls[i].substring(urls[i].indexOf(',') + 1);
               const buffer = Buffer.from(base64Data, 'base64');
-              fs.writeFileSync(dest, buffer);
+              await fs.promises.writeFile(dest, buffer);
               downloaded.push(dest);
             } else if (isLocalFile(urls[i])) {
               downloaded.push(urls[i]);
@@ -1128,8 +1128,18 @@ export function setupExportHandlers(tempDir: string) {
 
         downloadedAudio = downloaded;
         safeSendProgress(_event.sender, { phase: 'حساب توقيت الآيات من الصوت...', percent: 26 });
+        const syncedTotalDuration = options.totalDuration;
         for (let i = 0; i < downloadedAudio.length; i++) {
-          audioDurations.push(await getMediaDurationSeconds(downloadedAudio[i]));
+          try {
+            audioDurations.push(await getMediaDurationSeconds(downloadedAudio[i]));
+          } catch (e) {
+            console.warn('[Export] تعذر قراءة مدة الملف:', downloadedAudio[i], e);
+            if (downloadedAudio.length === 1 && syncedTotalDuration && syncedTotalDuration > 0) {
+              audioDurations.push(syncedTotalDuration);
+            } else {
+              throw new Error(`تعذر قراءة مدة ملف الصوت ${i + 1}/${downloadedAudio.length}`);
+            }
+          }
         }
 
         if (downloaded.length === 1) {
@@ -1351,6 +1361,21 @@ export function setupExportHandlers(tempDir: string) {
           })
           .on('end', () => {
             cleanup();
+            try {
+              const size = fs.existsSync(options.outputPath)
+                ? fs.statSync(options.outputPath).size
+                : 0;
+              if (size < 1024) {
+                resolve({
+                  success: false,
+                  error: `الملف الناتج فارغ أو تالف (${size} بايت). أعد المحاولة أو غيّر إعدادات الجودة.`,
+                });
+                return;
+              }
+            } catch (e: any) {
+              resolve({ success: false, error: `تعذر التحقق من الملف الناتج: ${e.message}` });
+              return;
+            }
             safeSendProgress(_event.sender, { phase: 'اكتمل التصدير ✅', percent: 100 });
             resolve({ success: true, outputPath: options.outputPath });
           })

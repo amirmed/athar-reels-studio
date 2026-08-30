@@ -30,11 +30,12 @@ import {
 } from '../../types';
 import { isVideoMedia } from '../../utils/imageUtils';
 import { useHotkeys } from '../../hooks/useHotkeys';
+import { useExportJob } from '../../hooks/useExportJob';
+import { logger } from '../../utils/logger';
 import { useAppStore } from '../../store/useAppStore';
 import { useTranslation } from '../../i18n';
 import {
   PLATFORM_PRESETS,
-  exportProject,
   isProjectExporting,
 } from '../../services/exportOrchestrator';
 
@@ -87,25 +88,42 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const addToast = useAppStore((s) => s.addToast);
-  const [status, setStatus] = useState<ExportStatus>('idle');
-  const [progress, setProgress] = useState(0);
-  const [phase, setPhase] = useState('جاري التجهيز...');
-  const [outputPath, setOutputPath] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [downloadBlobUrl, setDownloadBlobUrl] = useState<string | null>(null);
+
+  const {
+    status: exportJobStatus,
+    isExporting,
+    progress,
+    phase,
+    error,
+    result: exportResult,
+    downloadBlobUrl,
+    currentFrame: currentFrameNumber = 0,
+    totalFrames: totalFrameCount = 0,
+    currentAyah: currentAyahNumber = 1,
+    fps: realtimeFps = 30,
+    elapsedSeconds = 0,
+    estimatedSecondsRemaining = 0,
+    startExport: runExportJob,
+    cancelExport,
+    reset: resetExportJob,
+  } = useExportJob();
+
+  const status: ExportStatus =
+    exportJobStatus === 'done'
+      ? 'done'
+      : exportJobStatus === 'error'
+      ? 'error'
+      : isExporting
+      ? 'exporting'
+      : 'idle';
+
+  const outputPath = exportResult?.outputPath || '';
+
   const [showThumbnailModal, setShowThumbnailModal] = useState(false);
   const [showPublishKitModal, setShowPublishKitModal] = useState(false);
   const [selectedPlatformPreset, setSelectedPlatformPreset] = useState<string>('tiktok');
   const [activeTab, setActiveTab] = useState<'export' | 'preview'>('export');
-
-  // Smart Progress Metrics State
-  const [currentFrameNumber, setCurrentFrameNumber] = useState(0);
-  const [totalFrameCount, setTotalFrameCount] = useState(0);
-  const [currentAyahNumber, setCurrentAyahNumber] = useState(1);
-  const [elapsedSeconds, setElapsedSeconds] = useState(0);
-  const [estimatedSecondsRemaining, setEstimatedSecondsRemaining] = useState(0);
   const [estimatedSizeMb, setEstimatedSizeMb] = useState(0);
-  const [realtimeFps, setRealtimeFps] = useState(30);
 
   // Live Canvas Preview Player State
   const [isPreviewPlaying, setIsPreviewPlaying] = useState(true);
@@ -113,38 +131,14 @@ export const ExportModal: React.FC<ExportModalProps> = ({
   const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const previewAnimRef = useRef<number | null>(null);
 
-  const abortControllerRef = useRef<AbortController | null>(null);
-
   useEffect(() => {
     if (!isOpen) {
-      setStatus('idle');
-      setProgress(0);
-      setPhase('');
-      setError(null);
-      setDownloadBlobUrl((prevUrl) => {
-        if (prevUrl && prevUrl.startsWith('blob:')) {
-          try {
-            URL.revokeObjectURL(prevUrl);
-          } catch {}
-        }
-        return null;
-      });
-      abortControllerRef.current = null;
+      resetExportJob();
       if (previewAnimRef.current) {
         cancelAnimationFrame(previewAnimRef.current);
       }
     }
-  }, [isOpen]);
-
-  useEffect(() => {
-    return () => {
-      if (downloadBlobUrl && downloadBlobUrl.startsWith('blob:')) {
-        try {
-          URL.revokeObjectURL(downloadBlobUrl);
-        } catch {}
-      }
-    };
-  }, [downloadBlobUrl]);
+  }, [isOpen, resetExportJob]);
 
   const activePreset =
     PLATFORM_PRESETS.find((p) => p.id === selectedPlatformPreset) || PLATFORM_PRESETS[0];
@@ -288,14 +282,9 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
   // Main Export Process
   const handleStartExport = async () => {
-    if (status === 'exporting' || isProjectExporting()) {
+    if (isExporting || isProjectExporting()) {
       return;
     }
-    setStatus('exporting');
-    setProgress(0);
-    setError(null);
-    setPhase('جاري تهيئة منصة التصيير والموارد...');
-    abortControllerRef.current = new AbortController();
 
     if (audioUrls.length === 1 && ayahs.length > 1) {
       addToast({
@@ -315,83 +304,38 @@ export const ExportModal: React.FC<ExportModalProps> = ({
       ? `${settings.projectsPath.replace(/[/\\]+$/, '')}/${projectName.replace(/[/\\?%*:|"<>]/g, '-')}.mp4`
       : undefined;
 
-    try {
-      const result = await exportProject({
-        projectName,
-        surahName,
-        reciterName,
-        aspectRatio: activePreset.aspect,
-        width: activePreset.width,
-        height: activePreset.height,
-        fps: activePreset.fps,
-        bitrate: activePreset.bitrate,
-        backgroundPath,
-        backgroundOpacity: bgOpacity,
-        audioUrls,
-        ayahs,
-        textSettings,
-        audioSettings,
-        watermark,
-        showTranslation,
-        showTafsir,
-        totalDuration,
-        savePathPref: preferredSavePath,
-        signal: abortControllerRef.current.signal,
-        onProgress: (evt) => {
-          setProgress(evt.percent);
-          setPhase(evt.phase);
-          if (evt.currentFrame !== undefined) setCurrentFrameNumber(evt.currentFrame);
-          if (evt.totalFrames !== undefined) setTotalFrameCount(evt.totalFrames);
-          if (evt.fps !== undefined) setRealtimeFps(evt.fps);
-          if (evt.currentAyah !== undefined) setCurrentAyahNumber(evt.currentAyah);
-          if (evt.elapsedSeconds !== undefined) setElapsedSeconds(evt.elapsedSeconds);
-          if (evt.estimatedSecondsRemaining !== undefined) {
-            setEstimatedSecondsRemaining(evt.estimatedSecondsRemaining);
-          }
-        },
-      });
-
-      if (result.success) {
-        if (result.blobUrl) {
-          setDownloadBlobUrl(result.blobUrl);
-        }
-        if (result.outputPath) {
-          setOutputPath(result.outputPath);
-        }
-        setStatus('done');
-        setProgress(100);
-        setPhase('اكتمل التصدير بنجاح وبأعلى جودة ✅');
-      } else {
-        throw new Error(result.error || t('exportModal.errorDefault', 'فشلت عملية تصدير الفيديو'));
-      }
-    } catch (err: unknown) {
-      if (abortControllerRef.current?.signal.aborted) {
-        setStatus('idle');
-        setProgress(0);
-        setPhase('');
-        return;
-      }
-      console.error('[ExportModal] Export failed:', err);
-      const errMsg = err instanceof Error ? err.message : t('exportModal.errorDefault', 'حدث خطأ أثناء تصدير الفيديو');
-      setError(errMsg);
-      setStatus('error');
-    }
+    await runExportJob({
+      projectName,
+      surahName,
+      reciterName,
+      aspectRatio: activePreset.aspect,
+      width: activePreset.width,
+      height: activePreset.height,
+      fps: activePreset.fps,
+      bitrate: activePreset.bitrate,
+      backgroundPath,
+      backgroundOpacity: bgOpacity,
+      audioUrls,
+      ayahs,
+      textSettings,
+      audioSettings,
+      watermark,
+      showTranslation,
+      showTafsir,
+      totalDuration,
+      savePathPref: preferredSavePath,
+    });
   };
 
   const handleCancelExport = () => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
+    cancelExport();
     if (window.electronAPI?.videoExport?.cancel) {
       try {
         window.electronAPI.videoExport.cancel();
       } catch (err) {
-        console.debug('[ExportModal] Cancel error:', err);
+        logger.debug('[ExportModal] Cancel error:', err);
       }
     }
-    setStatus('idle');
-    setProgress(0);
-    setPhase('');
   };
 
   const handleUserCancelClick = () => {
@@ -440,7 +384,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                 onClick={() => setActiveTab('export')}
                 className={`flex-1 py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                   activeTab === 'export'
-                    ? 'bg-gold-500 text-surface-950 font-extrabold shadow-sm'
+                    ? 'bg-gold-500 text-onbrand font-extrabold shadow-sm'
                     : 'text-surface-400 hover:text-surface-50'
                 }`}
               >
@@ -452,7 +396,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                 onClick={() => setActiveTab('preview')}
                 className={`flex-1 py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                   activeTab === 'preview'
-                    ? 'bg-gold-500 text-surface-950 font-extrabold shadow-sm'
+                    ? 'bg-gold-500 text-onbrand font-extrabold shadow-sm'
                     : 'text-surface-400 hover:text-surface-50'
                 }`}
               >
@@ -523,7 +467,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               <div className="space-y-3 flex flex-col items-center">
                 <div className="relative rounded-2xl overflow-hidden border border-gold-500/40 shadow-2xl bg-black flex items-center justify-center max-h-[280px]">
                   <canvas ref={previewCanvasRef} className="max-h-[280px] w-auto object-contain" />
-                  <div className="absolute top-2 end-2 px-2 py-0.5 rounded-full bg-black/70 backdrop-blur-md border border-white/10 text-[11px] text-gold-300 font-bold">
+                  <div className="absolute top-2 end-2 px-2 py-0.5 rounded-full bg-black/85 border border-white/10 text-[11px] text-gold-300 font-bold">
                     {t('exportModal.livePreviewBadge', 'معاينة حية 1:1 🎬')}
                   </div>
                 </div>
@@ -532,7 +476,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                   <button
                     type="button"
                     onClick={() => setIsPreviewPlaying(!isPreviewPlaying)}
-                    className="p-2 rounded-xl bg-gold-500 text-surface-950 font-bold text-xs flex items-center gap-1 cursor-pointer active:scale-95 shadow"
+                    className="p-2 rounded-xl bg-gold-500 text-onbrand font-bold text-xs flex items-center gap-1 cursor-pointer active:scale-95 shadow"
                   >
                     {isPreviewPlaying ? <Pause size={14} /> : <Play size={14} />}
                     <span>{isPreviewPlaying ? t('exportModal.pausePreview', 'إيقاف المعاينة') : t('exportModal.playPreview', 'تشغيل المعاينة')}</span>
@@ -548,7 +492,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             <button
               type="button"
               onClick={handleStartExport}
-              className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-gold-500 via-amber-400 to-gold-500 hover:from-gold-400 hover:to-amber-300 text-surface-950 font-extrabold text-sm flex items-center justify-center gap-2 shadow-xl shadow-gold-500/25 active:scale-98 transition-all cursor-pointer"
+              className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-gold-500 via-amber-400 to-gold-500 hover:from-gold-400 hover:to-amber-300 text-onbrand font-extrabold text-sm flex items-center justify-center gap-2 shadow-xl shadow-gold-500/25 active:scale-98 transition-all cursor-pointer"
             >
               <Download size={18} />
               <span>{t('exportModal.startExportBtn', `بدء تصدير الفيديو لمنصة «${activePreset.name}» 🚀`).replace('{name}', activePreset.name)}</span>
@@ -630,7 +574,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             </div>
 
             {/* Native Path or Download Blob Actions */}
-            {outputPath && (outputPath.includes('/') || outputPath.includes('\\')) && window.electronAPI?.shell && (
+            {outputPath && (outputPath.includes('/') || outputPath.includes('\\')) && window.electronAPI?.shell ? (
               <div className="space-y-2">
                 <div className="p-2.5 rounded-xl bg-surface-950/80 border border-surface-700/40 text-xs font-mono text-gold-300/90 truncate">
                   {outputPath}
@@ -639,7 +583,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                   <button
                     type="button"
                     onClick={() => window.electronAPI?.shell?.showItemInFolder(outputPath)}
-                    className="py-3 px-4 rounded-xl bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-surface-950 font-black text-xs flex items-center justify-center gap-1.5 shadow-md active:scale-98 transition-all cursor-pointer"
+                    className="py-3 px-4 rounded-xl bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-onbrand font-black text-xs flex items-center justify-center gap-1.5 shadow-md active:scale-98 transition-all cursor-pointer"
                   >
                     <FolderOpen size={15} />
                     <span>{t('exportModal.openFolder', 'فتح مكان الملف 📁')}</span>
@@ -654,7 +598,11 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                   </button>
                 </div>
               </div>
-            )}
+            ) : downloadBlobUrl ? (
+              <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs flex items-center justify-center gap-2">
+                <span>⚠️ {t('exportModal.notAutoSavedNotice', 'تم إنشاء الفيديو بنجاح — استخدم زر «حفظ باسم / تحميل» أدناه لحفظه في مجلدك المفضل.')}</span>
+              </div>
+            ) : null}
 
             {downloadBlobUrl && (
               <div className="space-y-2">
@@ -675,10 +623,13 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                         if (savePath) {
                           const res = await fetch(downloadBlobUrl);
                           const arrayBuffer = await res.arrayBuffer();
-                          await window.electronAPI.fs.writeBinaryFile(
+                          const writeRes = await window.electronAPI.fs.writeBinaryFile(
                             savePath,
                             new Uint8Array(arrayBuffer)
                           );
+                          if (!writeRes?.success) {
+                            throw new Error(writeRes?.error || 'تعذر الحفظ في المسار المختار');
+                          }
                           window.electronAPI.shell?.showItemInFolder(savePath);
                           return;
                         }
@@ -696,7 +647,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                     a.click();
                     document.body.removeChild(a);
                   }}
-                  className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-surface-950 font-extrabold text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 active:scale-98 transition-all cursor-pointer"
+                  className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-onbrand font-extrabold text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 active:scale-98 transition-all cursor-pointer"
                 >
                   <Download size={18} />
                   <span>{t('exportModal.saveAsDownload', 'حفظ باسم / تحميل ملف الفيديو 📥')}</span>
@@ -727,10 +678,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
               <button
                 type="button"
-                onClick={() => {
-                  setStatus('idle');
-                  setProgress(0);
-                }}
+                onClick={resetExportJob}
                 className="py-2.5 px-3 rounded-xl bg-surface-950 border border-surface-700/40 hover:border-surface-700/60 text-surface-300 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <RotateCcw size={14} />
@@ -755,7 +703,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
             <button
               type="button"
-              onClick={() => setStatus('idle')}
+              onClick={resetExportJob}
               className="px-6 py-2.5 rounded-xl bg-surface-800 hover:bg-surface-700 text-surface-50 font-bold text-xs cursor-pointer border border-surface-700/40"
             >
               {t('exportModal.retryBtn', 'إعادة المحاولة 🔄')}

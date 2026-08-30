@@ -196,7 +196,9 @@ export function resolveTargetOutputPath(
     return `${cleanDir}${separator}${cleanProjectName}.${targetExt}`;
   }
 
-  return `${cleanProjectName}.${targetExt}`;
+  // لا مسار مفضل — الطبقة الأصلية ستستخدم مجلد temp الآمن افتراضيًا،
+  // والطبقات 2/3 تعيد الـ blob فقط ليحفظه المستخدم عبر زر الحفظ
+  return '';
 }
 
 /**
@@ -503,7 +505,9 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
         };
       });
 
-      const targetFfmpegOutputPath = resolveTargetOutputPath(projectName, 'mp4', savePathPref);
+      const targetFfmpegOutputPath = savePathPref
+        ? resolveTargetOutputPath(projectName, 'mp4', savePathPref)
+        : undefined;
 
       const exportResult = await window.electronAPI.videoExport.start({
         projectName,
@@ -522,7 +526,8 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
         reciterName,
         fps,
         bitrate: targetBitrate,
-        outputPath: targetFfmpegOutputPath,
+        outputPath: targetFfmpegOutputPath || undefined,
+        totalDuration,
       });
 
       unbindProgress();
@@ -549,8 +554,13 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
           success: false,
           error: exportResult.error || 'تم إلغاء عملية التصدير',
         };
+      } else {
+        onProgress?.({
+          percent: 8,
+          phase: `تعذر محرك FFmpeg الأصلي${exportResult?.error ? ` (${exportResult.error})` : ''} — جارٍ التبديل للمحرك الاحتياطي (أبطأ)...`,
+        });
       }
-    } catch (nativeErr) {
+    } catch (nativeErr: any) {
       unbindProgress();
       signal?.removeEventListener('abort', onAbort);
       console.warn('[ExportOrchestrator] Native FFmpeg failed, falling back to WebCodecs:', nativeErr);
@@ -560,6 +570,10 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
           error: 'تم إلغاء عملية التصدير',
         };
       }
+      onProgress?.({
+        percent: 8,
+        phase: `تعذر محرك FFmpeg الأصلي${nativeErr?.message ? ` (${nativeErr.message})` : ''} — جارٍ التبديل للمحرك الاحتياطي (أبطأ)...`,
+      });
     } finally {
       signal?.removeEventListener('abort', onAbort);
     }
@@ -737,8 +751,13 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
         },
       });
 
+      if (mp4Blob.size < 1024) {
+        throw new Error('نتيجة الترميز فارغة (0 بايت) — فشل التصيير بصمت.');
+      }
+
       const targetOutputPath = resolveTargetOutputPath(projectName, 'mp4', savePathPref);
       const isExplicitPath = targetOutputPath.includes('/') || targetOutputPath.includes('\\');
+      let savedToDisk = false;
 
       // If running in Electron and we have an absolute destination path, save binary file directly to disk
       if (
@@ -752,8 +771,10 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
             targetOutputPath,
             new Uint8Array(arrayBuffer)
           );
-          if (writeRes && !writeRes.success && writeRes.error) {
-            console.warn('[ExportOrchestrator] Failed writing to preferred save path:', writeRes.error);
+          if (writeRes?.success) {
+            savedToDisk = true;
+          } else {
+            console.warn('[WebCodecs] فشل حفظ الملف تلقائيًا:', writeRes?.error);
           }
         } catch (fsErr) {
           console.warn('[ExportOrchestrator] writeBinaryFile error:', fsErr);
@@ -768,7 +789,7 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
         engine: 'webcodecs',
         blob: mp4Blob,
         blobUrl: downloadUrl,
-        outputPath: targetOutputPath,
+        outputPath: savedToDisk ? targetOutputPath : undefined,
         durationSec: totalDurationSec,
         fileSizeBytes: mp4Blob.size,
       };
@@ -1000,9 +1021,14 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
     animFrameId = requestAnimationFrame(renderLoop);
   });
 
+  if (finalBlob.size < 1024) {
+    throw new Error('نتيجة التسجيل فارغة (0 بايت) — فشل التصيير بصمت.');
+  }
+
   const ext = selectedMime.includes('mp4') ? 'mp4' : 'webm';
   const targetOutputPath = resolveTargetOutputPath(projectName, ext, savePathPref);
   const isExplicitPath = targetOutputPath.includes('/') || targetOutputPath.includes('\\');
+  let savedToDisk = false;
 
   // If running in Electron and we have an absolute destination path, save binary file directly to disk
   if (
@@ -1016,8 +1042,10 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
         targetOutputPath,
         new Uint8Array(arrayBuffer)
       );
-      if (writeRes && !writeRes.success && writeRes.error) {
-        console.warn('[ExportOrchestrator] Failed writing to preferred save path:', writeRes.error);
+      if (writeRes?.success) {
+        savedToDisk = true;
+      } else {
+        console.warn('[MediaRecorder] فشل حفظ الملف تلقائيًا:', writeRes?.error);
       }
     } catch (fsErr) {
       console.warn('[ExportOrchestrator] writeBinaryFile error:', fsErr);
@@ -1032,7 +1060,7 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
     engine: 'mediarecorder',
     blob: finalBlob,
     blobUrl: downloadUrl,
-    outputPath: targetOutputPath,
+    outputPath: savedToDisk ? targetOutputPath : undefined,
     durationSec: totalDurationSec,
     fileSizeBytes: finalBlob.size,
   };
