@@ -8,10 +8,8 @@ import {
   FolderOpen,
   Settings,
   Film,
-  PanelRightClose,
-  PanelRightOpen,
-  PanelLeftClose,
-  PanelLeftOpen,
+  ChevronsLeft,
+  ChevronsRight,
   BookHeart,
   Sparkles,
   Image as ImageIcon,
@@ -25,7 +23,7 @@ interface NavItem {
   badgeColor?: string;
   icon: React.ReactNode;
   activeMatch?: Page[];
-  category?: 'main' | 'studios' | 'system';
+  category?: 'main' | 'studios' | 'workspace';
 }
 
 const navItems: NavItem[] = [
@@ -73,20 +71,13 @@ const navItems: NavItem[] = [
     activeMatch: ['voice-studio'],
     category: 'studios',
   },
-  // Management & Settings
+  // Content Management & Library
   {
     id: 'projects',
     label: { ar: 'مشاريعي والتصدير', en: 'Projects & Exports', fr: 'Projets & Exports' },
     icon: <FolderOpen size={19} />,
     activeMatch: ['projects', 'export'],
-    category: 'system',
-  },
-  {
-    id: 'settings',
-    label: { ar: 'الإعدادات', en: 'Settings', fr: 'Paramètres' },
-    icon: <Settings size={19} />,
-    activeMatch: ['settings'],
-    category: 'system',
+    category: 'workspace',
   },
 ];
 
@@ -96,6 +87,9 @@ export const Sidebar: React.FC = React.memo(() => {
   const sidebarCollapsed = useAppStore((s) => s.sidebarCollapsed);
   const toggleSidebar = useAppStore((s) => s.toggleSidebar);
   const { t, language } = useTranslation();
+
+  const currentLangKey = language as 'ar' | 'en' | 'fr';
+  const isSettingsActive = currentPage === 'settings';
 
   return (
     <motion.aside
@@ -122,7 +116,7 @@ export const Sidebar: React.FC = React.memo(() => {
               <div className="text-sm font-black text-surface-50 whitespace-nowrap tracking-tight">
                 {t('appName', 'أَثَــر ستوديو')}
               </div>
-              <p className="text-xs text-gold-400/90 whitespace-nowrap font-semibold">
+              <p className="text-xs text-gold-600 dark:text-gold-400 whitespace-nowrap font-semibold">
                 {t('appSubtitle', 'صانع الريلز القرآني')}
               </p>
             </motion.div>
@@ -140,25 +134,23 @@ export const Sidebar: React.FC = React.memo(() => {
           // Section Divider Labels
           const showStudiosHeader =
             item.category === 'studios' && (idx === 0 || navItems[idx - 1]?.category !== 'studios');
-          const showSystemHeader =
-            item.category === 'system' && (idx === 0 || navItems[idx - 1]?.category !== 'system');
-
-          const currentLangKey = language as 'ar' | 'en' | 'fr';
+          const showWorkspaceHeader =
+            item.category === 'workspace' && (idx === 0 || navItems[idx - 1]?.category !== 'workspace');
 
           return (
             <React.Fragment key={item.id}>
               {showStudiosHeader && !sidebarCollapsed && (
                 <div className="pt-3 pb-1 px-3 flex items-center justify-between text-[11px] font-black text-gold-400/80 tracking-wider">
                   <span>{t('nav.studios', 'الاستوديوهات الإبداعية')}</span>
-                  <span className="text-[9px] px-1.5 py-0.2 rounded bg-gold-400/10 border border-gold-400/20 text-gold-300">
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-gold-400/10 border border-gold-400/20 text-gold-300">
                     4
                   </span>
                 </div>
               )}
 
-              {showSystemHeader && !sidebarCollapsed && (
+              {showWorkspaceHeader && !sidebarCollapsed && (
                 <div className="pt-3 pb-1 px-3 text-[11px] font-bold text-surface-400 tracking-wider">
-                  <span>{t('nav.system', 'المشاريع والإعدادات')}</span>
+                  <span>{t('nav.workspace', 'مساحة العمل والمكتبة')}</span>
                 </div>
               )}
 
@@ -173,7 +165,7 @@ export const Sidebar: React.FC = React.memo(() => {
                   ${sidebarCollapsed ? 'px-0 py-2.5 justify-center' : 'px-3 py-2.5'}
                   ${
                     isActive
-                      ? 'bg-gradient-to-r from-accent-500/20 to-accent-600/10 text-surface-50 font-bold shadow-sm border border-accent-500/30'
+                      ? 'bg-gradient-to-r from-gold-500/20 to-amber-500/10 text-surface-50 font-bold shadow-sm border border-gold-500/30'
                       : 'text-surface-300 hover:bg-surface-800/60 hover:text-surface-50 font-medium'
                   }
                 `}
@@ -181,7 +173,7 @@ export const Sidebar: React.FC = React.memo(() => {
                 {isActive && (
                   <motion.div
                     layoutId="sidebar-indicator"
-                    className="absolute start-0 top-1/2 -translate-y-1/2 w-[3px] h-6 bg-accent-400 rounded-e-full shadow-[0_0_10px_rgba(20,184,166,0.6)]"
+                    className="absolute start-0 top-1/2 -translate-y-1/2 w-[3px] h-6 bg-gold-400 rounded-e-full shadow-[0_0_10px_rgba(251,191,36,0.6)]"
                     transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                   />
                 )}
@@ -214,26 +206,26 @@ export const Sidebar: React.FC = React.memo(() => {
       </nav>
 
       {/* New Project shortcut */}
-      <div className="px-2 mb-3">
+      <div className="px-2 mb-2">
         <button
           type="button"
           onClick={() => setCurrentPage('create')}
           aria-label={t('topbar.newProject', 'مشروع جديد')}
           className={`
-            w-full flex items-center gap-2 rounded-xl transition-all duration-200
-            bg-gradient-to-l from-accent-600/20 to-accent-500/10 border border-accent-500/20
-            hover:from-accent-600/30 hover:to-accent-500/20 hover:border-accent-500/30
-            ${sidebarCollapsed ? 'px-0 py-3 justify-center' : 'px-4 py-3'}
+            w-full flex items-center gap-2 rounded-xl transition-all duration-200 cursor-pointer
+            bg-gradient-to-l from-gold-500/20 to-amber-500/10 border border-gold-500/30
+            hover:from-gold-500/30 hover:to-amber-500/20 hover:border-gold-500/40
+            ${sidebarCollapsed ? 'px-0 py-2.5 justify-center' : 'px-4 py-2.5'}
           `}
         >
-          <Sparkles size={18} className="text-accent-400 shrink-0" />
+          <Sparkles size={18} className="text-gold-400 shrink-0" />
           <AnimatePresence>
             {!sidebarCollapsed && (
               <motion.span
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="text-sm font-semibold text-accent-400 whitespace-nowrap"
+                className="text-xs font-bold text-gold-400 whitespace-nowrap"
               >
                 {t('topbar.newProject', 'مشروع جديد')}
               </motion.span>
@@ -242,8 +234,48 @@ export const Sidebar: React.FC = React.memo(() => {
         </button>
       </div>
 
-      {/* Collapse toggle */}
-      <div className="border-t border-surface-700/30 p-2">
+      {/* Pinned Bottom Area: Settings & Collapse toggle */}
+      <div className="border-t border-surface-700/30 p-2 space-y-1">
+        {/* Settings pinned button */}
+        <button
+          type="button"
+          onClick={() => setCurrentPage('settings')}
+          title={t('topbar.settings', 'الإعدادات')}
+          aria-label={t('topbar.settings', 'الإعدادات')}
+          aria-current={isSettingsActive ? 'page' : undefined}
+          className={`
+            w-full flex items-center gap-2.5 rounded-xl transition-all duration-200 relative cursor-pointer
+            ${sidebarCollapsed ? 'px-0 py-2.5 justify-center' : 'px-3 py-2.5'}
+            ${
+              isSettingsActive
+                ? 'bg-gradient-to-r from-gold-500/20 to-amber-500/10 text-surface-50 font-bold shadow-sm border border-gold-500/30'
+                : 'text-surface-300 hover:bg-surface-800/60 hover:text-surface-50 font-medium'
+            }
+          `}
+        >
+          {isSettingsActive && (
+            <motion.div
+              layoutId="sidebar-indicator"
+              className="absolute start-0 top-1/2 -translate-y-1/2 w-[3px] h-6 bg-gold-400 rounded-e-full shadow-[0_0_10px_rgba(251,191,36,0.6)]"
+              transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+            />
+          )}
+          <Settings size={19} className="shrink-0" />
+          <AnimatePresence>
+            {!sidebarCollapsed && (
+              <motion.span
+                initial={{ opacity: 0, width: 0 }}
+                animate={{ opacity: 1, width: 'auto' }}
+                exit={{ opacity: 0, width: 0 }}
+                className="text-xs font-bold whitespace-nowrap overflow-hidden"
+              >
+                {t('topbar.settings', 'الإعدادات والتفضيلات')}
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </button>
+
+        {/* Collapse toggle */}
         <button
           type="button"
           onClick={toggleSidebar}
@@ -260,15 +292,9 @@ export const Sidebar: React.FC = React.memo(() => {
           }
         >
           {sidebarCollapsed ? (
-            language === 'ar' ? (
-              <PanelRightOpen size={18} />
-            ) : (
-              <PanelLeftOpen size={18} />
-            )
-          ) : language === 'ar' ? (
-            <PanelRightClose size={18} />
+            <ChevronsRight size={18} className="rtl:rotate-180 transition-transform duration-200" />
           ) : (
-            <PanelLeftClose size={18} />
+            <ChevronsLeft size={18} className="rtl:rotate-180 transition-transform duration-200" />
           )}
         </button>
       </div>

@@ -68,7 +68,7 @@ export const PresetTemplatesModal: React.FC<PresetTemplatesModalProps> = ({
 
                   {/* Tag Badge */}
                   <div className="absolute top-2.5 end-2.5">
-                    <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white shadow-sm">
+                    <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-black/85 border border-white/20 text-white shadow-sm">
                       {tpl.tag}
                     </span>
                   </div>

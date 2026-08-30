@@ -257,6 +257,7 @@ export interface AppSettings {
   performanceMode: 'balanced' | 'quality' | 'performance';
   autoSave: boolean;
   autoSaveInterval: number;
+  comfortableReading?: boolean;
 }
 
 export interface AzkarItem {

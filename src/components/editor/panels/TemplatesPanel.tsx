@@ -25,7 +25,7 @@ export const TemplatesPanel: React.FC<TemplatesPanelProps> = ({
         <button
           type="button"
           onClick={onOpenClipLibrary}
-          className="w-full py-2.5 px-3.5 rounded-2xl bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-surface-950 font-extrabold text-xs flex items-center justify-center gap-2 shadow-md shadow-gold-500/20 transition-all active:scale-95 mb-1 cursor-pointer"
+          className="w-full py-2.5 px-3.5 rounded-2xl bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-onbrand font-extrabold text-xs flex items-center justify-center gap-2 shadow-md shadow-gold-500/20 transition-all active:scale-95 mb-1 cursor-pointer"
         >
           <Film size={15} />
           <span>{t('editor.clipLibraryBtn', 'مكتبة المقاطع الجاهزة (أذكار وجمعة) 🎬')}</span>

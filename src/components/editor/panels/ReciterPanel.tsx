@@ -75,13 +75,13 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
           <div className="mb-3 p-3 rounded-2xl bg-gradient-to-r from-gold-500/20 via-amber-500/15 to-transparent border border-gold-400/40 space-y-2.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-gold-400 text-surface-950 flex items-center justify-center font-bold text-sm shadow-md">
+                <div className="w-8 h-8 rounded-xl bg-gold-400 text-onbrand flex items-center justify-center font-bold text-sm shadow-md">
                   🎙️
                 </div>
                 <div>
                   <div className="font-bold text-gold-700 dark:text-gold-300 text-xs flex items-center gap-1">
                     <span>{t('editor.customVoiceBannerTitle', 'تلاوتك المسجلة نشطة')}</span>
-                    <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
                       {t('editor.customVoiceBannerActive', 'مفعل')}
                     </span>
                   </div>
@@ -94,7 +94,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
                 <button
                   type="button"
                   onClick={onOpenVoiceRecorder}
-                  className="px-2.5 py-1 rounded-xl bg-gold-400 hover:bg-gold-300 text-surface-950 font-bold text-[11px] shadow-sm transition-all cursor-pointer"
+                  className="px-2.5 py-1 rounded-xl bg-gold-400 hover:bg-gold-300 text-onbrand font-bold text-[11px] shadow-sm transition-all cursor-pointer"
                 >
                   {t('editor.customVoiceChangeBtn', 'تغيير / تسجيل 🎙️')}
                 </button>
@@ -138,7 +138,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
             <div className="pt-2 border-t border-gold-400/20 space-y-1">
               <label className="text-[11px] font-bold text-gold-700 dark:text-gold-300 flex items-center justify-between">
                 <span>{t('editor.customReciterLabel', 'اسمك / اسم القارئ (يظهر في الفيديو والغلاف):')}</span>
-                <span className="text-[9px] text-surface-400">{t('editor.customReciterEditHint', 'تعديل')}</span>
+                <span className="text-[10px] text-surface-400">{t('editor.customReciterEditHint', 'تعديل')}</span>
               </label>
               <input
                 type="text"
@@ -167,11 +167,11 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
               const avail = getAvailableSurahsForReciter(reciterId);
               const isFull = avail.length === 114;
               return isFull ? (
-                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold border border-emerald-500/30">
+                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold border border-emerald-500/30">
                   {t('editor.fullSurahsBadge', '🟢 114 سورة كاملة')}
                 </span>
               ) : (
-                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 font-bold border border-amber-500/30">
+                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 font-bold border border-amber-500/30">
                   {t('editor.partialSurahsBadge', '🟡 {count} سورة مسجلة').replace('{count}', String(avail.length))}
                 </span>
               );
@@ -370,7 +370,7 @@ export const ReciterPanel: React.FC<ReciterPanelProps> = ({
                         setSurahNumber(fallbackSurahNum);
                         stopAudio();
                       }}
-                      className="px-2 py-0.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-surface-950 font-bold text-[10px] cursor-pointer"
+                      className="px-2 py-0.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-onbrand font-bold text-[10px] cursor-pointer"
                     >
                       {t('editor.pickSurahFallback', 'اختيار سورة {surah} 📖').replace('{surah}', fallbackSurahName || '')}
                     </button>

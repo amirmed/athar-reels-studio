@@ -26,6 +26,7 @@ import {
 
 import { studioTemplates } from '../../data/templates';
 import { surahs, reciters } from '../../data/mockData';
+import { getTodayDailyVerse } from '../../data/dailyVerses';
 import { StudioTemplate } from '../../types';
 import { OnboardingModal } from '../ui/OnboardingModal';
 import { useTranslation } from '../../i18n';
@@ -76,94 +77,16 @@ export const DashboardPage: React.FC = () => {
     const data = modalData as { projectId?: string; projectName?: string } | undefined;
     if (data?.projectId) {
       deleteProject(data.projectId);
-      addToast({ message: 'تم حذف المشروع بنجاح', type: 'success' });
+      addToast({
+        message: t('dashboard.projectDeletedSuccess', 'تم حذف المشروع بنجاح'),
+        type: 'success',
+      });
       closeModal();
     }
   };
 
   // 7 Daily Inspiring Verses Rotation (One for each day of the week)
-  const DAILY_VERSES = [
-    {
-      day: 0, // Sunday
-      surahName: 'الشرح',
-      surahNumber: 94,
-      fromAyah: 5,
-      toAyah: 6,
-      text: 'فَإِنَّ مَعَ الْعُسْرِ يُسْرًا ۝ إِنَّ مَعَ الْعُسْرِ يُسْرًا',
-      theme: 'الفرج والسكينة وتفريج الهموم',
-      reciter: 'ياسر الدوسري',
-      reciterId: 'yasser_128',
-    },
-    {
-      day: 1, // Monday
-      surahName: 'الضحى',
-      surahNumber: 93,
-      fromAyah: 5,
-      toAyah: 5,
-      text: 'وَلَسَوْفَ يُعْطِيكَ رَبُّكَ فَتَرْضَىٰ',
-      theme: 'العطاء والبشرى وجبر الخواطر',
-      reciter: 'مشاري العفاسي',
-      reciterId: 'alafasy_128',
-    },
-    {
-      day: 2, // Tuesday
-      surahName: 'الطلاق',
-      surahNumber: 65,
-      fromAyah: 2,
-      toAyah: 3,
-      text: 'وَمَن يَتَّقِ اللَّهَ يَجْعَل لَّهُ مَخْرَجًا ۝ وَيَرْزُقْهُ مِنْ حَيْثُ لَا يَحْتَسِبُ',
-      theme: 'التقوى وسعة الرزق والتوكل',
-      reciter: 'عبد الرحمن العوسي',
-      reciterId: 'abdulrahman_aloosi_128',
-    },
-    {
-      day: 3, // Wednesday
-      surahName: 'إبراهيم',
-      surahNumber: 14,
-      fromAyah: 7,
-      toAyah: 7,
-      text: 'لَئِن شَكَرْتُمْ لَأَزِيدَنَّكُمْ',
-      theme: 'بركة الشكر وزيادة النعم',
-      reciter: 'ماهر المعيقلي',
-      reciterId: 'maher_128',
-    },
-    {
-      day: 4, // Thursday
-      surahName: 'البقرة',
-      surahNumber: 2,
-      fromAyah: 186,
-      toAyah: 186,
-      text: 'وَإِذَا سَأَلَكَ عِبَادِي عَنِّي فَإِنِّي قَرِيبٌ ۖ أُجِيبُ دَعْوَةَ الدَّاعِ إِذَا دَعَانِ',
-      theme: 'قرب الله واستجابة الدعاء',
-      reciter: 'عبد الباسط عبد الصمد',
-      reciterId: 'abdulbasit_murat_192',
-    },
-    {
-      day: 5, // Friday
-      surahName: 'الكهف',
-      surahNumber: 18,
-      fromAyah: 10,
-      toAyah: 10,
-      text: 'رَبَّنَا آتِنَا مِن لَّدُنكَ رَحْمَةً وَهَيِّئْ لَنَا مِنْ أَمْرِنَا رَشَدًا',
-      theme: 'نور الجمعة وطلب الرشد والرحمة',
-      reciter: 'سعود الشريم',
-      reciterId: 'shuraim_128',
-    },
-    {
-      day: 6, // Saturday
-      surahName: 'الزمر',
-      surahNumber: 39,
-      fromAyah: 53,
-      toAyah: 53,
-      text: 'قُلْ يَا عِبَادِيَ الَّذِينَ أَسْرَفُوا عَلَىٰ أَنفُسِهِمْ لَا تَقْنَطُوا مِن رَّحْمَةِ اللَّهِ',
-      theme: 'سعة مغفرة الله والرجاء',
-      reciter: 'ياسر الدوسري',
-      reciterId: 'yasser_128',
-    },
-  ];
-
-  const todayIndex = new Date().getDay() % 7;
-  const dailyAyah = DAILY_VERSES[todayIndex] || DAILY_VERSES[0];
+  const dailyAyah = getTodayDailyVerse();
 
   const handleCreateDailyAyahReel = () => {
     const tpl = studioTemplates.find((t) => t.id === 'aesthetic_rain') || studioTemplates[0];
@@ -207,7 +130,10 @@ export const DashboardPage: React.FC = () => {
     });
     addProject(newProj);
     setCurrentProject(newProj);
-    addToast({ message: 'تم تجهيز مشروع آية اليوم في المحرر بنجاح', type: 'success' });
+    addToast({
+      message: t('dashboard.dailyAyahPrepared', 'تم تجهيز مشروع آية اليوم في المحرر بنجاح'),
+      type: 'success',
+    });
     setCurrentPage('editor');
   };
 
@@ -278,7 +204,12 @@ export const DashboardPage: React.FC = () => {
     setCurrentProject(newProj);
     setSelectedTemplateForConfirm(null);
     addToast({
-      message: `تم تطبيق قالب "${tpl.name}" وتجهيز المحرر لـ (${selectedSurahObj.name}) ✨`,
+      message: t(
+        'dashboard.templateAppliedSuccess',
+        'تم تطبيق قالب "{template}" وتجهيز المحرر لـ ({surah}) ✨'
+      )
+        .replace('{template}', tpl.name)
+        .replace('{surah}', selectedSurahObj.name),
       type: 'success',
     });
     setCurrentPage('editor');
@@ -312,18 +243,28 @@ export const DashboardPage: React.FC = () => {
             <div className="space-y-2.5 text-start max-w-2xl">
               <div className="flex items-center justify-center md:justify-start gap-2.5 flex-wrap">
                 <span className="text-xs px-3 py-1 rounded-full bg-gold-400/15 text-gold-300 font-bold border border-gold-400/25">
-                  آية اليوم المختارة
+                  {t('dashboard.dailyAyahBadge', 'آية اليوم المختارة')}
                 </span>
                 <span className="text-xs text-surface-300 font-semibold">
                   سورة {dailyAyah.surahName} • الآية ({dailyAyah.fromAyah}
                   {dailyAyah.toAyah !== dailyAyah.fromAyah ? `-${dailyAyah.toAyah}` : ''})
                 </span>
-                <span className="text-xs text-surface-400">بصوت القارئ: {dailyAyah.reciter}</span>
+                <span className="text-xs text-surface-400">
+                  {t('dashboard.reciterVoice', 'بصوت القارئ: {reciter}').replace(
+                    '{reciter}',
+                    dailyAyah.reciter
+                  )}
+                </span>
               </div>
               <h2 className="text-xl sm:text-2xl font-arabic font-bold text-surface-50 leading-loose selectable-text min-h-[3.5rem] flex items-center">
                 « {dailyAyah.text} »
               </h2>
-              <p className="text-sm text-gold-300/90 font-medium">الموضوع: {dailyAyah.theme}</p>
+              <p className="text-sm text-gold-300/90 font-medium">
+                {t('dashboard.dailyAyahTheme', 'الموضوع: {theme}').replace(
+                  '{theme}',
+                  dailyAyah.theme
+                )}
+              </p>
             </div>
 
             <div className="flex items-center gap-3 shrink-0">
@@ -333,7 +274,7 @@ export const DashboardPage: React.FC = () => {
                 className="py-3.5 px-6 rounded-2xl bg-gradient-to-r from-gold-400 to-accent-500 hover:from-gold-300 hover:to-accent-400 text-black font-bold text-sm flex items-center gap-2 shadow-lg shadow-gold-500/15 hover:scale-105 transition-all cursor-pointer min-h-[44px]"
               >
                 <Sparkles size={16} />
-                <span>إنشاء فيديو للآية فوراً</span>
+                <span>{t('dashboard.createDailyAyahVideo', 'إنشاء فيديو للآية فوراً')}</span>
               </button>
             </div>
           </div>
@@ -343,12 +284,14 @@ export const DashboardPage: React.FC = () => {
         <div className="space-y-3">
           <div className="flex items-center justify-between px-1">
             <h2 className="text-lg sm:text-xl font-black text-surface-50 tracking-tight flex items-center gap-2">
-              <span>استوديوهات الإنتاج والتصميم الإبداعي</span>
+              <span>{t('dashboard.productionStudios', 'استوديوهات الإنتاج والتصميم الإبداعي')}</span>
               <span className="text-xs px-2.5 py-0.5 rounded-full bg-gold-400/10 text-gold-300 border border-gold-400/20 font-bold">
-                4 استوديوهات متخصصة ✨
+                {t('dashboard.studiosCountBadge', '4 استوديوهات متخصصة ✨')}
               </span>
             </h2>
-            <span className="text-xs text-surface-400 hidden sm:inline">اضغط للفتح المباشر</span>
+            <span className="text-xs text-surface-400 hidden sm:inline">
+              {t('dashboard.clickToOpen', 'اضغط للفتح المباشر')}
+            </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
@@ -363,19 +306,22 @@ export const DashboardPage: React.FC = () => {
                   <Film size={22} />
                 </div>
                 <span className="text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-gold-400/20 text-gold-300 border border-gold-400/30">
-                  فيديو سينمائي 🎬
+                  {t('dashboard.studioQuranReelsBadge', 'فيديو سينمائي 🎬')}
                 </span>
               </div>
               <div className="space-y-1">
                 <h3 className="font-black text-sm text-surface-50 group-hover:text-gold-300 transition-colors">
-                  ريلز قرآني سينمائي
+                  {t('dashboard.studioQuranReelsTitle', 'ريلز قرآني سينمائي')}
                 </h3>
                 <p className="text-xs text-surface-300 line-clamp-2 leading-relaxed">
-                  فيديوهات قصيرة لكبار القراء مع كاريوكي التلاوة ومؤثرات كين بيرنز FHD
+                  {t(
+                    'dashboard.studioQuranReelsDesc',
+                    'فيديوهات قصيرة لكبار القراء مع كاريوكي التلاوة ومؤثرات كين بيرنز FHD'
+                  )}
                 </p>
               </div>
               <div className="mt-3 pt-2.5 border-t border-surface-700/40 flex items-center justify-between text-xs font-bold text-gold-400 group-hover:text-gold-300">
-                <span>إنشاء ريلز جديد</span>
+                <span>{t('dashboard.studioQuranReelsAction', 'إنشاء ريلز جديد')}</span>
                 <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
               </div>
             </button>
@@ -391,19 +337,22 @@ export const DashboardPage: React.FC = () => {
                   <BookHeart size={22} />
                 </div>
                 <span className="text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">
-                  أذكار + تسبيح 📿
+                  {t('dashboard.studioAzkarBadge', 'أذكار + تسبيح 📿')}
                 </span>
               </div>
               <div className="space-y-1">
                 <h3 className="font-black text-sm text-surface-50 group-hover:text-emerald-300 transition-colors">
-                  أذكار وأحاديث نبوية
+                  {t('dashboard.studioAzkarTitle', 'أذكار وأحاديث نبوية')}
                 </h3>
                 <p className="text-xs text-surface-300 line-clamp-2 leading-relaxed">
-                  أذكار الصباح والمساء وحصن المسلم مع عدّاد تسبيح تفاعلي وتحويل لريلز
+                  {t(
+                    'dashboard.studioAzkarDesc',
+                    'أذكار الصباح والمساء وحصن المسلم مع عدّاد تسبيح تفاعلي وتحويل لريلز'
+                  )}
                 </p>
               </div>
               <div className="mt-3 pt-2.5 border-t border-surface-700/40 flex items-center justify-between text-xs font-bold text-emerald-400 group-hover:text-emerald-300">
-                <span>فتح استوديو الأذكار</span>
+                <span>{t('dashboard.studioAzkarAction', 'فتح استوديو الأذكار')}</span>
                 <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
               </div>
             </button>
@@ -419,19 +368,22 @@ export const DashboardPage: React.FC = () => {
                   <ImageIcon size={22} />
                 </div>
                 <span className="text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-sky-400/20 text-sky-300 border border-sky-400/30">
-                  بوستات HD 🖼️
+                  {t('dashboard.studioQuotesBadge', 'بوستات HD 🖼️')}
                 </span>
               </div>
               <div className="space-y-1">
                 <h3 className="font-black text-sm text-surface-50 group-hover:text-sky-300 transition-colors">
-                  كروت وبوستات الصور
+                  {t('dashboard.studioQuotesTitle', 'كروت وبوستات الصور')}
                 </h3>
                 <p className="text-xs text-surface-300 line-clamp-2 leading-relaxed">
-                  تصميم بوستات دعوية وبطاقات آيات جاهزة لإنستغرام وواتساب بنقرة زر
+                  {t(
+                    'dashboard.studioQuotesDesc',
+                    'تصميم بوستات دعوية وبطاقات آيات جاهزة لإنستغرام وواتساب بنقرة زر'
+                  )}
                 </p>
               </div>
               <div className="mt-3 pt-2.5 border-t border-surface-700/40 flex items-center justify-between text-xs font-bold text-sky-400 group-hover:text-sky-300">
-                <span>تصميم بوست الآن</span>
+                <span>{t('dashboard.studioQuotesAction', 'تصميم بوست الآن')}</span>
                 <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
               </div>
             </button>
@@ -447,19 +399,22 @@ export const DashboardPage: React.FC = () => {
                   <Mic size={22} />
                 </div>
                 <span className="text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-purple-400/20 text-purple-300 border border-purple-400/30">
-                  تسجيل 8D 🎧
+                  {t('dashboard.studioVoiceBadge', 'تسجيل 8D 🎧')}
                 </span>
               </div>
               <div className="space-y-1">
                 <h3 className="font-black text-sm text-surface-50 group-hover:text-purple-300 transition-colors">
-                  التلقين والتسجيل 8D
+                  {t('dashboard.studioVoiceTitle', 'التلقين والتسجيل 8D')}
                 </h3>
                 <p className="text-xs text-surface-300 line-clamp-2 leading-relaxed">
-                  مصحف ملقن متحرك لتسجيل تلاوتك بصوتك مع صدى الحرم ثلاثي الأبعاد
+                  {t(
+                    'dashboard.studioVoiceDesc',
+                    'مصحف ملقن متحرك لتسجيل تلاوتك بصوتك مع صدى الحرم ثلاثي الأبعاد'
+                  )}
                 </p>
               </div>
               <div className="mt-3 pt-2.5 border-t border-surface-700/40 flex items-center justify-between text-xs font-bold text-purple-400 group-hover:text-purple-300">
-                <span>بدء التسجيل الصوتي</span>
+                <span>{t('dashboard.studioVoiceAction', 'بدء التسجيل الصوتي')}</span>
                 <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
               </div>
             </button>
@@ -471,11 +426,11 @@ export const DashboardPage: React.FC = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <h2 className="text-lg sm:text-xl font-black text-surface-50 tracking-tight flex items-center gap-2">
-                <span>قوالب سينمائية مختارة</span>
+                <span>{t('dashboard.featuredTemplates', 'قوالب سينمائية مختارة')}</span>
                 <span className="text-sm">✨</span>
               </h2>
               <span className="text-xs px-2.5 py-0.5 rounded-full bg-surface-800 text-surface-300 border border-surface-700/40 font-medium">
-                تتجدد يومياً
+                {t('dashboard.dailyRenew', 'تتجدد يومياً')}
               </span>
             </div>
             <div className="flex items-center gap-2.5">
@@ -484,17 +439,20 @@ export const DashboardPage: React.FC = () => {
                 data-tour="tour-help-btn"
                 onClick={startTour}
                 className="text-xs sm:text-[13px] text-gold-400 hover:text-gold-300 font-bold flex items-center gap-1.5 cursor-pointer bg-gold-400/10 hover:bg-gold-400/20 px-3.5 py-2 rounded-xl border border-gold-400/25 min-h-[36px] transition-all"
-                title="جولة إرشادية تفاعلية للتعرف على الأدوات"
+                title={t(
+                  'dashboard.guidedTourTooltip',
+                  'جولة إرشادية تفاعلية للتعرف على الأدوات'
+                )}
               >
                 <HelpCircle size={15} />
-                <span>جولة إرشادية</span>
+                <span>{t('dashboard.guidedTour', 'جولة إرشادية')}</span>
               </button>
               <button
                 type="button"
                 onClick={() => setCurrentPage('create')}
                 className="text-xs sm:text-[13px] text-surface-200 hover:text-surface-50 font-bold cursor-pointer bg-surface-800/60 hover:bg-surface-800 px-3.5 py-2 rounded-xl border border-surface-700/40 min-h-[36px] flex items-center transition-all"
               >
-                <span>عرض كل القوالب ←</span>
+                <span>{t('dashboard.viewAllTemplates', 'عرض كل القوالب ←')}</span>
               </button>
             </div>
           </div>
@@ -505,8 +463,8 @@ export const DashboardPage: React.FC = () => {
                 type="button"
                 key={tpl.id}
                 onClick={() => handleOpenTemplateModal(tpl)}
-                aria-label={`استخدام وتخصيص قالب ${tpl.name}`}
-                className="group relative rounded-2xl bg-surface-900 border border-surface-700/40 hover:border-gold-400/40 p-3.5 transition-all duration-300 cursor-pointer shadow-md hover:shadow-gold-500/10 flex flex-col justify-between text-start w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-400"
+                aria-label={`${t('dashboard.customizeTemplate', 'تخصيص واستخدام القالب')} ${tpl.name}`}
+                className="group relative rounded-2xl bg-surface-900 border border-surface-700/40 hover:border-gold-400/40 p-3.5 transition-all duration-300 cursor-pointer shadow-md hover:shadow-gold-500/10 flex flex-col justify-between text-start w-full focus:outline-none focus-visible:outline-accent-500"
               >
                 {tpl.backgroundUrl && (
                   <div className="h-28 rounded-xl overflow-hidden mb-3 relative w-full">
@@ -525,7 +483,7 @@ export const DashboardPage: React.FC = () => {
                   {tpl.description}
                 </p>
                 <div className="flex items-center justify-between text-xs sm:text-[13px] font-bold text-gold-400 group-hover:text-gold-300 pt-2 border-t border-surface-700/30 w-full">
-                  <span>تخصيص واستخدام القالب</span>
+                  <span>{t('dashboard.customizeTemplate', 'تخصيص واستخدام القالب')}</span>
                   <ArrowLeft
                     size={14}
                     className="group-hover:-translate-x-1 transition-transform"
@@ -539,37 +497,37 @@ export const DashboardPage: React.FC = () => {
         {/* Stats (Responsive 1/2/4 grid with motivational empty-state copy) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
-            title="مشاريعك المحفوظة"
+            title={t('dashboard.statSavedProjects', 'مشاريعك المحفوظة')}
             value={totalProjects > 0 ? totalProjects : '0'}
-            trend={totalProjects === 0 ? 'أنشئ أول ريلز 🚀' : undefined}
+            trend={totalProjects === 0 ? t('dashboard.statCreateFirst', 'أنشئ أول ريلز 🚀') : undefined}
             icon={FolderOpen}
             color="accent"
             delay={0}
           />
           <StatCard
-            title="الفيديوهات المصدّرة"
+            title={t('dashboard.statExportedVideos', 'الفيديوهات المصدّرة')}
             value={totalExported > 0 ? totalExported : '0'}
-            trend={totalExported === 0 ? 'بجودة 1080p Pro ✨' : undefined}
+            trend={totalExported === 0 ? t('dashboard.statQuality1080p', 'بجودة 1080p Pro ✨') : undefined}
             icon={Download}
             color="gold"
             delay={0.06}
           />
           <StatCard
-            title="آخر مشروع نشط"
-            value={lastProject?.name || 'لا يوجد بعد'}
-            trend={!lastProject ? 'اختر قالباً للبدء 🎬' : undefined}
+            title={t('dashboard.statLastActive', 'آخر مشروع نشط')}
+            value={lastProject?.name || t('dashboard.statNoneYet', 'لا يوجد بعد')}
+            trend={!lastProject ? t('dashboard.statChooseTemplate', 'اختر قالباً للبدء 🎬') : undefined}
             icon={Clock}
             color="emerald"
             delay={0.12}
           />
           <StatCard
-            title="إجمالي النشر والأثر"
+            title={t('dashboard.statTotalReach', 'إجمالي النشر والأثر')}
             value={
               projects.reduce((sum, p) => sum + (p.exportCount || 0), 0) > 0
                 ? projects.reduce((sum, p) => sum + (p.exportCount || 0), 0)
                 : '0'
             }
-            trend="صدقة جارية 🌿"
+            trend={t('dashboard.statOngoingCharity', 'صدقة جارية 🌿')}
             icon={TrendingUp}
             color="surface"
             delay={0.18}
@@ -581,14 +539,14 @@ export const DashboardPage: React.FC = () => {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg sm:text-xl font-black text-surface-50 tracking-tight flex items-center gap-2">
               <Film size={20} className="text-accent-400" />
-              <span>المشاريع الأخيرة</span>
+              <span>{t('dashboard.recentProjects', 'المشاريع الأخيرة')}</span>
             </h2>
             {projects.length > 0 && (
               <button
                 onClick={() => setCurrentPage('projects')}
                 className="flex items-center gap-1.5 text-xs sm:text-[13px] text-accent-400 hover:text-accent-300 font-bold cursor-pointer bg-accent-500/10 hover:bg-accent-500/20 px-3.5 py-2 rounded-xl border border-accent-500/20 min-h-[36px] transition-all"
               >
-                <span>عرض كل المشاريع</span>
+                <span>{t('dashboard.viewAllProjects', 'عرض كل المشاريع')}</span>
                 <ArrowLeft size={14} />
               </button>
             )}
@@ -596,14 +554,17 @@ export const DashboardPage: React.FC = () => {
 
           {isLoadingProjects ? (
             <div className="flex items-center justify-center py-12">
-              <div className="loader-spinner w-8 h-8 border-2 border-accent-500/20 border-t-accent-500 rounded-full animate-spin"></div>
+              <div className="w-8 h-8 border-2 border-accent-500/20 border-t-accent-500 rounded-full animate-spin"></div>
             </div>
           ) : recentProjects.length === 0 ? (
             <EmptyState
-              icon={FolderOpen}
-              title="لا توجد مشاريع بعد"
-              description="أنشئ مشروعك الأول لتبدأ في إنشاء ريلز قرآنية احترافية"
-              actionLabel="إنشاء مشروع جديد"
+              variant="first-time"
+              title={t('dashboard.emptyProjectsTitle', 'لا توجد مشاريع بعد')}
+              description={t(
+                'dashboard.emptyProjectsDesc',
+                'أنشئ مشروعك الأول لتبدأ في إنشاء ريلز قرآنية سينمائية واحترافية'
+              )}
+              actionLabel={t('dashboard.emptyProjectsAction', 'إنشاء مشروع جديد')}
               onAction={() => setCurrentPage('create')}
             />
           ) : (
@@ -619,22 +580,22 @@ export const DashboardPage: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
             {
-              title: 'إنشاء ريلز جديد',
-              desc: 'ابدأ مشروع ريلز قرآني بخطوات بسيطة',
+              title: t('dashboard.quickActionCreateTitle', 'إنشاء ريلز جديد'),
+              desc: t('dashboard.quickActionCreateDesc', 'ابدأ مشروع ريلز قرآني بخطوات بسيطة'),
               icon: <PlusCircle size={20} />,
               action: () => setCurrentPage('create'),
               color: 'accent',
             },
             {
-              title: 'تصدير مشروع',
-              desc: 'صدّر مشاريعك بجودة سينمائية Full HD 1080p',
+              title: t('dashboard.quickActionExportTitle', 'تصدير مشروع'),
+              desc: t('dashboard.quickActionExportDesc', 'صدّر مشاريعك بجودة سينمائية Full HD 1080p'),
               icon: <Download size={20} />,
               action: () => setCurrentPage('export'),
               color: 'gold',
             },
             {
-              title: 'إدارة المشاريع',
-              desc: 'تصفح وإدارة ومتابعة جميع مشاريعك',
+              title: t('dashboard.quickActionManageTitle', 'إدارة المشاريع'),
+              desc: t('dashboard.quickActionManageDesc', 'تصفح وإدارة ومتابعة جميع مشاريعك'),
               icon: <FolderOpen size={20} />,
               action: () => setCurrentPage('projects'),
               color: 'emerald',
@@ -679,7 +640,10 @@ export const DashboardPage: React.FC = () => {
         <Modal
           isOpen={Boolean(selectedTemplateForConfirm)}
           onClose={() => setSelectedTemplateForConfirm(null)}
-          title={`تخصيص القالب — ${selectedTemplateForConfirm.name} 🎬`}
+          title={t('dashboard.customizeModalTitle', 'تخصيص القالب — {name} 🎬').replace(
+            '{name}',
+            selectedTemplateForConfirm.name
+          )}
           size="md"
         >
           <div className="space-y-4 text-start">
@@ -703,7 +667,7 @@ export const DashboardPage: React.FC = () => {
             <div className="p-3.5 rounded-2xl bg-surface-900 border border-surface-700/40 space-y-3">
               <div>
                 <label className="block text-xs font-bold text-surface-300 mb-1">
-                  السورة القرآنية 📖:
+                  {t('dashboard.surahSelectionLabel', 'السورة القرآنية 📖:')}
                 </label>
                 <select
                   value={templateSurahNum}
@@ -726,7 +690,9 @@ export const DashboardPage: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-xs font-bold text-surface-300 mb-1">من الآية:</label>
+                  <label className="block text-xs font-bold text-surface-300 mb-1">
+                    {t('dashboard.fromAyahLabel', 'من الآية:')}
+                  </label>
                   <input
                     type="number"
                     min={1}
@@ -737,7 +703,9 @@ export const DashboardPage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-surface-300 mb-1">إلى الآية:</label>
+                  <label className="block text-xs font-bold text-surface-300 mb-1">
+                    {t('dashboard.toAyahLabel', 'إلى الآية:')}
+                  </label>
                   <input
                     type="number"
                     min={templateFromAyah}
@@ -757,7 +725,9 @@ export const DashboardPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-surface-300 mb-1">صوت القارئ 🎙️:</label>
+                <label className="block text-xs font-bold text-surface-300 mb-1">
+                  {t('dashboard.reciterVoiceLabel', 'صوت القارئ 🎙️:')}
+                </label>
                 <select
                   value={templateReciterId}
                   onChange={(e) => setTemplateReciterId(e.target.value)}
@@ -776,17 +746,17 @@ export const DashboardPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleConfirmCreateProject}
-                className="flex-1 py-3 rounded-xl bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-surface-950 font-extrabold text-xs flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all active:scale-98"
+                className="flex-1 py-3 rounded-xl bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-onbrand font-extrabold text-xs flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all active:scale-98"
               >
                 <Sparkles size={15} />
-                <span>إنشاء والبدء في التصميم 🚀</span>
+                <span>{t('dashboard.startDesigningBtn', 'إنشاء والبدء في التصميم 🚀')}</span>
               </button>
               <button
                 type="button"
                 onClick={() => setSelectedTemplateForConfirm(null)}
                 className="py-3 px-4 rounded-xl bg-surface-800/60 hover:bg-surface-800 text-surface-300 hover:text-surface-50 text-xs font-bold cursor-pointer transition-all"
               >
-                إلغاء
+                {t('dashboard.deleteCancelBtn', 'إلغاء')}
               </button>
             </div>
           </div>
@@ -798,10 +768,13 @@ export const DashboardPage: React.FC = () => {
         isOpen={activeModal === 'confirm-delete'}
         onClose={closeModal}
         onConfirm={handleDeleteConfirm}
-        title="حذف المشروع"
-        message={`هل أنت متأكد من حذف المشروع "${(modalData as { projectName?: string })?.projectName || ''}"؟ لا يمكن التراجع عن هذا الإجراء.`}
-        confirmLabel="حذف"
-        cancelLabel="إلغاء"
+        title={t('dashboard.deleteProjectTitle', 'حذف المشروع')}
+        message={t(
+          'dashboard.deleteProjectConfirm',
+          'هل أنت متأكد من حذف المشروع "{name}"؟ لا يمكن التراجع عن هذا الإجراء.'
+        ).replace('{name}', (modalData as { projectName?: string })?.projectName || '')}
+        confirmLabel={t('dashboard.deleteConfirmBtn', 'حذف')}
+        cancelLabel={t('dashboard.deleteCancelBtn', 'إلغاء')}
         variant="danger"
       />
     </AppLayout>

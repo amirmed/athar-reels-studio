@@ -74,7 +74,7 @@ export const EditorDockNav: React.FC<EditorDockNavProps> = ({
               <Icon size={19} />
               <span className="text-xs font-bold tracking-tight">{tab.label}</span>
               {tab.isPro && (
-                <span className="absolute -top-1 -end-1 text-[10px] px-1.5 py-0.2 rounded-full bg-purple-500/20 text-purple-700 dark:text-purple-300 font-bold border border-purple-400/30">
+                <span className="absolute -top-1 -end-1 text-[10px] px-1.5 py-0.5 rounded-full bg-purple-500/20 text-purple-700 dark:text-purple-300 font-bold border border-purple-400/30">
                   {t('editor.proLabel', 'PRO')}
                 </span>
               )}

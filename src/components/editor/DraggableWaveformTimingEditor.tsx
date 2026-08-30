@@ -63,46 +63,46 @@ const AYAH_COLOR_THEMES = [
   {
     badge: 'bg-gold-500/20 text-gold-300 border-gold-500/40',
     chipActive:
-      'bg-gold-400 text-surface-950 font-black shadow-gold-500/40 border-gold-300 ring-2 ring-gold-400/50',
+      'bg-gold-400 text-onbrand font-black shadow-gold-500/40 border-gold-300 ring-2 ring-gold-400/50',
     chipSelected: 'bg-gold-500/30 text-gold-200 border-gold-400/60 shadow-md',
     chipNormal: 'bg-gold-500/10 text-gold-100/90 hover:bg-gold-500/20 border-gold-500/20',
     blockBorder: 'border-gold-400/60 bg-gold-500/30',
-    handleStart: 'bg-amber-400/90 hover:bg-amber-300 text-surface-950',
-    handleEnd: 'bg-gold-400/90 hover:bg-gold-300 text-surface-950',
+    handleStart: 'bg-amber-400/90 hover:bg-amber-300 text-onbrand',
+    handleEnd: 'bg-gold-400/90 hover:bg-gold-300 text-onbrand',
     name: 'الآية الأولى (ذهبي)',
   },
   {
     badge: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
     chipActive:
-      'bg-emerald-400 text-surface-950 font-black shadow-emerald-500/40 border-emerald-300 ring-2 ring-emerald-400/50',
+      'bg-emerald-400 text-onbrand font-black shadow-emerald-500/40 border-emerald-300 ring-2 ring-emerald-400/50',
     chipSelected: 'bg-emerald-500/30 text-emerald-200 border-emerald-400/60 shadow-md',
     chipNormal:
       'bg-emerald-500/10 text-emerald-100/90 hover:bg-emerald-500/20 border-emerald-500/20',
     blockBorder: 'border-emerald-400/60 bg-emerald-500/30',
-    handleStart: 'bg-teal-400/90 hover:bg-teal-300 text-surface-950',
-    handleEnd: 'bg-emerald-400/90 hover:bg-emerald-300 text-surface-950',
+    handleStart: 'bg-teal-400/90 hover:bg-teal-300 text-onbrand',
+    handleEnd: 'bg-emerald-400/90 hover:bg-emerald-300 text-onbrand',
     name: 'الآية الثانية (زمردي)',
   },
   {
     badge: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40',
     chipActive:
-      'bg-cyan-400 text-surface-950 font-black shadow-cyan-500/40 border-cyan-300 ring-2 ring-cyan-400/50',
+      'bg-cyan-400 text-onbrand font-black shadow-cyan-500/40 border-cyan-300 ring-2 ring-cyan-400/50',
     chipSelected: 'bg-cyan-500/30 text-cyan-200 border-cyan-400/60 shadow-md',
     chipNormal: 'bg-cyan-500/10 text-cyan-100/90 hover:bg-cyan-500/20 border-cyan-500/20',
     blockBorder: 'border-cyan-400/60 bg-cyan-500/30',
-    handleStart: 'bg-sky-400/90 hover:bg-sky-300 text-surface-950',
-    handleEnd: 'bg-cyan-400/90 hover:bg-cyan-300 text-surface-950',
+    handleStart: 'bg-sky-400/90 hover:bg-sky-300 text-onbrand',
+    handleEnd: 'bg-cyan-400/90 hover:bg-cyan-300 text-onbrand',
     name: 'الآية الثالثة (سماوي)',
   },
   {
     badge: 'bg-purple-500/20 text-purple-300 border-purple-500/40',
     chipActive:
-      'bg-purple-400 text-surface-950 font-black shadow-purple-500/40 border-purple-300 ring-2 ring-purple-400/50',
+      'bg-purple-400 text-onbrand font-black shadow-purple-500/40 border-purple-300 ring-2 ring-purple-400/50',
     chipSelected: 'bg-purple-500/30 text-purple-200 border-purple-400/60 shadow-md',
     chipNormal: 'bg-purple-500/10 text-purple-100/90 hover:bg-purple-500/20 border-purple-500/20',
     blockBorder: 'border-purple-400/60 bg-purple-500/30',
-    handleStart: 'bg-fuchsia-400/90 hover:bg-fuchsia-300 text-surface-950',
-    handleEnd: 'bg-purple-400/90 hover:bg-purple-300 text-surface-950',
+    handleStart: 'bg-fuchsia-400/90 hover:bg-fuchsia-300 text-onbrand',
+    handleEnd: 'bg-purple-400/90 hover:bg-purple-300 text-onbrand',
     name: 'الآية الرابعة (بنفسجي)',
   },
 ];
@@ -1122,7 +1122,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="absolute top-4 left-1/2 -translate-x-1/2 z-50 px-4 py-1.5 rounded-full bg-surface-950/95 border border-gold-400 text-gold-300 text-xs font-bold shadow-2xl backdrop-blur flex items-center gap-1.5"
+              className="absolute top-4 left-1/2 -translate-x-1/2 z-50 px-4 py-1.5 rounded-full bg-surface-950 border border-gold-400 text-gold-300 text-xs font-bold shadow-2xl flex items-center gap-1.5"
             >
               <span>{flashNotification}</span>
             </motion.div>
@@ -1172,7 +1172,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
             <button
               type="button"
               onClick={handleSaveAndApply}
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 hover:to-amber-500 text-surface-950 font-extrabold flex items-center gap-1.5 shadow-lg shadow-gold-500/20 transition-all active:scale-95 cursor-pointer text-xs sm:text-sm"
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 hover:to-amber-500 text-onbrand font-extrabold flex items-center gap-1.5 shadow-lg shadow-gold-500/20 transition-all active:scale-95 cursor-pointer text-xs sm:text-sm"
               aria-label="حفظ وتطبيق على الفيديو"
             >
               <Check size={16} className="stroke-[3]" />
@@ -1190,7 +1190,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                   onClick={() => setViewMode('all')}
                   className={`px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                     viewMode === 'all'
-                      ? 'bg-gold-400 text-surface-950 shadow-sm font-black'
+                      ? 'bg-gold-400 text-onbrand shadow-sm font-black'
                       : 'text-surface-400 hover:text-surface-50'
                   }`}
                 >
@@ -1203,7 +1203,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                   onClick={() => setViewMode('single')}
                   className={`px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                     viewMode === 'single'
-                      ? 'bg-gold-400 text-surface-950 shadow-sm font-black'
+                      ? 'bg-gold-400 text-onbrand shadow-sm font-black'
                       : 'text-surface-400 hover:text-surface-50'
                   }`}
                 >
@@ -1350,7 +1350,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                   >
                     -0.05s
                   </button>
-                  <span className="text-[9px] text-surface-400 px-0.5 font-bold">دقة</span>
+                  <span className="text-[10px] text-surface-400 px-0.5 font-bold">دقة</span>
                   <button
                     type="button"
                     onClick={() => handleMicroNudge(0.05)}
@@ -1583,7 +1583,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                         } ${theme.handleStart}`}
                         title={isLocked ? 'هذه الكلمة مثبتة 🔒' : 'اسحب لتعديل بداية الكلمة ◀'}
                       >
-                        <span className="text-[9px] font-mono font-bold select-none leading-none">
+                        <span className="text-[10px] font-mono font-bold select-none leading-none">
                           ◄
                         </span>
                       </div>
@@ -1595,11 +1595,11 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                           isLocked ? 'cursor-default' : 'cursor-grab active:cursor-grabbing'
                         }`}
                       >
-                        <span className="font-arabic font-bold text-xs sm:text-sm text-surface-50 truncate group-hover:text-gold-200 flex items-center gap-1">
+                        <span className="font-arabic font-bold text-xs sm:text-sm text-white truncate group-hover:text-gold-200 flex items-center gap-1">
                           <span>{w.text}</span>
                           {isLocked && <Lock size={10} className="text-amber-400" />}
                         </span>
-                        <span className="text-[9px] font-mono text-surface-400 group-hover:text-gold-300">
+                        <span className="text-[10px] font-mono text-white/70 group-hover:text-gold-300">
                           {(w.globalEndTime - w.globalStartTime).toFixed(2)}s
                         </span>
                       </div>
@@ -1612,7 +1612,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                         } ${theme.handleEnd}`}
                         title={isLocked ? 'هذه الكلمة مثبتة 🔒' : 'اسحب لتعديل نهاية الكلمة ▶'}
                       >
-                        <span className="text-[9px] font-mono font-bold select-none leading-none">
+                        <span className="text-[10px] font-mono font-bold select-none leading-none">
                           ►
                         </span>
                       </div>
@@ -1646,7 +1646,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
             <button
               type="button"
               onClick={toggleGlobalPlay}
-              className="p-2.5 rounded-xl bg-gold-500 hover:bg-gold-400 text-surface-950 font-bold transition-all shadow-md active:scale-95 cursor-pointer"
+              className="p-2.5 rounded-xl bg-gold-500 hover:bg-gold-400 text-onbrand font-bold transition-all shadow-md active:scale-95 cursor-pointer"
               title={isPlaying ? 'إيقاف مؤقت' : 'تشغيل التلاوة كاملة (المسافة)'}
               aria-label={isPlaying ? 'إيقاف مؤقت' : 'تشغيل التلاوة كاملة (المسافة)'}
             >
@@ -1714,7 +1714,7 @@ export const DraggableWaveformTimingEditor: React.FC<DraggableWaveformTimingEdit
                 onClick={() => setPlaybackSpeed(spd)}
                 className={`px-2 py-0.5 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer ${
                   playbackSpeed === spd
-                    ? 'bg-gold-400 text-surface-950 font-black'
+                    ? 'bg-gold-400 text-onbrand font-black'
                     : 'text-surface-400 hover:text-surface-50'
                 }`}
                 aria-label={`سرعة التشغيل ${spd}x`}

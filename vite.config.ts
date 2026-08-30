@@ -60,7 +60,7 @@ function cspPlugin(): import('vite').Plugin {
     transformIndexHtml(html) {
       const isProd = process.env.NODE_ENV === 'production';
       if (isProd) {
-        const prodCsp = "default-src 'self' blob: data:; script-src 'self' 'unsafe-inline' blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data: blob:; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' https: blob: data:; worker-src 'self' blob:;";
+        const prodCsp = "default-src 'self' blob: data:; script-src 'self' blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data: blob:; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' https: blob: data:; worker-src 'self' blob:;";
         return html.replace(
           /<meta http-equiv="Content-Security-Policy"[^>]*\/>/,
           `<meta http-equiv="Content-Security-Policy" content="${prodCsp}" />`

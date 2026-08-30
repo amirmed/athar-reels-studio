@@ -81,7 +81,9 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
   useHotkeys('Escape', () => setIsToolsMenuOpen(false), { enabled: isToolsMenuOpen });
 
   return (
-    <header className="h-16 border-b border-surface-700/40 bg-surface-900/90 backdrop-blur-md px-3 sm:px-4 flex items-center justify-between z-30 sticky top-0">
+    <header className="relative h-16 border-b border-surface-700/40 bg-surface-900/90 backdrop-blur-md px-3 sm:px-4 flex items-center justify-between z-30 sticky top-0">
+      {/* Studio Color Identity Top Accent Strip (2px) - Gold Brand for Quran Reels Editor */}
+      <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-gold-400 via-amber-500 to-gold-600 shadow-sm z-30" />
       {/* Left: Back & Project Title & Quick Actions */}
       <div className="flex items-center gap-2 md:gap-3 min-w-0">
         <button
@@ -311,7 +313,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
         <button
           type="button"
           onClick={onOpenExport}
-          className="px-3 sm:px-4 py-1.5 rounded-xl bg-gradient-to-r from-gold-500 to-amber-400 hover:from-gold-400 hover:to-amber-300 text-surface-950 font-black text-xs flex items-center gap-1.5 shadow-lg shadow-gold-500/20 transition-all cursor-pointer active:scale-95 shrink-0"
+          className="px-3 sm:px-4 py-1.5 rounded-xl bg-gradient-to-r from-gold-500 to-amber-400 hover:from-gold-400 hover:to-amber-300 text-onbrand font-black text-xs flex items-center gap-1.5 shadow-lg shadow-gold-500/20 transition-all cursor-pointer active:scale-95 shrink-0"
           aria-label={t('editor.exportTooltip', 'تصدير الفيديو النهائي')}
         >
           <Download size={14} />

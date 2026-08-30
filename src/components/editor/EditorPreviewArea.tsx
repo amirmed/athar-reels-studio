@@ -139,7 +139,7 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
     return (
       <main className="flex-1 flex flex-col items-center justify-between p-2 md:p-3 overflow-hidden bg-surface-950 relative">
         {/* Top Floating Control Bar */}
-        <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-surface-900 border border-surface-700/50 backdrop-blur-md z-20 shadow-xl flex-wrap justify-center">
+        <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-surface-900 border border-surface-700/50 z-20 shadow-xl flex-wrap justify-center">
           {/* Aspect Ratio Selector */}
           <div className="flex items-center gap-1 bg-surface-800 p-1 rounded-xl border border-surface-700/40">
             {[
@@ -156,7 +156,7 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
                   onClick={() => setAspectRatio(r.id)}
                   className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                     isSelected
-                      ? 'bg-gradient-to-r from-gold-500 to-amber-500 text-surface-950 shadow-md font-black'
+                      ? 'bg-gradient-to-r from-gold-500 to-amber-500 text-onbrand shadow-md font-black'
                       : 'text-surface-300 hover:text-surface-50 hover:bg-surface-700'
                   }`}
                 >
@@ -353,7 +353,11 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
         </div>
 
         {/* Central Live Video Canvas Container */}
-        <div className="flex-1 w-full flex items-center justify-center relative overflow-auto p-4 custom-scrollbar">
+        <div
+          className={`flex-1 w-full flex items-center justify-center relative p-4 ${
+            previewZoom > 100 ? 'overflow-auto custom-scrollbar' : 'overflow-hidden'
+          }`}
+        >
           <div
             style={{
               transform: `scale(${previewZoom / 100})`,
@@ -464,14 +468,14 @@ export const EditorPreviewArea: React.FC<EditorPreviewAreaProps> = React.memo(
               <button
                 type="button"
                 onClick={togglePlay}
-                className="w-11 h-11 rounded-full bg-gradient-to-tr from-accent-500 to-gold-400 hover:from-accent-400 hover:to-gold-300 text-surface-950 flex items-center justify-center shadow-lg shadow-accent-500/30 hover:scale-110 active:scale-95 transition-all cursor-pointer"
+                className="w-11 h-11 rounded-full bg-gradient-to-tr from-accent-500 to-gold-400 hover:from-accent-400 hover:to-gold-300 text-onbrand flex items-center justify-center shadow-lg shadow-accent-500/30 hover:scale-110 active:scale-95 transition-all cursor-pointer"
                 title={isPlaying ? 'إيقاف مؤقت' : 'تشغيل المعاينة'}
                 aria-label={isPlaying ? 'إيقاف مؤقت' : 'تشغيل المعاينة'}
               >
                 {isPlaying ? (
-                  <Pause size={18} className="fill-surface-950" />
+                  <Pause size={18} className="fill-onbrand" />
                 ) : (
-                  <Play size={18} className="fill-surface-950 -scale-x-100 ms-0.5" />
+                  <Play size={18} className="fill-onbrand -scale-x-100 ms-0.5" />
                 )}
               </button>
 

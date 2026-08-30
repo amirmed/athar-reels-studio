@@ -221,17 +221,17 @@ export const AzkarStudioPage: React.FC = () => {
     >
       <div className="p-6 max-w-7xl mx-auto space-y-6">
         {/* Search & Hero Header */}
-        <div className="relative rounded-3xl bg-gradient-to-r from-surface-900 via-surface-800 to-surface-900 border border-surface-700/40 p-6 shadow-2xl overflow-hidden">
-          <div className="absolute -top-12 -start-12 w-64 h-64 bg-accent-500/10 rounded-full blur-[80px]" />
-          <div className="absolute -bottom-12 -end-12 w-64 h-64 bg-gold-500/10 rounded-full blur-[80px]" />
+        <div className="relative rounded-3xl bg-gradient-to-r from-surface-900 via-surface-800 to-surface-900 border border-emerald-500/30 p-6 shadow-2xl overflow-hidden">
+          <div className="absolute -top-12 -start-12 w-64 h-64 bg-emerald-500/15 rounded-full blur-[80px]" />
+          <div className="absolute -bottom-12 -end-12 w-64 h-64 bg-teal-500/15 rounded-full blur-[80px]" />
 
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1.5">
-                <span className="p-1.5 rounded-lg bg-gold-400/15 text-gold-400 border border-gold-400/30">
+                <span className="p-1.5 rounded-lg bg-emerald-400/15 text-emerald-400 border border-emerald-400/30">
                   <BookHeart size={18} />
                 </span>
-                <span className="text-xs font-bold text-gold-400">مكتبة إسلامية شاملة وموثوقة</span>
+                <span className="text-xs font-bold text-emerald-400">مكتبة إسلامية شاملة وموثوقة 📿</span>
               </div>
               <h2 className="text-2xl font-bold text-surface-50 mb-1">
                 حصن المسلم، أدعية الأنبياء، والأحاديث الصحيحة

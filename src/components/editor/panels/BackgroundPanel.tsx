@@ -5,9 +5,10 @@ import { matchAyahTheme } from '../../../services/ayahThemeMatcher';
 import { IslamicPexelsBrowser } from '../../ui/IslamicPexelsBrowser';
 import { AiBackgroundGenerator } from '../../ui/AiBackgroundGenerator';
 import { MediaUploader } from '../../ui/MediaUploader';
+import { FavoriteBackgroundsBrowser } from '../../ui/FavoriteBackgroundsBrowser';
 import { isVideoMedia } from '../../../utils/imageUtils';
 import { Slider } from '../../ui/Slider';
-import { Layers, Sparkles, Film, Wand2 } from 'lucide-react';
+import { Sparkles, Film, Wand2 } from 'lucide-react';
 import { useTranslation } from '../../../i18n';
 
 interface BackgroundPanelProps {
@@ -29,7 +30,7 @@ interface BackgroundPanelProps {
 export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
   ayahs,
   currentAyahIndex,
-  setCurrentAyahIndex,
+  setCurrentAyahIndex: _setCurrentAyahIndex,
   backgroundFile,
   setBackgroundFile,
   backgroundOpacity,
@@ -40,7 +41,7 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
   addToast,
 }) => {
   const { t } = useTranslation();
-  const [bgTab, setBgTab] = useState<'pexels' | 'ai' | 'upload'>('pexels');
+  const [bgTab, setBgTab] = useState<'pexels' | 'favorites' | 'ai' | 'upload'>('pexels');
   const [applyScope, setApplyScope] = useState<'all' | 'current'>('all');
 
   const colorFilters = [
@@ -116,6 +117,10 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
     });
   };
 
+  const activeSceneBg =
+    applyScope === 'current' ? textSettings.sceneBackgrounds?.[currentAyahIndex] : undefined;
+  const currentEffectiveBg = activeSceneBg || backgroundFile;
+
   return (
     <div className="space-y-4 animate-in">
       {/* 🪄 Smart Context-Aware Background Matcher */}
@@ -123,7 +128,7 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
         <button
           type="button"
           onClick={handleAutoMatchCurrentAyah}
-          className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-surface-950 font-extrabold text-xs flex items-center gap-1.5 shadow-md shadow-gold-500/20 active:scale-95 transition-all cursor-pointer"
+          className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-onbrand font-extrabold text-xs flex items-center gap-1.5 shadow-md shadow-gold-500/20 active:scale-95 transition-all cursor-pointer"
         >
           <Wand2 size={15} />
           <span>{t('editor.bgAutoMatchBtn', 'مطابقة تلقائية لسياق الآية ✨')}</span>
@@ -158,7 +163,7 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
               onClick={() => setApplyScope('all')}
               className={`py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                 applyScope === 'all'
-                  ? 'bg-gradient-to-r from-gold-500 to-amber-500 text-surface-950 font-extrabold shadow-sm'
+                  ? 'bg-gradient-to-r from-gold-500 to-amber-500 text-onbrand font-extrabold shadow-sm'
                   : 'text-surface-400 hover:text-surface-50'
               }`}
             >
@@ -191,76 +196,11 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
         </div>
       )}
 
-      {/* Featured: Dynamic Multi-Scene Storytelling Mode */}
-      {ayahs.length > 1 && (
-        <div className="p-3.5 rounded-2xl bg-gradient-to-r from-sky-500/15 via-surface-900 to-indigo-500/15 border border-sky-400/30 shadow-md shadow-sky-500/10 space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-sky-500/20 flex items-center justify-center text-sky-400 shrink-0">
-                <Layers size={16} />
-              </div>
-              <div>
-                <span className="font-bold text-surface-50 text-xs block">
-                  {t('editor.bgStoryModeTitle', 'تغيير المشاهد مع كل آية (Story Mode) 🎬')}
-                </span>
-                <span className="text-[11px] text-sky-300/70">
-                  {t('editor.bgStoryModeDesc', 'مشاهد سينمائية متتابعة مع كل آية')}
-                </span>
-              </div>
-            </div>
-            <input
-              type="checkbox"
-              checked={textSettings.enableMultiScene ?? false}
-              onChange={(e) => {
-                setTextSettings((s) => ({ ...s, enableMultiScene: e.target.checked }));
-                if (e.target.checked) {
-                  addToast({
-                    message: 'تم تفعيل نمط القصة وتغيير المشاهد التلقائي 🎬✨',
-                    type: 'success',
-                  });
-                }
-              }}
-              className="toggle"
-            />
-          </div>
-
-          {(textSettings.enableMultiScene ?? false) && (
-            <div className="space-y-2 pt-1 border-t border-surface-700/40">
-              <p className="text-[11px] text-surface-400 leading-relaxed">
-                {t('editor.bgStoryModeInstructions', 'اضغط على أي مشهد لتخصيص صورته المنفردة أو اختر «جميع الآيات» لتبديل الخلفية للجميع دفعة واحدة.')}
-              </p>
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 custom-scrollbar">
-                {ayahs.map((_a, aIdx) => {
-                  const hasCustomBg = Boolean(textSettings.sceneBackgrounds?.[aIdx]);
-                  return (
-                    <button
-                      key={aIdx}
-                      type="button"
-                      onClick={() => {
-                        setCurrentAyahIndex(aIdx);
-                        setApplyScope('current');
-                      }}
-                      className={`px-2.5 py-1.5 rounded-lg border text-[11px] font-bold shrink-0 cursor-pointer transition-all flex items-center gap-1.5 ${
-                        currentAyahIndex === aIdx
-                          ? 'bg-sky-500/30 border-sky-400 text-sky-200 shadow-sm'
-                          : 'bg-surface-800/80 border-surface-700/40 text-surface-400 hover:text-surface-50'
-                      }`}
-                    >
-                      <span>{t('editor.bgSceneBadge', 'مشهد {index}').replace('{index}', String(aIdx + 1))}</span>
-                      {hasCustomBg && <span className="text-[10px] text-emerald-400">●</span>}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
       {/* Background source selector */}
       <div className="flex items-center gap-1 p-1 bg-surface-900/90 rounded-xl border border-surface-700/40">
         {[
           { id: 'pexels' as const, label: t('editor.bgTabPexels', 'Pexels 4K') },
+          { id: 'favorites' as const, label: t('editor.bgTabFavorites', 'المفضلة ⭐') },
           { id: 'ai' as const, label: t('editor.bgTabAi', 'توليد AI') },
           { id: 'upload' as const, label: t('editor.bgTabUpload', 'رفع ملف') },
         ].map((tabItem) => (
@@ -279,12 +219,18 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
 
       {bgTab === 'pexels' && (
         <IslamicPexelsBrowser
-          selectedUrl={
-            applyScope === 'current' && textSettings.sceneBackgrounds?.[currentAyahIndex]
-              ? textSettings.sceneBackgrounds[currentAyahIndex]
-              : backgroundFile
-          }
+          selectedUrl={currentEffectiveBg}
           onSelectPhoto={handleApplyBackgroundUrl}
+          addToast={addToast}
+        />
+      )}
+
+      {bgTab === 'favorites' && (
+        <FavoriteBackgroundsBrowser
+          selectedUrl={currentEffectiveBg}
+          currentActiveUrl={currentEffectiveBg}
+          onSelectBackground={handleApplyBackgroundUrl}
+          addToast={addToast}
         />
       )}
 
@@ -303,11 +249,7 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({
       {bgTab === 'upload' && (
         <MediaUploader
           type="both"
-          currentFile={
-            applyScope === 'current' && textSettings.sceneBackgrounds?.[currentAyahIndex]
-              ? textSettings.sceneBackgrounds[currentAyahIndex]
-              : backgroundFile
-          }
+          currentFile={currentEffectiveBg}
           onUpload={handleApplyBackgroundUrl}
           onRemove={() => {
             if (applyScope === 'all') {

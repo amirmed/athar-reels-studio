@@ -147,7 +147,7 @@ export const ViralCaptionGenerator: React.FC<ViralCaptionGeneratorProps> = ({
             className={`flex-1 py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg transition-all ${
               copiedType === 'all'
                 ? 'bg-emerald-500 text-white'
-                : 'bg-gradient-to-r from-gold-400 to-accent-500 hover:from-gold-300 hover:to-accent-400 text-surface-950 shadow-gold-500/20 hover:scale-[1.02]'
+                : 'bg-gradient-to-r from-gold-400 to-accent-500 hover:from-gold-300 hover:to-accent-400 text-onbrand shadow-gold-500/20 hover:scale-[1.02]'
             }`}
           >
             {copiedType === 'all' ? <Check size={14} /> : <Copy size={14} />}

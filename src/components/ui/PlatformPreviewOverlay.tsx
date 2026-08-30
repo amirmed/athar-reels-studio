@@ -78,28 +78,28 @@ export const PlatformPreviewOverlay: React.FC<PlatformPreviewOverlayProps> = ({
             {/* Right Buttons */}
             <div className="flex flex-col items-center gap-3 text-white">
               <div className="flex flex-col items-center">
-                <div className="w-8 h-8 rounded-full bg-surface-900/60 backdrop-blur flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-black/60 flex items-center justify-center">
                   <Heart size={16} className="text-rose-500 fill-rose-500" />
                 </div>
                 <span className="text-[10px] font-bold">142K</span>
               </div>
 
               <div className="flex flex-col items-center">
-                <div className="w-8 h-8 rounded-full bg-surface-900/60 backdrop-blur flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-black/60 flex items-center justify-center">
                   <MessageCircle size={16} />
                 </div>
                 <span className="text-[10px] font-bold">1,820</span>
               </div>
 
               <div className="flex flex-col items-center">
-                <div className="w-8 h-8 rounded-full bg-surface-900/60 backdrop-blur flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-black/60 flex items-center justify-center">
                   <Bookmark size={16} />
                 </div>
                 <span className="text-[10px] font-bold">28K</span>
               </div>
 
               <div className="flex flex-col items-center">
-                <div className="w-8 h-8 rounded-full bg-surface-900/60 backdrop-blur flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-black/60 flex items-center justify-center">
                   <Share2 size={16} />
                 </div>
                 <span className="text-[10px] font-bold">15K</span>
@@ -126,7 +126,7 @@ export const PlatformPreviewOverlay: React.FC<PlatformPreviewOverlayProps> = ({
             {/* Profile & Audio */}
             <div className="space-y-1.5 max-w-[70%] text-start" dir="rtl">
               <div className="flex items-center gap-1.5">
-                <div className="w-6 h-6 rounded-full bg-gold-400 text-surface-950 font-bold text-[10px] flex items-center justify-center">
+                <div className="w-6 h-6 rounded-full bg-gold-400 text-onbrand font-bold text-[10px] flex items-center justify-center">
                   📖
                 </div>
                 <span className="font-bold text-xs text-white">{watermark || '@athar_studio'}</span>
@@ -189,25 +189,25 @@ export const PlatformPreviewOverlay: React.FC<PlatformPreviewOverlayProps> = ({
 
             <div className="flex flex-col items-center gap-3 text-white">
               <div className="flex flex-col items-center">
-                <div className="w-8 h-8 rounded-full bg-surface-900/60 backdrop-blur flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-black/60 flex items-center justify-center">
                   <ThumbsUp size={16} />
                 </div>
                 <span className="text-[10px] font-bold">52K</span>
               </div>
               <div className="flex flex-col items-center">
-                <div className="w-8 h-8 rounded-full bg-surface-900/60 backdrop-blur flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-black/60 flex items-center justify-center">
                   <ThumbsDown size={16} />
                 </div>
                 <span className="text-[10px]">لم يعجبني</span>
               </div>
               <div className="flex flex-col items-center">
-                <div className="w-8 h-8 rounded-full bg-surface-900/60 backdrop-blur flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-black/60 flex items-center justify-center">
                   <MessageCircle size={16} />
                 </div>
                 <span className="text-[10px] font-bold">640</span>
               </div>
               <div className="flex flex-col items-center">
-                <div className="w-8 h-8 rounded-full bg-surface-900/60 backdrop-blur flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-black/60 flex items-center justify-center">
                   <Share2 size={16} />
                 </div>
                 <span className="text-[10px]">مشاركة</span>

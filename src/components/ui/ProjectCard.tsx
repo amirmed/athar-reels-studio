@@ -86,7 +86,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = React.memo(
                 }}
                 className={`w-6 h-6 rounded-lg flex items-center justify-center transition-all ${
                   isSelected
-                    ? 'bg-accent-500 text-surface-950 shadow-md'
+                    ? 'bg-accent-500 text-onbrand shadow-md'
                     : 'border border-white/30 bg-black/40 text-transparent hover:border-accent-400'
                 }`}
               >
@@ -168,12 +168,12 @@ export const ProjectCard: React.FC<ProjectCardProps> = React.memo(
               e.stopPropagation();
               onToggleSelect?.(project.id);
             }}
-            className={`w-7 h-7 rounded-xl flex items-center justify-center transition-all cursor-pointer backdrop-blur-md ${
+            className={`w-7 h-7 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
               isSelected
-                ? 'bg-gradient-to-r from-accent-400 to-accent-500 text-surface-950 shadow-lg ring-2 ring-white/50'
+                ? 'bg-gradient-to-r from-accent-400 to-accent-500 text-onbrand shadow-lg ring-2 ring-white/50'
                 : isSelectionMode
-                  ? 'bg-black/60 border border-white/40 text-transparent hover:border-accent-400'
-                  : 'opacity-0 group-hover:opacity-100 bg-black/60 border border-white/30 text-transparent hover:border-accent-400'
+                  ? 'bg-black/80 border border-white/40 text-transparent hover:border-accent-400'
+                  : 'opacity-0 group-hover:opacity-100 bg-black/80 border border-white/30 text-transparent hover:border-accent-400'
             }`}
             title={isSelected ? 'إلغاء التحديد' : 'تحديد المشروع'}
           >
@@ -225,7 +225,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = React.memo(
           {/* Status badge */}
           <div className="absolute top-3 start-3 z-10">
             <span
-              className={`text-[11px] px-2.5 py-1 rounded-lg font-medium backdrop-blur-sm shadow-sm ${getStatusColor(project.status)}`}
+              className={`text-[11px] px-2.5 py-1 rounded-lg font-medium shadow-sm ${getStatusColor(project.status)}`}
             >
               {getStatusLabel(project.status)}
             </span>

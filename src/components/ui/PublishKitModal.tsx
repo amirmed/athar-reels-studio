@@ -184,7 +184,7 @@ export const PublishKitModal: React.FC<PublishKitModalProps> = ({
               onClick={() => setActiveTab('kit')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                 activeTab === 'kit'
-                  ? 'bg-gradient-to-r from-gold-500 to-amber-500 text-surface-950 shadow-md font-black'
+                  ? 'bg-gradient-to-r from-gold-500 to-amber-500 text-onbrand shadow-md font-black'
                   : 'text-surface-400 hover:text-surface-50 bg-surface-900 border border-surface-700/40'
               }`}
             >
@@ -197,7 +197,7 @@ export const PublishKitModal: React.FC<PublishKitModalProps> = ({
               onClick={() => setActiveTab('history')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                 activeTab === 'history'
-                  ? 'bg-gradient-to-r from-gold-500 to-amber-500 text-surface-950 shadow-md font-black'
+                  ? 'bg-gradient-to-r from-gold-500 to-amber-500 text-onbrand shadow-md font-black'
                   : 'text-surface-400 hover:text-surface-50 bg-surface-900 border border-surface-700/40'
               }`}
             >
@@ -311,7 +311,7 @@ export const PublishKitModal: React.FC<PublishKitModalProps> = ({
                             <h4 className="text-xs font-bold text-surface-50 truncate">
                               {log.projectName}
                             </h4>
-                            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
                               تم التوجيه ✓
                             </span>
                           </div>

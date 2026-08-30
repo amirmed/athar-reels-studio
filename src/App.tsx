@@ -1,9 +1,11 @@
 import React, { useEffect, Suspense, lazy } from 'react';
-import { useAppStore, applyThemeToDom } from './store/useAppStore';
+import { useAppStore, applyThemeToDom, applyComfortableReadingToDom } from './store/useAppStore';
 import { ToastContainer } from './components/ui/Toast';
 import { MotionConfig } from 'framer-motion';
 import { Loader2, Sparkles } from 'lucide-react';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
+
+import type { Page } from './types';
 
 // Dynamic Lazy Imports for Code Splitting
 const WelcomePage = lazy(() =>
@@ -39,6 +41,20 @@ const VoiceStudioPage = lazy(() =>
   import('./components/pages/VoiceStudioPage').then((m) => ({ default: m.VoiceStudioPage }))
 );
 
+// Strongly typed Route Map
+const PAGE_COMPONENTS: Record<Page, React.ComponentType> = {
+  welcome: WelcomePage,
+  dashboard: DashboardPage,
+  azkar: AzkarStudioPage,
+  quotes: ImageQuotesStudioPage,
+  'voice-studio': VoiceStudioPage,
+  create: CreateProjectPage,
+  editor: EditorPage,
+  projects: ProjectsPage,
+  export: ExportPage,
+  settings: SettingsPage,
+};
+
 // Sleek Luxury Page Loading Fallback
 const PageLoadingSkeleton: React.FC = () => (
   <div className="h-screen w-screen flex flex-col items-center justify-center bg-surface-950 text-white space-y-4 select-none">
@@ -60,6 +76,7 @@ const App: React.FC = () => {
   const initializeApp = useAppStore((s) => s.initializeApp);
   const theme = useAppStore((s) => s.theme);
   const language = useAppStore((s) => s.settings.language || 'ar');
+  const comfortableReading = useAppStore((s) => !!s.settings.comfortableReading);
 
   useEffect(() => {
     // Initialize app — load settings, projects, export jobs from disk
@@ -84,47 +101,29 @@ const App: React.FC = () => {
     applyThemeToDom(theme);
   }, [theme]);
 
+  // Synchronize documentElement comfortable reading mode
+  useEffect(() => {
+    applyComfortableReadingToDom(comfortableReading);
+  }, [comfortableReading]);
+
   // Synchronize documentElement language and direction (RTL / LTR)
   useEffect(() => {
     document.documentElement.lang = language;
     document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
   }, [language]);
 
-  const renderPage = () => {
-    switch (currentPage) {
-      case 'welcome':
-        return <WelcomePage />;
-      case 'dashboard':
-        return <DashboardPage />;
-      case 'azkar':
-        return <AzkarStudioPage />;
-      case 'quotes':
-        return <ImageQuotesStudioPage />;
-      case 'voice-studio':
-        return <VoiceStudioPage />;
-      case 'create':
-        return <CreateProjectPage />;
-      case 'editor':
-        return <EditorPage />;
-      case 'projects':
-        return <ProjectsPage />;
-      case 'export':
-        return <ExportPage />;
-      case 'settings':
-        return <SettingsPage />;
-      default:
-        return <WelcomePage />;
-    }
-  };
+  const ActivePageComponent = PAGE_COMPONENTS[currentPage] || WelcomePage;
 
   return (
     <MotionConfig reducedMotion="user">
-      <ErrorBoundary>
-        <div className="h-screen w-screen bg-surface-950">
-          <Suspense fallback={<PageLoadingSkeleton />}>{renderPage()}</Suspense>
-          <ToastContainer />
-        </div>
-      </ErrorBoundary>
+      <div className="h-screen w-screen bg-surface-950">
+        <ErrorBoundary>
+          <Suspense fallback={<PageLoadingSkeleton />}>
+            <ActivePageComponent />
+          </Suspense>
+        </ErrorBoundary>
+        <ToastContainer />
+      </div>
     </MotionConfig>
   );
 };

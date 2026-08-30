@@ -205,8 +205,8 @@ describe('ExportOrchestrator Service', () => {
     });
 
     it('resolves target output paths correctly from project name and savePathPref', () => {
-      // Default fallback
-      expect(resolveTargetOutputPath('My Cool Video', 'mp4')).toBe('My Cool Video.mp4');
+      // Default fallback (no savePathPref -> returns empty string)
+      expect(resolveTargetOutputPath('My Cool Video', 'mp4')).toBe('');
       
       // With custom directory path (forward slash)
       expect(
@@ -223,10 +223,15 @@ describe('ExportOrchestrator Service', () => {
         resolveTargetOutputPath('Surah Yasin', 'mp4', 'E:/Custom/Output_Surah.mp4')
       ).toBe('E:/Custom/Output_Surah.mp4');
       
-      // Sanitize special characters in project name
+      // Sanitize special characters in project name with savePathPref
       expect(
-        resolveTargetOutputPath('Surah/Al-Baqarah:Ayah*1?', 'mp4')
-      ).toBe('Surah-Al-Baqarah-Ayah-1-.mp4');
+        resolveTargetOutputPath('Surah/Al-Baqarah:Ayah*1?', 'mp4', 'C:/Exports')
+      ).toBe('C:/Exports/Surah-Al-Baqarah-Ayah-1-.mp4');
+
+      // Empty string and whitespace preferences return empty string
+      expect(resolveTargetOutputPath('Test', 'mp4', '')).toBe('');
+      expect(resolveTargetOutputPath('Test', 'mp4', '   ')).toBe('');
+      expect(resolveTargetOutputPath('Test', 'mp4', undefined)).toBe('');
     });
 
     it('handles cancellation via AbortSignal gracefully', async () => {

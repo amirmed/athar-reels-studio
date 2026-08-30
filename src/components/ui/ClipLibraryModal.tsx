@@ -18,6 +18,7 @@ import {
 } from '../../data/clipLibraryData';
 import { useAppStore } from '../../store/useAppStore';
 import { Modal } from './Modal';
+import { EmptyState } from './EmptyState';
 
 interface ClipLibraryModalProps {
   isOpen: boolean;
@@ -113,11 +114,16 @@ export const ClipLibraryModal: React.FC<ClipLibraryModalProps> = ({ isOpen, onCl
         {/* Clips Grid */}
         <div className="overflow-y-auto max-h-[55vh] custom-scrollbar pe-1">
           {filteredClips.length === 0 ? (
-            <div className="py-16 text-center text-surface-400 space-y-2">
-              <Film size={36} className="mx-auto opacity-30" />
-              <p className="text-sm font-bold">لا توجد مقاطع مطابقة لبحثك</p>
-              <p className="text-xs text-surface-500">جرّب تغيير كلمات البحث أو اختيار تصنيف آخر</p>
-            </div>
+            <EmptyState
+              variant="search"
+              title="لا توجد مقاطع مطابقة لبحثك"
+              description="جرّب تغيير كلمات البحث أو اختيار تصنيف آخر للعثور على لقطات سينمائية جاهزة"
+              actionLabel="إعادة ضبط البحث"
+              onAction={() => {
+                setSearchQuery('');
+                setSelectedCategory('all');
+              }}
+            />
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredClips.map((clip) => (
@@ -136,7 +142,7 @@ export const ClipLibraryModal: React.FC<ClipLibraryModalProps> = ({ isOpen, onCl
                     <div className="absolute inset-0 bg-gradient-to-t from-surface-950 via-surface-950/40 to-transparent" />
 
                     <div className="absolute top-2.5 end-2.5">
-                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-surface-950/80 backdrop-blur-md text-gold-300 border border-gold-400/30">
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-surface-950 text-gold-300 border border-gold-400/30">
                         {clip.badge}
                       </span>
                     </div>
@@ -146,7 +152,7 @@ export const ClipLibraryModal: React.FC<ClipLibraryModalProps> = ({ isOpen, onCl
                         <BookOpen size={13} className="text-gold-400" />
                         <span>سورة {clip.surahName}</span>
                       </div>
-                      <span className="text-[11px] font-mono text-white/80 bg-black/50 px-2 py-0.5 rounded-md backdrop-blur-sm">
+                      <span className="text-[11px] font-mono text-white/90 bg-black/80 px-2 py-0.5 rounded-md">
                         {clip.fromAyah === clip.toAyah ? `الآية ${clip.fromAyah}` : `الآيات ${clip.fromAyah}-${clip.toAyah}`}
                       </span>
                     </div>
@@ -186,7 +192,7 @@ export const ClipLibraryModal: React.FC<ClipLibraryModalProps> = ({ isOpen, onCl
                         onClick={() => handleLaunchClip(clip)}
                         className="btn-gold w-full py-2.5 px-3 text-xs flex items-center justify-center gap-1.5 shadow-md"
                       >
-                        <Zap size={14} className="fill-surface-950" />
+                        <Zap size={14} className="fill-onbrand" />
                         <span>فتح وتعديل في الاستوديو 🎬</span>
                       </button>
                     </div>

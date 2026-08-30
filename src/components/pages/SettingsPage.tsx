@@ -16,6 +16,7 @@ import {
   Shield,
   Trash2,
   RefreshCw,
+  Eye,
 } from 'lucide-react';
 import {
   getAudioStorageStats,
@@ -243,6 +244,34 @@ export const SettingsPage: React.FC = () => {
                 {t('settings.themeLight', 'فاتح')}
               </button>
             </div>
+          </SettingRow>
+
+          <SettingRow
+            label={t('settings.comfortableReading', 'نمط القراءة المريحة (تكبير النصوص)')}
+            description={t(
+              'settings.comfortableReadingDesc',
+              'تكبير النصوص الدقيقة والشارات خطوة واحدة لقراءة مريحة وواضحة لكبار السن والعمل الليلي'
+            )}
+          >
+            <button
+              type="button"
+              onClick={() => {
+                const next = !settings.comfortableReading;
+                updateSettings({ comfortableReading: next });
+              }}
+              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                settings.comfortableReading
+                  ? 'bg-accent-500/20 text-accent-400 border-accent-500/40 shadow-sm'
+                  : 'bg-surface-800/40 text-surface-400 border-surface-700/40 hover:text-surface-200'
+              }`}
+            >
+              <Eye size={14} />
+              <span>
+                {settings.comfortableReading
+                  ? t('settings.comfortableReadingEnabled', 'مفعل ✓')
+                  : t('settings.comfortableReadingDisabled', 'معطل')}
+              </span>
+            </button>
           </SettingRow>
         </SettingGroup>
 

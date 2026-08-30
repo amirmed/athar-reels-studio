@@ -275,7 +275,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowAnimatedModal(true)}
-            className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-gold-400 to-amber-500 hover:from-gold-300 hover:to-amber-400 text-surface-950 font-black text-xs flex items-center gap-1.5 shadow-md shadow-gold-500/20 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+            className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-gold-400 to-amber-500 hover:from-gold-300 hover:to-amber-400 text-onbrand font-black text-xs flex items-center gap-1.5 shadow-md shadow-gold-500/20 hover:scale-105 active:scale-95 transition-all cursor-pointer"
           >
             <Film size={14} />
             <span>{t('imageQuotes.createVideoFromCard', 'ستوري متحرك 🎬✨')}</span>
@@ -396,10 +396,10 @@ export const ImageQuotesStudioPage: React.FC = () => {
                             watermarkY: (s.watermarkY || 0) + info.offset.y,
                           }));
                         }}
-                        className="group/wm relative pointer-events-auto cursor-grab active:cursor-grabbing select-none"
+                        className="group/wm relative pointer-events-auto cursor-grab active:cursor-grabbing select-none gpu-layer"
                       >
                         {/* Drag Handle Indicator */}
-                        <div className="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover/wm:opacity-100 transition-opacity bg-black/85 backdrop-blur-md px-2 py-0.5 rounded-full text-[8px] text-accent-300 border border-accent-500/30 flex items-center gap-1 shadow-lg pointer-events-none whitespace-nowrap z-40">
+                        <div className="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover/wm:opacity-100 transition-opacity bg-black/85 px-2 py-0.5 rounded-full text-[8px] text-accent-300 border border-accent-500/30 flex items-center gap-1 shadow-lg pointer-events-none whitespace-nowrap z-40">
                           <Move size={8} className="text-accent-400" />
                           <span>اسحب باليد ✋</span>
                         </div>
@@ -420,7 +420,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
                   )}
 
                   {isRendering && (
-                    <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center">
+                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
                       <Sparkles size={24} className="text-accent-400 animate-spin" />
                     </div>
                   )}
@@ -439,7 +439,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowAnimatedModal(true)}
-                className="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-gold-400 via-amber-500 to-amber-600 hover:from-gold-300 hover:to-amber-500 text-surface-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2.5 shadow-xl shadow-gold-500/20 hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer group"
+                className="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-gold-400 via-amber-500 to-amber-600 hover:from-gold-300 hover:to-amber-500 text-onbrand font-black text-xs sm:text-sm flex items-center justify-center gap-2.5 shadow-xl shadow-gold-500/20 hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer group"
               >
                 <Film size={18} className="group-hover:rotate-6 transition-transform" />
                 <span>تصدير فيديو ستوري متحرك مع أصوات الطبيعة 🎬✨ (Story MP4)</span>

@@ -301,7 +301,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
         <button
           type="button"
           onClick={onOpenVoiceRecorder}
-          className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-gold-400 to-amber-500 hover:from-gold-300 hover:to-amber-400 text-surface-950 font-bold text-xs flex items-center justify-center gap-2 shadow-md transition-all active:scale-95 cursor-pointer"
+          className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-gold-400 to-amber-500 hover:from-gold-300 hover:to-amber-400 text-onbrand font-bold text-xs flex items-center justify-center gap-2 shadow-md transition-all active:scale-95 cursor-pointer"
         >
           <Mic size={14} />
           <span>{t('editor.openVoiceRecorderBtn', 'فتح استوديو التسجيل والمايكروفون 🎙️')}</span>

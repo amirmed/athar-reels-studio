@@ -16,6 +16,8 @@ interface AppLayoutProps {
   topbarActions?: React.ReactNode;
   hideTopbar?: boolean;
   hideSidebar?: boolean;
+  noScroll?: boolean;
+  contentClassName?: string;
 }
 
 export const AppLayout: React.FC<AppLayoutProps> = ({
@@ -25,6 +27,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   topbarActions,
   hideTopbar = false,
   hideSidebar = false,
+  noScroll = false,
+  contentClassName = '',
 }) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMotherDuaOpen, setIsMotherDuaOpen] = useState(false);
@@ -35,8 +39,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     setIsSearchOpen((prev) => !prev);
   });
 
-  // Global Shift+? / ? listener
-  useHotkeys('shift+?', () => {
+  // Global Shift+? / ? listener (cross-keyboard layout support)
+  useHotkeys('shift+?, ?, shift+/', () => {
     setIsShortcutsOpen((prev) => !prev);
   });
 
@@ -55,7 +59,15 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               onOpenShortcuts={() => setIsShortcutsOpen(true)}
             />
           )}
-          <main className="flex-1 overflow-auto">{children}</main>
+          <main
+            className={`flex-1 min-h-0 ${
+              noScroll
+                ? 'overflow-hidden flex flex-col'
+                : 'overflow-y-auto overflow-x-hidden custom-scrollbar'
+            } ${contentClassName}`}
+          >
+            {children}
+          </main>
         </div>
       </div>
 

@@ -20,6 +20,7 @@ import { surahs } from '../../data/mockData';
 import { everyAyahReciters } from '../../services/quranApi';
 import { Page } from '../../types';
 import { useTranslation } from '../../i18n';
+import { EmptyState } from './EmptyState';
 
 interface GlobalSearchModalProps {
   isOpen: boolean;
@@ -275,9 +276,11 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
       {/* Results List */}
       <div className="p-3 space-y-1 overflow-y-auto flex-1 custom-scrollbar">
         {searchResults.length === 0 ? (
-          <div className="py-12 text-center text-surface-400 text-xs">
-            {t('globalSearchModal.noResults', 'لا توجد نتائج تطابق "{query}"').replace('{query}', query)}
-          </div>
+          <EmptyState
+            variant="search"
+            title={t('globalSearchModal.noResults', 'لا توجد نتائج تطابق "{query}"').replace('{query}', query)}
+            description={t('globalSearchModal.tryAnotherQuery', 'جرّب البحث باسم سورة أخرى، اسم قارئ، أو اسم صفحة في التطبيق.')}
+          />
         ) : (
           searchResults.map((item, idx) => {
             const isSelected = idx === selectedIndex;

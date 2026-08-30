@@ -59,8 +59,6 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
 
   useHotkeys('Escape', onClose, { enabled: isOpen });
 
-  if (!isOpen) return null;
-
   // Resolve Title based on selection
   const getParentTitle = () => {
     if (parentType === 'custom' && customName.trim()) return customName.trim();
@@ -345,7 +343,7 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
                 onClick={() => setActiveTab('parents')}
                 className={`flex-1 py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                   activeTab === 'parents'
-                    ? 'bg-gradient-to-r from-gold-500 to-amber-500 text-surface-950 shadow-md font-black'
+                    ? 'bg-gradient-to-r from-gold-500 to-amber-500 text-onbrand shadow-md font-black'
                     : 'text-surface-400 hover:text-surface-50 hover:bg-surface-800/50'
                 }`}
               >
@@ -358,7 +356,7 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
                 onClick={() => setActiveTab('tijani_aisha')}
                 className={`flex-1 py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                   activeTab === 'tijani_aisha'
-                    ? 'bg-gradient-to-r from-gold-500 to-amber-500 text-surface-950 shadow-md font-black'
+                    ? 'bg-gradient-to-r from-gold-500 to-amber-500 text-onbrand shadow-md font-black'
                     : 'text-surface-400 hover:text-surface-50 hover:bg-surface-800/50'
                 }`}
               >
@@ -483,7 +481,7 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
                     type="button"
                     onClick={handleDownload4KCard}
                     disabled={isGeneratingImage}
-                    className="py-3.5 px-3 rounded-2xl bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-surface-950 font-black text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-all cursor-pointer"
+                    className="py-3.5 px-3 rounded-2xl bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-onbrand font-black text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-all cursor-pointer"
                   >
                     <Download size={16} />
                     <span>
@@ -597,7 +595,7 @@ export const MotherDuaModal: React.FC<MotherDuaModalProps> = ({ isOpen, onClose 
                 <button
                   type="button"
                   onClick={handleAmeenTijani}
-                  className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-surface-950 font-black text-sm sm:text-base flex items-center justify-center gap-2.5 shadow-lg shadow-gold-500/20 active:scale-95 transition-all cursor-pointer"
+                  className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-onbrand font-black text-sm sm:text-base flex items-center justify-center gap-2.5 shadow-lg shadow-gold-500/20 active:scale-95 transition-all cursor-pointer"
                 >
                   <Heart
                     size={18}

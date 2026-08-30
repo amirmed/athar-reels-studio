@@ -74,7 +74,7 @@ export const AutoReelModal: React.FC<AutoReelModalProps> = ({ isOpen, onClose })
         {/* Instant 1-Click Generator Hero Card */}
         <div className="p-5 rounded-2xl bg-gradient-to-r from-accent-500/20 via-surface-900 to-gold-500/20 border border-gold-400/30 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg shadow-black/40">
           <div className="flex items-center gap-3.5 text-start">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-gold-400 to-amber-500 flex items-center justify-center text-surface-950 shadow-md shadow-gold-500/20 shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-gold-400 to-amber-500 flex items-center justify-center text-onbrand shadow-md shadow-gold-500/20 shrink-0">
               <Zap size={24} />
             </div>
             <div>
@@ -143,7 +143,7 @@ export const AutoReelModal: React.FC<AutoReelModalProps> = ({ isOpen, onClose })
 
                     {/* Badges */}
                     <div className="absolute top-2 end-2">
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-sm text-white/90 font-bold border border-white/[0.1]">
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-black/80 text-white/90 font-bold border border-white/[0.1]">
                         {theme.badge}
                       </span>
                     </div>

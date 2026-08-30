@@ -27,7 +27,7 @@ import {
 import { proceduralAmbientEngine } from '../../data/ambientSounds';
 import { unifiedAudioEngine } from '../../services/unifiedAudioEngine';
 import { resolveValidAudioUrl } from '../../services/persistentAudioStorage';
-import { applyCustomVoiceToAyahs } from '../../utils/customVoiceDistribution';
+import { applyCustomVoiceWithSilenceDetection } from '../../utils/customVoiceDistribution';
 import { generateProjectThumbnailDataUrl } from '../../services/thumbnailGeneratorService';
 import { synthesizeArabicSpeech } from '../../services/arabicTtsService';
 
@@ -58,6 +58,7 @@ import {
   X,
   RotateCcw,
 } from 'lucide-react';
+import { useTranslation } from '../../i18n';
 
 export const EditorPage: React.FC = () => {
   const currentProject = useAppStore((s) => s.currentProject);
@@ -66,6 +67,7 @@ export const EditorPage: React.FC = () => {
   const addToast = useAppStore((s) => s.addToast);
   const settings = useAppStore((s) => s.settings);
   const activeModal = useAppStore((s) => s.activeModal);
+  const { t } = useTranslation();
 
   // Active Tool Dock Tab & Inspector visibility
   const [activeDockTab, setActiveDockTab] = useState<DockTabType>('reciter');
@@ -346,9 +348,12 @@ export const EditorPage: React.FC = () => {
         }
         return next;
       });
-      addToast({ message: `تم تحديث وضبط كلمات وتوقيت الآية بنجاح ✨`, type: 'success' });
+      addToast({
+        message: t('editor.waveformSyncSuccess', 'تم تحديث وضبط كلمات وتوقيت الآية بنجاح ✨'),
+        type: 'success',
+      });
     },
-    [addToast]
+    [addToast, t]
   );
 
   // Pro Template Applicator
@@ -400,11 +405,14 @@ export const EditorPage: React.FC = () => {
 
       setActiveTemplateId(tpl.id);
       addToast({
-        message: `تم تطبيق قالب "${tpl.name}" وتحديث جميع المشاهد بنجاح ✨`,
+        message: t(
+          'editor.templateAppliedSuccess',
+          'تم تطبيق قالب "{template}" وتحديث جميع المشاهد بنجاح ✨'
+        ).replace('{template}', tpl.name),
         type: 'success',
       });
     },
-    [addToast, currentProject, updateProject]
+    [addToast, currentProject, updateProject, t]
   );
 
   // Ambient sound playback with strict lifecycle management (no restart glitches on volume drag)
@@ -568,7 +576,7 @@ export const EditorPage: React.FC = () => {
       }
 
       if (customVoice && ayahData.length > 0) {
-        applyCustomVoiceToAyahs(ayahData, customVoice, recordedDuration || 0);
+        await applyCustomVoiceWithSilenceDetection(ayahData, customVoice, recordedDuration || 0);
       }
 
       if (loadRequestIdRef.current !== currentRequestId) {
@@ -580,7 +588,7 @@ export const EditorPage: React.FC = () => {
       setTranslations(translationData);
     } catch (err: unknown) {
       if (loadRequestIdRef.current === currentRequestId) {
-        setLoadError('فشل في تحميل الآيات. جاري استخدام الكاش المحلي...');
+        setLoadError(t('editor.fetchError', 'فشل في تحميل الآيات. جاري استخدام الكاش المحلي...'));
         console.error(err);
       }
     } finally {
@@ -607,6 +615,7 @@ export const EditorPage: React.FC = () => {
     audioSettings.customAudioDuration,
     audioSettings.customAudioKey,
     ayahs.length,
+    t,
   ]);
 
   useEffect(() => {
@@ -675,12 +684,14 @@ export const EditorPage: React.FC = () => {
 
     const unsubError = unifiedAudioEngine.onError((_errorMsg) => {
       addToast({
-        message:
-          'تعذر تشغيل تلاوة القارئ. قد يكون هناك انقطاع في الاتصال أو عدم توفر السورة لهذا القارئ 🎙️',
+        message: t(
+          'editor.audioPlayError',
+          'تعذر تشغيل تلاوة القارئ. قد يكون هناك انقطاع في الاتصال أو عدم توفر السورة لهذا القارئ 🎙️'
+        ),
         type: 'warning',
         duration: 8000,
         action: {
-          label: 'تغيير القارئ 🔄',
+          label: t('editor.changeReciter', 'تغيير القارئ 🔄'),
           onClick: () => {
             setIsReciterModalOpen(true);
           },
@@ -801,7 +812,10 @@ export const EditorPage: React.FC = () => {
       });
       setSaveStatus('saved');
     }
-    addToast({ message: 'تم حفظ التغييرات بنجاح ✓', type: 'success' });
+    addToast({
+      message: t('editor.changesSaved', 'تم حفظ التغييرات بنجاح ✓'),
+      type: 'success',
+    });
   }, [
     currentProject,
     updateProject,
@@ -821,6 +835,7 @@ export const EditorPage: React.FC = () => {
     videoEffect,
     activeTemplateId,
     addToast,
+    t,
   ]);
 
   // Global Pro Keyboard Shortcuts Studio
@@ -882,7 +897,10 @@ export const EditorPage: React.FC = () => {
         setAudioSettings((s) => {
           const next = s.ambientSoundId === 'none' ? 'gentle_rain' : 'none';
           addToast({
-            message: next === 'none' ? 'تم كتم صوت الطبيعة 🔇' : 'تم تفعيل صوت الطبيعة 🌧️',
+            message:
+              next === 'none'
+                ? t('editor.ambientMuted', 'تم كتم صوت الطبيعة 🔇')
+                : t('editor.ambientEnabled', 'تم تفعيل صوت الطبيعة 🌧️'),
             type: 'info',
           });
           return { ...s, ambientSoundId: next };
@@ -1030,22 +1048,29 @@ export const EditorPage: React.FC = () => {
       <div className="flex-1 flex overflow-hidden relative">
         {/* Loading Indicator */}
         {isLoadingAyahs && (
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 px-4 py-2 rounded-full bg-surface-900/90 border border-gold-500/30 text-gold-400 text-xs font-bold flex items-center gap-2 shadow-2xl backdrop-blur-md animate-pulse pointer-events-none">
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 px-4 py-2 rounded-full bg-surface-900 border border-gold-500/30 text-gold-400 text-xs font-bold flex items-center gap-2 shadow-2xl animate-pulse pointer-events-none">
             <div className="w-2.5 h-2.5 rounded-full bg-gold-400 animate-ping" />
-            <span>جاري تحميل الآيات والصوت القرآني...</span>
+            <span>
+              {t('editor.loadingAyahsAndAudio', 'جاري تحميل الآيات والصوت القرآني...')}
+            </span>
           </div>
         )}
 
         {/* Load Error Notification with Retry Button */}
         {loadError && ayahs.length === 0 && (
-          <div className="absolute top-6 left-1/2 -translate-x-1/2 z-40 max-w-md w-full mx-auto px-5 py-4 rounded-2xl bg-surface-950 border border-red-500/40 text-surface-50 shadow-2xl backdrop-blur-xl flex flex-col items-center text-center gap-3 animate-in fade-in zoom-in-95">
+          <div className="absolute top-6 left-1/2 -translate-x-1/2 z-40 max-w-md w-full mx-auto px-5 py-4 rounded-2xl bg-surface-950 border border-red-500/40 text-surface-50 shadow-2xl flex flex-col items-center text-center gap-3 animate-in fade-in zoom-in-95">
             <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-500 text-xl font-black">
               ⚠️
             </div>
             <div>
-              <h4 className="font-bold text-sm text-red-600 dark:text-red-300">تعذر تحميل بيانات الآيات والصوت</h4>
+              <h4 className="font-bold text-sm text-red-600 dark:text-red-300">
+                {t('editor.loadErrorTitle', 'تعذر تحميل بيانات الآيات والصوت')}
+              </h4>
               <p className="text-xs text-surface-400 mt-1">
-                يرجى التحقق من اتصال الإنترنت أو اختيار قارئ آخر
+                {t(
+                  'editor.loadErrorDesc',
+                  'يرجى التحقق من اتصال الإنترنت أو اختيار قارئ آخر'
+                )}
               </p>
             </div>
             <button
@@ -1053,7 +1078,7 @@ export const EditorPage: React.FC = () => {
               className="px-4 py-2 rounded-xl bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 text-red-700 dark:text-red-200 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
             >
               <RotateCcw size={13} />
-              <span>إعادة المحاولة الآن</span>
+              <span>{t('editor.retryBtn', 'إعادة المحاولة الآن')}</span>
             </button>
           </div>
         )}
@@ -1115,13 +1140,20 @@ export const EditorPage: React.FC = () => {
                   {activeDockTab === 'templates' && <Palette size={16} className="text-pink-400" />}
                   {activeDockTab === 'branding' && <Sliders size={16} className="text-amber-400" />}
                   <span className="font-bold text-xs text-surface-50">
-                    {activeDockTab === 'reciter' && 'القارئ والسورة القرآنية'}
-                    {activeDockTab === 'bg' && 'الخلفيات السينمائية'}
-                    {activeDockTab === 'text' && 'تنسيق النص والخطوط'}
-                    {activeDockTab === 'ornaments' && 'الزخارف والإطارات'}
-                    {activeDockTab === 'ambient' && 'الصوت المحيطي و 8D'}
-                    {activeDockTab === 'templates' && 'القوالب السينمائية'}
-                    {activeDockTab === 'branding' && 'العلامة المائية والكابشن'}
+                    {activeDockTab === 'reciter' &&
+                      t('editor.dockReciterTitle', 'القارئ والسورة القرآنية')}
+                    {activeDockTab === 'bg' &&
+                      t('editor.dockBgTitle', 'الخلفيات السينمائية')}
+                    {activeDockTab === 'text' &&
+                      t('editor.dockTextTitle', 'تنسيق النص والخطوط')}
+                    {activeDockTab === 'ornaments' &&
+                      t('editor.dockOrnamentsTitle', 'الزخارف والإطارات')}
+                    {activeDockTab === 'ambient' &&
+                      t('editor.dockAmbientTitle', 'الصوت المحيطي و 8D')}
+                    {activeDockTab === 'templates' &&
+                      t('editor.dockTemplatesTitle', 'القوالب السينمائية')}
+                    {activeDockTab === 'branding' &&
+                      t('editor.dockBrandingTitle', 'العلامة المائية والكابشن')}
                   </span>
                 </div>
               </div>

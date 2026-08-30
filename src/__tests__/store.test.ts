@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { useAppStore, applyThemeToDom } from '../store';
+import { useAppStore, applyThemeToDom, applyComfortableReadingToDom } from '../store';
 import { createDefaultProject } from '../utils/projectDefaults';
 
 describe('Zustand Modular Store (Slices & Persist)', () => {
@@ -24,6 +24,9 @@ describe('Zustand Modular Store (Slices & Persist)', () => {
           rootAttrs[k] = v;
         }),
         getAttribute: vi.fn((k: string) => rootAttrs[k] || null),
+        removeAttribute: vi.fn((k: string) => {
+          delete rootAttrs[k];
+        }),
         style: {},
       },
       body: {
@@ -36,6 +39,9 @@ describe('Zustand Modular Store (Slices & Persist)', () => {
           bodyAttrs[k] = v;
         }),
         getAttribute: vi.fn((k: string) => bodyAttrs[k] || null),
+        removeAttribute: vi.fn((k: string) => {
+          delete bodyAttrs[k];
+        }),
       },
     };
 
@@ -128,6 +134,14 @@ describe('Zustand Modular Store (Slices & Persist)', () => {
       expect(useAppStore.getState().toasts.length).toBe(1);
 
       removeToast(toastId);
+      expect(useAppStore.getState().toasts.length).toBe(0);
+
+      // Multiple toasts and clearAllToasts
+      addToast({ message: 'Toast 1', type: 'info' });
+      addToast({ message: 'Toast 2', type: 'warning' });
+      expect(useAppStore.getState().toasts.length).toBe(2);
+
+      useAppStore.getState().clearAllToasts?.();
       expect(useAppStore.getState().toasts.length).toBe(0);
     });
 
@@ -229,6 +243,18 @@ describe('Zustand Modular Store (Slices & Persist)', () => {
       expect(document.body.classList.contains('dark')).toBe(true);
       expect(document.body.classList.contains('light')).toBe(false);
       expect(document.body.getAttribute('data-theme')).toBe('dark');
+    });
+
+    it('applies comfortable reading classes to document root and body when applyComfortableReadingToDom is called', () => {
+      applyComfortableReadingToDom(true);
+      expect(document.documentElement.classList.contains('comfortable-reading')).toBe(true);
+      expect(document.documentElement.getAttribute('data-reading-mode')).toBe('comfortable');
+      expect(document.body.classList.contains('comfortable-reading')).toBe(true);
+
+      applyComfortableReadingToDom(false);
+      expect(document.documentElement.classList.contains('comfortable-reading')).toBe(false);
+      expect(document.documentElement.getAttribute('data-reading-mode')).toBeNull();
+      expect(document.body.classList.contains('comfortable-reading')).toBe(false);
     });
   });
 

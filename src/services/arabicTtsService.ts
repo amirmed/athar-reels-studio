@@ -4,6 +4,8 @@
  * Provides high-fidelity Arabic speech synthesis with authentic Tashkeel support.
  */
 
+import { logger } from '../utils/logger';
+
 export interface ArabicVoice {
   id: string;
   name: string;
@@ -90,7 +92,7 @@ function setTtsCache(key: string, value: { blob: Blob; audioUrl: string; duratio
       try {
         URL.revokeObjectURL(old.audioUrl);
       } catch (err) {
-        console.debug('[ArabicTTS] URL revoke error:', err);
+        logger.debug('[ArabicTTS] URL revoke error:', err);
       }
     }
   } else if (ttsAudioCache.size >= MAX_TTS_CACHE_ENTRIES) {
@@ -101,7 +103,7 @@ function setTtsCache(key: string, value: { blob: Blob; audioUrl: string; duratio
         try {
           URL.revokeObjectURL(old.audioUrl);
         } catch (err) {
-          console.debug('[ArabicTTS] URL revoke error:', err);
+          logger.debug('[ArabicTTS] URL revoke error:', err);
         }
       }
       ttsAudioCache.delete(firstKey);
@@ -116,7 +118,7 @@ export function clearTtsAudioCache(): void {
       try {
         URL.revokeObjectURL(entry.audioUrl);
       } catch (err) {
-        console.debug('[ArabicTTS] URL revoke error:', err);
+        logger.debug('[ArabicTTS] URL revoke error:', err);
       }
     }
   });
@@ -166,7 +168,7 @@ export async function synthesizeArabicSpeech(
         return result;
       }
     } catch (ipcErr) {
-      console.warn('[ArabicTTS] Electron IPC failed, trying HTTP proxy:', ipcErr);
+      logger.warn('[ArabicTTS] Electron IPC failed, trying HTTP proxy:', ipcErr);
     }
   }
 
@@ -185,7 +187,7 @@ export async function synthesizeArabicSpeech(
       }
     }
   } catch (proxyErr) {
-    console.warn('[ArabicTTS] /api/tts proxy fetch failed:', proxyErr);
+    logger.warn('[ArabicTTS] /api/tts proxy fetch failed:', proxyErr);
   }
 
   // 3. Try Direct Google Arabic Speech stream
@@ -194,7 +196,7 @@ export async function synthesizeArabicSpeech(
     setTtsCache(cacheKey, googleResult);
     return googleResult;
   } catch (gErr) {
-    console.warn('[ArabicTTS] Google TTS stream failed:', gErr);
+    logger.warn('[ArabicTTS] Google TTS stream failed:', gErr);
   }
 
   // 4. Fail explicitly with clear user error message instead of generating fake silent audio
@@ -252,7 +254,7 @@ export function playArabicSpeechDirect(
         activeAudio.pause();
         activeAudio.removeAttribute('src');
       } catch (err) {
-        console.debug('[ArabicTTS] Audio cleanup error:', err);
+        logger.debug('[ArabicTTS] Audio cleanup error:', err);
       }
       activeAudio = null;
     }
@@ -260,7 +262,7 @@ export function playArabicSpeechDirect(
       try {
         window.speechSynthesis.cancel();
       } catch (err) {
-        console.debug('[ArabicTTS] SpeechSynthesis cancel error:', err);
+        logger.debug('[ArabicTTS] SpeechSynthesis cancel error:', err);
       }
     }
   };

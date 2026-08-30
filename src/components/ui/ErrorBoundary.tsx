@@ -128,7 +128,7 @@ ${errorInfo?.componentStack || 'No component stack'}
               <button
                 type="button"
                 onClick={this.handleReload}
-                className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-surface-950 font-extrabold text-xs flex items-center justify-center gap-2 shadow-lg shadow-gold-500/20 active:scale-95 transition-all cursor-pointer"
+                className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-onbrand font-extrabold text-xs flex items-center justify-center gap-2 shadow-lg shadow-gold-500/20 active:scale-95 transition-all cursor-pointer"
               >
                 <RotateCcw size={15} />
                 <span>إعادة تحميل التطبيق 🔄</span>

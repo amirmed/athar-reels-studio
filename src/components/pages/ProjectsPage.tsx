@@ -11,7 +11,6 @@ import {
   List,
   Search,
   PlusCircle,
-  FolderOpen,
   Trash2,
   CheckSquare,
   Square,
@@ -153,7 +152,7 @@ export const ProjectsPage: React.FC = () => {
                 }}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                   isSelectionMode
-                    ? 'bg-accent-500 text-surface-950 shadow-md'
+                    ? 'bg-accent-500 text-onbrand shadow-md'
                     : 'bg-surface-800/80 hover:bg-surface-700 text-surface-300 hover:text-surface-50 border border-surface-700/40'
                 }`}
               >
@@ -264,11 +263,30 @@ export const ProjectsPage: React.FC = () => {
         {/* Projects List / Grid */}
         {filteredProjects.length === 0 ? (
           <EmptyState
-            icon={FolderOpen}
-            title={t('projects.noProjects', 'لا توجد مشاريع')}
-            description={t('projects.noResults', 'لم يتم العثور على مشاريع تطابق معايير البحث. أنشئ مشروعاً جديداً للبدء.')}
-            actionLabel={t('projects.newProject', 'إنشاء مشروع جديد')}
-            onAction={() => setCurrentPage('create')}
+            variant={searchQuery || statusFilter !== 'all' ? 'search' : 'first-time'}
+            title={
+              searchQuery || statusFilter !== 'all'
+                ? t('projects.noResultsTitle', 'لم يتم العثور على نتائج مطابقة')
+                : t('projects.noProjects', 'لا توجد مشاريع بعد')
+            }
+            description={
+              searchQuery || statusFilter !== 'all'
+                ? t('projects.noResults', 'لم يتم العثور على مشاريع تطابق معايير البحث والتصفية الحالية.')
+                : t('projects.emptyDesc', 'ابدأ بإنشاء أول ريلز قرآني احترافي عالي الدقة الآن.')
+            }
+            actionLabel={
+              searchQuery || statusFilter !== 'all'
+                ? t('projects.clearFilters', 'إعادة ضبط البحث')
+                : t('projects.newProject', 'إنشاء مشروع جديد')
+            }
+            onAction={
+              searchQuery || statusFilter !== 'all'
+                ? () => {
+                    setSearchQuery('');
+                    setStatusFilter('all');
+                  }
+                : () => setCurrentPage('create')
+            }
           />
         ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 stagger-children">

@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore, Toast as ToastType } from '../../store/useAppStore';
 import { CheckCircle2, XCircle, Info, AlertTriangle, X } from 'lucide-react';
+import { useTranslation } from '../../i18n';
 
 const iconMap = {
   success: <CheckCircle2 size={18} className="text-green-400" />,
@@ -22,16 +23,17 @@ interface ToastItemProps {
 }
 
 const ToastItem: React.FC<ToastItemProps> = React.memo(({ toast }) => {
+  const { t } = useTranslation();
   const removeToast = useAppStore((s) => s.removeToast);
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
+      initial={{ opacity: 0, y: -20, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: 20, scale: 0.95 }}
+      exit={{ opacity: 0, y: -20, scale: 0.95 }}
       transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
       className={`
-        flex items-center gap-3 px-4 py-3 rounded-xl backdrop-blur-xl border shadow-xl
+        flex items-center gap-3 px-4 py-3 rounded-xl backdrop-blur-xl border shadow-2xl pointer-events-auto
         ${bgMap[toast.type || 'info']}
       `}
     >
@@ -50,9 +52,10 @@ const ToastItem: React.FC<ToastItemProps> = React.memo(({ toast }) => {
         </button>
       )}
       <button
+        type="button"
         onClick={() => removeToast(toast.id)}
         className="text-surface-400 hover:text-surface-50 transition-colors p-1 cursor-pointer"
-        aria-label="إغلاق التنبيه"
+        aria-label={t('common.closeToast', 'إغلاق التنبيه')}
       >
         <X size={14} />
       </button>
@@ -62,13 +65,22 @@ const ToastItem: React.FC<ToastItemProps> = React.memo(({ toast }) => {
 
 export const ToastContainer: React.FC = () => {
   const toasts = useAppStore((s) => s.toasts);
+  const clearAllToasts = useAppStore((s) => s.clearAllToasts);
+
+  React.useEffect(() => {
+    return () => {
+      if (clearAllToasts) {
+        clearAllToasts();
+      }
+    };
+  }, [clearAllToasts]);
 
   return (
     <div
       role="status"
       aria-live="polite"
       aria-atomic="true"
-      className="fixed bottom-6 start-6 z-[100] flex flex-col gap-2 max-w-sm"
+      className="fixed top-6 start-6 z-[100] flex flex-col gap-2 max-w-sm pointer-events-none"
     >
       <AnimatePresence mode="popLayout">
         {toasts.map((toast) => (

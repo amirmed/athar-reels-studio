@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
+import { useTranslation } from '../../i18n';
 
 interface ModalProps {
   isOpen: boolean;
@@ -18,12 +19,33 @@ interface ModalProps {
 }
 
 const sizeMap: Record<NonNullable<ModalProps['size']>, string> = {
-  sm: 'max-w-md',
-  md: 'max-w-lg',
-  lg: 'max-w-2xl',
-  xl: 'max-w-4xl',
-  full: 'max-w-6xl',
+  sm: 'max-w-md w-full',
+  md: 'max-w-lg w-full',
+  lg: 'max-w-2xl w-full',
+  xl: 'max-w-4xl w-full',
+  full: 'max-w-6xl w-full',
 };
+
+// Global counter for nested / multiple modals body scroll locking
+let activeModalCount = 0;
+let initialBodyOverflow = '';
+
+export function lockBodyScroll() {
+  if (typeof document === 'undefined') return;
+  if (activeModalCount === 0) {
+    initialBodyOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+  }
+  activeModalCount++;
+}
+
+export function unlockBodyScroll() {
+  if (typeof document === 'undefined') return;
+  activeModalCount = Math.max(0, activeModalCount - 1);
+  if (activeModalCount === 0) {
+    document.body.style.overflow = initialBodyOverflow;
+  }
+}
 
 export const Modal: React.FC<ModalProps> = ({
   isOpen,
@@ -39,63 +61,58 @@ export const Modal: React.FC<ModalProps> = ({
   closeOnBackdropClick = true,
   closeOnEscape = true,
 }) => {
+  const { t } = useTranslation();
   const modalRef = React.useRef<HTMLDivElement>(null);
   const previousActiveElementRef = React.useRef<HTMLElement | null>(null);
 
   React.useEffect(() => {
     if (!isOpen) return;
 
-    // Store previously focused element
+    // Capture the trigger element that opened the modal to return focus later
     previousActiveElementRef.current = document.activeElement as HTMLElement;
 
-    // Focus first focusable element inside modal
+    // Prevent body scroll when modal dialog is open
+    lockBodyScroll();
+
+    // Focus the first actionable or focusable element within the modal dialog
     const timer = setTimeout(() => {
       if (modalRef.current) {
-        const focusables = modalRef.current.querySelectorAll<HTMLElement>(
-          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        const focusable = modalRef.current.querySelector<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
         );
-        if (focusables.length > 0) {
-          focusables[0].focus();
+        if (focusable) {
+          focusable.focus();
+        } else {
+          modalRef.current.focus();
         }
       }
     }, 50);
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        if (closeOnEscape) {
-          onClose();
-        }
+      if (e.key === 'Escape' && closeOnEscape) {
+        onClose();
         return;
       }
 
-      // Focus trap for Tab key
+      // Trap focus inside modal
       if (e.key === 'Tab' && modalRef.current) {
-        const focusables = Array.from(
-          modalRef.current.querySelectorAll<HTMLElement>(
-            'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-          )
-        ).filter((el) => el.offsetParent !== null); // only visible elements
-
+        const focusables = modalRef.current.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])'
+        );
         if (focusables.length === 0) return;
 
-        const first = focusables[0];
-        const last = focusables[focusables.length - 1];
+        const firstElement = focusables[0];
+        const lastElement = focusables[focusables.length - 1];
 
         if (e.shiftKey) {
-          if (
-            document.activeElement === first ||
-            !modalRef.current.contains(document.activeElement)
-          ) {
+          if (document.activeElement === firstElement) {
             e.preventDefault();
-            last.focus();
+            lastElement.focus();
           }
         } else {
-          if (
-            document.activeElement === last ||
-            !modalRef.current.contains(document.activeElement)
-          ) {
+          if (document.activeElement === lastElement) {
             e.preventDefault();
-            first.focus();
+            firstElement.focus();
           }
         }
       }
@@ -106,6 +123,7 @@ export const Modal: React.FC<ModalProps> = ({
     return () => {
       clearTimeout(timer);
       window.removeEventListener('keydown', handleKeyDown);
+      unlockBodyScroll();
       // Restore previous focus on close
       if (
         previousActiveElementRef.current &&
@@ -114,16 +132,16 @@ export const Modal: React.FC<ModalProps> = ({
         previousActiveElementRef.current.focus();
       }
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, closeOnEscape]);
 
   return (
     <AnimatePresence>
       {isOpen && (
         <div
-          className="fixed inset-0 z-[90] flex items-center justify-center p-4 sm:p-6 overflow-hidden"
+          className="fixed inset-0 z-[90] flex items-center justify-center p-3 sm:p-6 overflow-y-auto custom-scrollbar overscroll-contain"
           role="dialog"
           aria-modal="true"
-          aria-label={title || 'نافذة حوار'}
+          aria-label={title || t('common.dialogModal', 'نافذة حوار')}
         >
           {/* Backdrop */}
           <motion.div
@@ -138,21 +156,19 @@ export const Modal: React.FC<ModalProps> = ({
           {/* Modal content */}
           <motion.div
             ref={modalRef}
-            initial={{ opacity: 0, scale: 0.96, y: 8 }}
+            tabIndex={-1}
+            initial={{ opacity: 0, scale: 0.95, y: 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, y: 8 }}
-            transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
-            className={`
-              relative glass-panel-solid p-0 ${sizeMap[size] || sizeMap.md} w-full max-h-[85vh] flex flex-col overflow-hidden
-              shadow-2xl shadow-black/50 border border-surface-700/40 ${className}
-            `}
+            exit={{ opacity: 0, scale: 0.95, y: 15 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className={`relative w-full max-w-[calc(100vw-1.5rem)] sm:max-w-[calc(100vw-3rem)] ${sizeMap[size] || sizeMap.md} bg-surface-900 border border-surface-700/50 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[90vh] my-auto shrink-0 z-10 ${className}`}
           >
             {/* Header */}
             {(title || headerIcon || headerActions) && (
-              <div className="flex items-center justify-between px-6 py-4 border-b border-surface-700/40 bg-surface-900/90 shrink-0">
+              <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-surface-700/40 bg-surface-900/95 shrink-0">
                 <div className="flex items-center gap-3 min-w-0">
                   {headerIcon && (
-                    <div className="w-9 h-9 rounded-xl bg-accent-500/10 border border-accent-500/20 flex items-center justify-center text-accent-400 shrink-0">
+                    <div className="w-9 h-9 rounded-xl bg-gold-500/10 border border-gold-500/20 flex items-center justify-center text-gold-400 shrink-0">
                       {headerIcon}
                     </div>
                   )}
@@ -168,7 +184,7 @@ export const Modal: React.FC<ModalProps> = ({
                     type="button"
                     onClick={onClose}
                     className="w-8 h-8 rounded-xl bg-surface-800/60 hover:bg-surface-700/80 flex items-center justify-center text-surface-400 hover:text-surface-50 transition-all cursor-pointer border border-surface-700/30"
-                    aria-label="إغلاق النافذة"
+                    aria-label={t('common.closeModal', 'إغلاق النافذة')}
                   >
                     <X size={15} />
                   </button>
@@ -177,7 +193,7 @@ export const Modal: React.FC<ModalProps> = ({
             )}
 
             {/* Body */}
-            <div className={`p-6 overflow-y-auto custom-scrollbar flex-1 ${bodyClassName}`}>{children}</div>
+            <div className={`p-4 sm:p-6 overflow-y-auto overflow-x-hidden custom-scrollbar flex-1 min-h-0 overscroll-contain text-start ${bodyClassName}`}>{children}</div>
           </motion.div>
         </div>
       )}
@@ -209,17 +225,18 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title} size="sm">
       <p className="text-sm text-surface-300 leading-relaxed mb-6">{message}</p>
-      <div className="flex gap-3 justify-start">
+      <div className="flex gap-3 justify-start flex-wrap">
         <button
+          type="button"
           onClick={() => {
             onConfirm();
             onClose();
           }}
-          className={variant === 'danger' ? 'btn-danger px-5' : 'btn-primary-sm px-5'}
+          className={variant === 'danger' ? 'btn-danger px-5 cursor-pointer' : 'btn-primary-sm px-5 cursor-pointer'}
         >
           {confirmLabel}
         </button>
-        <button onClick={onClose} className="btn-ghost px-5">
+        <button type="button" onClick={onClose} className="btn-ghost px-5 cursor-pointer">
           {cancelLabel}
         </button>
       </div>

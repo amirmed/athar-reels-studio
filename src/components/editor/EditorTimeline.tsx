@@ -187,7 +187,7 @@ export const EditorTimeline: React.FC<EditorTimelineProps> = React.memo(
                       }}
                       aria-label={t('editor.jumpToAyah', 'انقر للانتقال للآية {number}').replace('{number}', String(seg.ayahNumber))}
                       style={{ width: `${Math.max(8, widthPercent)}%` }}
-                      className={`h-full rounded-xl border p-1.5 flex flex-col justify-between cursor-pointer transition-all relative overflow-hidden group focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 ${
+                      className={`h-full rounded-xl border p-1.5 flex flex-col justify-between cursor-pointer transition-all relative overflow-hidden group focus:outline-none focus-visible:outline-accent-500 ${
                         isActive
                           ? 'bg-gradient-to-r from-gold-500/30 to-amber-500/25 border-gold-400 shadow-md shadow-gold-500/20 ring-1 ring-gold-400/40'
                           : 'bg-surface-800/80 hover:bg-surface-700/80 border-surface-700/40 hover:border-surface-600'

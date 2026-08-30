@@ -251,7 +251,7 @@ export const ArabicAiVoiceModal: React.FC<ArabicAiVoiceModalProps> = ({
                     <div className="min-w-0 text-start">
                       <h4 className="text-xs font-bold text-surface-50 truncate flex items-center gap-1.5">
                         <span>{voice.name}</span>
-                        <span className="text-[10px] px-1.5 py-0.2 rounded bg-surface-800 text-surface-400 border border-surface-700/30">
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface-800 text-surface-400 border border-surface-700/30">
                           {voice.region}
                         </span>
                       </h4>
@@ -268,7 +268,7 @@ export const ArabicAiVoiceModal: React.FC<ArabicAiVoiceModalProps> = ({
                       </span>
                     )}
                     {isSelected && (
-                      <span className="p-1 rounded-full bg-gold-500 text-surface-950">
+                      <span className="p-1 rounded-full bg-gold-500 text-onbrand">
                         <Check size={11} />
                       </span>
                     )}
@@ -342,7 +342,7 @@ export const ArabicAiVoiceModal: React.FC<ArabicAiVoiceModalProps> = ({
               className="btn-gold py-2 px-5 text-xs flex items-center gap-2 shadow-lg disabled:opacity-50"
             >
               {isSynthesizing ? (
-                <Loader2 size={15} className="animate-spin text-surface-950" />
+                <Loader2 size={15} className="animate-spin text-onbrand" />
               ) : (
                 <Zap size={15} />
               )}

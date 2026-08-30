@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Wand2 } from 'lucide-react';
+import { Sparkles, Wand2, Keyboard } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { studioTemplates } from '../../data/templates';
 import { createDefaultProject } from '../../utils/projectDefaults';
@@ -111,6 +111,23 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClos
               <p className="text-[11px] text-surface-400">
                 جاهز للتيك توك، إنستغرام ريلز، وشورتس يوتيوب
               </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Keyboard shortcut pro-tip */}
+        <div className="p-3 rounded-2xl bg-surface-850 border border-gold-500/25 flex items-center justify-between gap-3 text-start">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-8 h-8 rounded-xl bg-gold-400/10 border border-gold-400/20 flex items-center justify-center text-gold-400 shrink-0">
+              <Keyboard size={16} />
+            </div>
+            <div className="min-w-0">
+              <span className="text-xs font-bold text-surface-100 block">
+                نصيحة للمحترفين ⚡
+              </span>
+              <span className="text-[11px] text-surface-400 block mt-0.5">
+                اضغط مفتاح <kbd className="px-1.5 py-0.5 rounded bg-surface-900 border border-surface-700 text-gold-300 font-mono font-bold text-[10px] shadow-sm">?</kbd> في أي وقت لعرض كافة اختصارات لوحة المفاتيح.
+              </span>
             </div>
           </div>
         </div>

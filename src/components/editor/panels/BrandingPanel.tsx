@@ -131,7 +131,7 @@ export const BrandingPanel: React.FC<BrandingPanelProps> = ({
                       (textSettings.watermarkPosition || 'bottom') === pos.id &&
                       !textSettings.watermarkX &&
                       !textSettings.watermarkY
-                        ? 'bg-gradient-to-r from-gold-400 to-amber-500 text-surface-950 font-black shadow-md'
+                        ? 'bg-gradient-to-r from-gold-400 to-amber-500 text-onbrand font-black shadow-md'
                         : 'bg-surface-800/80 text-surface-400 hover:text-surface-50 hover:bg-surface-700'
                     } ${pos.id === 'center' ? 'col-span-3' : ''}`}
                   >

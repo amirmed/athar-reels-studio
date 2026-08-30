@@ -69,7 +69,7 @@ export const IslamicEventsModal: React.FC<IslamicEventsModalProps> = ({
               onSelectEvent(liveOccasion.recommendedItem);
               onClose();
             }}
-            className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-gradient-to-r from-gold-400 to-accent-500 hover:from-gold-300 hover:to-accent-400 text-surface-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-md transition-all active:scale-95 cursor-pointer shrink-0"
+            className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-gradient-to-r from-gold-400 to-accent-500 hover:from-gold-300 hover:to-accent-400 text-onbrand font-bold text-xs flex items-center justify-center gap-1.5 shadow-md transition-all active:scale-95 cursor-pointer shrink-0"
           >
             <span>{t('islamicEventsModal.applyTodayRecommendation', 'تطبيق مقترح اليوم الآن 🚀')}</span>
             <ArrowRight size={14} className="rotate-180" />
@@ -143,7 +143,7 @@ export const IslamicEventsModal: React.FC<IslamicEventsModalProps> = ({
                 <div className="absolute inset-0 bg-gradient-to-t from-surface-950 via-surface-950/40 to-transparent" />
 
                 <div className="absolute top-2 end-2">
-                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-surface-950/80 backdrop-blur-md text-gold-300 border border-gold-400/30">
+                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-surface-950 text-gold-300 border border-gold-400/30">
                     {item.seasonBadge}
                   </span>
                 </div>

@@ -200,7 +200,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
             onClick={() => setActiveSubTab(tab.id as 'font' | 'spacing' | 'fx' | 'motion' | 'translation')}
             className={`py-2 rounded-xl transition-all cursor-pointer flex flex-col items-center gap-0.5 ${
               activeSubTab === tab.id
-                ? 'bg-gradient-to-b from-gold-500 to-amber-500 text-surface-950 font-black shadow-sm'
+                ? 'bg-gradient-to-b from-gold-500 to-amber-500 text-onbrand font-black shadow-sm'
                 : 'text-surface-400 hover:text-surface-50 hover:bg-surface-800/60'
             }`}
           >
@@ -264,7 +264,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                   onClick={() => setFontCategoryFilter(cat.id)}
                   className={`px-2.5 py-1 rounded-xl text-[11px] font-bold shrink-0 transition-all cursor-pointer ${
                     fontCategoryFilter === cat.id
-                      ? 'bg-gold-500 text-surface-950 shadow-sm'
+                      ? 'bg-gold-500 text-onbrand shadow-sm'
                       : 'bg-surface-900 border border-surface-700/40 text-surface-300 hover:text-surface-50'
                   }`}
                 >
@@ -350,7 +350,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                         aria-label={`سُمك الخط: ${w.label}`}
                         className={`py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                           textSettings.fontWeight === w.id
-                            ? 'bg-gold-500 text-surface-950 font-black shadow-sm'
+                            ? 'bg-gold-500 text-onbrand font-black shadow-sm'
                             : 'text-surface-400 hover:text-surface-50'
                         }`}
                       >
@@ -374,7 +374,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                           aria-label={a.name}
                           className={`py-1.5 rounded-lg text-xs flex items-center justify-center transition-all cursor-pointer ${
                             textSettings.textAlign === a.id
-                              ? 'bg-gold-500 text-surface-950 shadow-sm font-bold'
+                              ? 'bg-gold-500 text-onbrand shadow-sm font-bold'
                               : 'text-surface-400 hover:text-surface-50'
                           }`}
                         >

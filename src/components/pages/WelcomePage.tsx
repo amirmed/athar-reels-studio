@@ -218,7 +218,7 @@ export const WelcomePage: React.FC = () => {
             <button
               type="button"
               onClick={handleStartNow}
-              className="w-full sm:w-auto px-10 py-4 rounded-2xl bg-gradient-to-r from-gold-400 via-amber-500 to-amber-600 hover:from-gold-300 hover:to-amber-500 text-surface-950 font-black text-base sm:text-lg shadow-xl shadow-gold-500/20 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 cursor-pointer group"
+              className="w-full sm:w-auto px-10 py-4 rounded-2xl bg-gradient-to-r from-gold-400 via-amber-500 to-amber-600 hover:from-gold-300 hover:to-amber-500 text-onbrand font-black text-base sm:text-lg shadow-xl shadow-gold-500/20 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 cursor-pointer group"
             >
               <Sparkles size={20} className="group-hover:rotate-12 transition-transform" />
               <span>{t('welcome.startNowBtn', 'ابدأ الآن واصنع أثرك القرآني')}</span>

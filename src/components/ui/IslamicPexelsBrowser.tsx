@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import {
   Search,
   Image as ImageIcon,
@@ -9,7 +9,7 @@ import {
   ExternalLink,
   Loader2,
   X,
-  Video,
+  Star,
 } from 'lucide-react';
 
 import {
@@ -22,6 +22,7 @@ import {
   ISLAMIC_VIDEO_CATEGORIES,
   CURATED_ISLAMIC_VIDEOS,
 } from '../../data/islamicVideos';
+import { EmptyState } from './EmptyState';
 import {
   getPexelsApiKey,
   setPexelsApiKey,
@@ -29,6 +30,11 @@ import {
   PexelsVideo,
   PexelsVideoFile,
 } from '../../services/pexelsApi';
+import {
+  toggleFavoriteBackground,
+  getAllFavoriteBackgrounds,
+} from '../../services/persistentBackgroundStorage';
+import { useTranslation } from '../../i18n';
 
 export type { IslamicWallpaper, IslamicVideo };
 
@@ -36,6 +42,7 @@ interface IslamicPexelsBrowserProps {
   onSelectPhoto: (url: string) => void;
   selectedUrl?: string;
   defaultMediaType?: 'photos' | 'videos';
+  addToast?: (toast: { message: string; type?: 'success' | 'error' | 'info' | 'warning' }) => void;
 }
 
 const PHOTO_CATEGORIES = [
@@ -52,7 +59,9 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
   onSelectPhoto,
   selectedUrl,
   defaultMediaType = 'photos',
+  addToast,
 }) => {
+  const { t } = useTranslation();
   const [mediaType, setMediaType] = useState<'photos' | 'videos'>(defaultMediaType);
   const [selectedPhotoCategory, setSelectedPhotoCategory] = useState<string>('all');
   const [selectedVideoCategory, setSelectedVideoCategory] = useState<string>('all');
@@ -63,6 +72,45 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
   const [apiKey, setApiKey] = useState(() => getPexelsApiKey());
   const [showKeyModal, setShowKeyModal] = useState(false);
   const [hoveredVideoId, setHoveredVideoId] = useState<string | null>(null);
+  const [favoritedUrls, setFavoritedUrls] = useState<Set<string>>(new Set());
+
+  const refreshFavorites = useCallback(async () => {
+    try {
+      const all = await getAllFavoriteBackgrounds();
+      setFavoritedUrls(new Set(all.map((f) => f.url)));
+    } catch {
+      // Ignore
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshFavorites();
+  }, [refreshFavorites]);
+
+  const handleToggleFavorite = async (
+    e: React.MouseEvent,
+    item: { url: string; previewUrl?: string; title: string; mediaType: 'image' | 'video' }
+  ) => {
+    e.stopPropagation();
+    try {
+      const res = await toggleFavoriteBackground({
+        url: item.url,
+        previewUrl: item.previewUrl || item.url,
+        title: item.title,
+        mediaType: item.mediaType,
+        source: 'pexels',
+      });
+      await refreshFavorites();
+      addToast?.({
+        message: res.favorited
+          ? t('editor.bgAddedToFavorites', 'تمت إضافة الخلفية إلى مكتبة المفضلة بنجاح ⭐')
+          : t('editor.bgRemovedFromFavorites', 'تم حذف الخلفية من المفضلة 🗑️'),
+        type: 'info',
+      });
+    } catch {
+      // Ignore
+    }
+  };
 
   // Filter curated wallpapers based on search and category
   const filteredWallpapers = useMemo(() => {
@@ -424,16 +472,41 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
 
                       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/30 flex flex-col justify-between p-2">
                         <div className="flex items-center justify-between">
-                          <span className="px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-md text-sky-400 font-mono text-[10px] font-bold border border-white/10 flex items-center gap-1">
+                          <span className="px-1.5 py-0.5 rounded bg-black/80 text-sky-400 font-mono text-[10px] font-bold border border-white/10 flex items-center gap-1">
                             <Film size={9} />
                             <span>{vid.duration}s</span>
                           </span>
 
-                          {isSelected && (
-                            <span className="p-1 rounded-full bg-sky-500 text-white shadow-md">
-                              <Check size={11} />
-                            </span>
-                          )}
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={(e) =>
+                                handleToggleFavorite(e, {
+                                  url: videoUrl,
+                                  previewUrl: vid.image,
+                                  title: vid.user?.name || 'Pexels Video',
+                                  mediaType: 'video',
+                                })
+                              }
+                              title={t('editor.bgSaveToFavorites', 'حفظ في المفضلة')}
+                              className={`p-1 rounded-full transition-all cursor-pointer ${
+                                favoritedUrls.has(videoUrl)
+                                  ? 'bg-amber-500 text-onbrand shadow-md'
+                                  : 'bg-black/60 text-white/80 hover:text-amber-300 hover:bg-black/80'
+                              }`}
+                            >
+                              <Star
+                                size={11}
+                                className={favoritedUrls.has(videoUrl) ? 'fill-onbrand' : ''}
+                              />
+                            </button>
+
+                            {isSelected && (
+                              <span className="p-1 rounded-full bg-sky-500 text-white shadow-md">
+                                <Check size={11} />
+                              </span>
+                            )}
+                          </div>
                         </div>
 
                         <div>
@@ -451,6 +524,7 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
               : filteredVideos.map((videoItem) => {
                   const isSelected = isCurrentUrl(videoItem.videoUrl);
                   const isHovered = hoveredVideoId === videoItem.id;
+                  const isFav = favoritedUrls.has(videoItem.videoUrl);
 
                   return (
                     <div
@@ -484,16 +558,38 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
 
                       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/30 flex flex-col justify-between p-2">
                         <div className="flex items-center justify-between">
-                          <span className="px-1.5 py-0.5 rounded bg-black/70 backdrop-blur-md text-sky-300 font-mono text-[10px] font-bold border border-white/10 flex items-center gap-1">
+                          <span className="px-1.5 py-0.5 rounded bg-black/70 text-sky-300 font-mono text-[10px] font-bold border border-white/10 flex items-center gap-1">
                             <Play size={8} className="fill-sky-300" />
                             <span>{videoItem.duration}s</span>
                           </span>
 
-                          {isSelected && (
-                            <span className="p-1 rounded-full bg-sky-500 text-white shadow-md">
-                              <Check size={11} />
-                            </span>
-                          )}
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={(e) =>
+                                handleToggleFavorite(e, {
+                                  url: videoItem.videoUrl,
+                                  previewUrl: videoItem.thumbnailUrl,
+                                  title: videoItem.title,
+                                  mediaType: 'video',
+                                })
+                              }
+                              title={t('editor.bgSaveToFavorites', 'حفظ في المفضلة')}
+                              className={`p-1 rounded-full transition-all cursor-pointer ${
+                                isFav
+                                  ? 'bg-amber-500 text-onbrand shadow-md'
+                                  : 'bg-black/60 text-white/80 hover:text-amber-300 hover:bg-black/80'
+                              }`}
+                            >
+                              <Star size={11} className={isFav ? 'fill-onbrand' : ''} />
+                            </button>
+
+                            {isSelected && (
+                              <span className="p-1 rounded-full bg-sky-500 text-white shadow-md">
+                                <Check size={11} />
+                              </span>
+                            )}
+                          </div>
                         </div>
 
                         <div>
@@ -513,6 +609,8 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
               ? livePhotos.map((photo) => {
                   const photoUrl = photo.src.large2x || photo.src.large || photo.src.original;
                   const isSelected = isCurrentUrl(photoUrl);
+                  const isFav = favoritedUrls.has(photoUrl);
+
                   return (
                     <div
                       key={photo.id}
@@ -530,7 +628,27 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
                         loading="lazy"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-2">
-                        <div className="flex justify-end">
+                        <div className="flex items-center justify-end gap-1">
+                          <button
+                            type="button"
+                            onClick={(e) =>
+                              handleToggleFavorite(e, {
+                                url: photoUrl,
+                                previewUrl: photo.src.medium || photoUrl,
+                                title: photo.photographer || 'Pexels Photo',
+                                mediaType: 'image',
+                              })
+                            }
+                            title={t('editor.bgSaveToFavorites', 'حفظ في المفضلة')}
+                            className={`p-1 rounded-full transition-all cursor-pointer ${
+                              isFav
+                                ? 'bg-amber-500 text-onbrand shadow-md'
+                                : 'bg-black/60 text-white/80 hover:text-amber-300 hover:bg-black/80'
+                            }`}
+                          >
+                            <Star size={11} className={isFav ? 'fill-onbrand' : ''} />
+                          </button>
+
                           {isSelected && (
                             <span className="p-1 rounded-full bg-sky-500 text-white shadow-md">
                               <Check size={11} />
@@ -546,6 +664,8 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
                 })
               : filteredWallpapers.map((item) => {
                   const isSelected = isCurrentUrl(item.url);
+                  const isFav = favoritedUrls.has(item.url);
+
                   return (
                     <div
                       key={item.id}
@@ -563,7 +683,27 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
                         loading="lazy"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-2">
-                        <div className="flex justify-end">
+                        <div className="flex items-center justify-end gap-1">
+                          <button
+                            type="button"
+                            onClick={(e) =>
+                              handleToggleFavorite(e, {
+                                url: item.url,
+                                previewUrl: item.url,
+                                title: item.title,
+                                mediaType: 'image',
+                              })
+                            }
+                            title={t('editor.bgSaveToFavorites', 'حفظ في المفضلة')}
+                            className={`p-1 rounded-full transition-all cursor-pointer ${
+                              isFav
+                                ? 'bg-amber-500 text-onbrand shadow-md'
+                                : 'bg-black/60 text-white/80 hover:text-amber-300 hover:bg-black/80'
+                            }`}
+                          >
+                            <Star size={11} className={isFav ? 'fill-onbrand' : ''} />
+                          </button>
+
                           {isSelected && (
                             <span className="p-1 rounded-full bg-sky-500 text-white shadow-md">
                               <Check size={11} />
@@ -585,10 +725,11 @@ export const IslamicPexelsBrowser: React.FC<IslamicPexelsBrowserProps> = ({
       {/* Empty State */}
       {((mediaType === 'videos' && filteredVideos.length === 0 && liveVideos.length === 0) ||
         (mediaType === 'photos' && filteredWallpapers.length === 0 && livePhotos.length === 0)) && (
-        <div className="py-8 text-center text-surface-400">
-          <Video size={24} className="mx-auto mb-1.5 opacity-40" />
-          <p className="text-xs">لم يتم العثور على وسائط تطابق بحثك</p>
-        </div>
+        <EmptyState
+          variant="search"
+          title="لم يتم العثور على وسائط تطابق بحثك"
+          description="جرّب كتابة كلمات مفتاحية مثل: مكة، مطر، كعبة، طبيعة، نجوم، أو اختر تصنيفاً آخر."
+        />
       )}
     </div>
   );

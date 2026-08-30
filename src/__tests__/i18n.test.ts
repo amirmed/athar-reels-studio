@@ -1,8 +1,20 @@
-﻿import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { translations, tLang, SupportedLanguage, applyLanguageToDom } from '../i18n';
+import { describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest';
+import {
+  translations,
+  tLang,
+  SupportedLanguage,
+  applyLanguageToDom,
+  loadLocale,
+  loadedLocales,
+} from '../i18n';
 
 describe('Universal i18n Translation Engine', () => {
   const originalDoc = (globalThis as any).document;
+
+  beforeAll(async () => {
+    // Pre-load en and fr in tests
+    await Promise.all([loadLocale('en'), loadLocale('fr')]);
+  });
 
   beforeEach(() => {
     const attrs: Record<string, string> = {};
@@ -27,6 +39,9 @@ describe('Universal i18n Translation Engine', () => {
     expect(translations.ar).toBeDefined();
     expect(translations.en).toBeDefined();
     expect(translations.fr).toBeDefined();
+    expect(loadedLocales.ar).toBeDefined();
+    expect(loadedLocales.en).toBeDefined();
+    expect(loadedLocales.fr).toBeDefined();
   });
 
   it('should translate common keys correctly in Arabic, English, and French', () => {

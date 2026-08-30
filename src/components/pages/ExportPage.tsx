@@ -31,7 +31,8 @@ import { PublishKitModal } from '../ui/PublishKitModal';
 import { exportProject } from '../../services/exportOrchestrator';
 import { synthesizeArabicSpeech } from '../../services/arabicTtsService';
 import { resolveValidAudioUrl } from '../../services/persistentAudioStorage';
-import { applyCustomVoiceToAyahs } from '../../utils/customVoiceDistribution';
+import { applyCustomVoiceWithSilenceDetection } from '../../utils/customVoiceDistribution';
+import { logger } from '../../utils/logger';
 
 // ==================== Export Page Component ====================
 export const ExportPage: React.FC = () => {
@@ -105,7 +106,7 @@ export const ExportPage: React.FC = () => {
                 estimatedTotalSec = ttsResult.duration;
               }
             } catch (ttsErr) {
-              console.warn('[ExportPage] synthesizeArabicSpeech error:', ttsErr);
+              logger.warn('[ExportPage] synthesizeArabicSpeech error:', ttsErr);
             }
           }
 
@@ -172,7 +173,7 @@ export const ExportPage: React.FC = () => {
                   },
                 });
               }
-              applyCustomVoiceToAyahs(
+              await applyCustomVoiceWithSilenceDetection(
                 ayahs,
                 resolvedCustomVoice,
                 currentProject.audioSettings?.customAudioDuration || 0
@@ -266,38 +267,47 @@ export const ExportPage: React.FC = () => {
           setExportProgress(100);
 
           addToast({
-            message: 'تم التصدير بنجاح! 🚀 اضغط لفتح عدة النشر والكابشن والهاشتاجات',
+            message: t(
+              'export.exportSuccessToast',
+              'تم التصدير بنجاح! 🚀 اضغط لفتح عدة النشر والكابشن والهاشتاجات'
+            ),
             type: 'success',
             duration: 8000,
             action: {
-              label: 'عدة النشر 🚀',
+              label: t('export.publishKitBtn', 'عدة النشر 🚀'),
               onClick: () => {
                 setActivePublishJob(completedJob);
               },
             },
           });
         } else {
-          throw new Error(result.error || 'فشلت عملية تصدير الفيديو');
+          throw new Error(result.error || t('export.exportFailedError', 'فشلت عملية تصدير الفيديو'));
         }
       } catch (error: unknown) {
         if (abortControllerRef.current?.signal.aborted) {
           updateExportJob(jobId, { status: 'failed', progress: 0 });
           return;
         }
-        console.error('Export failed:', error);
+        logger.error('Export failed:', error);
         updateExportJob(jobId, { status: 'failed', progress: 0 });
-        const errMsg = error instanceof Error ? error.message : 'خطأ غير معروف';
-        addToast({ message: `فشل التصدير: ${errMsg}`, type: 'error' });
+        const errMsg = error instanceof Error ? error.message : t('common.error', 'خطأ غير معروف');
+        addToast({
+          message: t('export.exportFailedPrefix', 'فشل التصدير: {error}').replace('{error}', errMsg),
+          type: 'error',
+        });
       } finally {
         setIsExporting(false);
       }
     },
-    [currentProject, aspectRatio, quality, updateExportJob, addToast, settings?.projectsPath]
+    [currentProject, aspectRatio, quality, updateExportJob, addToast, settings?.projectsPath, t, updateProject]
   );
 
   const handleExport = async () => {
     if (!currentProject) {
-      addToast({ message: 'يرجى اختيار مشروع أولاً', type: 'warning' });
+      addToast({
+        message: t('export.selectProjectWarning', 'يرجى اختيار مشروع أولاً'),
+        type: 'warning',
+      });
       return;
     }
 
@@ -318,7 +328,7 @@ export const ExportPage: React.FC = () => {
     };
 
     addExportJob(newJob);
-    addToast({ message: 'تم بدء عملية التصدير', type: 'info' });
+    addToast({ message: t('export.exportStartedToast', 'تم بدء عملية التصدير'), type: 'info' });
 
     await performRealExport(newJob.id);
   };
@@ -331,11 +341,11 @@ export const ExportPage: React.FC = () => {
       try {
         window.electronAPI.videoExport.cancel();
       } catch (err) {
-        console.debug('[ExportPage] Cancel error:', err);
+        logger.debug('[ExportPage] Cancel error:', err);
       }
     }
     setIsExporting(false);
-    addToast({ message: 'تم إلغاء التصدير', type: 'warning' });
+    addToast({ message: t('export.exportCancelledToast', 'تم إلغاء التصدير'), type: 'warning' });
   };
 
   const handleRetry = (jobId: string) => {
@@ -350,35 +360,45 @@ export const ExportPage: React.FC = () => {
   const aspectOptions = [
     {
       value: '9:16' as const,
-      label: 'ريلز',
-      sublabel: '1080×1920',
+      label: t('export.ratioReels', 'ريلز'),
+      sublabel: t('export.ratioReelsSub', '1080×1920'),
       icon: <Smartphone size={20} />,
     },
-    { value: '16:9' as const, label: 'يوتيوب', sublabel: '1920×1080', icon: <Monitor size={20} /> },
-    { value: '1:1' as const, label: 'مربع', sublabel: '1080×1080', icon: <Square size={20} /> },
+    {
+      value: '16:9' as const,
+      label: t('export.ratioYoutube', 'يوتيوب'),
+      sublabel: t('export.ratioYoutubeSub', '1920×1080'),
+      icon: <Monitor size={20} />,
+    },
+    {
+      value: '1:1' as const,
+      label: t('export.ratioSquare', 'مربع'),
+      sublabel: t('export.ratioSquareSub', '1080×1080'),
+      icon: <Square size={20} />,
+    },
   ];
 
   const qualityOptions = [
     {
       value: 'standard' as const,
-      label: 'عادي',
-      sublabel: '720p',
+      label: t('export.qualityStandard', 'عادي'),
+      sublabel: t('export.qualityStandardSub', '720p'),
       icon: <Zap size={18} />,
-      desc: 'حجم صغير، مناسب للمشاركة السريعة',
+      desc: t('export.qualityStandardDesc', 'حجم صغير، مناسب للمشاركة السريعة'),
     },
     {
       value: 'high' as const,
-      label: 'عالي',
-      sublabel: '1080p',
+      label: t('export.qualityHigh', 'عالي'),
+      sublabel: t('export.qualityHighSub', '1080p'),
       icon: <Star size={18} />,
-      desc: 'جودة ممتازة للنشر على المنصات',
+      desc: t('export.qualityHighDesc', 'جودة ممتازة للنشر على المنصات'),
     },
     {
       value: 'premium' as const,
-      label: 'ممتاز',
-      sublabel: '1080p Pro',
+      label: t('export.qualityPremium', 'ممتاز'),
+      sublabel: t('export.qualityPremiumSub', '1080p Pro'),
       icon: <Crown size={18} />,
-      desc: 'أعلى معدل بت سينمائي فائق النقاء (16 Mbps)',
+      desc: t('export.qualityPremiumDesc', 'أعلى معدل بت سينمائي فائق النقاء (16 Mbps)'),
     },
   ];
 
@@ -390,7 +410,10 @@ export const ExportPage: React.FC = () => {
   };
 
   return (
-    <AppLayout title={t('export.title', 'تصدير ونشر الفيديو 🎬')} subtitle={t('export.subtitle', 'اختر المنصة والجودة المناسبة لتصدير الريلز')}>
+    <AppLayout
+      title={t('export.title', 'تصدير ونشر الفيديو 🎬')}
+      subtitle={t('export.subtitle', 'اختر المنصة والجودة المناسبة لتصدير الريلز بأعلى سرعة وبصيغة MP4')}
+    >
       <div className="p-6 animate-in max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left: Export settings */}
@@ -405,9 +428,11 @@ export const ExportPage: React.FC = () => {
                   <Download size={20} className="text-accent-400" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-surface-50">تصدير جديد</h3>
+                  <h3 className="text-base font-bold text-surface-50">
+                    {t('export.newExport', 'تصدير جديد')}
+                  </h3>
                   <p className="text-xs text-surface-400">
-                    {currentProject ? currentProject.name : 'لم يتم اختيار مشروع'}
+                    {currentProject ? currentProject.name : t('export.noProjectSelected', 'لم يتم اختيار مشروع')}
                   </p>
                 </div>
               </div>
@@ -416,7 +441,7 @@ export const ExportPage: React.FC = () => {
 
               {/* Aspect ratio */}
               <div>
-                <label className="label">المقاس</label>
+                <label className="label">{t('export.aspectRatio', 'المقاس')}</label>
                 <div className="grid grid-cols-3 gap-3">
                   {aspectOptions.map((opt) => (
                     <button
@@ -457,7 +482,7 @@ export const ExportPage: React.FC = () => {
 
               {/* Quality */}
               <div>
-                <label className="label">الجودة</label>
+                <label className="label">{t('export.quality', 'الجودة')}</label>
                 <div className="space-y-2">
                   {qualityOptions.map((opt) => (
                     <button
@@ -508,8 +533,18 @@ export const ExportPage: React.FC = () => {
                 <Info size={16} className="text-accent-400 mt-0.5 shrink-0" />
                 <p className="text-xs text-accent-300/80 leading-relaxed font-arabic">
                   {currentProject
-                    ? `سيتم تصدير "${currentProject.name}" — سورة ${currentProject.surah} (آية ${currentProject.fromAyah} إلى ${currentProject.toAyah}) بالفيديو مع صوت القارئ بدقة فائقة.`
-                    : 'يرجى اختيار مشروع من صفحة المشاريع لبدء التصدير.'}
+                    ? t(
+                        'export.willExportInfo',
+                        'سيتم تصدير "{name}" — سورة {surah} (آية {fromAyah} إلى {toAyah}) بالفيديو مع صوت القارئ بدقة فائقة.'
+                      )
+                        .replace('{name}', currentProject.name)
+                        .replace('{surah}', currentProject.surah || '')
+                        .replace('{fromAyah}', String(currentProject.fromAyah))
+                        .replace('{toAyah}', String(currentProject.toAyah))
+                    : t(
+                        'export.selectProjectFromProjects',
+                        'يرجى اختيار مشروع من صفحة المشاريع لبدء التصدير.'
+                      )}
                 </p>
               </div>
 
@@ -520,7 +555,7 @@ export const ExportPage: React.FC = () => {
                   className="btn-danger w-full flex items-center justify-center gap-2 py-3.5"
                 >
                   <X size={18} />
-                  إلغاء التصدير
+                  {t('export.cancelExportBtn', 'إلغاء التصدير')}
                 </button>
               ) : (
                 <button
@@ -529,7 +564,7 @@ export const ExportPage: React.FC = () => {
                   className="btn-primary w-full flex items-center justify-center gap-2 py-3.5 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Play size={18} />
-                  بدء التصدير
+                  {t('export.startExportBtn', 'بدء التصدير')}
                 </button>
               )}
 
@@ -539,7 +574,7 @@ export const ExportPage: React.FC = () => {
                   onClick={() => setCurrentPage('create')}
                   className="w-full text-center text-xs font-bold text-accent-400 hover:text-accent-300 transition-colors"
                 >
-                  إنشاء مشروع جديد →
+                  {t('export.createProjectFirst', 'إنشاء مشروع جديد →')}
                 </button>
               )}
             </motion.div>
@@ -568,22 +603,22 @@ export const ExportPage: React.FC = () => {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
               {[
                 {
-                  label: 'قيد الانتظار',
+                  label: t('export.statusPending', 'قيد الانتظار'),
                   count: statusCounts.pending,
                   color: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/10',
                 },
                 {
-                  label: 'جاري المعالجة',
+                  label: t('export.statusProcessing', 'جاري المعالجة'),
                   count: statusCounts.processing,
                   color: 'text-blue-400 bg-blue-500/10 border-blue-500/10',
                 },
                 {
-                  label: 'مكتمل',
+                  label: t('export.statusCompleted', 'مكتمل'),
                   count: statusCounts.completed,
                   color: 'text-green-400 bg-green-500/10 border-green-500/10',
                 },
                 {
-                  label: 'فشل',
+                  label: t('export.statusFailed', 'فشل'),
                   count: statusCounts.failed,
                   color: 'text-red-400 bg-red-500/10 border-red-500/10',
                 },
@@ -604,14 +639,14 @@ export const ExportPage: React.FC = () => {
             {/* Export jobs list */}
             <h3 className="section-title flex items-center gap-2">
               <Download size={16} className="text-accent-400" />
-              سجل التصدير
+              {t('export.historyTitle', 'سجل التصدير')}
             </h3>
 
             {exportJobs.length === 0 ? (
               <EmptyState
-                icon={Download}
-                title="لا توجد عمليات تصدير"
-                description="ابدأ بتصدير مشروعك الأول"
+                variant="default"
+                title={t('export.noExportsTitle', 'لا توجد عمليات تصدير')}
+                description={t('export.noExportsDesc', 'لم تقم بأي عملية تصدير بعد. صدّر مشروعك الحالي لتشاهد تقدم المعالجة هنا.')}
               />
             ) : (
               <div className="space-y-3 stagger-children">
@@ -674,15 +709,18 @@ async function saveVideoBlob(
       if (savePath) {
         const arrayBuffer = await blob.arrayBuffer();
         const bytes = new Uint8Array(arrayBuffer);
-        await window.electronAPI.fs.writeBinaryFile(savePath, bytes);
+        const writeRes = await window.electronAPI.fs.writeBinaryFile(savePath, bytes);
+        if (!writeRes?.success) {
+          throw new Error(writeRes?.error || 'فشل حفظ الملف في المسار المختار');
+        }
 
         // Open the folder containing the file
-        window.electronAPI.shell.showItemInFolder(savePath);
+        window.electronAPI.shell?.showItemInFolder(savePath);
         return savePath;
       }
     }
   } catch (e) {
-    console.warn('Electron save failed, falling back to download:', e);
+    logger.warn('Electron save failed, falling back to download:', e);
   }
 
   // Fallback: browser download

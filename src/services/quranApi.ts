@@ -6,6 +6,7 @@ const TEXT_API = 'https://api.alquran.cloud/v1';
 const AUDIO_BASE = 'https://everyayah.com/data';
 
 import { removeQuranicMarks, cleanAyahTextForDuration } from '../utils/arabicTextUtils';
+import { logger } from '../utils/logger';
 
 // ==================== EveryAyah Reciters ====================
 // Each reciter maps to a subfolder on everyayah.com
@@ -928,12 +929,12 @@ async function fetchTextApi<T>(endpoint: string): Promise<T> {
     setCache(cacheKey, json.data);
     if (surahMatch && sNum > 0) {
       quranCacheService.setCachedAyahs(sNum, json.data, edition).catch((err) => {
-        console.debug('[QuranApi] setCachedAyahs error:', err);
+        logger.debug('[QuranApi] setCachedAyahs error:', err);
       });
     }
     return json.data as T;
   } catch (primaryErr) {
-    console.warn(
+    logger.warn(
       `[QuranApi] Primary Text API failed for ${endpoint}, checking fallbacks...`,
       primaryErr
     );
@@ -963,12 +964,12 @@ async function fetchTextApi<T>(endpoint: string): Promise<T> {
           };
           setCache(cacheKey, transformed);
           quranCacheService.setCachedAyahs(sNum, transformed, edition).catch((err) => {
-            console.debug('[QuranApi] setCachedAyahs fallback error:', err);
+            logger.debug('[QuranApi] setCachedAyahs fallback error:', err);
           });
           return transformed as unknown as T;
         }
       } catch (fallbackErr) {
-        console.warn(`[QuranApi] Quran.com fallback also failed for surah ${sNum}:`, fallbackErr);
+        logger.warn(`[QuranApi] Quran.com fallback also failed for surah ${sNum}:`, fallbackErr);
       }
     }
     throw primaryErr;
@@ -1041,7 +1042,7 @@ export async function fetchQuranComTimestamps(
       }
     }
   } catch (err) {
-    console.warn(`[QuranApi] Could not load chapter timestamps for reciter ${reciterId}:`, err);
+    logger.warn(`[QuranApi] Could not load chapter timestamps for reciter ${reciterId}:`, err);
   }
   return map;
 }
@@ -1064,7 +1065,7 @@ export async function fetchQuranComWords(
       }
     }
   } catch (err) {
-    console.warn(`[QuranApi] Could not load Quran.com words for surah ${surahNumber}:`, err);
+    logger.warn(`[QuranApi] Could not load Quran.com words for surah ${surahNumber}:`, err);
   }
   return map;
 }
@@ -1249,7 +1250,7 @@ export async function fetchAyahsWithAudio(
 
     return ayahs;
   } catch (error) {
-    console.error('Error fetching ayahs with audio and words:', error);
+    logger.error('Error fetching ayahs with audio and words:', error);
     throw error;
   }
 }
@@ -1278,7 +1279,7 @@ export async function fetchAyahs(
       }));
     return ayahs;
   } catch (error) {
-    console.error('Error fetching ayahs:', error);
+    logger.error('Error fetching ayahs:', error);
     throw error;
   }
 }
@@ -1344,7 +1345,7 @@ export async function fetchTranslation(
         text: a.text,
       }));
   } catch (error) {
-    console.error('Error fetching translation:', error);
+    logger.error('Error fetching translation:', error);
     throw error;
   }
 }
@@ -1364,7 +1365,7 @@ export async function fetchAllSurahs(): Promise<SurahMetadata[]> {
       revelationType: s.revelationType,
     }));
   } catch (error) {
-    console.error('Error fetching surahs:', error);
+    logger.error('Error fetching surahs:', error);
     throw error;
   }
 }

@@ -187,7 +187,7 @@ export const AnimatedQuoteModal: React.FC<AnimatedQuoteModalProps> = ({
               />
 
               {/* Live Preview Badge */}
-              <div className="absolute top-2.5 end-2.5 px-2 py-0.5 rounded-full bg-black/70 backdrop-blur-md border border-white/10 text-[10px] font-bold text-gold-300 flex items-center gap-1">
+              <div className="absolute top-2.5 end-2.5 px-2 py-0.5 rounded-full bg-black/85 border border-white/10 text-[10px] font-bold text-gold-300 flex items-center gap-1">
                 <Sparkles size={10} className="text-gold-400 animate-pulse" />
                 <span>معاينة حية 60 FPS</span>
               </div>

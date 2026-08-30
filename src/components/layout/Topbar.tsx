@@ -6,11 +6,10 @@ import {
   Sun,
   Moon,
   Bell,
-  User,
-  ChevronDown,
   CheckCircle2,
   HelpCircle,
   Keyboard,
+  Heart,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -28,7 +27,7 @@ export const Topbar: React.FC<TopbarProps> = ({
   subtitle,
   actions,
   onOpenSearch,
-  onOpenMotherDua: _onOpenMotherDua,
+  onOpenMotherDua,
   onOpenShortcuts,
 }) => {
   const theme = useAppStore((s) => s.theme);
@@ -76,10 +75,29 @@ export const Topbar: React.FC<TopbarProps> = ({
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 5);
 
+  const currentPage = useAppStore((s) => s.currentPage);
   const unreadExportsCount = recentExports.filter((j) => !seenIds.includes(j.id)).length;
 
+  const studioAccentGradient: Record<string, string> = {
+    dashboard: 'from-gold-400 via-accent-400 to-purple-500',
+    create: 'from-gold-400 via-amber-500 to-gold-600',
+    editor: 'from-gold-400 via-amber-500 to-gold-600',
+    azkar: 'from-emerald-400 via-teal-400 to-emerald-600',
+    quotes: 'from-sky-400 via-cyan-400 to-blue-500',
+    'voice-studio': 'from-purple-400 via-fuchsia-400 to-purple-600',
+    projects: 'from-accent-400 via-teal-400 to-accent-600',
+    export: 'from-gold-400 via-amber-400 to-gold-600',
+    settings: 'from-surface-400 via-surface-300 to-surface-500',
+  };
+
   return (
-    <header className="h-14 bg-surface-950/30 backdrop-blur-md border-b border-surface-700/30 flex items-center justify-between px-6 shrink-0 z-20">
+    <header className="relative h-14 bg-surface-950/30 backdrop-blur-md border-b border-surface-700/30 flex items-center justify-between px-6 shrink-0 z-20">
+      {/* Studio Color Identity Top Accent Strip (2px) */}
+      <div
+        className={`absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r ${
+          studioAccentGradient[currentPage] || studioAccentGradient.dashboard
+        } shadow-sm transition-all duration-500 z-30`}
+      />
       {/* Right side: Title (H1 Level) */}
       <div className="flex items-center gap-4">
         {title && (
@@ -106,7 +124,7 @@ export const Topbar: React.FC<TopbarProps> = ({
           >
             <Search
               size={15}
-              className="text-gold-400/70 group-hover:text-gold-400 transition-colors shrink-0"
+              className="text-gold-600 dark:text-gold-400 group-hover:text-gold-500 transition-colors shrink-0"
             />
             <span className="text-xs text-surface-400 group-hover:text-surface-50 transition-colors font-medium truncate">
               {t('topbar.searchPlaceholder', 'بحث في السور، القراء...')}
@@ -127,6 +145,20 @@ export const Topbar: React.FC<TopbarProps> = ({
             className="w-9 h-9 rounded-xl bg-surface-800/40 border border-surface-700/40 flex items-center justify-center text-surface-400 hover:text-gold-300 hover:bg-surface-700/50 hover:border-gold-400/30 transition-all duration-200 cursor-pointer shadow-sm active:scale-95"
           >
             <Keyboard size={16} />
+          </button>
+        )}
+
+        {/* Mother Dua & Ongoing Charity Quick Button */}
+        {onOpenMotherDua && (
+          <button
+            type="button"
+            onClick={onOpenMotherDua}
+            aria-label={t('topbar.motherDua', 'ركن بر الوالدين والصدقة الجارية')}
+            title={t('topbar.motherDua', 'ركن بر الوالدين والصدقة الجارية • دعاء وإهداء بطاقة')}
+            className="flex items-center gap-1.5 px-3 h-9 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-300 hover:text-rose-200 hover:bg-rose-500/20 hover:border-rose-500/40 transition-all duration-200 cursor-pointer shadow-sm active:scale-95 text-xs font-bold"
+          >
+            <Heart size={14} className="text-rose-400 fill-rose-400/30" />
+            <span className="hidden lg:inline">🌸 {t('topbar.motherDuaShort', 'بر الوالدين')}</span>
           </button>
         )}
 
@@ -275,26 +307,6 @@ export const Topbar: React.FC<TopbarProps> = ({
             )}
           </AnimatePresence>
         </div>
-
-        {/* Separator */}
-        <div className="w-px h-6 bg-surface-700/40"></div>
-
-        {/* Settings button */}
-        <button
-          type="button"
-          onClick={() => setCurrentPage('settings')}
-          aria-label={t('topbar.settings', 'الإعدادات')}
-          title={t('topbar.settings', 'إعدادات التطبيق')}
-          className="flex items-center gap-2 bg-surface-800/40 border border-surface-700/40 rounded-xl px-3 py-2 hover:bg-surface-700/50 hover:border-surface-600 transition-all duration-200 group cursor-pointer"
-        >
-          <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center">
-            <User size={13} className="text-white" />
-          </div>
-          <span className="text-sm text-surface-300 group-hover:text-surface-50 transition-colors">
-            {t('topbar.settings', 'الإعدادات')}
-          </span>
-          <ChevronDown size={13} className="text-surface-400" />
-        </button>
       </div>
     </header>
   );

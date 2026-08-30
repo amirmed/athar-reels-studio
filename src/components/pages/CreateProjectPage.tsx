@@ -30,12 +30,14 @@ import {
   BookHeart,
   Image as ImageIcon,
 } from 'lucide-react';
+import { useTranslation } from '../../i18n';
 
 export const CreateProjectPage: React.FC = () => {
   const setCurrentPage = useAppStore((s) => s.setCurrentPage);
   const addProject = useAppStore((s) => s.addProject);
   const setCurrentProject = useAppStore((s) => s.setCurrentProject);
   const addToast = useAppStore((s) => s.addToast);
+  const { t } = useTranslation();
   const [isAutoReelModalOpen, setIsAutoReelModalOpen] = useState(false);
   const [isReciterModalOpen, setIsReciterModalOpen] = useState(false);
   const [isClipLibraryOpen, setIsClipLibraryOpen] = useState(false);
@@ -69,7 +71,12 @@ export const CreateProjectPage: React.FC = () => {
       const sName = surahs.find((s) => s.number === nextSurahNum)?.name;
       const rObj = reciters.find((r) => r.id === newReciterId);
       addToast({
-        message: `تم ضبط السورة تلقائياً على (سورة ${sName}) لأنها متوفرة بصوت ${rObj?.name || 'القارئ'} ✨`,
+        message: t(
+          'createProject.surahAutoAdjusted',
+          'تم ضبط السورة تلقائياً على (سورة {surah}) لأنها متوفرة بصوت {reciter} ✨'
+        )
+          .replace('{surah}', sName || '')
+          .replace('{reciter}', rObj?.name || 'القارئ'),
         type: 'info',
       });
     }
@@ -77,15 +84,24 @@ export const CreateProjectPage: React.FC = () => {
 
   const handleCreate = async () => {
     if (!name.trim()) {
-      addToast({ message: 'يرجى إدخال اسم المشروع', type: 'warning' });
+      addToast({
+        message: t('createProject.enterNameWarning', 'يرجى إدخال اسم المشروع'),
+        type: 'warning',
+      });
       return;
     }
     if (!reciterId) {
-      addToast({ message: 'يرجى اختيار القارئ', type: 'warning' });
+      addToast({
+        message: t('createProject.selectReciterWarning', 'يرجى اختيار القارئ'),
+        type: 'warning',
+      });
       return;
     }
     if (!surahNumber) {
-      addToast({ message: 'يرجى اختيار السورة', type: 'warning' });
+      addToast({
+        message: t('createProject.selectSurahWarning', 'يرجى اختيار السورة'),
+        type: 'warning',
+      });
       return;
     }
 
@@ -133,7 +149,10 @@ export const CreateProjectPage: React.FC = () => {
     addProject(project);
     setCurrentProject(project);
     addToast({
-      message: `تم إنشاء المشروع وتطبيق قالب "${selectedTpl.name}" بنجاح ✓`,
+      message: t(
+        'createProject.projectCreatedSuccess',
+        'تم إنشاء المشروع وتطبيق قالب "{template}" بنجاح ✓'
+      ).replace('{template}', selectedTpl.name),
       type: 'success',
     });
 
@@ -164,9 +183,24 @@ export const CreateProjectPage: React.FC = () => {
       : surahs;
 
   const aspectOptions = [
-    { value: '9:16' as const, label: 'ريلز', sublabel: '9:16', icon: '📱' },
-    { value: '16:9' as const, label: 'يوتيوب', sublabel: '16:9', icon: '🖥️' },
-    { value: '1:1' as const, label: 'مربع', sublabel: '1:1', icon: '⬜' },
+    {
+      value: '9:16' as const,
+      label: t('export.ratioReels', 'ريلز'),
+      sublabel: '9:16',
+      icon: '📱',
+    },
+    {
+      value: '16:9' as const,
+      label: t('export.ratioYoutube', 'يوتيوب'),
+      sublabel: '16:9',
+      icon: '🖥️',
+    },
+    {
+      value: '1:1' as const,
+      label: t('export.ratioSquare', 'مربع'),
+      sublabel: '1:1',
+      icon: '⬜',
+    },
   ];
 
   const [creationFormat, setCreationFormat] = useState<'quran' | 'azkar' | 'quotes' | 'voice'>(
@@ -176,9 +210,12 @@ export const CreateProjectPage: React.FC = () => {
   const creationFormats = [
     {
       id: 'quran' as const,
-      title: 'ريل قرآني سينمائي',
-      badge: 'فيديو 9:16 / 16:9 🎬',
-      desc: 'سور وآيات مع كبار القراء وخلفيات سينمائية FHD وكاريوكي متزامن',
+      title: t('dashboard.studioQuranReelsTitle', 'ريلز قرآني سينمائي'),
+      badge: t('dashboard.studioQuranReelsBadge', 'فيديو سينمائي 🎬'),
+      desc: t(
+        'dashboard.studioQuranReelsDesc',
+        'فيديوهات قصيرة لكبار القراء مع كاريوكي التلاوة ومؤثرات كين بيرنز FHD'
+      ),
       icon: <Film size={20} className="text-gold-400" />,
       activeClass:
         'from-gold-500/25 via-amber-500/10 to-surface-900 border-gold-400/90 shadow-xl shadow-gold-500/15 ring-2 ring-gold-400/40',
@@ -187,9 +224,12 @@ export const CreateProjectPage: React.FC = () => {
     },
     {
       id: 'azkar' as const,
-      title: 'أذكار وأحاديث نبوية',
-      badge: 'أذكار + تسبيح 📿',
-      desc: 'أذكار الصباح والمساء وحصن المسلم مع عدّاد تسبيح وتحويل لريلز',
+      title: t('dashboard.studioAzkarTitle', 'أذكار وأحاديث نبوية'),
+      badge: t('dashboard.studioAzkarBadge', 'أذكار + تسبيح 📿'),
+      desc: t(
+        'dashboard.studioAzkarDesc',
+        'أذكار الصباح والمساء وحصن المسلم مع عدّاد تسبيح تفاعلي وتحويل لريلز'
+      ),
       icon: <BookHeart size={20} className="text-emerald-400" />,
       activeClass:
         'from-emerald-500/25 via-teal-500/10 to-surface-900 border-emerald-400/90 shadow-xl shadow-emerald-500/15 ring-2 ring-emerald-400/40',
@@ -198,9 +238,12 @@ export const CreateProjectPage: React.FC = () => {
     },
     {
       id: 'quotes' as const,
-      title: 'كروت وصور وبوستات',
-      badge: 'بوستات HD 🖼️',
-      desc: 'تصميم بوستات دعوية لإنستغرام وواتساب بنقرة وتصدير عالي الدقة',
+      title: t('dashboard.studioQuotesTitle', 'كروت وبوستات الصور'),
+      badge: t('dashboard.studioQuotesBadge', 'بوستات HD 🖼️'),
+      desc: t(
+        'dashboard.studioQuotesDesc',
+        'تصميم بوستات دعوية وبطاقات آيات جاهزة لإنستغرام وواتساب بنقرة زر'
+      ),
       icon: <ImageIcon size={20} className="text-sky-400" />,
       activeClass:
         'from-sky-500/25 via-blue-500/10 to-surface-900 border-sky-400/90 shadow-xl shadow-sky-500/15 ring-2 ring-sky-400/40',
@@ -209,9 +252,12 @@ export const CreateProjectPage: React.FC = () => {
     },
     {
       id: 'voice' as const,
-      title: 'استوديو الصوت والتلقين',
-      badge: 'صوت 8D 🎧',
-      desc: 'مصحف ملقن متحرك لتسجيل تلاوتك مع صدى الحرم المكي ومؤثرات 8D',
+      title: t('dashboard.studioVoiceTitle', 'التلقين والتسجيل 8D'),
+      badge: t('dashboard.studioVoiceBadge', 'تسجيل 8D 🎧'),
+      desc: t(
+        'dashboard.studioVoiceDesc',
+        'مصحف ملقن متحرك لتسجيل تلاوتك بصوتك مع صدى الحرم ثلاثي الأبعاد'
+      ),
       icon: <Mic size={20} className="text-purple-400" />,
       activeClass:
         'from-purple-500/25 via-indigo-500/10 to-surface-900 border-purple-400/90 shadow-xl shadow-purple-500/15 ring-2 ring-purple-400/40',
@@ -222,8 +268,8 @@ export const CreateProjectPage: React.FC = () => {
 
   return (
     <AppLayout
-      title="استوديو الإنشاء والإنتاج الشامل"
-      subtitle="اختر نوع المحتوى الذي ترغب في إنشائه وتصميمه اليوم"
+      title={t('createProject.title', 'استوديو الإنشاء والإنتاج الشامل')}
+      subtitle={t('createProject.subtitle', 'اختر نوع المحتوى الذي ترغب في إنشائه وتصميمه اليوم')}
     >
       <div className="p-6 max-w-5xl mx-auto space-y-6 animate-in">
         {/* Step 1: Format Switcher Pro Studio Cards */}
@@ -231,9 +277,16 @@ export const CreateProjectPage: React.FC = () => {
           <div className="flex items-center justify-between px-1">
             <span className="text-xs font-black text-surface-200 flex items-center gap-2">
               <Sparkles size={14} className="text-gold-400" />
-              <span>اختر بيئة الإنتاج والاستوديو (4 استوديوهات إبداعية متكاملة):</span>
+              <span>
+                {t(
+                  'createProject.chooseEnv',
+                  'اختر بيئة الإنتاج والاستوديو (4 استوديوهات إبداعية متكاملة):'
+                )}
+              </span>
             </span>
-            <span className="text-[11px] text-surface-400 hidden sm:inline">1-Click Launch</span>
+            <span className="text-[11px] text-surface-400 hidden sm:inline">
+              {t('createProject.oneClickLaunch', '1-Click Launch')}
+            </span>
           </div>
 
           <div
@@ -287,7 +340,11 @@ export const CreateProjectPage: React.FC = () => {
 
                   {/* Bottom Action Footer */}
                   <div className="mt-3 pt-2 border-t border-surface-700/40 flex items-center justify-between text-[11px] font-bold text-surface-400 group-hover:text-surface-50 transition-colors">
-                    <span>{isSelected ? 'الاستوديو المفعّل حالياً ✓' : 'فتح هذا الاستوديو ←'}</span>
+                    <span>
+                      {isSelected
+                        ? t('createProject.activeStudio', 'الاستوديو المفعّل حالياً ✓')
+                        : t('createProject.openStudio', 'فتح هذا الاستوديو ←')}
+                    </span>
                     <span className="font-mono text-xs text-gold-400 opacity-0 group-hover:opacity-100 transition-opacity">
                       ➔
                     </span>
@@ -313,15 +370,20 @@ export const CreateProjectPage: React.FC = () => {
               <div>
                 <div className="flex items-center justify-center sm:justify-start gap-2 mb-0.5">
                   <h3 className="text-sm font-bold text-surface-50 group-hover:text-gold-300 transition-colors">
-                    توليد ريلز قرآني تلقائي ذكي (1-Click Auto Reel) ⚡
+                    {t(
+                      'createProject.autoReelBannerTitle',
+                      'توليد ريلز قرآني تلقائي ذكي (1-Click Auto Reel) ⚡'
+                    )}
                   </h3>
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-gold-400/20 text-gold-300 font-extrabold border border-gold-400/30 animate-pulse">
                     AI Auto
                   </span>
                 </div>
                 <p className="text-xs text-surface-300 max-w-xl">
-                  اختر سورة، وسيقوم الذكاء الاصطناعي بجلب تلاوة الشيخ عبدالباسط، الآيات، التوقيت،
-                  والخلفيات فوراً دون عناء!
+                  {t(
+                    'createProject.autoReelBannerDesc',
+                    'اختر سورة، وسيقوم الذكاء الاصطناعي بجلب تلاوة الشيخ عبدالباسط، الآيات، التوقيت، والخلفيات فوراً دون عناء!'
+                  )}
                 </p>
               </div>
             </div>
@@ -332,7 +394,7 @@ export const CreateProjectPage: React.FC = () => {
               className="py-3 px-5 rounded-2xl bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-black font-bold text-xs flex items-center gap-2 shadow-lg shadow-gold-500/20 active:scale-95 transition-all shrink-0 cursor-pointer"
             >
               <Sparkles size={16} />
-              <span>توليد تلقائي الآن</span>
+              <span>{t('createProject.autoGenerateNow', 'توليد تلقائي الآن')}</span>
             </button>
           </div>
         </motion.div>
@@ -342,14 +404,19 @@ export const CreateProjectPage: React.FC = () => {
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-bold text-surface-200 flex items-center gap-2">
               <Sparkles size={16} className="text-gold-400" />
-              <span>قوالب وتصاميم جاهزة للاستخدام السريع</span>
+              <span>
+                {t(
+                  'createProject.presetsCatalogTitle',
+                  'قوالب وتصاميم جاهزة للاستخدام السريع'
+                )}
+              </span>
             </h2>
             <button
               type="button"
               onClick={() => setIsTemplatesModalOpen(true)}
               className="text-xs text-gold-400 hover:text-gold-300 font-bold transition-colors cursor-pointer"
             >
-              تصفح مكتبة القوالب الكاملة ➔
+              {t('createProject.viewAllTemplates', 'عرض كافة القوالب ←')}
             </button>
           </div>
 
@@ -361,7 +428,10 @@ export const CreateProjectPage: React.FC = () => {
                   key={tpl.id}
                   onClick={() => {
                     setSelectedTemplateId(tpl.id);
-                    addToast({ message: `تم اختيار قالب «${tpl.name}» 🎨`, type: 'info' });
+                    addToast({
+                      message: `تم اختيار قالب «${tpl.name}» 🎨`,
+                      type: 'info',
+                    });
                   }}
                   className={`relative p-3 rounded-2xl border transition-all cursor-pointer group ${
                     isSelected
@@ -408,8 +478,12 @@ export const CreateProjectPage: React.FC = () => {
               <Sparkles size={20} className="text-accent-400" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-surface-50">تخصيص يدوي للمشروع</h2>
-              <p className="text-xs text-surface-400">أو اختر تفاصيل السورة والآيات والقارئ يدوياً</p>
+              <h2 className="text-lg font-bold text-surface-50">
+                {t('editor.templatesTab', 'تخصيص يدوي للمشروع')}
+              </h2>
+              <p className="text-xs text-surface-400">
+                {t('createProject.subtitle', 'أو اختر تفاصيل السورة والآيات والقارئ يدوياً')}
+              </p>
             </div>
           </div>
 
@@ -419,13 +493,16 @@ export const CreateProjectPage: React.FC = () => {
           <div>
             <label className="label flex items-center gap-2">
               <FileText size={14} className="text-accent-400" />
-              اسم المشروع
+              {t('createProject.projectNameLabel', 'اسم المشروع:')}
             </label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="مثال: ريلز سورة الفاتحة"
+              placeholder={t(
+                'createProject.projectNamePlaceholder',
+                'مثال: ريلز سورة الكهف — يوم الجمعة'
+              )}
               className="glass-input w-full"
             />
           </div>
@@ -435,10 +512,10 @@ export const CreateProjectPage: React.FC = () => {
             <div className="flex items-center justify-between mb-1">
               <label className="label flex items-center gap-2 mb-0">
                 <Mic size={14} className="text-accent-400" />
-                <span>اختيار القارئ</span>
+                <span>{t('createProject.reciterLabel', 'القارئ والصوت 🎙️:')}</span>
                 {isFullQuran ? (
                   <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
-                    🟢 مصحف كامل (114 سورة)
+                    🟢 {t('editor.fullQuranBadge', 'مصحف كامل (114 سورة)')}
                   </span>
                 ) : (
                   <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30">
@@ -452,7 +529,12 @@ export const CreateProjectPage: React.FC = () => {
                 className="text-xs text-gold-400 hover:text-gold-300 font-bold flex items-center gap-1.5 hover:underline bg-gold-400/10 px-2.5 py-1 rounded-lg border border-gold-400/20 cursor-pointer"
               >
                 <Sparkles size={13} />
-                <span>تصفح واستماع لجميع القراء ({reciters.length}) 🎙️</span>
+                <span>
+                  {t(
+                    'createProject.allRecitersBtn',
+                    'تصفح جميع القراء (16 قارئ) ←'
+                  )}
+                </span>
               </button>
             </div>
             <select
@@ -460,7 +542,7 @@ export const CreateProjectPage: React.FC = () => {
               onChange={(e) => handleReciterChange(e.target.value)}
               className="glass-select w-full"
             >
-              <option value="">اختر القارئ...</option>
+              <option value="">{t('voiceStudio.selectSurah', 'اختر القارئ...')}</option>
               {reciters.map((r) => {
                 const rSurahs = getAvailableSurahsForReciter(r.id);
                 const isFull = rSurahs.length === 114;
@@ -479,7 +561,7 @@ export const CreateProjectPage: React.FC = () => {
             <div className="flex items-center justify-between mb-1.5">
               <label className="label flex items-center gap-2 mb-0">
                 <BookOpen size={14} className="text-accent-400" />
-                <span>اختيار السورة</span>
+                <span>{t('createProject.surahLabel', 'السورة الكريمة 📖:')}</span>
                 <span className="text-[11px] text-surface-400">
                   ({displayedSurahs.length} سورة معروضة)
                 </span>
@@ -493,7 +575,13 @@ export const CreateProjectPage: React.FC = () => {
                     onChange={(e) => setFilterAvailableSurahsOnly(e.target.checked)}
                     className="checkbox checkbox-xs accent-gold-400"
                   />
-                  <span>عرض سور القارئ المتوفرة فقط ({availableSurahs.length}) 🎧</span>
+                  <span>
+                    {t(
+                      'createProject.filterAvailableLabel',
+                      'عرض السور المتوفرة فقط لهذا القارئ'
+                    )}{' '}
+                    ({availableSurahs.length}) 🎧
+                  </span>
                 </label>
               )}
             </div>
@@ -503,7 +591,7 @@ export const CreateProjectPage: React.FC = () => {
               onChange={(e) => handleSurahChange(Number(e.target.value))}
               className={`glass-select w-full ${!isCurrentSurahAvailable ? 'border-amber-500/60 bg-amber-500/10' : ''}`}
             >
-              <option value="">اختر السورة...</option>
+              <option value="">{t('voiceStudio.selectSurah', 'اختر السورة...')}</option>
               {displayedSurahs.map((s) => {
                 const isAvail = availableSurahs.includes(s.number);
                 return (
@@ -536,7 +624,7 @@ export const CreateProjectPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleSurahChange(availableSurahs[0] || 1)}
-                    className="px-2.5 py-1 rounded-xl bg-amber-500 hover:bg-amber-400 text-surface-950 font-bold text-[11px] shadow-sm transition-all cursor-pointer"
+                    className="px-2.5 py-1 rounded-xl bg-amber-500 hover:bg-amber-400 text-onbrand font-bold text-[11px] shadow-sm transition-all cursor-pointer"
                   >
                     اختيار سورة{' '}
                     {surahs.find((s) => s.number === availableSurahs[0])?.name || 'الفاتحة'} 📖
@@ -552,7 +640,7 @@ export const CreateProjectPage: React.FC = () => {
               <div>
                 <label className="label flex items-center gap-2">
                   <Hash size={14} className="text-accent-400" />
-                  من آية
+                  {t('createProject.fromAyahLabel', 'من آية:')}
                 </label>
                 <input
                   type="number"
@@ -573,7 +661,7 @@ export const CreateProjectPage: React.FC = () => {
               <div>
                 <label className="label flex items-center gap-2">
                   <Hash size={14} className="text-accent-400" />
-                  إلى آية
+                  {t('createProject.toAyahLabel', 'إلى آية:')}
                 </label>
                 <input
                   type="number"
@@ -599,7 +687,7 @@ export const CreateProjectPage: React.FC = () => {
             <label className="label flex items-center justify-between">
               <span className="flex items-center gap-2">
                 <Wand2 size={14} className="text-gold-400" />
-                اختر القالب والتأثير الأولي (Pro Template)
+                {t('editor.templatesTab', 'اختر القالب والتأثير الأولي (Pro Template)')}
               </span>
               <span className="text-[11px] text-gold-400 font-semibold">جاهز بضغطة زر ✨</span>
             </label>
@@ -642,7 +730,7 @@ export const CreateProjectPage: React.FC = () => {
           <div>
             <label className="label flex items-center gap-2">
               <Ratio size={14} className="text-accent-400" />
-              نوع المقاس
+              {t('createProject.aspectRatioLabel', 'أبعاد ومقاس الفيديو:')}
             </label>
             <div className="grid grid-cols-3 gap-3">
               {aspectOptions.map((opt) => (
@@ -679,17 +767,19 @@ export const CreateProjectPage: React.FC = () => {
             <button
               onClick={handleCreate}
               disabled={isCreating}
-              className="btn-primary flex items-center gap-2 px-8 disabled:opacity-50"
+              className="btn-primary flex items-center gap-2 px-8 disabled:opacity-50 cursor-pointer"
             >
               {isCreating ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
-              {isCreating ? 'جاري الإنشاء...' : 'إنشاء المشروع'}
+              {isCreating
+                ? t('createProject.creatingBtn', 'جارٍ إنشاء وتجهيز المشروع...')
+                : t('createProject.createAndOpenBtn', 'إنشاء والبدء في التصميم 🚀')}
             </button>
             <button
               onClick={() => setCurrentPage('dashboard')}
-              className="btn-ghost flex items-center gap-2"
+              className="btn-ghost flex items-center gap-2 cursor-pointer"
             >
               <ArrowLeft size={16} />
-              رجوع
+              {t('common.cancel', 'رجوع')}
             </button>
           </div>
         </motion.div>

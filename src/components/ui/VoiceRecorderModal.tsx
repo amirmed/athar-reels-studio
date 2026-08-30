@@ -260,7 +260,7 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
             onClick={() => setActiveMode('record')}
             className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
               activeMode === 'record'
-                ? 'bg-gradient-to-r from-gold-500 to-amber-500 text-surface-950 shadow-md font-black'
+                ? 'bg-gradient-to-r from-gold-500 to-amber-500 text-onbrand shadow-md font-black'
                 : 'text-surface-400 hover:text-surface-50'
             }`}
           >
@@ -273,7 +273,7 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
             onClick={() => setActiveMode('upload')}
             className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
               activeMode === 'upload'
-                ? 'bg-gradient-to-r from-gold-500 to-amber-500 text-surface-950 shadow-md font-black'
+                ? 'bg-gradient-to-r from-gold-500 to-amber-500 text-onbrand shadow-md font-black'
                 : 'text-surface-400 hover:text-surface-50'
             }`}
           >
@@ -301,7 +301,7 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
                 className={`w-20 h-20 rounded-full flex items-center justify-center transition-all shadow-xl cursor-pointer ${
                   isRecording
                     ? 'bg-red-500 hover:bg-red-600 text-white shadow-red-500/40 animate-pulse'
-                    : 'bg-gradient-to-br from-gold-400 to-amber-500 hover:from-gold-300 hover:to-amber-400 text-surface-950 shadow-gold-500/30 hover:scale-105'
+                    : 'bg-gradient-to-br from-gold-400 to-amber-500 hover:from-gold-300 hover:to-amber-400 text-onbrand shadow-gold-500/30 hover:scale-105'
                 }`}
               >
                 {isRecording ? <Square size={28} /> : <Mic size={32} />}
@@ -372,7 +372,7 @@ export const VoiceRecorderModal: React.FC<VoiceRecorderModalProps> = ({
                 <button
                   type="button"
                   onClick={handleTogglePreview}
-                  className="w-10 h-10 rounded-xl bg-gradient-to-r from-gold-400 to-amber-500 text-surface-950 flex items-center justify-center font-bold shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer shrink-0"
+                  className="w-10 h-10 rounded-xl bg-gradient-to-r from-gold-400 to-amber-500 text-onbrand flex items-center justify-center font-bold shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer shrink-0"
                 >
                   {isPlaying ? <Pause size={18} /> : <Play size={18} className="me-0.5" />}
                 </button>

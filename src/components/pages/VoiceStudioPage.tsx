@@ -288,10 +288,19 @@ export const VoiceStudioPage: React.FC = () => {
         setRecordingSeconds((s) => s + 1);
       }, 1000);
 
-      addToast({ message: 'بدأ التسجيل وتحريك المصحف الملقّن.. اقرأ بخشوع 🎙️✨', type: 'info' });
+      addToast({
+        message: t(
+          'voiceStudio.recordStartedToast',
+          'بدأ التسجيل وتحريك المصحف الملقّن.. اقرأ بخشوع 🎙️✨'
+        ),
+        type: 'info',
+      });
     } catch {
       addToast({
-        message: 'تعذر الوصول إلى المايكروفون. يرجى التأكد من منحه الإذن.',
+        message: t(
+          'voiceStudio.micErrorToast',
+          'تعذر الوصول إلى المايكروفون. يرجى التأكد من منحه الإذن.'
+        ),
         type: 'error',
       });
     }
@@ -338,11 +347,17 @@ export const VoiceStudioPage: React.FC = () => {
         });
       }
       addToast({
-        message: 'تم حفظ تسجيلك الصوتي بنجاح! يمكنك الآن تجربة صدى المسجد وفلاتر الاستوديو ✨',
+        message: t(
+          'voiceStudio.recordSavedToast',
+          'تم حفظ تسجيلك الصوتي بنجاح! يمكنك الآن تجربة صدى المسجد وفلاتر الاستوديو ✨'
+        ),
         type: 'success',
       });
     } catch {
-      addToast({ message: 'حدث خطأ أثناء معالجة التسجيل', type: 'error' });
+      addToast({
+        message: t('voiceStudio.recordErrorToast', 'حدث خطأ أثناء معالجة التسجيل'),
+        type: 'error',
+      });
     }
   };
 
@@ -381,9 +396,21 @@ export const VoiceStudioPage: React.FC = () => {
       quranCacheService.cacheAudioBlob(result.url, file).catch((err) => {
         console.debug('[VoiceStudio] Cache file error:', err);
       });
-      addToast({ message: `تم رفع ملف «${file.name}» بنجاح! 🎵`, type: 'success' });
+      addToast({
+        message: t('voiceStudio.audioUploadedToast', 'تم رفع ملف «{name}» بنجاح! 🎵').replace(
+          '{name}',
+          file.name
+        ),
+        type: 'success',
+      });
     } catch {
-      addToast({ message: 'تعذر تحميل الملف الصوتي، يرجى اختيار ملف MP3 أو WAV', type: 'error' });
+      addToast({
+        message: t(
+          'voiceStudio.audioUploadErrorToast',
+          'تعذر تحميل الملف الصوتي، يرجى اختيار ملف MP3 أو WAV'
+        ),
+        type: 'error',
+      });
     }
   };
 
@@ -425,7 +452,10 @@ export const VoiceStudioPage: React.FC = () => {
   // Convert to Video Project & Open Editor
   const handleConvertToReel = async () => {
     if (!audioBlobUrl) {
-      addToast({ message: 'يرجى تسجيل الصوت أولاً قبل التحويل للريلز', type: 'warning' });
+      addToast({
+        message: t('voiceStudio.recordFirstWarning', 'يرجى تسجيل الصوت أولاً قبل التحويل للريلز'),
+        type: 'warning',
+      });
       return;
     }
 
@@ -584,7 +614,10 @@ export const VoiceStudioPage: React.FC = () => {
     });
     localStorage.removeItem('athar_voice_studio_draft_meta');
     addToast({
-      message: 'تم تحويل تسجيلك الصوتي بنجاح إلى مشروع ريلز احترافي! 🚀✨',
+      message: t(
+        'voiceStudio.projectCreatedToast',
+        'تم تحويل تسجيلك الصوتي بنجاح إلى مشروع ريلز احترافي! 🚀✨'
+      ),
       type: 'success',
     });
     setTimeout(() => {
@@ -603,12 +636,18 @@ export const VoiceStudioPage: React.FC = () => {
       console.warn('[VoiceStudio] Failed to delete draft audio:', err);
     });
     localStorage.removeItem('athar_voice_studio_draft_meta');
-    addToast({ message: 'تم مسح التسجيل المسودة والبدء من جديد ✨', type: 'info' });
+    addToast({
+      message: t('voiceStudio.draftClearedToast', 'تم مسح التسجيل المسودة والبدء من جديد ✨'),
+      type: 'info',
+    });
   };
 
   const handleDownloadAudio = () => {
     if (!audioBlobUrl) {
-      addToast({ message: 'لا يوجد تسجيل صوتي لتحميله', type: 'warning' });
+      addToast({
+        message: t('voiceStudio.noAudioWarning', 'لا يوجد تسجيل صوتي لتحميله'),
+        type: 'warning',
+      });
       return;
     }
     const a = document.createElement('a');
@@ -617,7 +656,10 @@ export const VoiceStudioPage: React.FC = () => {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    addToast({ message: 'تم بدء تحميل الملف الصوتي بنجاح 💾', type: 'success' });
+    addToast({
+      message: t('voiceStudio.downloadStartedToast', 'تم بدء تحميل الملف الصوتي بنجاح 💾'),
+      type: 'success',
+    });
   };
 
   const formatSeconds = (sec: number) => {
@@ -640,7 +682,9 @@ export const VoiceStudioPage: React.FC = () => {
   return (
     <div className="h-screen w-screen flex flex-col bg-surface-950 text-surface-50 overflow-hidden font-sans">
       {/* Top Professional Studio Header */}
-      <header className="h-14 bg-surface-950/95 backdrop-blur-2xl border-b border-surface-700/40 flex items-center justify-between px-4 sm:px-6 shrink-0 z-30 shadow-lg">
+      <header className="relative h-14 bg-surface-950/95 backdrop-blur-2xl border-b border-surface-700/40 flex items-center justify-between px-4 sm:px-6 shrink-0 z-30 shadow-lg">
+        {/* Studio Color Identity Top Accent Strip (2px) - Purple for Voice Studio */}
+        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-purple-500 via-fuchsia-400 to-purple-600 shadow-sm shadow-purple-500/30 z-30" />
         <div className="flex items-center gap-3">
           <button
             type="button"
@@ -648,20 +692,20 @@ export const VoiceStudioPage: React.FC = () => {
             className="p-2 rounded-xl bg-surface-900 hover:bg-surface-800 text-surface-300 hover:text-surface-50 border border-surface-700/40 transition-all flex items-center gap-1.5 text-xs font-bold cursor-pointer"
           >
             <ArrowRight size={15} />
-            <span>الرئيسية</span>
+            <span>{t('common.cancel', 'الرئيسية')}</span>
           </button>
 
           <div className="w-px h-5 bg-surface-700/40" />
 
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-gold-400 to-amber-500 text-surface-950 flex items-center justify-center font-bold shadow-md">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-500 to-fuchsia-500 text-white flex items-center justify-center font-bold shadow-md shadow-purple-500/20">
               <Mic size={16} />
             </div>
             <div>
               <h1 className="text-xs sm:text-sm font-black text-surface-50 flex items-center gap-1.5">
                 {t('voiceStudio.title', 'استوديو التسجيل والصوت الاحترافي 🎙️')}
               </h1>
-              <p className="text-[11px] text-gold-400/80 hidden sm:block">
+              <p className="text-[11px] text-purple-300/80 hidden sm:block">
                 {t('voiceStudio.subtitle', 'سجل تلاوتك بصوتك، أو ولّد أصواتاً بالذكاء الاصطناعي مع صدى المساجد والمؤثرات المكانية 8D')}
               </p>
             </div>
@@ -676,29 +720,29 @@ export const VoiceStudioPage: React.FC = () => {
                 type="button"
                 onClick={handleClearDraft}
                 className="px-3 py-1.5 rounded-xl bg-surface-900 hover:bg-red-500/20 text-surface-300 hover:text-red-300 text-xs font-bold flex items-center gap-1.5 border border-surface-700/40 hover:border-red-500/30 transition-all cursor-pointer"
-                title="مسح التسجيل والبدء من جديد"
+                title={t('voiceStudio.clearDraft', 'مسح التسجيل والبدء من جديد')}
               >
                 <Trash2 size={14} />
-                <span className="hidden sm:inline">مسح المسودة</span>
+                <span className="hidden sm:inline">{t('voiceStudio.clearDraft', 'مسح المسودة')}</span>
               </button>
 
               <button
                 type="button"
                 onClick={handleDownloadAudio}
                 className="px-3 py-1.5 rounded-xl bg-surface-900 hover:bg-surface-800 text-surface-200 hover:text-surface-50 text-xs font-bold flex items-center gap-1.5 border border-surface-700/40 transition-all cursor-pointer"
-                title="تنزيل الملف الصوتي"
+                title={t('voiceStudio.downloadAudio', 'تنزيل الملف الصوتي')}
               >
                 <Download size={14} />
-                <span className="hidden sm:inline">تحميل الصوت 💾</span>
+                <span className="hidden sm:inline">{t('voiceStudio.downloadAudio', 'تحميل الصوت 💾')}</span>
               </button>
 
               <button
                 type="button"
                 onClick={handleConvertToReel}
-                className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-gold-400 to-amber-500 hover:from-gold-300 hover:to-amber-400 text-surface-950 font-black text-xs flex items-center gap-1.5 shadow-lg shadow-gold-500/20 transition-all active:scale-95 cursor-pointer"
+                className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-gold-400 to-amber-500 hover:from-gold-300 hover:to-amber-400 text-onbrand font-black text-xs flex items-center gap-1.5 shadow-lg shadow-gold-500/20 transition-all active:scale-95 cursor-pointer"
               >
                 <Zap size={14} />
-                <span>تحويل إلى فيديو ريلز 🎬</span>
+                <span>{t('voiceStudio.convertToReel', 'تحويل إلى فيديو ريلز 🎬')}</span>
               </button>
             </>
           )}
@@ -710,7 +754,7 @@ export const VoiceStudioPage: React.FC = () => {
         {/* ======================================================== */}
         {/* LEFT COLUMN: المصحف الملقّن الذكي (Smart Quran Teleprompter) */}
         {/* ======================================================== */}
-        <div className="flex-1 flex flex-col bg-surface-900/60 border border-surface-700/40 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-xl">
+        <div className="flex-1 flex flex-col bg-surface-900/80 border border-surface-700/40 rounded-3xl overflow-hidden shadow-2xl">
           {/* Prompter Toolbar */}
           <div className="p-3 bg-surface-950/80 border-b border-surface-700/40 flex flex-wrap items-center justify-between gap-2.5">
             {/* Mode Switcher */}
@@ -720,12 +764,12 @@ export const VoiceStudioPage: React.FC = () => {
                 onClick={() => setPrompterMode('quran')}
                 className={`px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                   prompterMode === 'quran'
-                    ? 'bg-gold-400 text-surface-950 shadow-sm font-black'
+                    ? 'bg-gold-400 text-onbrand shadow-sm font-black'
                     : 'text-surface-300 hover:text-surface-50'
                 }`}
               >
                 <BookOpen size={13} />
-                <span>القرآن الكريم 📖</span>
+                <span>{t('voiceStudio.prompterQuran', 'القرآن الكريم 📖')}</span>
               </button>
 
               <button
@@ -733,12 +777,12 @@ export const VoiceStudioPage: React.FC = () => {
                 onClick={() => setPrompterMode('hadith')}
                 className={`px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                   prompterMode === 'hadith'
-                    ? 'bg-gold-400 text-surface-950 shadow-sm font-black'
+                    ? 'bg-gold-400 text-onbrand shadow-sm font-black'
                     : 'text-surface-300 hover:text-surface-50'
                 }`}
               >
                 <BookHeart size={13} />
-                <span>حديث نبوي 📜</span>
+                <span>{t('voiceStudio.prompterHadith', 'حديث نبوي 📜')}</span>
               </button>
 
               <button
@@ -746,12 +790,12 @@ export const VoiceStudioPage: React.FC = () => {
                 onClick={() => setPrompterMode('dua')}
                 className={`px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                   prompterMode === 'dua'
-                    ? 'bg-gold-400 text-surface-950 shadow-sm font-black'
+                    ? 'bg-gold-400 text-onbrand shadow-sm font-black'
                     : 'text-surface-300 hover:text-surface-50'
                 }`}
               >
                 <Sparkles size={13} />
-                <span>دعاء ومناجاة 🤲</span>
+                <span>{t('voiceStudio.prompterDua', 'دعاء ومناجاة 🤲')}</span>
               </button>
 
               <button
@@ -759,12 +803,12 @@ export const VoiceStudioPage: React.FC = () => {
                 onClick={() => setPrompterMode('custom')}
                 className={`px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                   prompterMode === 'custom'
-                    ? 'bg-gold-400 text-surface-950 shadow-sm font-black'
+                    ? 'bg-gold-400 text-onbrand shadow-sm font-black'
                     : 'text-surface-300 hover:text-surface-50'
                 }`}
               >
                 <FileText size={13} />
-                <span>تسجيل حر / موعظة 🎙️</span>
+                <span>{t('voiceStudio.prompterCustom', 'تسجيل حر / موعظة 🎙️')}</span>
               </button>
             </div>
 
@@ -772,11 +816,13 @@ export const VoiceStudioPage: React.FC = () => {
             <div className="flex items-center gap-2.5 flex-wrap">
               {/* Speed Presets & Slider */}
               <div className="flex items-center gap-1.5 p-1 rounded-xl bg-surface-900 border border-surface-700/40 text-xs">
-                <span className="text-[11px] text-surface-400 px-1 font-bold">سرعة التلقين:</span>
+                <span className="text-[11px] text-surface-400 px-1 font-bold">
+                  {t('voiceStudio.speed', 'سرعة التلقين:')}
+                </span>
                 {[
-                  { speed: 0.28, label: '🐢 هادئ' },
-                  { speed: 0.45, label: '📖 ترتيل' },
-                  { speed: 0.75, label: '⚡ حدر' },
+                  { speed: 0.28, label: t('voiceStudio.speedSlow', '🐢 هادئ') },
+                  { speed: 0.45, label: t('voiceStudio.speedRecite', '📖 ترتيل') },
+                  { speed: 0.75, label: t('voiceStudio.speedFast', '⚡ حدر') },
                 ].map((sp) => (
                   <button
                     key={sp.speed}
@@ -784,7 +830,7 @@ export const VoiceStudioPage: React.FC = () => {
                     onClick={() => setScrollSpeed(sp.speed)}
                     className={`px-2 py-0.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
                       Math.abs(scrollSpeed - sp.speed) < 0.05
-                        ? 'bg-gold-400 text-surface-950 shadow-sm font-black'
+                        ? 'bg-gold-400 text-onbrand shadow-sm font-black'
                         : 'text-surface-300 hover:text-surface-50 hover:bg-surface-800'
                     }`}
                   >
@@ -799,12 +845,12 @@ export const VoiceStudioPage: React.FC = () => {
                   value={scrollSpeed}
                   onChange={(e) => setScrollSpeed(Number(e.target.value))}
                   className="w-16 accent-gold-400 cursor-pointer ms-1"
-                  title={`السرعة: ${Math.round(scrollSpeed * 100)}%`}
+                  title={`${t('voiceStudio.speed', 'السرعة')}: ${Math.round(scrollSpeed * 100)}%`}
                 />
               </div>
 
               <div className="flex items-center gap-1 text-xs text-surface-300 font-bold">
-                <span className="text-[11px]">الخط:</span>
+                <span className="text-[11px]">{t('voiceStudio.fontLabel', 'الخط:')}</span>
                 <input
                   type="range"
                   min={22}
@@ -812,7 +858,7 @@ export const VoiceStudioPage: React.FC = () => {
                   value={fontSize}
                   onChange={(e) => setFontSize(Number(e.target.value))}
                   className="w-16 accent-gold-400 cursor-pointer"
-                  title={`حجم الخط: ${fontSize}px`}
+                  title={`${t('voiceStudio.fontSize', 'حجم الخط')}: ${fontSize}px`}
                 />
               </div>
 
@@ -851,7 +897,10 @@ export const VoiceStudioPage: React.FC = () => {
                     ? 'bg-purple-500/20 border-purple-400 text-purple-300 ring-1 ring-purple-400/40'
                     : 'bg-surface-800 border-surface-700/40 text-surface-300 hover:text-surface-50 hover:bg-surface-700'
                 }`}
-                title="عكس الشاشة لزجاج التلقين (Mirror Mode 🪞)"
+                title={t(
+                  'voiceStudio.mirrorModeTitle',
+                  'عكس الشاشة لزجاج التلقين (Mirror Mode 🪞)'
+                )}
               >
                 <FlipHorizontal size={14} />
               </button>
@@ -867,7 +916,11 @@ export const VoiceStudioPage: React.FC = () => {
                 }`}
               >
                 {isAutoScrolling ? <Pause size={12} /> : <Play size={12} />}
-                <span>{isAutoScrolling ? 'إيقاف التلقين' : 'بدء التلقين'}</span>
+                <span>
+                  {isAutoScrolling
+                    ? t('voiceStudio.stopPrompting', 'إيقاف التلقين')
+                    : t('voiceStudio.startPrompting', 'بدء التلقين')}
+                </span>
               </button>
 
               <button
@@ -876,7 +929,7 @@ export const VoiceStudioPage: React.FC = () => {
                   if (prompterContainerRef.current) prompterContainerRef.current.scrollTop = 0;
                 }}
                 className="p-1.5 rounded-lg bg-surface-800 hover:bg-surface-700 text-surface-300 hover:text-surface-50 border border-surface-700/40 text-xs cursor-pointer"
-                title="الرجوع للبداية"
+                title={t('voiceStudio.resetScroll', 'الرجوع للبداية')}
               >
                 <RotateCcw size={13} />
               </button>
@@ -888,7 +941,9 @@ export const VoiceStudioPage: React.FC = () => {
             {prompterMode === 'quran' && (
               <>
                 <div className="flex items-center gap-2">
-                  <label className="text-xs text-surface-400 font-bold">السورة:</label>
+                  <label className="text-xs text-surface-400 font-bold">
+                    {t('voiceStudio.surahLabel', 'السورة:')}
+                  </label>
                   <select
                     value={selectedSurahNumber}
                     onChange={(e) => {
@@ -909,7 +964,9 @@ export const VoiceStudioPage: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <label className="text-xs text-surface-400 font-bold">من الآية:</label>
+                  <label className="text-xs text-surface-400 font-bold">
+                    {t('voiceStudio.fromAyahLabel', 'من الآية:')}
+                  </label>
                   <input
                     type="number"
                     min={1}
@@ -925,7 +982,9 @@ export const VoiceStudioPage: React.FC = () => {
                     }}
                     className="w-14 p-1 rounded-xl bg-surface-800 border border-surface-700/50 text-xs font-bold text-center text-surface-50 shadow-sm"
                   />
-                  <label className="text-xs text-surface-400 font-bold">إلى:</label>
+                  <label className="text-xs text-surface-400 font-bold">
+                    {t('voiceStudio.toAyahLabel', 'إلى:')}
+                  </label>
                   <input
                     type="number"
                     min={fromAyah}
@@ -944,7 +1003,9 @@ export const VoiceStudioPage: React.FC = () => {
 
             {prompterMode === 'hadith' && (
               <div className="flex items-center gap-2 flex-1">
-                <label className="text-xs text-surface-400 font-bold">اختر الحديث النبوي:</label>
+                <label className="text-xs text-surface-400 font-bold">
+                  {t('voiceStudio.selectHadith', 'اختر الحديث النبوي:')}
+                </label>
                 <select
                   value={selectedZikrId}
                   onChange={(e) => setSelectedZikrId(e.target.value)}
@@ -963,7 +1024,9 @@ export const VoiceStudioPage: React.FC = () => {
 
             {prompterMode === 'dua' && (
               <div className="flex items-center gap-2 flex-1">
-                <label className="text-xs text-surface-400 font-bold">اختر الدعاء أو الذكر:</label>
+                <label className="text-xs text-surface-400 font-bold">
+                  {t('voiceStudio.selectDua', 'اختر الدعاء أو الذكر:')}
+                </label>
                 <select
                   value={selectedZikrId}
                   onChange={(e) => setSelectedZikrId(e.target.value)}
@@ -983,7 +1046,10 @@ export const VoiceStudioPage: React.FC = () => {
             {prompterMode === 'custom' && (
               <div className="text-xs text-surface-300">
                 <span>
-                  ✍️ اكتب أو الصق موعظتك أو خاطرتك، أو سجل مباشرة بصوتك بدون كتابة إجبارية.
+                  {t(
+                    'voiceStudio.customTextHint',
+                    '✍️ اكتب أو الصق موعظتك أو خاطرتك، أو سجل مباشرة بصوتك بدون كتابة إجبارية.'
+                  )}
                 </span>
               </div>
             )}
@@ -1010,7 +1076,7 @@ export const VoiceStudioPage: React.FC = () => {
               <>
                 {isLoadingAyahs ? (
                   <div className="h-full flex items-center justify-center text-gold-500 text-sm animate-pulse font-bold">
-                    جاري تحميل الآيات بالتشكيل العثماني...
+                    {t('voiceStudio.loadingAyahs', 'جاري تحميل الآيات بالتشكيل العثماني...')}
                   </div>
                 ) : (
                   <div
@@ -1089,7 +1155,10 @@ export const VoiceStudioPage: React.FC = () => {
                   value={customText}
                   onChange={(e) => setCustomText(e.target.value)}
                   rows={8}
-                  placeholder="اكتب أو الصق موعظتك، كلمتك الطيبة، أو فكرتك هنا لتظهر أمامك أثناء التسجيل (أو اتركها فارغة للتسجيل الحر)..."
+                  placeholder={t(
+                    'voiceStudio.customTextPlaceholder',
+                    'اكتب أو الصق موعظتك، كلمتك الطيبة، أو فكرتك هنا لتظهر أمامك أثناء التسجيل (أو اتركها فارغة للتسجيل الحر)...'
+                  )}
                   className="w-full p-4 rounded-2xl bg-surface-900 border border-surface-700/50 text-surface-50 text-center leading-[2.2] focus:outline-none focus:border-gold-400 resize-none shadow-sm"
                   style={{ fontSize: `${fontSize}px`, fontFamily }}
                 />
@@ -1103,7 +1172,7 @@ export const VoiceStudioPage: React.FC = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 z-40 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center"
+                  className="absolute inset-0 z-40 bg-black/90 flex flex-col items-center justify-center p-6 text-center"
                 >
                   <motion.div
                     key={countdownValue}
@@ -1113,17 +1182,21 @@ export const VoiceStudioPage: React.FC = () => {
                     transition={{ duration: 0.5, ease: 'easeOut' }}
                     className="flex flex-col items-center"
                   >
-                    <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-full bg-gradient-to-br from-gold-400 via-amber-500 to-amber-600 text-surface-950 flex items-center justify-center font-black text-5xl sm:text-6xl shadow-2xl shadow-gold-500/50 mb-4 border-4 border-gold-300">
+                    <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-full bg-gradient-to-br from-gold-400 via-amber-500 to-amber-600 text-onbrand flex items-center justify-center font-black text-5xl sm:text-6xl shadow-2xl shadow-gold-500/50 mb-4 border-4 border-gold-300">
                       {countdownValue > 0 ? countdownValue : '🎙️'}
                     </div>
                     <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">
-                      {countdownValue === 3 && 'خُذ نفساً عميقاً واستعد.. 🌿'}
-                      {countdownValue === 2 && 'تهيأ للتلاوة والخشوع.. ✨'}
-                      {countdownValue === 1 && 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ 📖'}
-                      {countdownValue === 0 && 'ابدأ التلاوة الآن! 🚀'}
+                      {countdownValue === 3 &&
+                        t('voiceStudio.cdBreath', 'خُذ نفساً عميقاً واستعد.. 🌿')}
+                      {countdownValue === 2 &&
+                        t('voiceStudio.cdPrepare', 'تهيأ للتلاوة والخشوع.. ✨')}
+                      {countdownValue === 1 &&
+                        t('voiceStudio.cdBismillah', 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ 📖')}
+                      {countdownValue === 0 &&
+                        t('voiceStudio.cdStart', 'ابدأ التلاوة الآن! 🚀')}
                     </h3>
                     <p className="text-xs text-gold-300/80">
-                      العد التنازلي التمهيدي للاستعداد التام
+                      {t('voiceStudio.cdSubtitle', 'العد التنازلي التمهيدي للاستعداد التام')}
                     </p>
                   </motion.div>
 
@@ -1135,7 +1208,7 @@ export const VoiceStudioPage: React.FC = () => {
                     }}
                     className="mt-6 px-4 py-1.5 rounded-full bg-surface-800 hover:bg-surface-700 text-white/70 hover:text-white text-xs border border-white/10 transition-all cursor-pointer"
                   >
-                    إلغاء ✕
+                    {t('common.cancel', 'إلغاء ✕')}
                   </button>
                 </motion.div>
               )}
@@ -1166,10 +1239,10 @@ export const VoiceStudioPage: React.FC = () => {
                 />
                 <span>
                   {isRecording
-                    ? 'جاري التسجيل الحي الآن 🔴'
+                    ? t('voiceStudio.liveRecordingActive', 'جاري التسجيل الحي الآن 🔴')
                     : isCountingDown
-                      ? 'الاستعداد التمهيدي ⏳'
-                      : 'منصة التسجيل المباشر 🎙️'}
+                      ? t('voiceStudio.countdownPreparing', 'الاستعداد التمهيدي ⏳')
+                      : t('voiceStudio.liveRecordingDeck', 'منصة التسجيل المباشر 🎙️')}
                 </span>
               </span>
               <span className="font-mono text-surface-50 text-sm font-bold">
@@ -1198,8 +1271,8 @@ export const VoiceStudioPage: React.FC = () => {
                   isRecording
                     ? 'bg-red-500 hover:bg-red-600 text-white shadow-red-500/50 animate-pulse'
                     : isCountingDown
-                      ? 'bg-amber-400 text-surface-950 font-black text-3xl shadow-amber-500/50 scale-105'
-                      : 'bg-gradient-to-br from-gold-400 via-amber-500 to-amber-600 hover:from-gold-300 hover:to-amber-400 text-surface-950 shadow-gold-500/40 hover:scale-105'
+                      ? 'bg-amber-400 text-onbrand font-black text-3xl shadow-amber-500/50 scale-105'
+                      : 'bg-gradient-to-br from-gold-400 via-amber-500 to-amber-600 hover:from-gold-300 hover:to-amber-400 text-onbrand shadow-gold-500/40 hover:scale-105'
                 }`}
               >
                 {isRecording ? (
@@ -1222,7 +1295,7 @@ export const VoiceStudioPage: React.FC = () => {
                   />
                 </div>
                 <span className="text-[11px] text-surface-400 font-mono">
-                  مستوى الصوت: {audioLevel}%
+                  {t('voiceStudio.audioLevel', 'مستوى الصوت:')} {audioLevel}%
                 </span>
               </div>
             ) : isCountingDown ? (
@@ -1234,13 +1307,13 @@ export const VoiceStudioPage: React.FC = () => {
               </div>
             ) : (
               <div className="flex items-center justify-center gap-3 pt-1">
-                <span className="text-xs text-surface-400">أو</span>
+                <span className="text-xs text-surface-400">{t('common.or', 'أو')}</span>
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   className="text-xs text-gold-600 dark:text-gold-400 hover:underline font-bold cursor-pointer"
                 >
-                  رفع ملف MP3 من جهازك 📁
+                  {t('voiceStudio.uploadAudioFile', 'رفع ملف MP3 من جهازك 📁')}
                 </button>
                 <input
                   ref={fileInputRef}
@@ -1260,7 +1333,7 @@ export const VoiceStudioPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleTogglePreview}
-                  className="w-10 h-10 rounded-xl bg-gradient-to-r from-gold-400 to-amber-500 text-surface-950 flex items-center justify-center font-bold shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer shrink-0"
+                  className="w-10 h-10 rounded-xl bg-gradient-to-r from-gold-400 to-amber-500 text-onbrand flex items-center justify-center font-bold shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer shrink-0"
                 >
                   {isPlayingPreview ? <Pause size={18} /> : <Play size={18} className="me-0.5" />}
                 </button>
@@ -1268,35 +1341,45 @@ export const VoiceStudioPage: React.FC = () => {
                 <div className="flex-1 min-w-0">
                   <div className="text-xs font-bold text-surface-50 truncate">
                     {isPlayingPreview
-                      ? 'معاينة حية مع الصدى والطبيعة 🎧'
-                      : 'استمع لتسجيلك مع التأثيرات'}
+                      ? t('voiceStudio.previewWithReverb', 'معاينة حية مع الصدى والطبيعة 🎧')
+                      : t('voiceStudio.listenWithEffects', 'استمع لتسجيلك مع التأثيرات')}
                   </div>
                   <div className="text-xs text-gold-600 dark:text-gold-400 font-mono font-bold">
-                    المدة: {formatSeconds(audioDuration)}
+                    {t('voiceStudio.durationLabel', 'المدة:')} {formatSeconds(audioDuration)}
                   </div>
                 </div>
 
                 <button
                   type="button"
                   onClick={handleConvertToReel}
-                  className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-gold-400 to-amber-500 hover:from-gold-300 hover:to-amber-400 text-surface-950 font-black text-xs flex items-center gap-1 shadow-md shadow-gold-500/20 transition-all active:scale-95 cursor-pointer shrink-0"
+                  className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-gold-400 to-amber-500 hover:from-gold-300 hover:to-amber-400 text-onbrand font-black text-xs flex items-center gap-1 shadow-md shadow-gold-500/20 transition-all active:scale-95 cursor-pointer shrink-0"
                 >
                   <Zap size={13} />
-                  <span>تحويل لريلز 🎬</span>
+                  <span>{t('voiceStudio.convertToReel', 'تحويل لريلز 🎬')}</span>
                 </button>
               </div>
 
               {/* Custom Reciter Name Input */}
               <div className="pt-2 border-t border-surface-700/40 space-y-1">
                 <label className="text-[11px] font-bold text-gold-600 dark:text-gold-300 flex items-center justify-between">
-                  <span>اسمك / اسم القارئ (يظهر في الفيديو والغلاف):</span>
-                  <span className="text-[9px] text-surface-400">تعديل</span>
+                  <span>
+                    {t(
+                      'voiceStudio.reciterNameLabel',
+                      'اسمك / اسم القارئ (يظهر في الفيديو والغلاف):'
+                    )}
+                  </span>
+                  <span className="text-[10px] text-surface-400">
+                    {t('common.edit', 'تعديل')}
+                  </span>
                 </label>
                 <input
                   type="text"
                   value={customReciterName}
                   onChange={(e) => setCustomReciterName(e.target.value)}
-                  placeholder="مثال: القارئ محمد طه / تلاوتي الخاصة"
+                  placeholder={t(
+                    'voiceStudio.reciterNamePlaceholder',
+                    'مثال: القارئ محمد طه / تلاوتي الخاصة'
+                  )}
                   className="glass-input w-full p-2 rounded-xl text-xs bg-surface-800 border border-gold-400/40 text-surface-50 placeholder-surface-400 focus:border-gold-500 focus:outline-none"
                 />
               </div>
@@ -1308,7 +1391,12 @@ export const VoiceStudioPage: React.FC = () => {
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
                 <Sparkles size={14} className="text-purple-400" />
-                <span>صدى المسجد الحرام (Mosque Spatial Reverb) 🕌</span>
+                <span>
+                  {t(
+                    'voiceStudio.reverbTitle',
+                    'صدى المسجد الحرام (Mosque Spatial Reverb) 🕌'
+                  )}
+                </span>
               </label>
               <span className="text-[11px] font-bold text-purple-400 px-2 py-0.5 rounded-full bg-purple-500/15 border border-purple-500/25">
                 3D Sound
@@ -1317,11 +1405,31 @@ export const VoiceStudioPage: React.FC = () => {
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
               {[
-                { id: 'none', name: 'بدون صدى', icon: '🎙️' },
-                { id: 'smallRoom', name: 'غرفة هادئة', icon: '🏠' },
-                { id: 'grandMosque', name: 'المسجد الكبير', icon: '🕌' },
-                { id: 'makkahHaram', name: 'الحرم المكي', icon: '🕋' },
-                { id: 'celestialEcho', name: 'صدى إيماني', icon: '✨' },
+                {
+                  id: 'none',
+                  name: t('voiceStudio.reverbNone', 'بدون صدى'),
+                  icon: '🎙️',
+                },
+                {
+                  id: 'smallRoom',
+                  name: t('voiceStudio.reverbSmallRoom', 'غرفة هادئة'),
+                  icon: '🏠',
+                },
+                {
+                  id: 'grandMosque',
+                  name: t('voiceStudio.reverbGrandMosque', 'المسجد الكبير'),
+                  icon: '🕌',
+                },
+                {
+                  id: 'makkahHaram',
+                  name: t('voiceStudio.reverbMakkahHaram', 'الحرم المكي'),
+                  icon: '🕋',
+                },
+                {
+                  id: 'celestialEcho',
+                  name: t('voiceStudio.reverbCelestialEcho', 'صدى إيماني'),
+                  icon: '✨',
+                },
               ].map((rev) => {
                 const isSelected = reverbPreset === rev.id;
                 return (
@@ -1369,7 +1477,7 @@ export const VoiceStudioPage: React.FC = () => {
             {reverbPreset !== 'none' && (
               <div className="pt-2 border-t border-surface-700/40">
                 <div className="flex items-center justify-between text-xs font-bold text-surface-300 mb-1">
-                  <span>قوة الصدى والارتداد</span>
+                  <span>{t('voiceStudio.reverbStrength', 'قوة الصدى والارتداد')}</span>
                   <span className="font-mono text-purple-400 font-bold">{reverbLevel}%</span>
                 </div>
                 <input
@@ -1389,9 +1497,16 @@ export const VoiceStudioPage: React.FC = () => {
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
                 <Sliders size={14} className="text-emerald-400" />
-                <span>فلاتر الاستوديو ونقاء الصوت (Mastering) 🎛️</span>
+                <span>
+                  {t(
+                    'voiceStudio.dspTitle',
+                    'فلاتر الاستوديو ونقاء الصوت (Mastering) 🎛️'
+                  )}
+                </span>
               </label>
-              <span className="text-[11px] text-emerald-400 font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">Studio DSP</span>
+              <span className="text-[11px] text-emerald-400 font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                Studio DSP
+              </span>
             </div>
 
             <div className="grid grid-cols-3 gap-1.5">
@@ -1404,9 +1519,11 @@ export const VoiceStudioPage: React.FC = () => {
                     : 'bg-surface-800/80 border-surface-700/40 text-surface-300 hover:text-surface-50 hover:bg-surface-800'
                 }`}
               >
-                <div>⚡ عزل الضوضاء</div>
+                <div>{t('voiceStudio.noiseGate', '⚡ عزل الضوضاء')}</div>
                 <div className="text-[10px] text-surface-400">
-                  {enableNoiseGate ? 'مفعل ✓' : 'معطل'}
+                  {enableNoiseGate
+                    ? t('voiceStudio.enabled', 'مفعل ✓')
+                    : t('voiceStudio.disabled', 'معطل')}
                 </div>
               </button>
 
@@ -1419,8 +1536,12 @@ export const VoiceStudioPage: React.FC = () => {
                     : 'bg-surface-800/80 border-surface-700/40 text-surface-300 hover:text-surface-50 hover:bg-surface-800'
                 }`}
               >
-                <div>💎 نقاء التجويد</div>
-                <div className="text-[10px] text-surface-400">{enableClarity ? 'مفعل ✓' : 'معطل'}</div>
+                <div>{t('voiceStudio.clarity', '💎 نقاء التجويد')}</div>
+                <div className="text-[10px] text-surface-400">
+                  {enableClarity
+                    ? t('voiceStudio.enabled', 'مفعل ✓')
+                    : t('voiceStudio.disabled', 'معطل')}
+                </div>
               </button>
 
               <button
@@ -1432,8 +1553,12 @@ export const VoiceStudioPage: React.FC = () => {
                     : 'bg-surface-800/80 border-surface-700/40 text-surface-300 hover:text-surface-50 hover:bg-surface-800'
                 }`}
               >
-                <div>🎙️ دفء الصوت</div>
-                <div className="text-[10px] text-surface-400">{enableWarmth ? 'مفعل ✓' : 'معطل'}</div>
+                <div>{t('voiceStudio.warmth', '🎙️ دفء الصوت')}</div>
+                <div className="text-[10px] text-surface-400">
+                  {enableWarmth
+                    ? t('voiceStudio.enabled', 'مفعل ✓')
+                    : t('voiceStudio.disabled', 'معطل')}
+                </div>
               </button>
             </div>
           </div>
@@ -1443,7 +1568,12 @@ export const VoiceStudioPage: React.FC = () => {
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
                 <Flame size={14} className="text-amber-500" />
-                <span>تنعيم النبرة والهارمونيك (Auto-Pitch Polish) 💎</span>
+                <span>
+                  {t(
+                    'voiceStudio.pitchPolishTitle',
+                    'تنعيم النبرة والهارمونيك (Auto-Pitch Polish) 💎'
+                  )}
+                </span>
               </label>
               <button
                 type="button"
@@ -1454,15 +1584,21 @@ export const VoiceStudioPage: React.FC = () => {
                     : 'bg-surface-800 border-surface-700/40 text-surface-400'
                 }`}
               >
-                {enablePitchPolish ? 'مفعل ✓' : 'معطل'}
+                {enablePitchPolish
+                  ? t('voiceStudio.enabled', 'مفعل ✓')
+                  : t('voiceStudio.disabled', 'معطل')}
               </button>
             </div>
 
             {enablePitchPolish && (
               <div className="space-y-1 pt-1">
                 <div className="flex items-center justify-between text-xs font-bold text-surface-300">
-                  <span>درجة التنعيم واللمعان الصوتي</span>
-                  <span className="font-mono text-amber-500 dark:text-amber-400 font-bold">{pitchPolishLevel}%</span>
+                  <span>
+                    {t('voiceStudio.pitchPolishStrength', 'درجة التنعيم واللمعان الصوتي')}
+                  </span>
+                  <span className="font-mono text-amber-500 dark:text-amber-400 font-bold">
+                    {pitchPolishLevel}%
+                  </span>
                 </div>
                 <input
                   type="range"
@@ -1473,7 +1609,10 @@ export const VoiceStudioPage: React.FC = () => {
                   className="w-full accent-amber-400 cursor-pointer"
                 />
                 <p className="text-[10px] text-surface-400">
-                  يضيف نعومة مخملية للنبرة مع إبراز النقاء والتناغم الصوتي
+                  {t(
+                    'voiceStudio.pitchPolishDesc',
+                    'يضيف نعومة مخملية للنبرة مع إبراز النقاء والتناغم الصوتي'
+                  )}
                 </p>
               </div>
             )}
@@ -1484,7 +1623,9 @@ export const VoiceStudioPage: React.FC = () => {
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
                 <Headphones size={14} className="text-gold-500 dark:text-gold-400" />
-                <span>صوت الحرم المكاني (8D Spatial) 🎧</span>
+                <span>
+                  {t('voiceStudio.spatial8DTitle', 'صوت الحرم المكاني (8D Spatial) 🎧')}
+                </span>
               </label>
               <button
                 type="button"
@@ -1502,7 +1643,9 @@ export const VoiceStudioPage: React.FC = () => {
                     : 'bg-surface-800 border-surface-700/40 text-surface-400'
                 }`}
               >
-                {enable8DAudio ? 'مفعل ✓' : 'معطل'}
+                {enable8DAudio
+                  ? t('voiceStudio.enabled', 'مفعل ✓')
+                  : t('voiceStudio.disabled', 'معطل')}
               </button>
             </div>
 
@@ -1518,14 +1661,26 @@ export const VoiceStudioPage: React.FC = () => {
               <div className="space-y-2.5 pt-1">
                 <div>
                   <label className="block text-surface-300 text-xs font-bold mb-1.5">
-                    مسار الطواف 360°
+                    {t('voiceStudio.spatial8DOrbit', 'مسار الطواف 360°')}
                   </label>
                   <div className="grid grid-cols-2 gap-1.5">
                     {[
-                      { id: 'orbit360', name: '🕋 طواف الكعبة 360°' },
-                      { id: 'makkahDome', name: '🕌 قبة الحرم' },
-                      { id: 'pendulum', name: '🕊️ بندول السكينة' },
-                      { id: 'floatingClouds', name: '☁️ سحب النور' },
+                      {
+                        id: 'orbit360',
+                        name: t('voiceStudio.styleOrbit360', '🕋 طواف الكعبة 360°'),
+                      },
+                      {
+                        id: 'makkahDome',
+                        name: t('voiceStudio.styleMakkahDome', '🕌 قبة الحرم'),
+                      },
+                      {
+                        id: 'pendulum',
+                        name: t('voiceStudio.stylePendulum', '🕊️ بندول السكينة'),
+                      },
+                      {
+                        id: 'floatingClouds',
+                        name: t('voiceStudio.styleFloatingClouds', '☁️ سحب النور'),
+                      },
                     ].map((st) => (
                       <button
                         key={st.id}
@@ -1545,7 +1700,9 @@ export const VoiceStudioPage: React.FC = () => {
 
                 <div>
                   <div className="flex items-center justify-between text-xs font-bold text-surface-300 mb-1">
-                    <span>سرعة الدوران المداري</span>
+                    <span>
+                      {t('voiceStudio.spatial8DSpeed', 'سرعة الدوران المداري')}
+                    </span>
                     <span className="font-mono text-gold-600 dark:text-gold-400 font-bold">
                       {Math.round(eightDSpeed * 100)}%
                     </span>
@@ -1562,7 +1719,10 @@ export const VoiceStudioPage: React.FC = () => {
 
                 <div className="flex items-center justify-between pt-1 border-t border-surface-700/40">
                   <span className="text-xs text-surface-300 font-medium">
-                    إظهار شارة السماعات 🎧 على الفيديو
+                    {t(
+                      'voiceStudio.spatial8DShowBadge',
+                      'إظهار شارة السماعات 🎧 على الفيديو'
+                    )}
                   </span>
                   <input
                     type="checkbox"
@@ -1580,7 +1740,12 @@ export const VoiceStudioPage: React.FC = () => {
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-surface-50 flex items-center gap-1.5">
                 <Volume2 size={14} className="text-sky-400" />
-                <span>مزج صوت الطبيعة في الخلفية (Ambient) 🌿</span>
+                <span>
+                  {t(
+                    'voiceStudio.ambientTitle',
+                    'مزج صوت الطبيعة في الخلفية (Ambient) 🌿'
+                  )}
+                </span>
               </label>
             </div>
 
@@ -1615,7 +1780,7 @@ export const VoiceStudioPage: React.FC = () => {
             {ambientSoundId !== 'none' && (
               <div className="pt-2 border-t border-surface-700/40">
                 <div className="flex items-center justify-between text-xs font-bold text-surface-300 mb-1">
-                  <span>مستوى صوت الطبيعة</span>
+                  <span>{t('voiceStudio.ambientVolume', 'مستوى صوت الطبيعة')}</span>
                   <span className="font-mono text-sky-400 font-bold">{ambientVolume}%</span>
                 </div>
                 <input
