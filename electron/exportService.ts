@@ -521,13 +521,13 @@ function hexToAssColor(hex: string | undefined, fallback: string, alphaHex = '00
   return `&H${alphaHex}${b}${g}${r}&`;
 }
 
-function generateAssSubtitleFile(
+async function generateAssSubtitleFile(
   ayahs: ExportAyah[],
   options: ExportOptions,
   w: number,
   h: number,
   assFilePath: string
-): boolean {
+): Promise<boolean> {
   const settings = options.textSettings || {};
   const previewWidth = previewWidths[options.aspectRatio] || 270;
   
@@ -704,7 +704,7 @@ function generateAssSubtitleFile(
   });
 
   try {
-    fs.writeFileSync(assFilePath, lines.join('\n'), 'utf8');
+    await fs.promises.writeFile(assFilePath, lines.join('\n'), 'utf8');
     return true;
   } catch (err) {
     console.error('[ExportService] Failed to write ASS subtitle file:', err);
@@ -1207,7 +1207,7 @@ export function setupExportHandlers(tempDir: string) {
 
       // Generate ASS Subtitle file for ultra-crisp word-by-word karaoke & font shaping
       const assDest = path.join(jobTempDir, `subtitles_${ts}.ass`);
-      const assGenerated = generateAssSubtitleFile(timedAyahs, options, w, h, assDest);
+      const assGenerated = await generateAssSubtitleFile(timedAyahs, options, w, h, assDest);
 
       const textFilters: string[] = [];
       const bundledFonts = getBundledFontsDir();
