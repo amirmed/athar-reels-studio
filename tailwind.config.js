@@ -45,10 +45,31 @@ export default {
           800: '#92400e',
           900: '#78350f',
         },
+        onbrand: 'rgb(var(--color-on-brand) / <alpha-value>)',
+      },
+      fontSize: {
+        'micro': ['0.625rem', { lineHeight: '1rem' }],        // 10px
+        'caption-xs': ['0.6875rem', { lineHeight: '1rem' }],   // 11px
+        'caption-sm': ['0.75rem', { lineHeight: '1.125rem' }], // 12px
+        'body-sm': ['0.8125rem', { lineHeight: '1.25rem' }],    // 13px
+        'body-md': ['0.875rem', { lineHeight: '1.375rem' }],    // 14px
+        'title-sm': ['1rem', { lineHeight: '1.5rem' }],         // 16px
+        'title-md': ['1.125rem', { lineHeight: '1.625rem' }],   // 18px
+        'heading-md': ['1.25rem', { lineHeight: '1.75rem' }],   // 20px
+        'heading-lg': ['1.5rem', { lineHeight: '2rem' }],       // 24px
+        'display-sm': ['1.875rem', { lineHeight: '2.25rem' }],  // 30px
+        'display-md': ['2.25rem', { lineHeight: '2.5rem' }],    // 36px
+        'display-lg': ['3rem', { lineHeight: '1.15' }],         // 48px
       },
       fontFamily: {
         arabic: ['Cairo', 'Tajawal', 'sans-serif'],
         display: ['Cairo', 'sans-serif'],
+      },
+      spacing: {
+        'tight': '0.75rem',        // 12px (p-3)
+        'normal': '1rem',          // 16px (p-4)
+        'comfortable': '1.25rem',  // 20px (p-5)
+        'spacious': '1.5rem',      // 24px (p-6)
       },
       borderRadius: {
         '2xl': '1rem',

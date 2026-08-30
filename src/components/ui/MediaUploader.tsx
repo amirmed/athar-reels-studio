@@ -304,14 +304,14 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
                 }}
               />
             )}
-            <div className="absolute top-2 end-2 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-[10px] text-white/80 font-bold border border-white/10 flex items-center gap-1">
+            <div className="absolute top-2 end-2 px-2 py-0.5 rounded-full bg-black/80 text-[10px] text-white/80 font-bold border border-white/10 flex items-center gap-1">
               <CheckCircle2 size={11} className="text-emerald-400" />
               <span>خلفية نشطة</span>
             </div>
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-1.5 p-2 bg-surface-900/80 backdrop-blur-sm border-t border-surface-700/40">
+          <div className="flex items-center gap-1.5 p-2 bg-surface-900 border-t border-surface-700/40">
             <button
               type="button"
               onClick={handleUploadClick}
