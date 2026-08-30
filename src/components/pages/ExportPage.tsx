@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useAppStore } from '../../store/useAppStore';
 import { useTranslation } from '../../i18n';
@@ -28,7 +28,7 @@ import {
 
 import { ViralCaptionGenerator } from '../ui/ViralCaptionGenerator';
 import { PublishKitModal } from '../ui/PublishKitModal';
-import { exportProject } from '../../services/exportOrchestrator';
+import { useExportJob } from '../../hooks/useExportJob';
 import { synthesizeArabicSpeech } from '../../services/arabicTtsService';
 import { resolveValidAudioUrl } from '../../services/persistentAudioStorage';
 import { applyCustomVoiceWithSilenceDetection } from '../../utils/customVoiceDistribution';
@@ -46,27 +46,30 @@ export const ExportPage: React.FC = () => {
   const settings = useAppStore((s) => s.settings);
   const { t } = useTranslation();
 
+  const exportJob = useExportJob();
+  const {
+    isExporting,
+    startExport: runExportJob,
+    cancelExport: cancelExportJob,
+  } = exportJob;
+
   const [aspectRatio, setAspectRatio] = useState<'9:16' | '16:9' | '1:1'>(
     currentProject?.aspectRatio || '9:16'
   );
   const [quality, setQuality] = useState<'standard' | 'high' | 'premium'>('high');
-  const [isExporting, setIsExporting] = useState(false);
-  const [_exportProgress, setExportProgress] = useState(0);
   const [activePublishJob, setActivePublishJob] = useState<ExportJob | null>(null);
-  const abortControllerRef = useRef<AbortController | null>(null);
 
-  // Real export: delegates to unified ExportOrchestrator
+  // Real export: delegates to unified useExportJob hook
   const performRealExport = useCallback(
     async (jobId: string) => {
       if (!currentProject) return;
-
-      abortControllerRef.current = new AbortController();
 
       try {
         updateExportJob(jobId, { status: 'processing', progress: 5 });
 
         let ayahs: AyahData[] = [];
         let resolvedCustomVoice: string | undefined = undefined;
+
         if (
           currentProject.customText ||
           currentProject.contentType === 'hadith' ||
@@ -126,72 +129,80 @@ export const ExportPage: React.FC = () => {
           ayahs = [
             {
               number: 1,
+              text,
               numberInSurah: 1,
               surahNumber: 0,
-              surahName: currentProject.customTitle || currentProject.name,
-              text: text,
-              audioUrl: audioUrl || '',
               juz: 1,
               page: 1,
+              audioUrl: audioUrl || '',
+              duration: estimatedTotalSec,
+              surahName: currentProject.surah || currentProject.name,
               words,
             },
           ];
-        } else {
-          const activeReciter =
-            currentProject.reciterId === 'custom_voice' ||
-            currentProject.audioSettings?.customRecordedAudioUrl
-              ? 'alafasy_128'
-              : currentProject.reciterId;
-          ayahs = await fetchAyahsWithAudio(
-            currentProject.surahNumber,
-            currentProject.fromAyah,
-            currentProject.toAyah,
-            activeReciter
-          );
+        } else if (currentProject.surahNumber > 0) {
           const customVoice =
             currentProject.audioSettings?.customRecordedAudioUrl || currentProject.customAudioUrl;
-          const isUsingCustomVoice = Boolean(
-            customVoice &&
-            (currentProject.reciterId === 'custom_voice' ||
-              currentProject.audioSettings?.customRecordedAudioUrl ||
-              currentProject.customAudioUrl)
-          );
-          if (isUsingCustomVoice && customVoice) {
+
+          if (customVoice) {
             const customKey =
               currentProject.audioSettings?.customAudioKey ||
               currentProject.customAudioKey ||
               currentProject.id;
-            // Revive recording from IndexedDB if blob: was invalidated
-            resolvedCustomVoice = await resolveValidAudioUrl(customVoice, currentProject.id, customKey);
-            if (resolvedCustomVoice) {
-              if (resolvedCustomVoice !== customVoice) {
+            const valid = await resolveValidAudioUrl(customVoice, currentProject.id, customKey);
+            if (valid) {
+              resolvedCustomVoice = valid;
+              if (valid !== currentProject.customAudioUrl) {
                 updateProject(currentProject.id, {
-                  customAudioUrl: resolvedCustomVoice,
+                  customAudioUrl: valid,
                   audioSettings: {
                     ...currentProject.audioSettings,
-                    customRecordedAudioUrl: resolvedCustomVoice,
+                    customRecordedAudioUrl: valid,
                   },
                 });
               }
+            }
+          }
+
+          ayahs = await fetchAyahsWithAudio(
+            currentProject.surahNumber,
+            currentProject.fromAyah,
+            currentProject.toAyah,
+            currentProject.reciterId
+          );
+
+          if (resolvedCustomVoice && ayahs.length > 0) {
+            try {
               await applyCustomVoiceWithSilenceDetection(
                 ayahs,
                 resolvedCustomVoice,
                 currentProject.audioSettings?.customAudioDuration || 0
               );
-              if (ayahs.length > 1) {
-                addToast({
-                  message: t(
-                    'exportModal.multiAyahCustomVoice',
-                    '🎙️ تنبيه: سيتم استخدام تسجيلك الصوتي المخصص كمسار موحد لكافة آيات الفيديو.'
-                  ),
-                  type: 'info',
-                });
-              }
+            } catch (distErr) {
+              logger.warn(
+                '[ExportPage] applyCustomVoiceWithSilenceDetection error, fallback:',
+                distErr
+              );
+              const totalDur = currentProject.audioSettings?.customAudioDuration || 15;
+              const portion = totalDur / Math.max(ayahs.length, 1);
+              ayahs = ayahs.map((a) => ({
+                ...a,
+                audioUrl: resolvedCustomVoice!,
+                duration: portion,
+              }));
+            }
+
+            if (ayahs.length > 1) {
+              addToast({
+                message: t(
+                  'exportModal.multiAyahCustomVoice',
+                  '🎙️ تنبيه: سيتم استخدام تسجيلك الصوتي المخصص كمسار موحد لكافة آيات الفيديو.'
+                ),
+                type: 'info',
+              });
             }
           }
         }
-
-        if (abortControllerRef.current?.signal.aborted) return;
 
         let translations: TranslationData[] = [];
         if (currentProject.translationEnabled && currentProject.surahNumber > 0) {
@@ -215,7 +226,7 @@ export const ExportPage: React.FC = () => {
           currentProject.reciterId === 'custom_voice' ||
           Boolean(currentProject.audioSettings?.customRecordedAudioUrl || currentProject.customAudioUrl);
 
-        const result = await exportProject({
+        const result = await runExportJob({
           projectName: currentProject.name,
           surahName: currentProject.surah || '',
           reciterName: currentProject.reciter,
@@ -233,10 +244,8 @@ export const ExportPage: React.FC = () => {
           savePathPref: settings?.projectsPath
             ? `${settings.projectsPath}/${currentProject.name}.mp4`
             : undefined,
-          signal: abortControllerRef.current?.signal,
           onProgress: (evt) => {
             updateExportJob(jobId, { progress: evt.percent });
-            setExportProgress(evt.percent);
           },
         });
 
@@ -257,14 +266,12 @@ export const ExportPage: React.FC = () => {
             quality,
             status: 'completed',
             progress: 100,
-            outputPath: savedPath || undefined,
+            outputPath: savedPath || result.outputPath || undefined,
             downloadUrl: result.blobUrl,
             createdAt: new Date().toISOString(),
           };
 
           updateExportJob(jobId, completedJob);
-          setIsExporting(false);
-          setExportProgress(100);
 
           addToast({
             message: t(
@@ -281,13 +288,13 @@ export const ExportPage: React.FC = () => {
             },
           });
         } else {
+          if (result.error === 'تم إلغاء التصدير') {
+            updateExportJob(jobId, { status: 'failed', progress: 0 });
+            return;
+          }
           throw new Error(result.error || t('export.exportFailedError', 'فشلت عملية تصدير الفيديو'));
         }
       } catch (error: unknown) {
-        if (abortControllerRef.current?.signal.aborted) {
-          updateExportJob(jobId, { status: 'failed', progress: 0 });
-          return;
-        }
         logger.error('Export failed:', error);
         updateExportJob(jobId, { status: 'failed', progress: 0 });
         const errMsg = error instanceof Error ? error.message : t('common.error', 'خطأ غير معروف');
@@ -295,11 +302,9 @@ export const ExportPage: React.FC = () => {
           message: t('export.exportFailedPrefix', 'فشل التصدير: {error}').replace('{error}', errMsg),
           type: 'error',
         });
-      } finally {
-        setIsExporting(false);
       }
     },
-    [currentProject, aspectRatio, quality, updateExportJob, addToast, settings?.projectsPath, t, updateProject]
+    [currentProject, aspectRatio, quality, updateExportJob, addToast, settings?.projectsPath, t, updateProject, runExportJob]
   );
 
   const handleExport = async () => {
@@ -310,9 +315,6 @@ export const ExportPage: React.FC = () => {
       });
       return;
     }
-
-    setIsExporting(true);
-    setExportProgress(0);
 
     const newJob: ExportJob = {
       id: `exp-${Date.now()}`,
@@ -334,9 +336,7 @@ export const ExportPage: React.FC = () => {
   };
 
   const handleCancel = () => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
+    cancelExportJob();
     if (window.electronAPI?.videoExport?.cancel) {
       try {
         window.electronAPI.videoExport.cancel();
@@ -344,7 +344,6 @@ export const ExportPage: React.FC = () => {
         logger.debug('[ExportPage] Cancel error:', err);
       }
     }
-    setIsExporting(false);
     addToast({ message: t('export.exportCancelledToast', 'تم إلغاء التصدير'), type: 'warning' });
   };
 
@@ -352,7 +351,6 @@ export const ExportPage: React.FC = () => {
     const job = exportJobs.find((j) => j.id === jobId);
     if (job) {
       updateExportJob(jobId, { status: 'processing', progress: 0 });
-      setIsExporting(true);
       performRealExport(jobId);
     }
   };
