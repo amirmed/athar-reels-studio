@@ -12,30 +12,85 @@ export interface Toast {
   };
 }
 
-export type ModalName =
-  | 'confirm-delete'
-  | 'quickVerse'
-  | 'reciterBrowser'
-  | 'pexelsBrowser'
-  | 'export'
-  | 'thumbnail'
-  | 'publishKit'
-  | 'viralCaption'
-  | 'aiVoice'
-  | 'onboarding'
-  | 'globalSearch'
-  | 'presetTemplates';
-
 export interface DeleteProjectModalData {
-  projectId?: string;
+  projectId: string;
   projectName?: string;
-  [key: string]: unknown;
+}
+
+export interface QuickVerseModalData {
+  initialSurah?: number;
+  initialAyah?: number;
+}
+
+export interface ReciterBrowserModalData {
+  reciterId?: string;
+  selectedReciter?: string;
+}
+
+export interface PexelsBrowserModalData {
+  query?: string;
+  type?: 'image' | 'video';
+  mediaType?: 'photo' | 'video';
+}
+
+export interface ExportModalData {
+  projectId?: string;
+}
+
+export interface ThumbnailModalData {
+  projectId?: string;
+}
+
+export interface PublishKitModalData {
+  projectId?: string;
+  projectTitle?: string;
+}
+
+export interface ViralCaptionModalData {
+  surahName?: string;
+  versesText?: string;
+}
+
+export interface AiVoiceModalData {
+  text?: string;
+  voiceId?: string;
+}
+
+export interface PresetTemplatesModalData {
+  category?: string;
+  templateId?: string;
 }
 
 export interface ModalDataMap {
   'confirm-delete': DeleteProjectModalData;
-  [key: string]: unknown;
+  quickVerse: QuickVerseModalData | undefined;
+  reciterBrowser: ReciterBrowserModalData | undefined;
+  pexelsBrowser: PexelsBrowserModalData | undefined;
+  export: ExportModalData | undefined;
+  thumbnail: ThumbnailModalData | undefined;
+  publishKit: PublishKitModalData | undefined;
+  viralCaption: ViralCaptionModalData | undefined;
+  aiVoice: AiVoiceModalData | undefined;
+  onboarding: Record<string, unknown> | undefined;
+  globalSearch: Record<string, unknown> | undefined;
+  presetTemplates: PresetTemplatesModalData | undefined;
 }
+
+export type ModalName = keyof ModalDataMap;
+
+export type ModalPayload =
+  | { name: 'confirm-delete'; data: DeleteProjectModalData }
+  | { name: 'quickVerse'; data?: QuickVerseModalData }
+  | { name: 'reciterBrowser'; data?: ReciterBrowserModalData }
+  | { name: 'pexelsBrowser'; data?: PexelsBrowserModalData }
+  | { name: 'export'; data?: ExportModalData }
+  | { name: 'thumbnail'; data?: ThumbnailModalData }
+  | { name: 'publishKit'; data?: PublishKitModalData }
+  | { name: 'viralCaption'; data?: ViralCaptionModalData }
+  | { name: 'aiVoice'; data?: AiVoiceModalData }
+  | { name: 'onboarding'; data?: Record<string, unknown> }
+  | { name: 'globalSearch'; data?: Record<string, unknown> }
+  | { name: 'presetTemplates'; data?: PresetTemplatesModalData };
 
 export interface UiSlice {
   // Navigation
@@ -46,8 +101,8 @@ export interface UiSlice {
 
   // Modals with typed payloads
   activeModal: ModalName | null;
-  modalData: DeleteProjectModalData | Record<string, unknown> | unknown;
-  openModal: <T = unknown>(name: ModalName, data?: T) => void;
+  modalData: ModalDataMap[ModalName] | null;
+  openModal: <K extends ModalName>(name: K, data?: ModalDataMap[K]) => void;
   closeModal: () => void;
 
   // Quotes
@@ -58,6 +113,7 @@ export interface UiSlice {
   toasts: Toast[];
   addToast: (toast: Omit<Toast, 'id'>) => void;
   removeToast: (id: string) => void;
+  clearAllToasts?: () => void;
 
   // Interactive Tour Guide
   isTourActive: boolean;
@@ -88,7 +144,8 @@ export interface SettingsSlice {
   theme: 'dark' | 'light';
   settings: AppSettings;
   toggleTheme: () => void;
-  updateSettings: (updates: Partial<AppSettings>) => void;
+  setTheme: (theme: 'dark' | 'light') => void;
+  updateSettings: (settings: Partial<AppSettings>) => void;
   loadSettings: () => Promise<void>;
   saveSettings: () => Promise<void>;
 }
@@ -97,14 +154,15 @@ export interface ExportSlice {
   exportJobs: ExportJob[];
   addExportJob: (job: ExportJob) => void;
   updateExportJob: (id: string, updates: Partial<ExportJob>) => void;
+  deleteExportJob: (id: string) => void;
   loadExportJobs: () => Promise<void>;
   saveExportJobs: () => Promise<void>;
 }
 
-export interface AppStoreState extends UiSlice, ProjectSlice, SettingsSlice, ExportSlice {
+export type AppStoreState = UiSlice & ProjectSlice & SettingsSlice & ExportSlice & {
   initialized: boolean;
   initializeApp: () => Promise<void>;
-}
+};
 
 export type AppSlice<T> = StateCreator<
   AppStoreState,

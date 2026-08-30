@@ -1,5 +1,6 @@
 import { Page, QuoteCardSettings } from '../../types';
-import { AppSlice, Toast, UiSlice, ModalName } from '../types';
+import { AppSlice, Toast, UiSlice, ModalName, ModalDataMap } from '../types';
+import { logger } from '../../utils/logger';
 
 function generateUniqueId(prefix = 'id'): string {
   try {
@@ -7,7 +8,7 @@ function generateUniqueId(prefix = 'id'): string {
       return `${prefix}_${crypto.randomUUID()}`;
     }
   } catch (err) {
-    console.debug('[UiSlice] crypto.randomUUID fallback:', err);
+    logger.debug('[UiSlice] crypto.randomUUID fallback:', err);
   }
   return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 9)}`;
 }
@@ -17,9 +18,17 @@ const getInitialPage = (): Page => {
     const hasOnboarded = typeof localStorage !== 'undefined' ? localStorage.getItem('athar_has_onboarded') : null;
     return hasOnboarded === 'true' ? 'dashboard' : 'welcome';
   } catch (err) {
-    console.debug('[UiSlice] getInitialPage fallback:', err);
+    logger.debug('[UiSlice] getInitialPage fallback:', err);
     return 'welcome';
   }
+};
+
+// Active toast timeout references for leak-free cleanup
+const toastTimers = new Map<string, ReturnType<typeof setTimeout>>();
+
+export const clearToastTimers = () => {
+  toastTimers.forEach((timer) => clearTimeout(timer));
+  toastTimers.clear();
 };
 
 export const createUiSlice: AppSlice<UiSlice> = (set, get) => ({
@@ -31,9 +40,9 @@ export const createUiSlice: AppSlice<UiSlice> = (set, get) => ({
 
   // Modals with typed payloads
   activeModal: null as ModalName | null,
-  modalData: null,
-  openModal: <T = unknown>(name: ModalName, data: T = null as T) =>
-    set({ activeModal: name, modalData: data }),
+  modalData: null as ModalDataMap[ModalName] | null,
+  openModal: <K extends ModalName>(name: K, data?: ModalDataMap[K]) =>
+    set({ activeModal: name, modalData: data ?? null }),
   closeModal: () => set({ activeModal: null, modalData: null }),
 
   // Quotes Draft
@@ -41,7 +50,7 @@ export const createUiSlice: AppSlice<UiSlice> = (set, get) => ({
   setActiveQuoteDraft: (draft: Partial<QuoteCardSettings> | null) =>
     set({ activeQuoteDraft: draft }),
 
-  // Toasts with strict duplicate protection
+  // Toasts with strict duplicate protection and timer tracking
   toasts: [],
   addToast: (toast: Omit<Toast, 'id'>) => {
     const existing = get().toasts.find((t) => t.message === toast.message);
@@ -51,12 +60,31 @@ export const createUiSlice: AppSlice<UiSlice> = (set, get) => ({
     const newToast: Toast = { ...toast, id };
     set((state) => ({ toasts: [...state.toasts, newToast] }));
     const dur = toast.duration || 4000;
-    setTimeout(() => {
+
+    // Clear any previous timer for same id
+    const prevTimer = toastTimers.get(id);
+    if (prevTimer) {
+      clearTimeout(prevTimer);
+    }
+
+    const timer = setTimeout(() => {
+      toastTimers.delete(id);
       set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) }));
     }, dur);
+
+    toastTimers.set(id, timer);
   },
   removeToast: (id: string) => {
+    const timer = toastTimers.get(id);
+    if (timer) {
+      clearTimeout(timer);
+      toastTimers.delete(id);
+    }
     set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) }));
+  },
+  clearAllToasts: () => {
+    clearToastTimers();
+    set({ toasts: [] });
   },
 
   // Interactive Tour Guide

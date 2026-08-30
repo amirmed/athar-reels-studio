@@ -1,6 +1,9 @@
 import { Project } from '../../types';
 import { AppSlice, ProjectSlice } from '../types';
 import { deletePersistentAudio } from '../../services/persistentAudioStorage';
+import { saveToLocal } from '../../utils/localStorage';
+import { loadWithLegacyMigration } from '../../utils/storageMigration';
+import { logger } from '../../utils/logger';
 import {
   saveProjectThumbnail,
   getAllProjectThumbnails,
@@ -23,31 +26,9 @@ function generateUniqueId(prefix = 'proj'): string {
       return `${prefix}_${crypto.randomUUID()}`;
     }
   } catch (err) {
-    console.debug('[ProjectSlice] crypto.randomUUID fallback:', err);
+    logger.debug('[ProjectSlice] crypto.randomUUID fallback:', err);
   }
   return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 9)}`;
-}
-
-function loadFromLocal<T>(key: string): T | null {
-  try {
-    const raw = typeof localStorage !== 'undefined' ? localStorage.getItem(key) : null;
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
-
-function saveToLocal(key: string, data: unknown): boolean {
-  try {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem(key, JSON.stringify(data));
-      return true;
-    }
-    return false;
-  } catch (e) {
-    console.warn('localStorage save failed:', e);
-    return false;
-  }
 }
 
 export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
@@ -81,14 +62,14 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
 
   deleteProject: (id: string) => {
     deletePersistentAudio(id).catch((err) => {
-      console.warn(`[ProjectSlice] Failed to delete audio for project ${id}:`, err);
+      logger.warn(`[ProjectSlice] Failed to delete audio for project ${id}:`, err);
     });
     deleteProjectThumbnail(id).catch((err) => {
-      console.warn(`[ProjectSlice] Failed to delete thumbnail for project ${id}:`, err);
+      logger.warn(`[ProjectSlice] Failed to delete thumbnail for project ${id}:`, err);
     });
     if (window.electronAPI?.projects?.delete) {
       window.electronAPI.projects.delete(id).catch((err) => {
-        console.error(`[ProjectSlice] Electron IPC project deletion failed for ${id}:`, err);
+        logger.error(`[ProjectSlice] Electron IPC project deletion failed for ${id}:`, err);
       });
     }
     set((state) => ({
@@ -100,15 +81,15 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
 
   deleteProjects: (ids: string[]) => {
     deleteProjectThumbnails(ids).catch((err) => {
-      console.warn('[ProjectSlice] Failed to batch delete thumbnails:', err);
+      logger.warn('[ProjectSlice] Failed to batch delete thumbnails:', err);
     });
     ids.forEach((id) => {
       deletePersistentAudio(id).catch((err) => {
-        console.warn(`[ProjectSlice] Failed to delete audio for project ${id}:`, err);
+        logger.warn(`[ProjectSlice] Failed to delete audio for project ${id}:`, err);
       });
       if (window.electronAPI?.projects?.delete) {
         window.electronAPI.projects.delete(id).catch((err) => {
-          console.error(`[ProjectSlice] Electron IPC project deletion failed for ${id}:`, err);
+          logger.error(`[ProjectSlice] Electron IPC project deletion failed for ${id}:`, err);
         });
       }
     });
@@ -122,22 +103,22 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
 
   deleteAllProjects: () => {
     clearAllProjectThumbnails().catch((err) => {
-      console.warn('[ProjectSlice] Failed to clear all thumbnails:', err);
+      logger.warn('[ProjectSlice] Failed to clear all thumbnails:', err);
     });
     get().projects.forEach((p) => {
       deletePersistentAudio(p.id).catch((err) => {
-        console.warn(`[ProjectSlice] Failed to delete audio for project ${p.id}:`, err);
+        logger.warn(`[ProjectSlice] Failed to delete audio for project ${p.id}:`, err);
       });
     });
     if (window.electronAPI?.projects?.deleteAll) {
       window.electronAPI.projects.deleteAll().catch((err) => {
-        console.error('[ProjectSlice] Electron IPC deleteAll failed:', err);
+        logger.error('[ProjectSlice] Electron IPC deleteAll failed:', err);
       });
     } else {
       get().projects.forEach((p) => {
         if (window.electronAPI?.projects?.delete) {
           window.electronAPI.projects.delete(p.id).catch((err) => {
-            console.error(`[ProjectSlice] Electron IPC delete failed for ${p.id}:`, err);
+            logger.error(`[ProjectSlice] Electron IPC delete failed for ${p.id}:`, err);
           });
         }
       });
@@ -175,16 +156,12 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
 
         // Automatic Web-to-Electron Migration:
         // Check localStorage for legacy web projects and migrate them
-        let legacyLocalProjects = loadFromLocal<Project[]>(STORAGE_KEY_PROJECTS_V1);
-        if (!legacyLocalProjects || legacyLocalProjects.length === 0) {
-          for (const k of LEGACY_PROJECTS_KEYS) {
-            const found = loadFromLocal<Project[]>(k);
-            if (found && Array.isArray(found) && found.length > 0) {
-              legacyLocalProjects = found;
-              break;
-            }
-          }
-        }
+        const legacyLocalProjects = loadWithLegacyMigration<Project[]>({
+          primaryKey: STORAGE_KEY_PROJECTS_V1,
+          legacyKeys: LEGACY_PROJECTS_KEYS,
+          validate: (d): d is Project[] => Array.isArray(d),
+          autoPersistToPrimary: false,
+        });
 
         if (
           legacyLocalProjects &&
@@ -203,7 +180,7 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
           }
 
           if (migratedProjects.length > 0) {
-            console.info(
+            logger.info(
               `[ProjectSlice] Migrated ${migratedProjects.length} legacy project(s) into Electron disk.`
             );
             // Offload thumbnails and backgrounds to IndexedDB and save clean projects to Electron disk
@@ -222,23 +199,16 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
               return clean as Project;
             });
             window.electronAPI.projects.saveAll(sanitizedMigrated).catch((err) => {
-              console.warn('[ProjectSlice] Failed to save migrated projects to Electron:', err);
+              logger.warn('[ProjectSlice] Failed to save migrated projects to Electron:', err);
             });
           }
         }
       } else {
-        let local = loadFromLocal<Project[]>(STORAGE_KEY_PROJECTS_V1);
-        if (!local || local.length === 0) {
-          for (const k of LEGACY_PROJECTS_KEYS) {
-            const found = loadFromLocal<Project[]>(k);
-            if (found && Array.isArray(found) && found.length > 0) {
-              local = found;
-              // Migrate to v1 key
-              saveToLocal(STORAGE_KEY_PROJECTS_V1, found);
-              break;
-            }
-          }
-        }
+        const local = loadWithLegacyMigration<Project[]>({
+          primaryKey: STORAGE_KEY_PROJECTS_V1,
+          legacyKeys: LEGACY_PROJECTS_KEYS,
+          validate: (d): d is Project[] => Array.isArray(d),
+        });
         baseProjects = local || [];
       }
 
@@ -277,7 +247,7 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
         set({ projects: baseProjects, isLoadingProjects: false });
       }
     } catch (e) {
-      console.warn('Failed to load projects:', e);
+      logger.warn('Failed to load projects:', e);
       set({ isLoadingProjects: false });
     }
   },
@@ -290,18 +260,18 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
       projects.forEach((p) => {
         if (p.thumbnail && p.thumbnail.startsWith('data:')) {
           saveProjectThumbnail(p.id, p.thumbnail).catch((err) => {
-            console.warn(`[ProjectSlice] Failed to persist thumbnail for ${p.id}:`, err);
+            logger.warn(`[ProjectSlice] Failed to persist thumbnail for ${p.id}:`, err);
           });
         }
         if (p.backgroundUrl && p.backgroundUrl.startsWith('data:')) {
           saveProjectBackground(p.id, p.backgroundUrl).catch((err) => {
-            console.warn(`[ProjectSlice] Failed to persist background for ${p.id}:`, err);
+            logger.warn(`[ProjectSlice] Failed to persist background for ${p.id}:`, err);
           });
         }
         const pAny = p as any;
         if (pAny.backgroundFile && typeof pAny.backgroundFile === 'string' && pAny.backgroundFile.startsWith('data:')) {
           saveProjectBackground(p.id, pAny.backgroundFile).catch((err) => {
-            console.warn(`[ProjectSlice] Failed to persist backgroundFile for ${p.id}:`, err);
+            logger.warn(`[ProjectSlice] Failed to persist backgroundFile for ${p.id}:`, err);
           });
         }
         if (p.textSettings?.sceneBackgrounds) {
@@ -310,7 +280,7 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
           );
           if (hasDataUrlScenes) {
             saveProjectSceneBackgrounds(p.id, p.textSettings.sceneBackgrounds).catch((err) => {
-              console.warn(`[ProjectSlice] Failed to persist sceneBackgrounds for ${p.id}:`, err);
+              logger.warn(`[ProjectSlice] Failed to persist sceneBackgrounds for ${p.id}:`, err);
             });
           }
         }
@@ -348,7 +318,7 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
         try {
           await window.electronAPI.projects.saveAll(sanitizedProjects);
         } catch (electronSaveErr) {
-          console.error('[ProjectSlice] Electron save error:', electronSaveErr);
+          logger.error('[ProjectSlice] Electron save error:', electronSaveErr);
           get().addToast?.({
             message: '⚠️ تعذر حفظ المشاريع على القرص، تحقق من أذونات النظام',
             type: 'error',
@@ -364,7 +334,7 @@ export const createProjectSlice: AppSlice<ProjectSlice> = (set, get) => ({
         }
       }
     } catch (e) {
-      console.warn('Failed to save projects:', e);
+      logger.warn('Failed to save projects:', e);
       get().addToast?.({
         message: '⚠️ حدث خطأ أثناء حفظ بيانات المشروع',
         type: 'error',

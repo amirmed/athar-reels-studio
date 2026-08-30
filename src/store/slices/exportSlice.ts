@@ -1,31 +1,12 @@
 import { ExportJob } from '../../types';
 import { AppSlice, ExportSlice } from '../types';
+import { saveToLocal } from '../../utils/localStorage';
+import { loadWithLegacyMigration } from '../../utils/storageMigration';
+import { logger } from '../../utils/logger';
 
 const isElectron = () => typeof window !== 'undefined' && !!window.electronAPI;
 const STORAGE_KEY_EXPORTS_V1 = 'ayahStudio_exportJobs_v1';
 const LEGACY_EXPORTS_KEYS = ['ayahStudio_exportJobs', 'athar_exportJobs', 'exportJobs'];
-
-function loadFromLocal<T>(key: string): T | null {
-  try {
-    const raw = typeof localStorage !== 'undefined' ? localStorage.getItem(key) : null;
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
-
-function saveToLocal(key: string, data: unknown): boolean {
-  try {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem(key, JSON.stringify(data));
-      return true;
-    }
-    return false;
-  } catch (e) {
-    console.warn('localStorage save failed:', e);
-    return false;
-  }
-}
 
 export const createExportSlice: AppSlice<ExportSlice> = (set, get) => ({
   exportJobs: [],
@@ -42,6 +23,13 @@ export const createExportSlice: AppSlice<ExportSlice> = (set, get) => ({
     get().saveExportJobs();
   },
 
+  deleteExportJob: (id: string) => {
+    set((state) => ({
+      exportJobs: state.exportJobs.filter((j) => j.id !== id),
+    }));
+    get().saveExportJobs();
+  },
+
   loadExportJobs: async () => {
     try {
       let rawJobs: ExportJob[] = [];
@@ -51,18 +39,11 @@ export const createExportSlice: AppSlice<ExportSlice> = (set, get) => ({
           rawJobs = loaded;
         }
       } else {
-        let local = loadFromLocal<ExportJob[]>(STORAGE_KEY_EXPORTS_V1);
-        if (!local || local.length === 0) {
-          for (const k of LEGACY_EXPORTS_KEYS) {
-            const found = loadFromLocal<ExportJob[]>(k);
-            if (found && Array.isArray(found) && found.length > 0) {
-              local = found;
-              // Migrate to v1 key
-              saveToLocal(STORAGE_KEY_EXPORTS_V1, found);
-              break;
-            }
-          }
-        }
+        const local = loadWithLegacyMigration<ExportJob[]>({
+          primaryKey: STORAGE_KEY_EXPORTS_V1,
+          legacyKeys: LEGACY_EXPORTS_KEYS,
+          validate: (d): d is ExportJob[] => Array.isArray(d),
+        });
         if (local && Array.isArray(local)) {
           rawJobs = local;
         }
@@ -87,7 +68,7 @@ export const createExportSlice: AppSlice<ExportSlice> = (set, get) => ({
         get().saveExportJobs();
       }
     } catch (e) {
-      console.warn('Failed to load export jobs:', e);
+      logger.warn('Failed to load export jobs:', e);
     }
   },
 
@@ -100,7 +81,7 @@ export const createExportSlice: AppSlice<ExportSlice> = (set, get) => ({
         saveToLocal(STORAGE_KEY_EXPORTS_V1, exportJobs);
       }
     } catch (e) {
-      console.warn('Failed to save export jobs:', e);
+      logger.warn('Failed to save export jobs:', e);
     }
   },
 });

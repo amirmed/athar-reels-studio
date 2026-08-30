@@ -1,5 +1,8 @@
 import { AppSettings } from '../../types';
 import { AppSlice, SettingsSlice } from '../types';
+import { saveToLocal } from '../../utils/localStorage';
+import { loadWithLegacyMigration } from '../../utils/storageMigration';
+import { logger } from '../../utils/logger';
 
 export const defaultSettings: AppSettings = {
   language: 'ar',
@@ -10,11 +13,34 @@ export const defaultSettings: AppSettings = {
   performanceMode: 'balanced',
   autoSave: true,
   autoSaveInterval: 5,
+  comfortableReading: false,
 };
 
 const isElectron = () => typeof window !== 'undefined' && !!window.electronAPI;
 const STORAGE_KEY_SETTINGS_V1 = 'ayahStudio_settings_v1';
 const LEGACY_SETTINGS_KEYS = ['ayahStudio_settings', 'athar_settings', 'settings'];
+
+export function applyComfortableReadingToDom(enabled: boolean) {
+  if (typeof document === 'undefined') return;
+  const root = document.documentElement;
+  const body = document.body;
+
+  if (enabled) {
+    root.classList?.add('comfortable-reading');
+    root.setAttribute?.('data-reading-mode', 'comfortable');
+    if (body) {
+      body.classList?.add('comfortable-reading');
+      body.setAttribute?.('data-reading-mode', 'comfortable');
+    }
+  } else {
+    root.classList?.remove('comfortable-reading');
+    root.removeAttribute?.('data-reading-mode');
+    if (body) {
+      body.classList?.remove('comfortable-reading');
+      body.removeAttribute?.('data-reading-mode');
+    }
+  }
+}
 
 export function applyThemeToDom(theme: 'dark' | 'light') {
   if (typeof document === 'undefined') return;
@@ -48,7 +74,7 @@ export function applyThemeToDom(theme: 'dark' | 'light') {
       localStorage.setItem('athar_theme', theme);
     }
   } catch (err) {
-    console.debug('[SettingsSlice] localStorage theme save failed:', err);
+    logger.debug('[SettingsSlice] localStorage theme save failed:', err);
   }
 }
 
@@ -62,30 +88,11 @@ export const getInitialTheme = (): 'dark' | 'light' => {
       }
     }
   } catch (err) {
-    console.debug('[SettingsSlice] localStorage theme read failed:', err);
+    logger.debug('[SettingsSlice] localStorage theme read failed:', err);
   }
   applyThemeToDom('dark');
   return 'dark';
 };
-
-function loadFromLocal<T>(key: string): T | null {
-  try {
-    const raw = typeof localStorage !== 'undefined' ? localStorage.getItem(key) : null;
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
-
-function saveToLocal(key: string, data: unknown) {
-  try {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem(key, JSON.stringify(data));
-    }
-  } catch (e) {
-    console.warn('localStorage save failed:', e);
-  }
-}
 
 export const createSettingsSlice: AppSlice<SettingsSlice> = (set, get) => {
   const initialTheme = getInitialTheme();
@@ -102,12 +109,22 @@ export const createSettingsSlice: AppSlice<SettingsSlice> = (set, get) => {
       get().saveSettings();
     },
 
+    setTheme: (theme: 'dark' | 'light') => {
+      applyThemeToDom(theme);
+      const updatedSettings: AppSettings = { ...get().settings, theme };
+      set({ theme, settings: updatedSettings });
+      get().saveSettings();
+    },
+
     updateSettings: (updates: Partial<AppSettings>) => {
       const currentTheme = get().theme;
       const nextTheme: 'dark' | 'light' = updates.theme ?? currentTheme ?? 'dark';
       const nextSettings: AppSettings = { ...get().settings, ...updates, theme: nextTheme };
       if (updates.theme) {
         applyThemeToDom(updates.theme);
+      }
+      if (updates.comfortableReading !== undefined) {
+        applyComfortableReadingToDom(updates.comfortableReading);
       }
       set({ settings: nextSettings, theme: nextTheme });
       get().saveSettings();
@@ -120,57 +137,48 @@ export const createSettingsSlice: AppSlice<SettingsSlice> = (set, get) => {
           if (loaded && Object.keys(loaded).length > 0) {
             const loadedTheme = loaded.theme || get().theme || getInitialTheme();
             applyThemeToDom(loadedTheme);
+            applyComfortableReadingToDom(!!loaded.comfortableReading);
             set({ settings: { ...defaultSettings, ...loaded, theme: loadedTheme }, theme: loadedTheme });
             return;
           }
 
           // First-run migration for Electron: Check localStorage if settings.json does not exist yet
-          let legacyWebSettings: AppSettings | null | undefined = loadFromLocal<AppSettings>(STORAGE_KEY_SETTINGS_V1);
-          if (!legacyWebSettings) {
-            for (const k of LEGACY_SETTINGS_KEYS) {
-              const found = loadFromLocal<AppSettings>(k);
-              if (found && typeof found === 'object') {
-                legacyWebSettings = found;
-                break;
-              }
-            }
-          }
-          if (!legacyWebSettings) {
-            legacyWebSettings = loadFromLocal<{ state?: { settings?: AppSettings } }>('athar_app_storage')?.state?.settings ?? null;
-          }
+          const legacyWebSettings = loadWithLegacyMigration<AppSettings>({
+            primaryKey: STORAGE_KEY_SETTINGS_V1,
+            legacyKeys: LEGACY_SETTINGS_KEYS,
+            validate: (d): d is AppSettings => typeof d === 'object' && d !== null,
+            zustandStoreKey: 'athar_app_storage',
+            zustandSliceKey: 'settings',
+            autoPersistToPrimary: false,
+          });
 
           if (legacyWebSettings && typeof legacyWebSettings === 'object') {
             const mergedSettings: AppSettings = { ...defaultSettings, ...legacyWebSettings };
             const loadedTheme = mergedSettings.theme || get().theme || getInitialTheme();
             applyThemeToDom(loadedTheme);
+            applyComfortableReadingToDom(!!mergedSettings.comfortableReading);
             set({ settings: mergedSettings, theme: loadedTheme });
             window.electronAPI.settings.save(mergedSettings).catch(() => {});
             return;
           }
         } else {
-          let local: AppSettings | null | undefined = loadFromLocal<AppSettings>(STORAGE_KEY_SETTINGS_V1);
-          if (!local) {
-            for (const k of LEGACY_SETTINGS_KEYS) {
-              const found = loadFromLocal<AppSettings>(k);
-              if (found && typeof found === 'object') {
-                local = found;
-                // Migrate to v1 key
-                saveToLocal(STORAGE_KEY_SETTINGS_V1, found);
-                break;
-              }
-            }
-          }
-          if (!local) {
-            local = loadFromLocal<{ state?: { settings?: AppSettings } }>('athar_app_storage')?.state?.settings ?? null;
-          }
+          const local = loadWithLegacyMigration<AppSettings>({
+            primaryKey: STORAGE_KEY_SETTINGS_V1,
+            legacyKeys: LEGACY_SETTINGS_KEYS,
+            validate: (d): d is AppSettings => typeof d === 'object' && d !== null,
+            zustandStoreKey: 'athar_app_storage',
+            zustandSliceKey: 'settings',
+          });
+
           if (local) {
             const localTheme = local.theme || get().theme || getInitialTheme();
             applyThemeToDom(localTheme);
+            applyComfortableReadingToDom(!!local.comfortableReading);
             set({ settings: { ...defaultSettings, ...local, theme: localTheme }, theme: localTheme });
           }
         }
       } catch (e) {
-        console.warn('Failed to load settings:', e);
+        logger.warn('Failed to load settings:', e);
       }
     },
 
@@ -183,7 +191,7 @@ export const createSettingsSlice: AppSlice<SettingsSlice> = (set, get) => {
           saveToLocal(STORAGE_KEY_SETTINGS_V1, settings);
         }
       } catch (e) {
-        console.warn('Failed to save settings:', e);
+        logger.warn('Failed to save settings:', e);
       }
     },
   };

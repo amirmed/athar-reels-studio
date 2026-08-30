@@ -1,14 +1,14 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { AppStoreState, Toast, DeleteProjectModalData, ModalDataMap, ModalName } from './types';
-import { createUiSlice } from './slices/uiSlice';
+import { AppStoreState, Toast, DeleteProjectModalData, ModalDataMap, ModalName, ModalPayload } from './types';
+import { createUiSlice, clearToastTimers } from './slices/uiSlice';
 import { createProjectSlice } from './slices/projectSlice';
-import { createSettingsSlice, applyThemeToDom, defaultSettings, getInitialTheme } from './slices/settingsSlice';
+import { createSettingsSlice, applyThemeToDom, applyComfortableReadingToDom, defaultSettings, getInitialTheme } from './slices/settingsSlice';
 import { createExportSlice } from './slices/exportSlice';
 
 export type AppState = AppStoreState;
-export type { Toast, DeleteProjectModalData, ModalDataMap, ModalName };
-export { defaultSettings, applyThemeToDom, getInitialTheme };
+export type { Toast, DeleteProjectModalData, ModalDataMap, ModalName, ModalPayload };
+export { defaultSettings, applyThemeToDom, applyComfortableReadingToDom, getInitialTheme, clearToastTimers };
 
 export const CURRENT_STORAGE_VERSION = 1;
 
