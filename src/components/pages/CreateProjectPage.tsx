@@ -220,7 +220,7 @@ export const CreateProjectPage: React.FC = () => {
       activeClass:
         'from-gold-500/25 via-amber-500/10 to-surface-900 border-gold-400/90 shadow-xl shadow-gold-500/15 ring-2 ring-gold-400/40',
       badgeClass: 'bg-gold-500/20 text-gold-300 border-gold-400/40',
-      accentColor: '#fbbf24',
+      accentColor: '#cbb06b',
     },
     {
       id: 'azkar' as const,
@@ -268,30 +268,24 @@ export const CreateProjectPage: React.FC = () => {
 
   return (
     <AppLayout
-      title={t('createProject.title', 'استوديو الإنشاء والإنتاج الشامل')}
+      title={t('createProject.title', 'استوديو الإنشاء والتصميم')}
       subtitle={t('createProject.subtitle', 'اختر نوع المحتوى الذي ترغب في إنشائه وتصميمه اليوم')}
     >
       <div className="p-6 max-w-5xl mx-auto space-y-6 animate-in">
-        {/* Step 1: Format Switcher Pro Studio Cards */}
+        {/* Step 1: Format Switcher (Segmented Control) */}
         <div className="space-y-2">
           <div className="flex items-center justify-between px-1">
-            <span className="text-xs font-black text-surface-200 flex items-center gap-2">
-              <Sparkles size={14} className="text-gold-400" />
-              <span>
-                {t(
-                  'createProject.chooseEnv',
-                  'اختر بيئة الإنتاج والاستوديو (4 استوديوهات إبداعية متكاملة):'
-                )}
-              </span>
-            </span>
-            <span className="text-[11px] text-surface-400 hidden sm:inline">
-              {t('createProject.oneClickLaunch', '1-Click Launch')}
+            <span className="text-xs font-semibold text-surface-300">
+              {t(
+                'createProject.chooseEnv',
+                'اختر بيئة الإنتاج والاستوديو:'
+              )}
             </span>
           </div>
 
           <div
             data-tour="create-formats"
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"
+            className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-surface-900/80 p-1.5 rounded-xl border border-surface-700/30"
           >
             {creationFormats.map((fmt) => {
               const isSelected = creationFormat === fmt.id;
@@ -305,49 +299,19 @@ export const CreateProjectPage: React.FC = () => {
                     else if (fmt.id === 'quotes') setCurrentPage('quotes');
                     else if (fmt.id === 'voice') setCurrentPage('voice-studio');
                   }}
-                  className={`p-4 rounded-3xl border text-start transition-all duration-300 cursor-pointer flex flex-col justify-between group relative overflow-hidden bg-gradient-to-b ${
+                  className={`p-3 rounded-lg border text-start transition-all duration-150 cursor-pointer flex items-center gap-2.5 ${
                     isSelected
-                      ? fmt.activeClass
-                      : 'bg-surface-950/70 border-surface-700/40 hover:border-surface-600 hover:bg-surface-900/80 hover:scale-[1.02]'
+                      ? 'bg-gold-500/10 border-gold-500/30 text-gold-300 shadow-sm'
+                      : 'bg-transparent border-transparent text-surface-400 hover:text-surface-100 hover:bg-surface-800/60'
                   }`}
                 >
-                  {/* Top Row: Icon + Badge */}
-                  <div className="flex items-center justify-between mb-3 w-full">
-                    <div className="p-2.5 rounded-2xl bg-surface-900/90 border border-surface-700/40 shadow-md group-hover:scale-110 transition-transform">
-                      {fmt.icon}
-                    </div>
-                    <span
-                      className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full border ${fmt.badgeClass}`}
-                    >
-                      {fmt.badge}
-                    </span>
+                  <div className={`p-1.5 rounded-md ${isSelected ? 'text-gold-400' : 'text-surface-400'}`}>
+                    {fmt.icon}
                   </div>
-
-                  {/* Title & Description */}
-                  <div className="space-y-1 my-1">
-                    <div className="font-black text-sm text-surface-50 flex items-center justify-between">
-                      <span className="group-hover:text-gold-300 transition-colors">
-                        {fmt.title}
-                      </span>
-                      {isSelected && (
-                        <span className="w-2.5 h-2.5 rounded-full bg-gold-400 shadow-[0_0_8px_#fbbf24] animate-pulse" />
-                      )}
+                  <div className="min-w-0 flex-1">
+                    <div className="font-semibold text-xs truncate text-surface-50">
+                      {fmt.title}
                     </div>
-                    <p className="text-xs text-surface-300 line-clamp-2 leading-relaxed font-medium">
-                      {fmt.desc}
-                    </p>
-                  </div>
-
-                  {/* Bottom Action Footer */}
-                  <div className="mt-3 pt-2 border-t border-surface-700/40 flex items-center justify-between text-[11px] font-bold text-surface-400 group-hover:text-surface-50 transition-colors">
-                    <span>
-                      {isSelected
-                        ? t('createProject.activeStudio', 'الاستوديو المفعّل حالياً ✓')
-                        : t('createProject.openStudio', 'فتح هذا الاستوديو ←')}
-                    </span>
-                    <span className="font-mono text-xs text-gold-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                      ➔
-                    </span>
                   </div>
                 </button>
               );
@@ -357,32 +321,31 @@ export const CreateProjectPage: React.FC = () => {
 
         {/* AI 1-Click Auto Reel Hero Banner */}
         <motion.div
-          initial={{ opacity: 0, y: 15 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative rounded-3xl bg-gradient-to-r from-accent-600/30 via-gold-500/20 to-purple-600/30 border border-accent-400/40 p-6 shadow-2xl overflow-hidden group hover:border-gold-400/70 transition-all duration-300"
+          className="relative rounded-xl bg-surface-900 border border-gold-500/25 p-5 shadow-lg overflow-hidden group hover:border-gold-500/40 transition-all duration-150"
         >
-          <div className="absolute -start-10 -bottom-10 w-48 h-48 bg-accent-500/20 rounded-full blur-3xl group-hover:scale-125 transition-transform" />
           <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3.5 text-center sm:text-start">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent-500 to-gold-500 text-white flex items-center justify-center shadow-lg shrink-0">
-                <Wand2 size={24} />
+              <div className="w-10 h-10 rounded-xl bg-surface-800 text-gold-400 border border-surface-700/40 flex items-center justify-center shrink-0">
+                <Wand2 size={20} />
               </div>
               <div>
                 <div className="flex items-center justify-center sm:justify-start gap-2 mb-0.5">
-                  <h3 className="text-sm font-bold text-surface-50 group-hover:text-gold-300 transition-colors">
+                  <h3 className="text-xs font-bold text-surface-50 group-hover:text-gold-300 transition-colors">
                     {t(
                       'createProject.autoReelBannerTitle',
-                      'توليد ريلز قرآني تلقائي ذكي (1-Click Auto Reel) ⚡'
+                      'توليد ريلز قرآني تلقائي ذكي'
                     )}
                   </h3>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-gold-400/20 text-gold-300 font-extrabold border border-gold-400/30 animate-pulse">
-                    AI Auto
+                  <span className="text-[10px] px-2 py-0.5 rounded-md bg-gold-500/10 text-gold-300 font-semibold border border-gold-500/20">
+                    توليد ذكي
                   </span>
                 </div>
-                <p className="text-xs text-surface-300 max-w-xl">
+                <p className="text-xs text-surface-400 max-w-xl">
                   {t(
                     'createProject.autoReelBannerDesc',
-                    'اختر سورة، وسيقوم الذكاء الاصطناعي بجلب تلاوة الشيخ عبدالباسط، الآيات، التوقيت، والخلفيات فوراً دون عناء!'
+                    'اختر سورة، وسيقوم النظام بتجهيز التلاوة، الآيات، التوقيت، والخلفيات تلقائياً.'
                   )}
                 </p>
               </div>
@@ -391,10 +354,10 @@ export const CreateProjectPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsAutoReelModalOpen(true)}
-              className="py-3 px-5 rounded-2xl bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-black font-bold text-xs flex items-center gap-2 shadow-lg shadow-gold-500/20 active:scale-95 transition-all shrink-0 cursor-pointer"
+              className="btn-gold text-xs flex items-center gap-2 shrink-0 cursor-pointer shadow-sm"
             >
-              <Sparkles size={16} />
-              <span>{t('createProject.autoGenerateNow', 'توليد تلقائي الآن')}</span>
+              <span>{t('createProject.autoGenerateNow', 'توليد تلقائي')}</span>
+              <ArrowLeft size={13} />
             </button>
           </div>
         </motion.div>
@@ -769,10 +732,10 @@ export const CreateProjectPage: React.FC = () => {
               disabled={isCreating}
               className="btn-primary flex items-center gap-2 px-8 disabled:opacity-50 cursor-pointer"
             >
-              {isCreating ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
+              {isCreating ? <Loader2 size={18} className="animate-spin" /> : null}
               {isCreating
                 ? t('createProject.creatingBtn', 'جارٍ إنشاء وتجهيز المشروع...')
-                : t('createProject.createAndOpenBtn', 'إنشاء والبدء في التصميم 🚀')}
+                : t('createProject.createAndOpenBtn', 'إنشاء والبدء في التصميم')}
             </button>
             <button
               onClick={() => setCurrentPage('dashboard')}

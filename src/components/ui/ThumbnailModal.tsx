@@ -34,7 +34,7 @@ export const ThumbnailModal: React.FC<ThumbnailModalProps> = ({
   const [reciterName, setReciterName] = useState<string>(
     project.customReciterName ||
       project.reciter ||
-      (project.reciterId === 'custom_voice' ? 'تلاوتي الخاصة 🎙️' : 'تلاوة مباركة')
+      (project.reciterId === 'custom_voice' ? 'تلاوتي الخاصة' : 'تلاوة مباركة')
   );
   const [dataUrl, setDataUrl] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -66,7 +66,7 @@ export const ThumbnailModal: React.FC<ThumbnailModalProps> = ({
         surahName: isQuran ? project.surah || 'الفاتحة' : project.customTitle || 'موعظة طيبة',
         ayahRange: ayahRangeText,
         ayahText: fullText,
-        reciterName: reciterName.trim() || project.reciter || 'تلاوة مباركة 🎙️',
+        reciterName: reciterName.trim() || project.reciter || 'تلاوة مباركة',
         backgroundUrl: project.backgroundUrl,
         colorGrading: project.textSettings?.colorGrading,
         aspectRatio: aspectRatio,
@@ -115,8 +115,8 @@ export const ThumbnailModal: React.FC<ThumbnailModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="مولد غلاف الريلز الفيروسي"
-      subtitle="صورة غلاف سينمائية 4K جاهزة للنشر لزيادة النقرات والمشاهدات"
+      title="تصميم غلاف الريلز الاحترافي"
+      subtitle="صورة غلاف سينمائية عالية الدقة جاهزة للنشر"
       headerIcon={<ImageIcon size={20} className="text-gold-400" />}
       size="lg"
     >
@@ -124,9 +124,9 @@ export const ThumbnailModal: React.FC<ThumbnailModalProps> = ({
         {/* Aspect Ratio Switcher */}
         <div className="flex items-center justify-between gap-2 p-1 bg-surface-950/80 rounded-xl border border-white/[0.06]">
           {[
-            { id: '9:16' as const, label: '📱 9:16 (ريلز وتيك توك)' },
-            { id: '16:9' as const, label: '🖥️ 16:9 (يوتيوب)' },
-            { id: '1:1' as const, label: '⏹️ 1:1 (مربع إنستغرام)' },
+            { id: '9:16' as const, label: '9:16 (ريلز وتيك توك)' },
+            { id: '16:9' as const, label: '16:9 (يوتيوب)' },
+            { id: '1:1' as const, label: '1:1 (مربع)' },
           ].map((r) => (
             <button
               key={r.id}
@@ -146,9 +146,9 @@ export const ThumbnailModal: React.FC<ThumbnailModalProps> = ({
         <div className="space-y-1 bg-surface-950/90 p-2.5 rounded-xl border border-white/[0.08]">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-gold-300 flex items-center gap-1">
-              <span>🎙️ اسم القارئ / صاحب الصوت على الغلاف:</span>
+              <span>اسم القارئ / صاحب الصوت على الغلاف:</span>
             </span>
-            <span className="text-[10px] text-white/50 font-mono">تعديل فوري ⚡</span>
+            <span className="text-[10px] text-white/50 font-mono">تعديل مباشر</span>
           </div>
           <input
             type="text"

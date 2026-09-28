@@ -86,6 +86,24 @@ describe('Universal i18n Translation Engine', () => {
     expect(tLang('fr', 'export.title')).toBe('Exporter & Publier la Vidéo 🎬');
   });
 
+  it('should translate Quick Text Floating Bar keys across all 3 languages', () => {
+    expect(tLang('ar', 'quickText.badge')).toBe('تحرير النص');
+    expect(tLang('en', 'quickText.badge')).toBe('Edit Text');
+    expect(tLang('fr', 'quickText.badge')).toBe('Modifier le texte');
+
+    expect(tLang('ar', 'quickText.decreaseFontSize')).toBe('تصغير حجم الخط (2px-)');
+    expect(tLang('en', 'quickText.decreaseFontSize')).toBe('Decrease font size (-2px)');
+    expect(tLang('fr', 'quickText.decreaseFontSize')).toBe('Réduire la taille (-2px)');
+
+    expect(tLang('ar', 'quickText.increaseFontSize')).toBe('تكبير حجم الخط (2px+)');
+    expect(tLang('en', 'quickText.increaseFontSize')).toBe('Increase font size (+2px)');
+    expect(tLang('fr', 'quickText.increaseFontSize')).toBe('Augmenter la taille (+2px)');
+
+    expect(tLang('ar', 'quickText.alignTop')).toBe('أعلى');
+    expect(tLang('en', 'quickText.alignTop')).toBe('Top');
+    expect(tLang('fr', 'quickText.alignTop')).toBe('Haut');
+  });
+
   it('should fallback gracefully to fallback string or key if missing', () => {
     const res = tLang('en' as SupportedLanguage, 'non.existent.key', 'Default Fallback');
     expect(res).toBe('Default Fallback');
@@ -108,5 +126,47 @@ describe('Universal i18n Translation Engine', () => {
     applyLanguageToDom('fr');
     expect(document.documentElement.getAttribute('lang')).toBe('fr');
     expect(document.documentElement.getAttribute('dir')).toBe('ltr');
+  });
+
+  it('should have consistent keys across ar, en, and fr dictionaries', () => {
+    function getAllKeys(obj: Record<string, unknown>, prefix = ''): string[] {
+      let keys: string[] = [];
+      for (const k of Object.keys(obj)) {
+        const fullKey = prefix ? `${prefix}.${k}` : k;
+        if (obj[k] && typeof obj[k] === 'object' && !Array.isArray(obj[k])) {
+          keys = keys.concat(getAllKeys(obj[k] as Record<string, unknown>, fullKey));
+        } else {
+          keys.push(fullKey);
+        }
+      }
+      return keys;
+    }
+
+    const arKeys = getAllKeys(loadedLocales.ar as any).sort();
+    const enKeys = getAllKeys(loadedLocales.en as any).sort();
+    const frKeys = getAllKeys(loadedLocales.fr as any).sort();
+
+    const missingInEn = arKeys.filter((k) => !enKeys.includes(k));
+    const missingInFr = arKeys.filter((k) => !frKeys.includes(k));
+    const extraInEn = enKeys.filter((k) => !arKeys.includes(k));
+    const extraInFr = frKeys.filter((k) => !arKeys.includes(k));
+
+    if (missingInEn.length > 0) {
+      console.warn('[i18n Parity] Missing in EN:', missingInEn);
+    }
+    if (missingInFr.length > 0) {
+      console.warn('[i18n Parity] Missing in FR:', missingInFr);
+    }
+    if (extraInEn.length > 0) {
+      console.warn('[i18n Parity] Extra in EN:', extraInEn);
+    }
+    if (extraInFr.length > 0) {
+      console.warn('[i18n Parity] Extra in FR:', extraInFr);
+    }
+
+    expect(missingInEn).toEqual([]);
+    expect(missingInFr).toEqual([]);
+    expect(extraInEn).toEqual([]);
+    expect(extraInFr).toEqual([]);
   });
 });

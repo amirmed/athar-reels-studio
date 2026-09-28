@@ -52,7 +52,7 @@ export const AutoReelModal: React.FC<AutoReelModalProps> = ({ isOpen, onClose })
     addProject(randomProject);
     setCurrentProject(randomProject);
     addToast({
-      message: 'تم توليد ريل فيروسي عشوائي بنجاح! 🚀 تم ضبط جميع المؤثرات تلقائياً',
+      message: 'تم إنشاء الريل القرآني بنجاح! تم ضبط جميع المؤثرات تلقائياً',
       type: 'success',
     });
 
@@ -65,26 +65,26 @@ export const AutoReelModal: React.FC<AutoReelModalProps> = ({ isOpen, onClose })
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="صانع الريلز التلقائي بالذكاء الاصطناعي"
-      subtitle="توليد ريل فيديو متكامل بضغطة زر واحدة: نص مشكول + خلفية سينمائية + صوت طبيعة + تظليل"
+      title="الإنتاج التلقائي للريلز القرآني"
+      subtitle="توليد ريل فيديو متكامل بضغطة زر واحدة: نص مشكول وخلفية سينمائية وصوت بيئي متناسق"
       headerIcon={<Wand2 size={22} className="text-gold-400" />}
-      size="xl"
+      size="lg"
     >
-      <div className="space-y-5">
+      <div className="space-y-4">
         {/* Instant 1-Click Generator Hero Card */}
-        <div className="p-5 rounded-2xl bg-gradient-to-r from-accent-500/20 via-surface-900 to-gold-500/20 border border-gold-400/30 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg shadow-black/40">
-          <div className="flex items-center gap-3.5 text-start">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-gold-400 to-amber-500 flex items-center justify-center text-onbrand shadow-md shadow-gold-500/20 shrink-0">
-              <Zap size={24} />
+        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-accent-500/20 via-surface-900 to-gold-500/20 border border-gold-400/30 flex flex-col sm:flex-row items-center justify-between gap-3.5 shadow-lg shadow-black/40">
+          <div className="flex items-center gap-3 text-start w-full sm:w-auto">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-gold-400 to-amber-500 flex items-center justify-center text-onbrand shadow-md shadow-gold-500/20 shrink-0">
+              <Zap size={22} />
             </div>
-            <div>
-              <h4 className="text-sm font-bold text-surface-50 flex items-center gap-2">
-                <span>توليد ريل عشوائي ذكي (Smart Random)</span>
+            <div className="min-w-0">
+              <h4 className="text-xs sm:text-sm font-bold text-surface-50 flex items-center gap-2 flex-wrap">
+                <span>توليد ريل تلقائي متناسق (Auto Reel)</span>
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-gold-400/20 text-gold-300 font-bold border border-gold-400/30">
-                  خوارزمية الانتشار 🔥
+                  تنسيق ذكي
                 </span>
               </h4>
-              <p className="text-xs text-surface-400 mt-0.5">
+              <p className="text-[11px] sm:text-xs text-surface-400 mt-0.5">
                 يقوم النظام باختيار آية مؤثرة، خلفية سينمائية، وتظليل ذهبي مناسب بضغطة واحدة
               </p>
             </div>
@@ -93,16 +93,16 @@ export const AutoReelModal: React.FC<AutoReelModalProps> = ({ isOpen, onClose })
           <button
             onClick={handleGenerateRandom}
             disabled={generatingThemeId !== null}
-            className="btn-gold py-3 px-6 text-xs sm:text-sm font-black whitespace-nowrap shadow-lg flex items-center justify-center gap-2 w-full sm:w-auto"
+            className="btn-gold py-2.5 px-5 text-xs sm:text-sm font-black whitespace-nowrap shadow-lg flex items-center justify-center gap-2 w-full sm:w-auto shrink-0"
           >
             {generatingThemeId === 'random' ? (
               <>
-                <Loader2 size={16} className="animate-spin" />
+                <Loader2 size={15} className="animate-spin" />
                 <span>جاري التوليد السحري...</span>
               </>
             ) : (
               <>
-                <Sparkles size={16} />
+                <Sparkles size={15} />
                 <span>توليد فوري الآن ⚡</span>
               </>
             )}
@@ -111,7 +111,7 @@ export const AutoReelModal: React.FC<AutoReelModalProps> = ({ isOpen, onClose })
 
         {/* Categorized Themes Grid */}
         <div>
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-2.5">
             <h4 className="text-xs font-bold text-surface-50 flex items-center gap-2">
               <Flame size={14} className="text-gold-400" />
               <span>أو اختر قالباً جاهزاً وموضوعاً محدداً:</span>
@@ -121,7 +121,7 @@ export const AutoReelModal: React.FC<AutoReelModalProps> = ({ isOpen, onClose })
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 max-h-[50vh] overflow-y-auto custom-scrollbar pe-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto custom-scrollbar pe-1">
             {autoReelThemes.map((theme) => {
               const isGeneratingThis = generatingThemeId === theme.id;
 

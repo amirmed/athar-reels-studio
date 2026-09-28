@@ -115,7 +115,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
   const textColors = [
     { color: '#ffffff', name: t('editor.colorWhite', 'أبيض') },
     { color: '#fef08a', name: 'أصفر ذهبي' },
-    { color: '#fbbf24', name: t('editor.colorGold', 'ذهبي') },
+    { color: '#cbb06b', name: t('editor.colorGold', 'ذهبي') },
     { color: '#a7f3d0', name: t('editor.colorEmerald', 'زمردي') },
     { color: '#bae6fd', name: t('editor.colorSky', 'سماوي') },
     { color: '#fed7aa', name: 'عنبر دافئ' },
@@ -123,7 +123,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
   ];
 
   const glowColors = [
-    { color: '#fbbf24', label: 'ذهبي 👑' },
+    { color: '#cbb06b', label: 'ذهبي' },
     { color: '#ffffff', label: 'أبيض ⚪' },
     { color: '#34d399', label: 'زمردي 🌿' },
     { color: '#38bdf8', label: 'سماوي 🌌' },
@@ -132,7 +132,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
 
   const strokeColors = [
     { color: '#000000', label: t('editor.strokeBlack', 'أسود كاحل') },
-    { color: '#fbbf24', label: t('editor.colorGold', 'ذهبي') },
+    { color: '#cbb06b', label: t('editor.colorGold', 'ذهبي') },
     { color: '#ffffff', label: t('editor.colorWhite', 'أبيض') },
     { color: '#0f172a', label: t('editor.strokeDarkNavy', 'كحلي داكن') },
   ];
@@ -142,7 +142,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
     { id: 'gold', label: t('editor.gradGold', 'ذهب ملكي 👑') },
     { id: 'silver', label: t('editor.gradSilver', 'فضي لامع 🪙') },
     { id: 'emerald', label: t('editor.gradEmerald', 'زمردي نوراني 🌿') },
-    { id: 'amber', label: t('editor.gradAmber', 'عنبر دافئ 🔥') },
+    { id: 'amber', label: t('editor.gradAmber', 'عنبر دافئ') },
     { id: 'celestial', label: t('editor.gradCelestial', 'سماوي كوني 🌌') },
   ];
 
@@ -178,7 +178,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
   const highlightStyles = [
     { id: 'emeraldGlow', name: t('editor.hlEmeraldGlow', 'زمردي 🌿'), color: '#10b981' },
     { id: 'radiantWhite', name: t('editor.hlRadiantWhite', 'أبيض ناصع ⚪'), color: '#ffffff' },
-    { id: 'amberEmber', name: t('editor.hlAmberEmber', 'عنبر دافئ 🔥'), color: '#f97316' },
+    { id: 'amberEmber', name: t('editor.hlAmberEmber', 'عنبر دافئ'), color: '#f97316' },
     { id: 'pillBadge', name: t('editor.hlPillBadge', 'كبسولة عائمة 💊'), color: '#38bdf8' },
     { id: 'underlineWave', name: t('editor.hlUnderlineWave', 'تموج تحتي 〰️'), color: '#a855f7' },
   ];
@@ -306,7 +306,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                       className="text-start text-base leading-relaxed py-1 transition-all select-none"
                       style={{
                         fontFamily: font.googleFontFamily,
-                        color: isSelected ? '#fbbf24' : '#e2e8f0',
+                        color: isSelected ? '#cbb06b' : '#e2e8f0',
                       }}
                     >
                       {sampleSnippet}
@@ -600,7 +600,7 @@ export const TextStylePanel: React.FC<TextStylePanelProps> = ({
                           type="button"
                           onClick={() => setTextSettings((s) => ({ ...s, glowColor: g.color }))}
                           className={`p-1.5 rounded-xl border text-center text-[11px] font-bold transition-all cursor-pointer ${
-                            (textSettings.glowColor || '#fbbf24') === g.color
+                            (textSettings.glowColor || '#cbb06b') === g.color
                               ? 'ring-2 ring-gold-400 border-gold-500 text-surface-50 shadow-md font-black'
                               : 'border-surface-700/40 text-surface-400 hover:text-surface-50'
                           }`}

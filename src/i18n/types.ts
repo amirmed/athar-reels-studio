@@ -21,6 +21,7 @@ export type TranslationDictionary = {
   shortcutsModal?: Record<string, string>;
   islamicEventsModal?: Record<string, string>;
   globalSearchModal?: Record<string, string>;
+  quickText?: Record<string, string>;
   [key: string]: unknown;
 };
 

@@ -30,10 +30,10 @@ export interface WebCodecsExportParams {
   bgImage?: HTMLImageElement | null;
   bgVideoUrl?: string | null;
   sceneBgImages?: Record<number, HTMLImageElement | HTMLVideoElement>;
-  bgOpacity: number;
+  bgOpacity?: number;
   textSettings?: TextSettings;
   watermark?: string;
-  projectName: string;
+  projectName?: string;
   surahName?: string;
   reciterName?: string;
   showTranslation?: boolean;
@@ -271,10 +271,10 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
     timeline,
     totalDurationSec,
     bgImage,
-    bgOpacity,
+    bgOpacity = 0.6,
     textSettings,
     watermark,
-    projectName,
+    projectName = 'Reel',
     surahName,
     reciterName,
     showTranslation,
@@ -297,24 +297,32 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
     (masterBuffer ? extractAudioPeaksFromBuffer(masterBuffer, 350) : undefined);
 
   const sampleRate = masterBuffer ? masterBuffer.sampleRate : 48000;
-  const numberOfChannels = masterBuffer ? masterBuffer.numberOfChannels : 2;
+  // Standardize on 2-channel stereo for universal AAC playback compatibility across all devices
+  const numberOfChannels = 2;
   const hasAudio = !!(masterBuffer && masterBuffer.length > 0);
 
   // 2. Determine preferred H.264 codec string
-  let chosenVideoCodec = 'avc1.640028';
-  try {
-    const configCheck = await VideoEncoder.isConfigSupported({
-      codec: 'avc1.640028',
-      width,
-      height,
-      bitrate,
-      framerate: fps,
-    });
-    if (!configCheck.supported) {
-      chosenVideoCodec = 'avc1.4d002a';
-    }
-  } catch {
-    chosenVideoCodec = 'avc1.4d002a';
+  const candidateCodecs = [
+    'avc1.640028', // High 4.0
+    'avc1.4d002a', // Main 4.2
+    'avc1.42001f', // Baseline 3.1
+    'avc1.420028', // Baseline 4.0
+  ];
+  let chosenVideoCodec = 'avc1.4d002a';
+  for (const codec of candidateCodecs) {
+    try {
+      const configCheck = await VideoEncoder.isConfigSupported({
+        codec,
+        width,
+        height,
+        bitrate,
+        framerate: fps,
+      });
+      if (configCheck?.supported) {
+        chosenVideoCodec = codec;
+        break;
+      }
+    } catch {}
   }
 
   // 3. Verify AudioEncoder support first before registering audio track with Muxer
@@ -352,14 +360,22 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
         }
       : undefined,
     fastStart: 'in-memory',
+    firstTimestampBehavior: 'offset',
   });
 
-  // 5. Initialize VideoEncoder
+  // 5. Initialize VideoEncoder (ultra-fast hardware encoding)
   let encoderError: Error | null = null;
   const videoEncoder = new VideoEncoder({
     output: (chunk, meta) => {
       try {
-        muxer.addVideoChunk(chunk, meta);
+        const data = new Uint8Array(chunk.byteLength);
+        chunk.copyTo(data);
+        const fallbackVideoDurationUs = Math.round((1 / fps) * 1_000_000);
+        const durationUs =
+          typeof chunk.duration === 'number' && Number.isFinite(chunk.duration) && chunk.duration > 0
+            ? chunk.duration
+            : fallbackVideoDurationUs;
+        muxer.addVideoChunkRaw(data, chunk.type, chunk.timestamp, durationUs, meta);
       } catch (err) {
         console.warn('[WebCodecsExport] Error adding video chunk:', err);
       }
@@ -385,14 +401,24 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
       audioEncoder = new AudioEncoder({
         output: (chunk, meta) => {
           try {
-            muxer.addAudioChunk(chunk, meta);
+            // FIX: In Chrome/Edge AAC AudioEncoder, chunk.duration can be null.
+            // mp4-muxer requires duration to be a finite non-negative number.
+            // We supply fallback duration calculated from AAC frame size (1024 / sampleRate).
+            const data = new Uint8Array(chunk.byteLength);
+            chunk.copyTo(data);
+            const fallbackDurationUs = Math.round((1024 / sampleRate) * 1_000_000);
+            const durationUs =
+              typeof chunk.duration === 'number' && Number.isFinite(chunk.duration) && chunk.duration > 0
+                ? chunk.duration
+                : fallbackDurationUs;
+
+            muxer.addAudioChunkRaw(data, chunk.type, chunk.timestamp, durationUs, meta);
           } catch (err) {
             console.warn('[WebCodecsExport] Error adding audio chunk:', err);
           }
         },
         error: (e) => {
           console.warn('[WebCodecsExport] AudioEncoder error:', e);
-          encoderError = new Error(`AudioEncoder failure: ${e.message}`);
         },
       });
 
@@ -410,9 +436,9 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
 
   try {
     // 6. Encode Audio Track in Chunks (if AudioEncoder active)
-    if (audioEncoder && masterBuffer) {
+    if (audioEncoder && masterBuffer && masterBuffer.length > 0) {
       const channel0 = masterBuffer.getChannelData(0);
-      const channel1 = numberOfChannels > 1 ? masterBuffer.getChannelData(1) : null;
+      const channel1 = masterBuffer.numberOfChannels > 1 ? masterBuffer.getChannelData(1) : channel0;
       const totalSamples = masterBuffer.length;
       const frameSize = 1024; // Standard AAC frame size
 
@@ -420,16 +446,15 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
         if (signal?.aborted) throw new Error('تم إلغاء عملية التصدير من قِبل المستخدم');
         if (encoderError) throw encoderError;
 
-        const currentFrameCount = Math.min(frameSize, totalSamples - offset);
-        const planarData = new Float32Array(currentFrameCount * numberOfChannels);
+        const currentChunkSamples = Math.min(frameSize, totalSamples - offset);
+        // AAC requires fixed frameSize (1024) per AudioData. Zero-pad the final frame.
+        const planarData = new Float32Array(frameSize * numberOfChannels);
 
         // Copy planar channel 0
-        planarData.set(channel0.subarray(offset, offset + currentFrameCount), 0);
+        planarData.set(channel0.subarray(offset, offset + currentChunkSamples), 0);
 
-        // Copy planar channel 1 if stereo
-        if (numberOfChannels > 1 && channel1) {
-          planarData.set(channel1.subarray(offset, offset + currentFrameCount), currentFrameCount);
-        }
+        // Copy planar channel 1 (stereo)
+        planarData.set(channel1.subarray(offset, offset + currentChunkSamples), frameSize);
 
         const timestampUs = Math.round((offset / sampleRate) * 1_000_000);
 
@@ -437,13 +462,20 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
           format: 'f32-planar',
           sampleRate,
           numberOfChannels,
-          numberOfFrames: currentFrameCount,
+          numberOfFrames: frameSize,
           timestamp: timestampUs,
           data: planarData,
         });
 
         audioEncoder.encode(audioData);
         audioData.close();
+      }
+
+      // Guarantee all audio chunks are encoded and flushed to mp4-muxer
+      try {
+        await audioEncoder.flush();
+      } catch (flushErr) {
+        console.warn('[WebCodecsExport] AudioEncoder flush warning:', flushErr);
       }
     }
 
@@ -493,28 +525,32 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
       const localAyahTime = Math.max(0, currentTimeSec - segmentStart);
 
       // Render frame to canvas with full visual parity
-      renderVideoExportFrame({
-        ctx,
-        width,
-        height,
-        frame: frameIdx,
-        totalFrames,
-        currentTimeSec: localAyahTime,
-        globalTimeSec: currentTimeSec,
-        bgImage,
-        sceneBgImages: params.sceneBgImages,
-        currentAyahIndex: activeSegmentIndex >= 0 ? activeSegmentIndex : 0,
-        bgOpacity,
-        currentAyah,
-        textSettings,
-        watermark,
-        projectName,
-        surahName,
-        reciterName,
-        showTranslation,
-        audioPeaks: effectiveAudioPeaks,
-        totalDurationSec,
-      });
+      try {
+        renderVideoExportFrame({
+          ctx,
+          width,
+          height,
+          frame: frameIdx,
+          totalFrames,
+          currentTimeSec: localAyahTime,
+          globalTimeSec: currentTimeSec,
+          bgImage,
+          sceneBgImages: params.sceneBgImages,
+          currentAyahIndex: activeSegmentIndex >= 0 ? activeSegmentIndex : 0,
+          bgOpacity,
+          currentAyah,
+          textSettings,
+          watermark,
+          projectName,
+          surahName,
+          reciterName,
+          showTranslation,
+          audioPeaks: effectiveAudioPeaks,
+          totalDurationSec,
+        });
+      } catch (renderErr) {
+        console.warn(`[WebCodecsExport] Frame ${frameIdx} render error:`, renderErr);
+      }
 
       // Create VideoFrame from Canvas
       const videoFrame = new VideoFrame(canvas, {
@@ -536,7 +572,7 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
         if (signal?.aborted) {
           throw new Error('تم إلغاء عملية التصدير من قِبل المستخدم');
         }
-        await new Promise((resolve) => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 4));
         waitIterations++;
         if (waitIterations > 5000) {
           throw new Error('VideoEncoder queue drain timed out');
@@ -570,7 +606,11 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
     await videoEncoder.flush();
 
     if (audioEncoder && (audioEncoder.state as string) === 'configured') {
-      await audioEncoder.flush();
+      try {
+        await audioEncoder.flush();
+      } catch (aFlushErr) {
+        console.warn('[WebCodecsExport] Audio flush warning (ignored):', aFlushErr);
+      }
     }
 
     muxer.finalize();

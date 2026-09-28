@@ -202,21 +202,29 @@ export function resolveTargetOutputPath(
 }
 
 /**
- * Fetch and decode an audio URL into an AudioBuffer
+ * Fetch and decode an audio URL into an AudioBuffer with retry support
  */
 export async function fetchAndDecodeAudio(
   audioCtx: AudioContext | BaseAudioContext,
-  url: string
+  url: string,
+  retries = 1
 ): Promise<AudioBuffer | null> {
-  try {
-    const response = await fetch(url, { mode: 'cors' });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const arrayBuffer = await response.arrayBuffer();
-    return await audioCtx.decodeAudioData(arrayBuffer);
-  } catch (e) {
-    console.warn(`[ExportOrchestrator] Audio fetch/decode failed for ${url}:`, e);
-    return null;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const response = await fetch(url, { mode: 'cors' });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const arrayBuffer = await response.arrayBuffer();
+      return await audioCtx.decodeAudioData(arrayBuffer);
+    } catch (e) {
+      if (attempt < retries) {
+        await new Promise((r) => setTimeout(r, 350));
+        continue;
+      }
+      console.warn(`[ExportOrchestrator] Audio fetch/decode failed for ${url}:`, e);
+      return null;
+    }
   }
+  return null;
 }
 
 /**
@@ -602,6 +610,23 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
       if (buf) loadedBuffersMap.set(i, buf);
     }
 
+    // Smart Audio Guard: If audio files were configured, ensure they were successfully retrieved and decoded.
+    if (validAudioUrls.length > 0) {
+      if (loadedBuffersMap.size === 0) {
+        return {
+          success: false,
+          error: 'تعذر تحميل تلاوة القارئ الصوتية. يرجى التحقق من اتصال الإنترنت أو اختيار قارئ آخر.',
+        };
+      }
+      if (loadedBuffersMap.size < validAudioUrls.length) {
+        const missingCount = validAudioUrls.length - loadedBuffersMap.size;
+        return {
+          success: false,
+          error: `تعذر تحميل تلاوة ${missingCount} من الآيات المختارة. يرجى التحقق من اتصال الإنترنت والمحاولة مجددًا.`,
+        };
+      }
+    }
+
     // 2. Stitch and Process Master Audio Buffer
     let masterBuffer: AudioBuffer | null = null;
     const loadedBuffersList = Array.from(loadedBuffersMap.values());
@@ -610,17 +635,28 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
     }
 
     // 3. Build Precise Timeline Ranges & Trim Continuous Audio Tracks
+    const isFullSurahTrack = validAyahs.some((a) => (a as any).isFullSurahFile);
+    const bufferDuration = masterBuffer?.duration || 0;
+    const rawStartSec = (validAyahs[0]?.startTimeMs ?? 0) / 1000;
+
     const hasAyahTimestamps =
       validAyahs.length > 0 &&
       validAyahs[0].startTimeMs !== undefined &&
       validAyahs[validAyahs.length - 1].endTimeMs !== undefined;
 
+    // A track is continuous (chapter/full-surah) ONLY if:
+    // 1) It is explicitly marked as isFullSurahFile, OR
+    // 2) The loaded buffer duration is genuinely large enough to contain the timestamp offset (e.g. 919s into a 30m file)
+    // 3) OR it's a custom voice file (single URL) covering multiple verses
     const isContinuousTrack =
-      validAudioUrls.length === 1 && (validAyahs.length > 1 || hasAyahTimestamps);
+      validAudioUrls.length === 1 &&
+      ((validAyahs.length > 1 && !isFullSurahTrack && bufferDuration > 0) ||
+        (isFullSurahTrack && hasAyahTimestamps) ||
+        (hasAyahTimestamps && rawStartSec > 0 && bufferDuration > rawStartSec + 0.5));
 
     let baseStartSec = 0;
-    if (isContinuousTrack && hasAyahTimestamps) {
-      baseStartSec = Math.max(0, (validAyahs[0].startTimeMs ?? 0) / 1000);
+    if (isContinuousTrack && hasAyahTimestamps && bufferDuration > rawStartSec + 0.5) {
+      baseStartSec = Math.max(0, rawStartSec);
     }
 
     let cumulativeTime = 0;
@@ -644,36 +680,39 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
               : totalDuration
                 ? totalDuration / Math.max(1, validAyahs.length)
                 : 6;
-      start = cumulativeTime;
-      cumulativeTime += dur;
-      end = cumulativeTime;
-    }
-
-    return {
-      start,
-      end,
-      duration: dur,
-      ayah: { ...a, duration: dur },
-      ayahIndex: idx + 1,
-    };
-  });
-
-  // Trim master audio buffer to match selected Ayah range if continuous audio was provided
-  if (masterBuffer) {
-    if (isContinuousTrack && hasAyahTimestamps && cumulativeTime > 0) {
-      const rangeStartSec = baseStartSec;
-      const rangeEndSec = baseStartSec + cumulativeTime;
-      if (rangeStartSec > 0 || masterBuffer.duration > cumulativeTime + 0.5) {
-        masterBuffer = sliceAudioBuffer(audioCtx, masterBuffer, rangeStartSec, rangeEndSec);
+        start = cumulativeTime;
+        cumulativeTime += dur;
+        end = cumulativeTime;
       }
-    } else if (
-      validAudioUrls.length === 1 &&
-      cumulativeTime > 0 &&
-      masterBuffer.duration > cumulativeTime + 0.5
-    ) {
-      masterBuffer = sliceAudioBuffer(audioCtx, masterBuffer, 0, cumulativeTime);
+
+      return {
+        start,
+        end,
+        duration: dur,
+        ayah: { ...a, duration: dur },
+        ayahIndex: idx + 1,
+      };
+    });
+
+    // Trim master audio buffer to match selected Ayah range if continuous audio was provided
+    if (masterBuffer) {
+      if (isContinuousTrack && hasAyahTimestamps && cumulativeTime > 0) {
+        const rangeStartSec = baseStartSec;
+        const rangeEndSec = baseStartSec + cumulativeTime;
+        // Protect against slicing past end of buffer
+        if (rangeStartSec < masterBuffer.duration) {
+          if (rangeStartSec > 0 || masterBuffer.duration > cumulativeTime + 0.5) {
+            masterBuffer = sliceAudioBuffer(audioCtx, masterBuffer, rangeStartSec, rangeEndSec);
+          }
+        }
+      } else if (
+        validAudioUrls.length === 1 &&
+        cumulativeTime > 0 &&
+        masterBuffer.duration > cumulativeTime + 0.5
+      ) {
+        masterBuffer = sliceAudioBuffer(audioCtx, masterBuffer, 0, cumulativeTime);
+      }
     }
-  }
 
   // Calculate strict total duration: Selected ayahs range duration takes precedence over full source file
   const totalDurationSec =
@@ -781,7 +820,7 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
         }
       }
 
-      const downloadUrl = URL.createObjectURL(mp4Blob);
+      const downloadUrl = registerExportBlobUrl(URL.createObjectURL(mp4Blob));
       reportProgress('اكتمل التصدير بنجاح وبصيغة MP4 القياسية ✅', 100, { engine: 'webcodecs' });
 
       return {
@@ -837,6 +876,14 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
     });
   }
 
+  if (audioCtx.state === 'suspended') {
+    try {
+      await audioCtx.resume();
+    } catch (e) {
+      console.warn('[MediaRecorder] AudioContext resume failed:', e);
+    }
+  }
+
   const dest = audioCtx.createMediaStreamDestination();
   let activeBufferSource: AudioBufferSourceNode | null = null;
 
@@ -847,10 +894,58 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
     masterGain.gain.value = 1.0;
     activeBufferSource.connect(masterGain);
     masterGain.connect(dest);
+
+    // Keep-alive: virtually-silent continuous sound to prevent MediaRecorder muxer audio starvation
+    try {
+      const silenceOsc = audioCtx.createOscillator();
+      const silenceGain = audioCtx.createGain();
+      silenceGain.gain.value = 0.00001;
+      silenceOsc.connect(silenceGain);
+      silenceGain.connect(dest);
+      silenceOsc.start();
+    } catch {}
+  }
+
+  const fallbackAyah =
+    validAyahs[0] || ayahs[0] || { text: projectName || 'قرآن كريم', duration: totalDurationSec };
+  const initialRange = ayahTimeRanges[0] || {
+    start: 0,
+    end: totalDurationSec,
+    duration: totalDurationSec,
+    ayah: fallbackAyah,
+    ayahIndex: 1,
+  };
+
+  // Pre-render frame 0 so canvas.captureStream immediately has valid pixel data
+  try {
+    renderVideoExportFrame({
+      ctx,
+      width,
+      height,
+      frame: 0,
+      totalFrames: Math.max(fps * 2, Math.round(fps * totalDurationSec)),
+      currentTimeSec: 0,
+      globalTimeSec: 0,
+      bgImage: bgImg,
+      bgVideo,
+      bgOpacity: backgroundOpacity,
+      currentAyah: initialRange.ayah,
+      textSettings,
+      watermark,
+      projectName,
+      surahName: initialRange.ayah.surahName || surahName,
+      reciterName,
+      showTranslation,
+      isCustomContent: !surahName || surahName.length === 0,
+      audioPeaks: masterAudioPeaks,
+      totalDurationSec,
+    });
+  } catch (initRenderErr) {
+    console.warn('[MediaRecorder] Initial frame render warning:', initRenderErr);
   }
 
   const canvasStream = canvas.captureStream(fps);
-  const audioTracks = dest.stream.getAudioTracks();
+  const audioTracks = activeBufferSource ? dest.stream.getAudioTracks() : [];
   const videoTracks = canvasStream.getVideoTracks();
   const combinedStream = new MediaStream([...videoTracks, ...audioTracks]);
 
@@ -877,13 +972,32 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
     }
   };
 
-  let selectedMime = 'video/webm;codecs=vp9,opus';
-  if (!MediaRecorder.isTypeSupported(selectedMime)) selectedMime = 'video/webm;codecs=vp8,opus';
-  if (!MediaRecorder.isTypeSupported(selectedMime)) selectedMime = 'video/webm';
-  if (!MediaRecorder.isTypeSupported(selectedMime)) selectedMime = 'video/mp4';
+  const hasAudioTrack = activeBufferSource !== null;
+  const candidateMimes = hasAudioTrack
+    ? [
+        'video/webm;codecs=vp9,opus',
+        'video/webm;codecs=vp8,opus',
+        'video/mp4;codecs=avc1,mp4a.40.2',
+        'video/webm',
+        'video/mp4',
+      ]
+    : [
+        'video/webm;codecs=vp9',
+        'video/webm;codecs=vp8',
+        'video/webm',
+        'video/mp4',
+      ];
+
+  let selectedMime = candidateMimes.find((m) => {
+    try {
+      return MediaRecorder.isTypeSupported(m);
+    } catch {
+      return false;
+    }
+  }) || '';
 
   const recorder = new MediaRecorder(combinedStream, {
-    mimeType: MediaRecorder.isTypeSupported(selectedMime) ? selectedMime : undefined,
+    mimeType: selectedMime || undefined,
     videoBitsPerSecond: targetBitrate,
   });
 
@@ -944,11 +1058,16 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
     recorder.start(100);
 
     const exportStartTime = audioCtx.currentTime;
+    const wallStartTime = performance.now();
     if (activeBufferSource) {
-      activeBufferSource.start(exportStartTime);
+      try {
+        activeBufferSource.start(exportStartTime);
+      } catch (err) {
+        console.warn('[MediaRecorder] Buffer start warning:', err);
+      }
     }
 
-    const totalFrames = Math.max(fps * 3, Math.round(fps * totalDurationSec));
+    const totalFrames = Math.max(fps * 2, Math.round(fps * totalDurationSec));
     let lastUiUpdateWallTime = 0;
     let lastReportedPercent = -1;
 
@@ -958,46 +1077,69 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
         return;
       }
 
-      const elapsedAudioTime = audioCtx.currentTime - exportStartTime;
+      const wallElapsedSec = (performance.now() - wallStartTime) / 1000;
+      const audioElapsedSec =
+        audioCtx.state === 'running'
+          ? Math.max(0, audioCtx.currentTime - exportStartTime)
+          : wallElapsedSec;
+      const elapsedSec = Math.max(wallElapsedSec, audioElapsedSec);
 
-      if (elapsedAudioTime >= totalDurationSec) {
+      if (elapsedSec >= totalDurationSec) {
         isFinished = true;
-        if (recorder.state !== 'inactive') {
-          recorder.stop();
+        if (recorder.state === 'recording') {
+          try {
+            recorder.requestData();
+          } catch {}
+          setTimeout(() => {
+            try {
+              if (recorder.state !== 'inactive') {
+                recorder.stop();
+              }
+            } catch {}
+          }, 100);
+        } else if (recorder.state !== 'inactive') {
+          try {
+            recorder.stop();
+          } catch {}
         }
         return;
       }
 
       const activeRange =
-        ayahTimeRanges.find((r) => elapsedAudioTime >= r.start && elapsedAudioTime < r.end) ||
-        ayahTimeRanges[ayahTimeRanges.length - 1];
+        ayahTimeRanges.find((r) => elapsedSec >= r.start && elapsedSec < r.end) ||
+        ayahTimeRanges[ayahTimeRanges.length - 1] ||
+        initialRange;
 
-      const localAyahTime = Math.max(0, elapsedAudioTime - activeRange.start);
-      const currentProg = Math.min(1, elapsedAudioTime / totalDurationSec);
-      const currentFrame = Math.floor(elapsedAudioTime * fps);
+      const localAyahTime = Math.max(0, elapsedSec - activeRange.start);
+      const currentProg = Math.min(1, elapsedSec / totalDurationSec);
+      const currentFrame = Math.floor(elapsedSec * fps);
 
-      renderVideoExportFrame({
-        ctx,
-        width,
-        height,
-        frame: currentFrame,
-        totalFrames,
-        currentTimeSec: localAyahTime,
-        globalTimeSec: elapsedAudioTime,
-        bgImage: bgImg,
-        bgVideo,
-        bgOpacity: backgroundOpacity,
-        currentAyah: activeRange.ayah,
-        textSettings,
-        watermark,
-        projectName,
-        surahName: activeRange.ayah.surahName || surahName,
-        reciterName,
-        showTranslation,
-        isCustomContent: !surahName || surahName.length === 0,
-        audioPeaks: masterAudioPeaks,
-        totalDurationSec,
-      });
+      try {
+        renderVideoExportFrame({
+          ctx,
+          width,
+          height,
+          frame: currentFrame,
+          totalFrames,
+          currentTimeSec: localAyahTime,
+          globalTimeSec: elapsedSec,
+          bgImage: bgImg,
+          bgVideo,
+          bgOpacity: backgroundOpacity,
+          currentAyah: activeRange.ayah,
+          textSettings,
+          watermark,
+          projectName,
+          surahName: activeRange.ayah.surahName || surahName,
+          reciterName,
+          showTranslation,
+          isCustomContent: !surahName || surahName.length === 0,
+          audioPeaks: masterAudioPeaks,
+          totalDurationSec,
+        });
+      } catch (frameErr) {
+        console.warn('[MediaRecorder] Frame render error:', frameErr);
+      }
 
       const percent = Math.min(99, 35 + Math.round(currentProg * 64));
       const nowWall = Date.now();
@@ -1010,7 +1152,7 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
           totalFrames,
           fps,
           currentAyah: activeRange.ayahIndex,
-          totalAyahs: validAyahs.length,
+          totalAyahs: validAyahs.length || 1,
           engine: 'mediarecorder',
         });
       }
@@ -1052,7 +1194,7 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
     }
   }
 
-  const downloadUrl = URL.createObjectURL(finalBlob);
+  const downloadUrl = registerExportBlobUrl(URL.createObjectURL(finalBlob));
   reportProgress('اكتمل التصدير بنجاح ✅', 100, { engine: 'mediarecorder' });
 
   return {
@@ -1065,7 +1207,7 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
     fileSizeBytes: finalBlob.size,
   };
   } finally {
-    if (audioCtx && audioCtx.state !== 'closed') {
+    if (audioCtx && typeof audioCtx.close === 'function' && audioCtx.state !== 'closed') {
       try {
         await audioCtx.close();
       } catch (err) {
@@ -1079,10 +1221,38 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
 }
 
 /**
- * Revoke blob URLs generated during export to free browser memory
+ * Map to track auto-revoke timers for export Blob URLs to prevent browser memory leaks
+ */
+const activeBlobUrlTimers = new Map<string, ReturnType<typeof setTimeout>>();
+
+/**
+ * Registers an export blob URL with an auto-revoke safety net timer.
+ * Default auto-revoke timeout is 10 minutes (600,000 ms).
+ */
+export function registerExportBlobUrl(url: string, autoRevokeMs: number = 10 * 60 * 1000): string {
+  if (url && url.startsWith('blob:')) {
+    const existing = activeBlobUrlTimers.get(url);
+    if (existing) {
+      clearTimeout(existing);
+    }
+    const timer = setTimeout(() => {
+      revokeExportBlobUrl(url);
+    }, autoRevokeMs);
+    activeBlobUrlTimers.set(url, timer);
+  }
+  return url;
+}
+
+/**
+ * Revoke blob URLs generated during export to free browser memory immediately
  */
 export function revokeExportBlobUrl(url?: string): void {
   if (url && url.startsWith('blob:')) {
+    const timer = activeBlobUrlTimers.get(url);
+    if (timer) {
+      clearTimeout(timer);
+      activeBlobUrlTimers.delete(url);
+    }
     try {
       URL.revokeObjectURL(url);
     } catch (err) {

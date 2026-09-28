@@ -5,7 +5,6 @@ import { useTranslation } from '../../i18n';
 import {
   Sparkles,
   ArrowLeft,
-  Flame,
   Mic,
   Languages,
   Headphones,
@@ -38,7 +37,7 @@ export const WelcomePage: React.FC = () => {
       type: 'success',
       duration: 8000,
       action: {
-        label: t('welcome.tourAction', 'جولة سريعة (دقيقتين) 🚀'),
+        label: t('welcome.tourAction', 'جولة سريعة (دقيقتين)'),
         onClick: () => {
           startTour();
         },
@@ -48,10 +47,10 @@ export const WelcomePage: React.FC = () => {
 
   const featureTiles = [
     {
-      icon: <Flame className="text-amber-400" size={24} />,
-      title: t('welcome.tile1Title', 'صانع الفيديوهات الفيروسية'),
-      desc: t('welcome.tile1Desc', 'قوالب 9:16 مخصصة لخوارزميات TikTok و Instagram Reels و YouTube Shorts لتحقيق أعلى انتشار وتفاعل.'),
-      badge: t('welcome.tile1Badge', 'إصدار 2026'),
+      icon: <Video className="text-gold-400" size={24} />,
+      title: t('welcome.tile1Title', 'صانع ريلز المنصات الحديثة'),
+      desc: t('welcome.tile1Desc', 'قوالب 9:16 احترافية مخصصة لمنصات TikTok و Instagram Reels و YouTube Shorts بتصميم متزن.'),
+      badge: t('welcome.tile1Badge', 'تصميم سينمائي'),
       color: 'border-surface-700/40 bg-surface-900',
     },
     {
@@ -95,7 +94,7 @@ export const WelcomePage: React.FC = () => {
     <div className="h-screen w-screen flex flex-col bg-surface-950 overflow-y-auto text-start select-none">
       {/* Background Ambient Atmosphere */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-gradient-to-b from-accent-500/10 via-surface-900/10 to-transparent rounded-full blur-[90px]" />
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[250px] bg-gold-500/5 rounded-full blur-[120px]" />
       </div>
 
       <div className="relative z-10 max-w-5xl mx-auto px-6 py-10 flex-1 flex flex-col justify-between">
@@ -103,12 +102,12 @@ export const WelcomePage: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.4 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-900 border border-surface-700/40 shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-accent-400 animate-pulse" />
-            <span className="text-xs font-bold text-surface-200">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-surface-900 border border-surface-700/40 shadow-sm">
+            <span className="w-2 h-2 rounded-full bg-gold-400" />
+            <span className="text-xs font-semibold text-surface-300">
               {t('welcome.proBadge', 'أَثَــر ستوديو • الإصدار الاحترافي v2.0')}
             </span>
           </div>
@@ -116,11 +115,11 @@ export const WelcomePage: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowMotherDua(true)}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-gold-500/20 to-amber-500/20 hover:from-gold-500/30 hover:to-amber-500/30 text-gold-300 hover:text-gold-200 border border-gold-400/40 text-xs font-bold transition-all shadow-sm cursor-pointer active:scale-95"
+            className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-gold-500/10 hover:bg-gold-500/20 text-gold-300 hover:text-gold-200 border border-gold-500/25 text-xs font-semibold transition-all shadow-sm cursor-pointer active:scale-95"
             title={t('welcome.motherDuaTitle', 'فتح نافذة الدعاء والصدقة الجارية')}
           >
-            <Heart size={14} className="text-rose-400 fill-rose-400/30 animate-pulse" />
-            <span>{t('welcome.motherDuaButton', 'صدقة جارية عن الوالدة تيجاني عائشة رحمها الله 🌸🤲')}</span>
+            <Heart size={14} className="text-rose-400 fill-rose-400/30" />
+            <span>{t('welcome.motherDuaButton', 'صدقة جارية عن الوالدة تيجاني عائشة رحمها الله')}</span>
           </button>
 
           {/* Theme Toggle */}
@@ -148,16 +147,16 @@ export const WelcomePage: React.FC = () => {
         </motion.div>
 
         {/* Hero Section */}
-        <div className="text-center space-y-7 my-auto py-4">
+        <div className="text-center space-y-6 my-auto py-4">
           {/* Main App Icon Logo */}
           <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
+            initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.5, type: 'spring' }}
+            transition={{ duration: 0.4, type: 'spring' }}
             className="flex justify-center"
           >
-            <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-3xl p-1 bg-gradient-to-tr from-gold-400 via-accent-500 to-amber-300 shadow-2xl shadow-gold-500/20">
-              <div className="relative w-full h-full rounded-3xl overflow-hidden border border-surface-700/50 shadow-xl bg-surface-900">
+            <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl p-1 bg-surface-800 border border-gold-500/30 shadow-xl">
+              <div className="relative w-full h-full rounded-xl overflow-hidden bg-surface-900">
                 <img
                   src="/icon.png"
                   alt="Athar Logo"
@@ -172,65 +171,64 @@ export const WelcomePage: React.FC = () => {
 
           {/* Title & Slogan */}
           <motion.div
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="space-y-3"
+            transition={{ duration: 0.4, delay: 0.1 }}
+            className="space-y-2.5"
           >
-            <h1 className="text-4xl sm:text-5xl font-black text-surface-50 tracking-tight">
-              {t('welcome.appTitlePrefix', 'أَثَــر')} <span className="text-accent-400">{t('welcome.appTitleSuffix', 'ستوديو')}</span>
+            <h1 className="text-3xl sm:text-4xl font-bold text-surface-50 tracking-tight">
+              {t('welcome.appTitlePrefix', 'أَثَــر')} <span className="text-gold-400">{t('welcome.appTitleSuffix', 'ستوديو')}</span>
             </h1>
-            <p className="text-xs sm:text-sm font-semibold text-surface-400 font-sans">
+            <p className="text-xs sm:text-sm font-medium text-surface-400 font-sans">
               {t('welcome.appSubTitle', 'Athar Reels Studio • Quranic Video Creator')}
             </p>
-            <p className="text-base sm:text-lg text-surface-200 max-w-2xl mx-auto leading-relaxed font-medium">
-              {t('welcome.heroDescription', 'المنصة الاحترافية الأولى لإنتاج الريلز والفيديوهات القرآنية الفيروسية بأعلى جودة وتصميم سينمائي مبتكر.')}
+            <p className="text-sm sm:text-base text-surface-200 max-w-2xl mx-auto leading-relaxed font-normal">
+              {t('welcome.heroDescription', 'المنصة الاحترافية الأولى لإنتاج الريلز والفيديوهات القرآنية بأعلى جودة وتصميم سينمائي متزن.')}
             </p>
           </motion.div>
 
-          {/* Spiritual Verse Card (Balanced Accent) */}
+          {/* Spiritual Verse Card */}
           <motion.div
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="max-w-3xl mx-auto rounded-3xl bg-surface-900 border border-gold-400/20 p-6 sm:p-7 shadow-xl relative overflow-hidden text-center space-y-3"
+            transition={{ delay: 0.15, duration: 0.4 }}
+            className="max-w-3xl mx-auto rounded-2xl bg-surface-900 border border-gold-500/20 p-6 shadow-lg relative overflow-hidden text-center space-y-3"
           >
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-surface-800 border border-surface-700/40 text-surface-300 text-xs font-bold shadow-sm">
+            <div className="inline-flex items-center gap-2 px-3 py-0.5 rounded-md bg-surface-800 border border-surface-700/40 text-surface-300 text-xs font-semibold shadow-sm">
               <span>{t('welcome.spiritualBadge', 'سر تسمية «أَثَــر» • الصدقة الجارية')}</span>
             </div>
 
-            <h2 className="text-xl sm:text-3xl font-bold font-arabic text-gold-300 tracking-wide leading-relaxed selectable-text">
+            <h2 className="text-xl sm:text-2xl font-bold font-arabic text-gold-300 tracking-wide leading-relaxed selectable-text">
               {t('welcome.spiritualVerse', '﴿إِنَّا نَحْنُ نُحْيِي الْمَوْتَىٰ وَنَكْتُبُ مَا قَدَّمُوا وَآثَارَهُمْ﴾')}
             </h2>
 
-            <p className="text-sm text-surface-200 max-w-2xl mx-auto leading-relaxed font-medium">
+            <p className="text-xs sm:text-sm text-surface-300 max-w-2xl mx-auto leading-relaxed font-normal">
               {t('welcome.spiritualText', 'كل دقيقة تقضيها هنا في صناعة ونشر تلاوة، هي أثر مبارك وحسنات جارية تضيء لك في قبرك ويمتد أجرها بعد رحيلك.. كم من قلبٍ يلين، وكم من مكروبٍ ينفرج همّه بآية نشرتها!')}
             </p>
           </motion.div>
 
-          {/* 🌟 The Main Single Primary Call-to-Action (Focused Gold Hero) */}
+          {/* Primary Call-to-Action */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, duration: 0.4 }}
+            transition={{ delay: 0.2, duration: 0.3 }}
             className="pt-2 flex flex-col items-center justify-center gap-3"
           >
             <button
               type="button"
               onClick={handleStartNow}
-              className="w-full sm:w-auto px-10 py-4 rounded-2xl bg-gradient-to-r from-gold-400 via-amber-500 to-amber-600 hover:from-gold-300 hover:to-amber-500 text-onbrand font-black text-base sm:text-lg shadow-xl shadow-gold-500/20 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 cursor-pointer group"
+              className="btn-gold px-8 py-3.5 text-sm sm:text-base flex items-center justify-center gap-2.5 cursor-pointer shadow-lg active:scale-98"
             >
-              <Sparkles size={20} className="group-hover:rotate-12 transition-transform" />
               <span>{t('welcome.startNowBtn', 'ابدأ الآن واصنع أثرك القرآني')}</span>
-              <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
+              <ArrowLeft size={16} />
             </button>
-            <div className="flex items-center gap-5 text-xs text-surface-400 font-medium">
+            <div className="flex items-center gap-5 text-xs text-surface-400 font-normal">
               <span className="flex items-center gap-1.5">
-                <CheckCircle2 size={14} className="text-emerald-400" />
+                <CheckCircle2 size={13} className="text-accent-400" />
                 {t('welcome.instantTemplates', 'قوالب جاهزة بضغطة واحدة')}
               </span>
               <span className="flex items-center gap-1.5">
-                <CheckCircle2 size={14} className="text-emerald-400" />
+                <CheckCircle2 size={13} className="text-accent-400" />
                 {t('welcome.interactiveTour', 'جولة إرشادية تفاعلية للتعرف على الأدوات')}
               </span>
             </div>
@@ -250,21 +248,21 @@ export const WelcomePage: React.FC = () => {
             {featureTiles.map((tile, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 15 }}
+                initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.05 * i + 0.3, duration: 0.4 }}
-                className={`p-4 sm:p-5 rounded-2xl border ${tile.color} hover:border-surface-600 transition-all hover:-translate-y-0.5 group`}
+                transition={{ delay: 0.04 * i + 0.2, duration: 0.3 }}
+                className={`p-4 sm:p-5 rounded-xl border ${tile.color} hover:border-gold-500/30 transition-all group`}
               >
                 <div className="flex items-center justify-between mb-3">
-                  <div className="p-2 rounded-xl bg-surface-800/60">{tile.icon}</div>
-                  <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-surface-800/60 text-surface-300">
+                  <div className="p-2 rounded-lg bg-surface-800/60">{tile.icon}</div>
+                  <span className="text-xs font-medium px-2 py-0.5 rounded-md bg-surface-800/60 text-surface-400">
                     {tile.badge}
                   </span>
                 </div>
-                <h3 className="text-sm font-bold text-surface-50 mb-1.5 group-hover:text-accent-400 transition-colors">
+                <h3 className="text-sm font-bold text-surface-50 mb-1.5 group-hover:text-gold-300 transition-colors">
                   {tile.title}
                 </h3>
-                <p className="text-xs text-surface-300 leading-relaxed">{tile.desc}</p>
+                <p className="text-xs text-surface-400 leading-relaxed font-normal">{tile.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -274,8 +272,8 @@ export const WelcomePage: React.FC = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="mt-6 p-5 rounded-2xl bg-surface-900 border border-surface-700/40 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-start"
+          transition={{ delay: 0.3 }}
+          className="mt-6 p-5 rounded-xl bg-surface-900 border border-surface-700/40 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-start"
         >
           <div>
             <h4 className="text-sm font-bold text-surface-50">{t('welcome.bottomBannerTitle', 'جاهز لنشر آيات الله وإحياء أثرك؟')}</h4>

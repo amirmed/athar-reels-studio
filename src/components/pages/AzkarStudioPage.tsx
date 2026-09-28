@@ -156,16 +156,16 @@ export const AzkarStudioPage: React.FC = () => {
         fontFamily: 'Amiri',
         wordHighlightEnabled: true,
         wordHighlightStyle: 'goldGlow',
-        wordHighlightColor: '#fbbf24',
+        wordHighlightColor: '#cbb06b',
         inactiveWordOpacity: 0.55,
         highlightScale: true,
         showProgressBar: true,
         progressBarStyle: 'neonGlow',
-        progressBarColor: '#fbbf24',
+        progressBarColor: '#cbb06b',
         progressBarHeight: 4,
         showIslamicOrnaments: true,
         ornamentStyle: 'royalFrame',
-        ornamentColor: '#fbbf24',
+        ornamentColor: '#cbb06b',
         ornamentOpacity: 0.8,
         translationFontSize: 14,
         translationColor: '#e2e8f0',
@@ -435,7 +435,7 @@ export const AzkarStudioPage: React.FC = () => {
                         className="py-1.5 px-3.5 rounded-xl bg-gradient-to-r from-accent-500 to-accent-600 hover:from-accent-400 hover:to-accent-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-accent-500/20 transition-all group cursor-pointer"
                       >
                         <Video size={13} className="group-hover:scale-110 transition-transform" />
-                        <span>تحويل لريل 🚀</span>
+                        <span>تحويل لريل</span>
                       </button>
                     </div>
                   </div>
@@ -456,7 +456,7 @@ export const AzkarStudioPage: React.FC = () => {
             addProject(project);
             setCurrentProject(project);
             setCurrentPage('editor');
-            addToast({ message: 'تم تجهيز الريلز بصوت الـ AI العربي بنجاح 🚀✨', type: 'success' });
+            addToast({ message: 'تم تجهيز الريلز بالصوت العربي بنجاح ✨', type: 'success' });
           }}
         />
       )}

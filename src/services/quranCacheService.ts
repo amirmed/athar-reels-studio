@@ -16,6 +16,12 @@ export const MAX_QURAN_AUDIO_BYTES = 120 * 1024 * 1024; // 120 MB max total audi
 export const TARGET_QURAN_AUDIO_BYTES_AFTER_EVICTION = 80 * 1024 * 1024; // 80 MB target on eviction (~70%)
 export const TARGET_QURAN_AUDIO_RECORDS_AFTER_EVICTION = 70; // 70 items target on eviction (~70%)
 
+// Storage and LRU Limits for Surahs Ayahs & Timings Cache
+export const MAX_STORED_SURAHS = 40; // Max stored surahs (ayahs/translations) in IndexedDB
+export const TARGET_SURAHS_AFTER_EVICTION = 28; // ~70% target on eviction
+export const MAX_STORED_TIMINGS = 50; // Max stored surah word timings in IndexedDB
+export const TARGET_TIMINGS_AFTER_EVICTION = 35; // ~70% target on eviction
+
 export interface StoredQuranAudioRecord {
   key: string; // audioUrl
   blob: Blob;
@@ -197,12 +203,20 @@ class QuranCacheService {
     try {
       const db = await dbP;
       return new Promise((resolve) => {
-        const tx = db.transaction(STORE_AYAHS, 'readonly');
+        const tx = db.transaction(STORE_AYAHS, 'readwrite');
         const store = tx.objectStore(STORE_AYAHS);
         const req = store.get(storageKey);
         req.onsuccess = () => {
-          const result = req.result?.data;
+          const record = req.result;
+          const result = record?.data;
           if (validateData(result)) {
+            // Touch lastAccessedAt for LRU eviction
+            try {
+              record.lastAccessedAt = Date.now();
+              store.put(record);
+            } catch (touchErr) {
+              console.debug('[QuranCache] Touch lastAccessedAt error for ayahs:', touchErr);
+            }
             resolve(result as T);
           } else {
             resolve(null);
@@ -222,16 +236,82 @@ class QuranCacheService {
     edition: string = 'quran-uthmani'
   ): Promise<void> {
     const storageKey = `surah_${surahNumber}_${edition}`;
-    this.setFallbackLocalStorage(storageKey, data);
+    // NOTE: We deliberately do NOT store full surahs in localStorage to prevent QuotaExceededError (5MB limit)
     const dbP = this.getDB();
     if (!dbP) return;
     try {
       const db = await dbP;
       const tx = db.transaction(STORE_AYAHS, 'readwrite');
       const store = tx.objectStore(STORE_AYAHS);
-      store.put({ key: storageKey, data, timestamp: Date.now() });
+      const now = Date.now();
+      store.put({
+        key: storageKey,
+        data,
+        createdAt: now,
+        lastAccessedAt: now,
+        timestamp: now,
+      });
+      // Fire-and-forget LRU eviction check to keep store within quota
+      this.evictStaleAyahs().catch(() => {});
     } catch (e) {
       console.warn('Failed to cache ayahs in IndexedDB:', e);
+    }
+  }
+
+  /**
+   * Evict least recently accessed Quran surahs/ayahs records (LRU)
+   */
+  async evictStaleAyahs(maxSurahs: number = MAX_STORED_SURAHS): Promise<number> {
+    const dbP = this.getDB();
+    if (!dbP) return 0;
+    try {
+      const db = await dbP;
+      return await new Promise<number>((resolve) => {
+        const tx = db.transaction(STORE_AYAHS, 'readwrite');
+        const store = tx.objectStore(STORE_AYAHS);
+        const req = store.getAll();
+
+        req.onsuccess = () => {
+          const records = (req.result || []) as Array<{
+            key: string;
+            lastAccessedAt?: number;
+            timestamp?: number;
+          }>;
+
+          if (records.length <= maxSurahs) {
+            resolve(0);
+            return;
+          }
+
+          // Sort oldest accessed first
+          records.sort(
+            (a, b) =>
+              (a.lastAccessedAt || a.timestamp || 0) -
+              (b.lastAccessedAt || b.timestamp || 0)
+          );
+
+          const targetCount =
+            maxSurahs < MAX_STORED_SURAHS
+              ? Math.max(1, Math.floor(maxSurahs * 0.7))
+              : TARGET_SURAHS_AFTER_EVICTION;
+          const countToEvict = records.length - targetCount;
+          const toEvict = records.slice(0, countToEvict);
+
+          for (const item of toEvict) {
+            store.delete(item.key);
+          }
+
+          console.info(
+            `[QuranCache] LRU Evicted ${toEvict.length} surah records from IndexedDB.`
+          );
+          resolve(toEvict.length);
+        };
+
+        req.onerror = () => resolve(0);
+      });
+    } catch (err) {
+      console.warn('[QuranCache] evictStaleAyahs error:', err);
+      return 0;
     }
   }
 
@@ -242,10 +322,23 @@ class QuranCacheService {
     try {
       const db = await dbP;
       return new Promise((resolve) => {
-        const tx = db.transaction(STORE_TIMINGS, 'readonly');
+        const tx = db.transaction(STORE_TIMINGS, 'readwrite');
         const store = tx.objectStore(STORE_TIMINGS);
         const req = store.get(`timing_${reciterId}_${surahNumber}`);
-        req.onsuccess = () => resolve((req.result?.data as T) || null);
+        req.onsuccess = () => {
+          const record = req.result;
+          if (record && record.data) {
+            try {
+              record.lastAccessedAt = Date.now();
+              store.put(record);
+            } catch (touchErr) {
+              console.debug('[QuranCache] Touch lastAccessedAt error for timings:', touchErr);
+            }
+            resolve(record.data as T);
+          } else {
+            resolve(null);
+          }
+        };
         req.onerror = () => resolve(null);
       });
     } catch {
@@ -260,9 +353,74 @@ class QuranCacheService {
       const db = await dbP;
       const tx = db.transaction(STORE_TIMINGS, 'readwrite');
       const store = tx.objectStore(STORE_TIMINGS);
-      store.put({ key: `timing_${reciterId}_${surahNumber}`, data, timestamp: Date.now() });
+      const now = Date.now();
+      store.put({
+        key: `timing_${reciterId}_${surahNumber}`,
+        data,
+        createdAt: now,
+        lastAccessedAt: now,
+        timestamp: now,
+      });
+      // Fire-and-forget LRU eviction check
+      this.evictStaleTimings().catch(() => {});
     } catch (e) {
       console.warn('Failed to cache timings in IndexedDB:', e);
+    }
+  }
+
+  /**
+   * Evict least recently accessed Quran word timings records (LRU)
+   */
+  async evictStaleTimings(maxTimings: number = MAX_STORED_TIMINGS): Promise<number> {
+    const dbP = this.getDB();
+    if (!dbP) return 0;
+    try {
+      const db = await dbP;
+      return await new Promise<number>((resolve) => {
+        const tx = db.transaction(STORE_TIMINGS, 'readwrite');
+        const store = tx.objectStore(STORE_TIMINGS);
+        const req = store.getAll();
+
+        req.onsuccess = () => {
+          const records = (req.result || []) as Array<{
+            key: string;
+            lastAccessedAt?: number;
+            timestamp?: number;
+          }>;
+
+          if (records.length <= maxTimings) {
+            resolve(0);
+            return;
+          }
+
+          records.sort(
+            (a, b) =>
+              (a.lastAccessedAt || a.timestamp || 0) -
+              (b.lastAccessedAt || b.timestamp || 0)
+          );
+
+          const targetCount =
+            maxTimings < MAX_STORED_TIMINGS
+              ? Math.max(1, Math.floor(maxTimings * 0.7))
+              : TARGET_TIMINGS_AFTER_EVICTION;
+          const countToEvict = records.length - targetCount;
+          const toEvict = records.slice(0, countToEvict);
+
+          for (const item of toEvict) {
+            store.delete(item.key);
+          }
+
+          console.info(
+            `[QuranCache] LRU Evicted ${toEvict.length} timing records from IndexedDB.`
+          );
+          resolve(toEvict.length);
+        };
+
+        req.onerror = () => resolve(0);
+      });
+    } catch (err) {
+      console.warn('[QuranCache] evictStaleTimings error:', err);
+      return 0;
     }
   }
 
@@ -649,6 +807,7 @@ class QuranCacheService {
   // =================== FALLBACK LOCALSTORAGE ===================
   private getFallbackLocalStorage<T = unknown>(key: string): T | null {
     try {
+      if (typeof window === 'undefined' || !window.localStorage) return null;
       const raw = localStorage.getItem(`quran_cache_${key}`);
       return raw ? (JSON.parse(raw) as T) : null;
     } catch {
@@ -656,26 +815,38 @@ class QuranCacheService {
     }
   }
 
-  private setFallbackLocalStorage(key: string, data: unknown): void {
+  /**
+   * Purge legacy unversioned/bulky quran_cache_* keys from localStorage to prevent quota exhaustion
+   */
+  clearCorruptedLocalStorage(): number {
+    let purgedCount = 0;
     try {
-      localStorage.setItem(`quran_cache_${key}`, JSON.stringify(data));
-    } catch (e) {
-      console.warn('[QuranCache] localStorage quota exceeded:', e);
-    }
-  }
-
-  private clearCorruptedLocalStorage(): void {
-    try {
-      // Remove any legacy unversioned ayahs caches
+      if (typeof window === 'undefined' || !window.localStorage) return 0;
+      const keysToRemove: string[] = [];
       for (let i = 0; i < localStorage.length; i++) {
         const k = localStorage.key(i);
-        if (k && k.startsWith('quran_cache_ayahs_')) {
-          localStorage.removeItem(k);
+        if (
+          k &&
+          (k.startsWith('quran_cache_') ||
+            k.startsWith('quran_cache_surah_') ||
+            k.startsWith('quran_cache_ayahs_'))
+        ) {
+          keysToRemove.push(k);
         }
+      }
+      for (const k of keysToRemove) {
+        localStorage.removeItem(k);
+        purgedCount++;
+      }
+      if (purgedCount > 0) {
+        console.info(
+          `[QuranCache] Purged ${purgedCount} legacy surah items from localStorage to prevent quota issues.`
+        );
       }
     } catch (err) {
       console.warn('[QuranCache] clearCorruptedLocalStorage error:', err);
     }
+    return purgedCount;
   }
 }
 

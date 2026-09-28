@@ -79,15 +79,15 @@ export const Topbar: React.FC<TopbarProps> = ({
   const unreadExportsCount = recentExports.filter((j) => !seenIds.includes(j.id)).length;
 
   const studioAccentGradient: Record<string, string> = {
-    dashboard: 'from-gold-400 via-accent-400 to-purple-500',
-    create: 'from-gold-400 via-amber-500 to-gold-600',
-    editor: 'from-gold-400 via-amber-500 to-gold-600',
-    azkar: 'from-emerald-400 via-teal-400 to-emerald-600',
-    quotes: 'from-sky-400 via-cyan-400 to-blue-500',
-    'voice-studio': 'from-purple-400 via-fuchsia-400 to-purple-600',
-    projects: 'from-accent-400 via-teal-400 to-accent-600',
-    export: 'from-gold-400 via-amber-400 to-gold-600',
-    settings: 'from-surface-400 via-surface-300 to-surface-500',
+    dashboard: 'from-gold-500/20 via-gold-400/40 to-gold-500/20',
+    create: 'from-gold-500/20 via-gold-400/40 to-gold-500/20',
+    editor: 'from-gold-500/20 via-gold-400/40 to-gold-500/20',
+    azkar: 'from-accent-500/20 via-accent-400/40 to-accent-500/20',
+    quotes: 'from-gold-500/20 via-gold-400/40 to-gold-500/20',
+    'voice-studio': 'from-accent-500/20 via-accent-400/40 to-accent-500/20',
+    projects: 'from-gold-500/20 via-gold-400/40 to-gold-500/20',
+    export: 'from-gold-500/20 via-gold-400/40 to-gold-500/20',
+    settings: 'from-surface-500/20 via-surface-400/40 to-surface-500/20',
   };
 
   return (
@@ -96,15 +96,15 @@ export const Topbar: React.FC<TopbarProps> = ({
       <div
         className={`absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r ${
           studioAccentGradient[currentPage] || studioAccentGradient.dashboard
-        } shadow-sm transition-all duration-500 z-30`}
+        } shadow-sm transition-all duration-300 z-30`}
       />
       {/* Right side: Title (H1 Level) */}
       <div className="flex items-center gap-4">
         {title && (
           <div>
-            <h1 className="text-lg sm:text-xl font-black text-surface-50 tracking-tight">{title}</h1>
+            <h1 className="text-base sm:text-lg font-bold text-surface-50 tracking-tight">{title}</h1>
             {subtitle && (
-              <p className="text-xs sm:text-[13px] text-surface-300 mt-0.5 font-medium">{subtitle}</p>
+              <p className="text-xs text-surface-400 mt-0.5 font-normal">{subtitle}</p>
             )}
           </div>
         )}
@@ -158,7 +158,7 @@ export const Topbar: React.FC<TopbarProps> = ({
             className="flex items-center gap-1.5 px-3 h-9 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-300 hover:text-rose-200 hover:bg-rose-500/20 hover:border-rose-500/40 transition-all duration-200 cursor-pointer shadow-sm active:scale-95 text-xs font-bold"
           >
             <Heart size={14} className="text-rose-400 fill-rose-400/30" />
-            <span className="hidden lg:inline">🌸 {t('topbar.motherDuaShort', 'بر الوالدين')}</span>
+            <span className="hidden lg:inline">{t('topbar.motherDuaShort', 'بر الوالدين')}</span>
           </button>
         )}
 
@@ -227,11 +227,11 @@ export const Topbar: React.FC<TopbarProps> = ({
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  className="absolute start-0 top-full mt-2 w-80 bg-surface-900 border border-surface-700/50 rounded-2xl shadow-2xl z-50 overflow-hidden text-start"
+                  className="absolute start-0 top-full mt-2 w-80 bg-surface-900 border border-surface-700/50 rounded-xl shadow-xl z-50 overflow-hidden text-start"
                 >
                   <div className="p-3.5 border-b border-surface-700/30 flex items-center justify-between">
                     <h3 className="text-xs font-bold text-surface-50">
-                      {t('topbar.notifications', 'الإشعارات والتنبيهات')} 🔔
+                      {t('topbar.notifications', 'الإشعارات والتنبيهات')}
                     </h3>
                     {recentExports.length > 0 && unreadExportsCount > 0 && (
                       <button

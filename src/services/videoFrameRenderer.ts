@@ -470,7 +470,7 @@ export function renderVideoExportFrame(opts: FrameRenderOptions): void {
             charTypeName: 'word' as const,
           }));
 
-    ctx.font = `${canvasFontWeight} ${baseFontSize}px "${fontFamily}", "Amiri", "Cairo", sans-serif`;
+    ctx.font = `${canvasFontWeight} ${baseFontSize}px "${fontFamily}", "Amiri", "Noto Naskh Arabic", "Scheherazade New", "Cairo", sans-serif`;
 
     const lines: QuranWord[][] = [];
     let currentLine: QuranWord[] = [];

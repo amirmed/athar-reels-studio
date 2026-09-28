@@ -193,7 +193,7 @@ export const ClipLibraryModal: React.FC<ClipLibraryModalProps> = ({ isOpen, onCl
                         className="btn-gold w-full py-2.5 px-3 text-xs flex items-center justify-center gap-1.5 shadow-md"
                       >
                         <Zap size={14} className="fill-onbrand" />
-                        <span>فتح وتعديل في الاستوديو 🎬</span>
+                        <span>فتح وتعديل في الاستوديو</span>
                       </button>
                     </div>
                   </div>
@@ -209,7 +209,7 @@ export const ClipLibraryModal: React.FC<ClipLibraryModalProps> = ({ isOpen, onCl
             <CheckCircle2 size={14} className="text-emerald-400" />
             <span>
               جميع المقاطع مضبوطة الأبعاد (9:16)، وتزامن الكلمات، والتلاوة العذبة، والكابشن
-              الفيروسي.
+              المخصص للنشر.
             </span>
           </div>
           <div className="font-bold text-gold-400">{filteredClips.length} مقطع متوفر</div>

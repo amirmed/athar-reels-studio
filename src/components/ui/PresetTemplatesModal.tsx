@@ -39,11 +39,11 @@ export const PresetTemplatesModal: React.FC<PresetTemplatesModalProps> = ({
       title="مكتبة القوالب السينمائية الجاهزة"
       subtitle="تطبيق فوري لجميع إعدادات الخطوط، الخلفيات، والتأثيرات بضغطة واحدة"
       headerIcon={<Wand2 size={20} className="text-gold-400" />}
-      size="xl"
+      size="lg"
     >
       <div className="space-y-4">
         {/* Templates Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 max-h-[55vh] overflow-y-auto custom-scrollbar pe-1">
           {studioTemplates.map((tpl) => {
             const isSelected = selectedId === tpl.id;
             return (

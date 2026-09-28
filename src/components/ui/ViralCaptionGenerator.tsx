@@ -48,7 +48,7 @@ export const ViralCaptionGenerator: React.FC<ViralCaptionGeneratorProps> = ({
     navigator.clipboard.writeText(activeCaption);
     setCopiedType('all');
     addToast({
-      message: 'تم نسخ الكابشن والهاشتاجات بنجاح! جاهز للنشر في تيك توك وإنستغرام 🚀',
+      message: 'تم نسخ الكابشن والهاشتاجات بنجاح! جاهز للنشر على المنصات',
       type: 'success',
     });
     setTimeout(() => setCopiedType(null), 2200);
@@ -57,15 +57,15 @@ export const ViralCaptionGenerator: React.FC<ViralCaptionGeneratorProps> = ({
   const handleCopyTags = () => {
     navigator.clipboard.writeText(generated.hashtags.join(' '));
     setCopiedType('tags');
-    addToast({ message: 'تم نسخ الهاشتاجات الفيروسية بنجاح ✓', type: 'success' });
+    addToast({ message: 'تم نسخ الهاشتاجات بنجاح ✓', type: 'success' });
     setTimeout(() => setCopiedType(null), 2200);
   };
 
   const tones: { id: CaptionTone; label: string; icon: string }[] = [
-    { id: 'spiritual', label: '🌿 روحاني وسكينة', icon: '✨' },
-    { id: 'engagement', label: '⚡ تفاعل وخوارزميات', icon: '🔥' },
-    { id: 'reflection', label: '💡 تدبر وعبرة', icon: '📖' },
-    { id: 'bilingual', label: '🌍 عالمي (عربي/إنجليزي)', icon: '🌐' },
+    { id: 'spiritual', label: 'روحاني وسكينة', icon: '✦' },
+    { id: 'engagement', label: 'تفاعل المنصات', icon: '◈' },
+    { id: 'reflection', label: 'تدبر وعبرة', icon: '❖' },
+    { id: 'bilingual', label: 'عالمي (عربي/إنجليزي)', icon: '◇' },
   ];
 
   return (
@@ -77,10 +77,10 @@ export const ViralCaptionGenerator: React.FC<ViralCaptionGeneratorProps> = ({
           </div>
           <div>
             <h4 className="text-xs font-bold text-surface-50">
-              مولد الكابشن والهاشتاجات الفيروسية (AI Copy)
+              مولد الكابشن والهاشتاجات للنشر
             </h4>
             <p className="text-[11px] text-surface-400">
-              وصف وخطاف احترافي للريلز وتيك توك مع أقوى الهاشتاجات
+              وصف وخطاف احترافي للريلز مع أنسب الهاشتاجات
             </p>
           </div>
         </div>

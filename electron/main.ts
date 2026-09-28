@@ -4,6 +4,7 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { setupExportHandlers, killActiveExport, cleanOldExportJobs } from './exportService.js';
 import { isSafeUserPath, registerTrustedDirectory, loadTrustedDirectories } from './pathSecurity.js';
+import { ALLOWED_TTS_VOICES, MAX_TTS_TEXT_LENGTH } from './ttsConstants.js';
 
 // ESM-compatible __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -57,6 +58,16 @@ function sanitizeProjectId(id: any): string | null {
   if (!id || typeof id !== 'string') return null;
   const clean = id.trim().replace(/[^a-zA-Z0-9_-]/g, '');
   return clean.length > 0 && clean.length <= 120 ? clean : null;
+}
+
+// Strip large base64 thumbnails before writing project to disk
+function sanitizeForDisk(item: any): any {
+  if (!item || typeof item !== 'object') return item;
+  if (item.thumbnail && typeof item.thumbnail === 'string' && item.thumbnail.startsWith('data:image/')) {
+    const { thumbnail: _t, ...rest } = item;
+    return rest;
+  }
+  return item;
 }
 
 function createWindow() {
@@ -291,15 +302,6 @@ ipcMain.handle('projects:loadAll', async () => {
 
 ipcMain.handle('projects:save', async (_event, projectOrProjects: any) => {
   try {
-    const sanitizeForDisk = (item: any) => {
-      if (!item || typeof item !== 'object') return item;
-      if (item.thumbnail && typeof item.thumbnail === 'string' && item.thumbnail.startsWith('data:image/')) {
-        const { thumbnail: _t, ...rest } = item;
-        return rest;
-      }
-      return item;
-    };
-
     const projectsDir = getProjectsPath();
     if (Array.isArray(projectOrProjects)) {
       for (const p of projectOrProjects) {
@@ -330,15 +332,6 @@ ipcMain.handle('projects:save', async (_event, projectOrProjects: any) => {
 
 ipcMain.handle('projects:saveAll', async (_event, projects: any[]) => {
   try {
-    const sanitizeForDisk = (item: any) => {
-      if (!item || typeof item !== 'object') return item;
-      if (item.thumbnail && typeof item.thumbnail === 'string' && item.thumbnail.startsWith('data:image/')) {
-        const { thumbnail: _t, ...rest } = item;
-        return rest;
-      }
-      return item;
-    };
-
     const projectsDir = getProjectsPath();
     for (const p of projects) {
       const safeId = sanitizeProjectId(p?.id);
@@ -484,8 +477,16 @@ ipcMain.handle('fs:exists', async (_event, filePath: string) => {
   return fs.existsSync(filePath);
 });
 
-// ==================== Shell & App ====================
 ipcMain.handle('audio:getTTSStream', async (_event, text: string, voice: string = 'ar-SA-HamedNeural') => {
+  if (!text || typeof text !== 'string' || !text.trim()) {
+    return { success: false, error: 'Missing or empty text' };
+  }
+  if (text.length > MAX_TTS_TEXT_LENGTH) {
+    return { success: false, error: `Text exceeds maximum allowed length of ${MAX_TTS_TEXT_LENGTH}` };
+  }
+  if (!ALLOWED_TTS_VOICES.has(voice)) {
+    return { success: false, error: 'Disallowed or invalid voice' };
+  }
   try {
     const { MsEdgeTTS, OUTPUT_FORMAT } = await import('msedge-tts');
     const tts = new MsEdgeTTS();

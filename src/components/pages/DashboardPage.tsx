@@ -16,8 +16,6 @@ import {
   Clock,
   ArrowLeft,
   TrendingUp,
-  PlusCircle,
-  Sparkles,
   HelpCircle,
   BookHeart,
   Image as ImageIcon,
@@ -232,20 +230,20 @@ export const DashboardPage: React.FC = () => {
       subtitle={t('dashboard.welcomeSubtitle', 'لوحة التحكم واستوديو الإنتاج السريع')}
     >
       <div className="p-6 space-y-6 animate-in max-w-7xl mx-auto">
-        {/* 🌟 Daily Ayah Hero Card (Refined with Stable min-height to prevent Layout Shift) */}
+        {/* Daily Ayah Hero Card */}
         <motion.div
           data-tour="daily-ayah"
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative rounded-3xl bg-surface-900 border border-gold-500/25 p-6 sm:p-7 shadow-xl overflow-hidden group hover:border-gold-400/40 transition-all duration-300 min-h-[175px] flex flex-col justify-center"
+          className="relative rounded-2xl bg-surface-900 border border-gold-500/25 p-6 shadow-lg overflow-hidden group hover:border-gold-500/40 transition-all duration-200 min-h-[160px] flex flex-col justify-center"
         >
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="space-y-2.5 text-start max-w-2xl">
+            <div className="space-y-2 text-start max-w-2xl">
               <div className="flex items-center justify-center md:justify-start gap-2.5 flex-wrap">
-                <span className="text-xs px-3 py-1 rounded-full bg-gold-400/15 text-gold-300 font-bold border border-gold-400/25">
-                  {t('dashboard.dailyAyahBadge', 'آية اليوم المختارة')}
+                <span className="text-xs px-2.5 py-0.5 rounded-md bg-gold-500/10 text-gold-300 font-semibold border border-gold-500/20">
+                  {t('dashboard.dailyAyahBadge', 'آية اليوم')}
                 </span>
-                <span className="text-xs text-surface-300 font-semibold">
+                <span className="text-xs text-surface-300 font-medium">
                   سورة {dailyAyah.surahName} • الآية ({dailyAyah.fromAyah}
                   {dailyAyah.toAyah !== dailyAyah.fromAyah ? `-${dailyAyah.toAyah}` : ''})
                 </span>
@@ -256,10 +254,10 @@ export const DashboardPage: React.FC = () => {
                   )}
                 </span>
               </div>
-              <h2 className="text-xl sm:text-2xl font-arabic font-bold text-surface-50 leading-loose selectable-text min-h-[3.5rem] flex items-center">
+              <h2 className="text-xl sm:text-2xl font-arabic font-bold text-surface-50 leading-loose selectable-text min-h-[3rem] flex items-center">
                 « {dailyAyah.text} »
               </h2>
-              <p className="text-sm text-gold-300/90 font-medium">
+              <p className="text-xs text-gold-300/80 font-medium">
                 {t('dashboard.dailyAyahTheme', 'الموضوع: {theme}').replace(
                   '{theme}',
                   dailyAyah.theme
@@ -271,22 +269,22 @@ export const DashboardPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleCreateDailyAyahReel}
-                className="py-3.5 px-6 rounded-2xl bg-gradient-to-r from-gold-400 to-accent-500 hover:from-gold-300 hover:to-accent-400 text-black font-bold text-sm flex items-center gap-2 shadow-lg shadow-gold-500/15 hover:scale-105 transition-all cursor-pointer min-h-[44px]"
+                className="btn-gold text-xs flex items-center gap-2 cursor-pointer shadow-md"
               >
-                <Sparkles size={16} />
-                <span>{t('dashboard.createDailyAyahVideo', 'إنشاء فيديو للآية فوراً')}</span>
+                <span>{t('dashboard.createDailyAyahVideo', 'إنشاء فيديو للآية')}</span>
+                <ArrowLeft size={14} />
               </button>
             </div>
           </div>
         </motion.div>
 
-        {/* 🚀 Creative Production Studios Launchpad */}
-        <div className="space-y-3">
+        {/* Creative Production Studios Launchpad */}
+        <div className="space-y-2.5">
           <div className="flex items-center justify-between px-1">
-            <h2 className="text-lg sm:text-xl font-black text-surface-50 tracking-tight flex items-center gap-2">
-              <span>{t('dashboard.productionStudios', 'استوديوهات الإنتاج والتصميم الإبداعي')}</span>
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-gold-400/10 text-gold-300 border border-gold-400/20 font-bold">
-                {t('dashboard.studiosCountBadge', '4 استوديوهات متخصصة ✨')}
+            <h2 className="text-base font-bold text-surface-50 tracking-tight flex items-center gap-2">
+              <span>{t('dashboard.productionStudios', 'استوديوهات الإنتاج والتصميم')}</span>
+              <span className="text-xs px-2 py-0.5 rounded-md bg-surface-800 text-surface-300 border border-surface-700/30 font-medium">
+                {t('dashboard.studiosCountBadge', '4 استوديوهات')}
               </span>
             </h2>
             <span className="text-xs text-surface-400 hidden sm:inline">
@@ -294,35 +292,35 @@ export const DashboardPage: React.FC = () => {
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {/* 1. Quran Reels */}
             <button
               type="button"
               onClick={() => setCurrentPage('create')}
-              className="p-4 rounded-3xl bg-gradient-to-br from-gold-500/15 via-surface-900 to-surface-950 border border-gold-500/30 hover:border-gold-400 hover:shadow-xl hover:shadow-gold-500/10 hover:scale-[1.02] transition-all text-start group cursor-pointer flex flex-col justify-between"
+              className="p-3.5 rounded-xl bg-surface-900/90 hover:bg-surface-850 border border-surface-700/30 hover:border-gold-500/40 transition-all duration-150 text-start group cursor-pointer flex flex-col justify-between"
             >
               <div className="flex items-center justify-between mb-3">
-                <div className="p-2.5 rounded-2xl bg-gold-400/15 text-gold-300 border border-gold-400/30 shadow-md group-hover:scale-110 transition-transform">
-                  <Film size={22} />
+                <div className="p-2 rounded-lg bg-surface-800 text-gold-400 border border-surface-700/30 group-hover:border-gold-500/30 transition-colors">
+                  <Film size={18} />
                 </div>
-                <span className="text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-gold-400/20 text-gold-300 border border-gold-400/30">
-                  {t('dashboard.studioQuranReelsBadge', 'فيديو سينمائي 🎬')}
+                <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-surface-800/80 text-surface-300 border border-surface-700/30">
+                  فيديو
                 </span>
               </div>
               <div className="space-y-1">
-                <h3 className="font-black text-sm text-surface-50 group-hover:text-gold-300 transition-colors">
+                <h3 className="font-bold text-xs text-surface-50 group-hover:text-gold-300 transition-colors">
                   {t('dashboard.studioQuranReelsTitle', 'ريلز قرآني سينمائي')}
                 </h3>
-                <p className="text-xs text-surface-300 line-clamp-2 leading-relaxed">
+                <p className="text-[11px] text-surface-400 line-clamp-2 leading-relaxed">
                   {t(
                     'dashboard.studioQuranReelsDesc',
                     'فيديوهات قصيرة لكبار القراء مع كاريوكي التلاوة ومؤثرات كين بيرنز FHD'
                   )}
                 </p>
               </div>
-              <div className="mt-3 pt-2.5 border-t border-surface-700/40 flex items-center justify-between text-xs font-bold text-gold-400 group-hover:text-gold-300">
+              <div className="mt-3 pt-2 border-t border-surface-700/30 flex items-center justify-between text-xs font-semibold text-gold-400 group-hover:text-gold-300">
                 <span>{t('dashboard.studioQuranReelsAction', 'إنشاء ريلز جديد')}</span>
-                <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+                <ArrowLeft size={13} className="group-hover:-translate-x-1 transition-transform" />
               </div>
             </button>
 
@@ -330,30 +328,30 @@ export const DashboardPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setCurrentPage('azkar')}
-              className="p-4 rounded-3xl bg-gradient-to-br from-emerald-500/15 via-surface-900 to-surface-950 border border-emerald-500/30 hover:border-emerald-400 hover:shadow-xl hover:shadow-emerald-500/10 hover:scale-[1.02] transition-all text-start group cursor-pointer flex flex-col justify-between"
+              className="p-3.5 rounded-xl bg-surface-900/90 hover:bg-surface-850 border border-surface-700/30 hover:border-accent-500/40 transition-all duration-150 text-start group cursor-pointer flex flex-col justify-between"
             >
               <div className="flex items-center justify-between mb-3">
-                <div className="p-2.5 rounded-2xl bg-emerald-400/15 text-emerald-300 border border-emerald-400/30 shadow-md group-hover:scale-110 transition-transform">
-                  <BookHeart size={22} />
+                <div className="p-2 rounded-lg bg-surface-800 text-accent-400 border border-surface-700/30 group-hover:border-accent-500/30 transition-colors">
+                  <BookHeart size={18} />
                 </div>
-                <span className="text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">
-                  {t('dashboard.studioAzkarBadge', 'أذكار + تسبيح 📿')}
+                <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-surface-800/80 text-surface-300 border border-surface-700/30">
+                  تسبيح
                 </span>
               </div>
               <div className="space-y-1">
-                <h3 className="font-black text-sm text-surface-50 group-hover:text-emerald-300 transition-colors">
+                <h3 className="font-bold text-xs text-surface-50 group-hover:text-accent-300 transition-colors">
                   {t('dashboard.studioAzkarTitle', 'أذكار وأحاديث نبوية')}
                 </h3>
-                <p className="text-xs text-surface-300 line-clamp-2 leading-relaxed">
+                <p className="text-[11px] text-surface-400 line-clamp-2 leading-relaxed">
                   {t(
                     'dashboard.studioAzkarDesc',
                     'أذكار الصباح والمساء وحصن المسلم مع عدّاد تسبيح تفاعلي وتحويل لريلز'
                   )}
                 </p>
               </div>
-              <div className="mt-3 pt-2.5 border-t border-surface-700/40 flex items-center justify-between text-xs font-bold text-emerald-400 group-hover:text-emerald-300">
+              <div className="mt-3 pt-2 border-t border-surface-700/30 flex items-center justify-between text-xs font-semibold text-accent-400 group-hover:text-accent-300">
                 <span>{t('dashboard.studioAzkarAction', 'فتح استوديو الأذكار')}</span>
-                <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+                <ArrowLeft size={13} className="group-hover:-translate-x-1 transition-transform" />
               </div>
             </button>
 
@@ -361,30 +359,30 @@ export const DashboardPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setCurrentPage('quotes')}
-              className="p-4 rounded-3xl bg-gradient-to-br from-sky-500/15 via-surface-900 to-surface-950 border border-sky-500/30 hover:border-sky-400 hover:shadow-xl hover:shadow-sky-500/10 hover:scale-[1.02] transition-all text-start group cursor-pointer flex flex-col justify-between"
+              className="p-3.5 rounded-xl bg-surface-900/90 hover:bg-surface-850 border border-surface-700/30 hover:border-gold-500/40 transition-all duration-150 text-start group cursor-pointer flex flex-col justify-between"
             >
               <div className="flex items-center justify-between mb-3">
-                <div className="p-2.5 rounded-2xl bg-sky-400/15 text-sky-300 border border-sky-400/30 shadow-md group-hover:scale-110 transition-transform">
-                  <ImageIcon size={22} />
+                <div className="p-2 rounded-lg bg-surface-800 text-gold-400 border border-surface-700/30 group-hover:border-gold-500/30 transition-colors">
+                  <ImageIcon size={18} />
                 </div>
-                <span className="text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-sky-400/20 text-sky-300 border border-sky-400/30">
-                  {t('dashboard.studioQuotesBadge', 'بوستات HD 🖼️')}
+                <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-surface-800/80 text-surface-300 border border-surface-700/30">
+                  بطاقات
                 </span>
               </div>
               <div className="space-y-1">
-                <h3 className="font-black text-sm text-surface-50 group-hover:text-sky-300 transition-colors">
+                <h3 className="font-bold text-xs text-surface-50 group-hover:text-gold-300 transition-colors">
                   {t('dashboard.studioQuotesTitle', 'كروت وبوستات الصور')}
                 </h3>
-                <p className="text-xs text-surface-300 line-clamp-2 leading-relaxed">
+                <p className="text-[11px] text-surface-400 line-clamp-2 leading-relaxed">
                   {t(
                     'dashboard.studioQuotesDesc',
                     'تصميم بوستات دعوية وبطاقات آيات جاهزة لإنستغرام وواتساب بنقرة زر'
                   )}
                 </p>
               </div>
-              <div className="mt-3 pt-2.5 border-t border-surface-700/40 flex items-center justify-between text-xs font-bold text-sky-400 group-hover:text-sky-300">
+              <div className="mt-3 pt-2 border-t border-surface-700/30 flex items-center justify-between text-xs font-semibold text-gold-400 group-hover:text-gold-300">
                 <span>{t('dashboard.studioQuotesAction', 'تصميم بوست الآن')}</span>
-                <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+                <ArrowLeft size={13} className="group-hover:-translate-x-1 transition-transform" />
               </div>
             </button>
 
@@ -392,86 +390,86 @@ export const DashboardPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setCurrentPage('voice-studio')}
-              className="p-4 rounded-3xl bg-gradient-to-br from-purple-500/15 via-surface-900 to-surface-950 border border-purple-500/30 hover:border-purple-400 hover:shadow-xl hover:shadow-purple-500/10 hover:scale-[1.02] transition-all text-start group cursor-pointer flex flex-col justify-between"
+              className="p-3.5 rounded-xl bg-surface-900/90 hover:bg-surface-850 border border-surface-700/30 hover:border-accent-500/40 transition-all duration-150 text-start group cursor-pointer flex flex-col justify-between"
             >
               <div className="flex items-center justify-between mb-3">
-                <div className="p-2.5 rounded-2xl bg-purple-400/15 text-purple-300 border border-purple-400/30 shadow-md group-hover:scale-110 transition-transform">
-                  <Mic size={22} />
+                <div className="p-2 rounded-lg bg-surface-800 text-accent-400 border border-surface-700/30 group-hover:border-accent-500/30 transition-colors">
+                  <Mic size={18} />
                 </div>
-                <span className="text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-purple-400/20 text-purple-300 border border-purple-400/30">
-                  {t('dashboard.studioVoiceBadge', 'تسجيل 8D 🎧')}
+                <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-surface-800/80 text-surface-300 border border-surface-700/30">
+                  صوت 8D
                 </span>
               </div>
               <div className="space-y-1">
-                <h3 className="font-black text-sm text-surface-50 group-hover:text-purple-300 transition-colors">
+                <h3 className="font-bold text-xs text-surface-50 group-hover:text-accent-300 transition-colors">
                   {t('dashboard.studioVoiceTitle', 'التلقين والتسجيل 8D')}
                 </h3>
-                <p className="text-xs text-surface-300 line-clamp-2 leading-relaxed">
+                <p className="text-[11px] text-surface-400 line-clamp-2 leading-relaxed">
                   {t(
                     'dashboard.studioVoiceDesc',
                     'مصحف ملقن متحرك لتسجيل تلاوتك بصوتك مع صدى الحرم ثلاثي الأبعاد'
                   )}
                 </p>
               </div>
-              <div className="mt-3 pt-2.5 border-t border-surface-700/40 flex items-center justify-between text-xs font-bold text-purple-400 group-hover:text-purple-300">
+              <div className="mt-3 pt-2 border-t border-surface-700/30 flex items-center justify-between text-xs font-semibold text-accent-400 group-hover:text-accent-300">
                 <span>{t('dashboard.studioVoiceAction', 'بدء التسجيل الصوتي')}</span>
-                <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+                <ArrowLeft size={13} className="group-hover:-translate-x-1 transition-transform" />
               </div>
             </button>
           </div>
         </div>
 
         {/* Featured Templates Shelf */}
-        <div data-tour="trending-templates" className="space-y-4">
+        <div data-tour="trending-templates" className="space-y-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <h2 className="text-lg sm:text-xl font-black text-surface-50 tracking-tight flex items-center gap-2">
+            <div className="flex items-center gap-2">
+              <h2 className="text-base font-bold text-surface-50 tracking-tight flex items-center gap-2">
                 <span>{t('dashboard.featuredTemplates', 'قوالب سينمائية مختارة')}</span>
-                <span className="text-sm">✨</span>
               </h2>
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-surface-800 text-surface-300 border border-surface-700/40 font-medium">
+              <span className="text-xs px-2 py-0.5 rounded-md bg-surface-800 text-surface-300 border border-surface-700/30 font-medium">
                 {t('dashboard.dailyRenew', 'تتجدد يومياً')}
               </span>
             </div>
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-2">
               <button
                 type="button"
                 data-tour="tour-help-btn"
                 onClick={startTour}
-                className="text-xs sm:text-[13px] text-gold-400 hover:text-gold-300 font-bold flex items-center gap-1.5 cursor-pointer bg-gold-400/10 hover:bg-gold-400/20 px-3.5 py-2 rounded-xl border border-gold-400/25 min-h-[36px] transition-all"
+                className="text-xs text-surface-300 hover:text-gold-300 font-medium flex items-center gap-1.5 cursor-pointer bg-surface-800/60 hover:bg-surface-800 px-3 py-1.5 rounded-lg border border-surface-700/30 min-h-[32px] transition-all"
                 title={t(
                   'dashboard.guidedTourTooltip',
                   'جولة إرشادية تفاعلية للتعرف على الأدوات'
                 )}
               >
-                <HelpCircle size={15} />
+                <HelpCircle size={14} />
                 <span>{t('dashboard.guidedTour', 'جولة إرشادية')}</span>
               </button>
               <button
                 type="button"
                 onClick={() => setCurrentPage('create')}
-                className="text-xs sm:text-[13px] text-surface-200 hover:text-surface-50 font-bold cursor-pointer bg-surface-800/60 hover:bg-surface-800 px-3.5 py-2 rounded-xl border border-surface-700/40 min-h-[36px] flex items-center transition-all"
+                className="text-xs text-surface-300 hover:text-surface-50 font-medium cursor-pointer bg-surface-800/60 hover:bg-surface-800 px-3 py-1.5 rounded-lg border border-surface-700/30 min-h-[32px] flex items-center gap-1 transition-all"
               >
-                <span>{t('dashboard.viewAllTemplates', 'عرض كل القوالب ←')}</span>
+                <span>{t('dashboard.viewAllTemplates', 'عرض كل القوالب')}</span>
+                <ArrowLeft size={13} />
               </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {featuredTemplates.map((tpl) => (
               <button
                 type="button"
                 key={tpl.id}
                 onClick={() => handleOpenTemplateModal(tpl)}
                 aria-label={`${t('dashboard.customizeTemplate', 'تخصيص واستخدام القالب')} ${tpl.name}`}
-                className="group relative rounded-2xl bg-surface-900 border border-surface-700/40 hover:border-gold-400/40 p-3.5 transition-all duration-300 cursor-pointer shadow-md hover:shadow-gold-500/10 flex flex-col justify-between text-start w-full focus:outline-none focus-visible:outline-accent-500"
+                className="group relative rounded-xl bg-surface-900 border border-surface-700/25 hover:border-gold-500/35 p-3 transition-all duration-150 cursor-pointer shadow-sm hover:shadow-black/30 flex flex-col justify-between text-start w-full focus:outline-none focus-visible:outline-accent-500"
               >
                 {tpl.backgroundUrl && (
-                  <div className="h-28 rounded-xl overflow-hidden mb-3 relative w-full">
+                  <div className="h-28 rounded-lg overflow-hidden mb-2.5 relative w-full">
                     <img
                       src={tpl.backgroundUrl}
                       alt={tpl.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                     <span className="absolute bottom-2 end-2.5 text-xs font-bold text-white">
@@ -479,13 +477,13 @@ export const DashboardPage: React.FC = () => {
                     </span>
                   </div>
                 )}
-                <p className="text-xs sm:text-[13px] text-surface-300 line-clamp-1 mb-3 leading-relaxed w-full font-medium">
+                <p className="text-xs text-surface-400 line-clamp-1 mb-2.5 leading-relaxed w-full font-normal">
                   {tpl.description}
                 </p>
-                <div className="flex items-center justify-between text-xs sm:text-[13px] font-bold text-gold-400 group-hover:text-gold-300 pt-2 border-t border-surface-700/30 w-full">
+                <div className="flex items-center justify-between text-xs font-medium text-gold-400 group-hover:text-gold-300 pt-2 border-t border-surface-700/25 w-full">
                   <span>{t('dashboard.customizeTemplate', 'تخصيص واستخدام القالب')}</span>
                   <ArrowLeft
-                    size={14}
+                    size={13}
                     className="group-hover:-translate-x-1 transition-transform"
                   />
                 </div>
@@ -494,12 +492,12 @@ export const DashboardPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Stats (Responsive 1/2/4 grid with motivational empty-state copy) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Stats (Responsive 1/2/4 grid) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <StatCard
             title={t('dashboard.statSavedProjects', 'مشاريعك المحفوظة')}
             value={totalProjects > 0 ? totalProjects : '0'}
-            trend={totalProjects === 0 ? t('dashboard.statCreateFirst', 'أنشئ أول ريلز 🚀') : undefined}
+            trend={totalProjects === 0 ? t('dashboard.statCreateFirst', 'أنشئ أول ريلز') : undefined}
             icon={FolderOpen}
             color="accent"
             delay={0}
@@ -507,18 +505,18 @@ export const DashboardPage: React.FC = () => {
           <StatCard
             title={t('dashboard.statExportedVideos', 'الفيديوهات المصدّرة')}
             value={totalExported > 0 ? totalExported : '0'}
-            trend={totalExported === 0 ? t('dashboard.statQuality1080p', 'بجودة 1080p Pro ✨') : undefined}
+            trend={totalExported === 0 ? t('dashboard.statQuality1080p', 'بجودة 1080p') : undefined}
             icon={Download}
             color="gold"
-            delay={0.06}
+            delay={0.04}
           />
           <StatCard
             title={t('dashboard.statLastActive', 'آخر مشروع نشط')}
             value={lastProject?.name || t('dashboard.statNoneYet', 'لا يوجد بعد')}
-            trend={!lastProject ? t('dashboard.statChooseTemplate', 'اختر قالباً للبدء 🎬') : undefined}
+            trend={!lastProject ? t('dashboard.statChooseTemplate', 'اختر قالباً للبدء') : undefined}
             icon={Clock}
             color="emerald"
-            delay={0.12}
+            delay={0.08}
           />
           <StatCard
             title={t('dashboard.statTotalReach', 'إجمالي النشر والأثر')}
@@ -527,34 +525,34 @@ export const DashboardPage: React.FC = () => {
                 ? projects.reduce((sum, p) => sum + (p.exportCount || 0), 0)
                 : '0'
             }
-            trend={t('dashboard.statOngoingCharity', 'صدقة جارية 🌿')}
+            trend={t('dashboard.statOngoingCharity', 'صدقة جارية')}
             icon={TrendingUp}
             color="surface"
-            delay={0.18}
+            delay={0.12}
           />
         </div>
 
         {/* Recent projects */}
         <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg sm:text-xl font-black text-surface-50 tracking-tight flex items-center gap-2">
-              <Film size={20} className="text-accent-400" />
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-base font-bold text-surface-50 tracking-tight flex items-center gap-2">
+              <Film size={18} className="text-gold-400" />
               <span>{t('dashboard.recentProjects', 'المشاريع الأخيرة')}</span>
             </h2>
             {projects.length > 0 && (
               <button
                 onClick={() => setCurrentPage('projects')}
-                className="flex items-center gap-1.5 text-xs sm:text-[13px] text-accent-400 hover:text-accent-300 font-bold cursor-pointer bg-accent-500/10 hover:bg-accent-500/20 px-3.5 py-2 rounded-xl border border-accent-500/20 min-h-[36px] transition-all"
+                className="flex items-center gap-1.5 text-xs text-gold-400 hover:text-gold-300 font-semibold cursor-pointer bg-gold-500/10 hover:bg-gold-500/15 px-3 py-1.5 rounded-lg border border-gold-500/20 min-h-[32px] transition-all"
               >
                 <span>{t('dashboard.viewAllProjects', 'عرض كل المشاريع')}</span>
-                <ArrowLeft size={14} />
+                <ArrowLeft size={13} />
               </button>
             )}
           </div>
 
           {isLoadingProjects ? (
             <div className="flex items-center justify-center py-12">
-              <div className="w-8 h-8 border-2 border-accent-500/20 border-t-accent-500 rounded-full animate-spin"></div>
+              <div className="w-8 h-8 border-2 border-gold-500/20 border-t-gold-500 rounded-full animate-spin"></div>
             </div>
           ) : recentProjects.length === 0 ? (
             <EmptyState
@@ -568,64 +566,12 @@ export const DashboardPage: React.FC = () => {
               onAction={() => setCurrentPage('create')}
             />
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 stagger-children">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 stagger-children">
               {recentProjects.map((project, i) => (
                 <ProjectCard key={project.id} project={project} index={i} />
               ))}
             </div>
           )}
-        </div>
-
-        {/* Quick actions (Responsive grid 1/3) */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {[
-            {
-              title: t('dashboard.quickActionCreateTitle', 'إنشاء ريلز جديد'),
-              desc: t('dashboard.quickActionCreateDesc', 'ابدأ مشروع ريلز قرآني بخطوات بسيطة'),
-              icon: <PlusCircle size={20} />,
-              action: () => setCurrentPage('create'),
-              color: 'accent',
-            },
-            {
-              title: t('dashboard.quickActionExportTitle', 'تصدير مشروع'),
-              desc: t('dashboard.quickActionExportDesc', 'صدّر مشاريعك بجودة سينمائية Full HD 1080p'),
-              icon: <Download size={20} />,
-              action: () => setCurrentPage('export'),
-              color: 'gold',
-            },
-            {
-              title: t('dashboard.quickActionManageTitle', 'إدارة المشاريع'),
-              desc: t('dashboard.quickActionManageDesc', 'تصفح وإدارة ومتابعة جميع مشاريعك'),
-              icon: <FolderOpen size={20} />,
-              action: () => setCurrentPage('projects'),
-              color: 'emerald',
-            },
-          ].map((item, i) => (
-            <motion.button
-              key={i}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 + i * 0.08 }}
-              onClick={item.action}
-              className="glass-card p-5 text-start hover:border-white/[0.12] transition-all duration-300 group cursor-pointer"
-            >
-              <div
-                className={`w-11 h-11 rounded-xl mb-3 flex items-center justify-center transition-transform duration-300 group-hover:scale-105 ${
-                  item.color === 'accent'
-                    ? 'bg-accent-500/15 text-accent-400'
-                    : item.color === 'gold'
-                      ? 'bg-gold-500/15 text-gold-400'
-                      : 'bg-emerald-500/15 text-emerald-400'
-                }`}
-              >
-                {item.icon}
-              </div>
-              <h3 className="text-base font-bold text-surface-50 mb-1">{item.title}</h3>
-              <p className="text-xs sm:text-[13px] text-surface-300 leading-relaxed font-medium">
-                {item.desc}
-              </p>
-            </motion.button>
-          ))}
         </div>
       </div>
 
@@ -746,15 +692,14 @@ export const DashboardPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleConfirmCreateProject}
-                className="flex-1 py-3 rounded-xl bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-onbrand font-extrabold text-xs flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all active:scale-98"
+                className="btn-gold flex-1 text-xs flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all active:scale-98"
               >
-                <Sparkles size={15} />
-                <span>{t('dashboard.startDesigningBtn', 'إنشاء والبدء في التصميم 🚀')}</span>
+                <span>{t('dashboard.startDesigningBtn', 'إنشاء والبدء في التصميم')}</span>
               </button>
               <button
                 type="button"
                 onClick={() => setSelectedTemplateForConfirm(null)}
-                className="py-3 px-4 rounded-xl bg-surface-800/60 hover:bg-surface-800 text-surface-300 hover:text-surface-50 text-xs font-bold cursor-pointer transition-all"
+                className="py-2.5 px-4 rounded-xl bg-surface-800/60 hover:bg-surface-800 text-surface-300 hover:text-surface-50 text-xs font-semibold cursor-pointer transition-all"
               >
                 {t('dashboard.deleteCancelBtn', 'إلغاء')}
               </button>

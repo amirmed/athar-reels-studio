@@ -178,29 +178,29 @@ export const ReciterBrowserModal: React.FC<ReciterBrowserModalProps> = ({
     { id: 'all', label: 'الكل (جميع القراء)', icon: <Mic size={13} /> },
     {
       id: 'viral',
-      label: 'الأكثر شهرة وترند 🔥',
+      label: 'الأكثر استماعاً',
       icon: <Flame size={13} className="text-gold-400" />,
     },
     {
       id: 'full',
-      label: 'مصحف كامل 114 سورة 🟢',
-      icon: <Check size={13} className="text-emerald-400" />,
+      label: 'مصحف كامل (114 سورة)',
+      icon: <Check size={13} className="text-accent-400" />,
     },
-    { id: 'imams', label: 'أئمة الحرمين 🕋', icon: <Star size={13} className="text-accent-400" /> },
+    { id: 'imams', label: 'أئمة الحرمين الشريفين', icon: <Star size={13} className="text-gold-400" /> },
     {
       id: 'legends',
-      label: 'عمالقة التلاوة 👑',
-      icon: <Crown size={13} className="text-yellow-400" />,
+      label: 'أعلام التلاوة',
+      icon: <Crown size={13} className="text-gold-400" />,
     },
     {
       id: 'warsh',
-      label: 'رواية ورش 🌴',
-      icon: <Sparkles size={13} className="text-emerald-400" />,
+      label: 'رواية ورش عن نافع',
+      icon: <Sparkles size={13} className="text-accent-400" />,
     },
     {
       id: 'mujawwad',
-      label: 'تجويد خاشع 📜',
-      icon: <Volume2 size={13} className="text-purple-400" />,
+      label: 'تلاوات مجودة',
+      icon: <Volume2 size={13} className="text-surface-300" />,
     },
   ];
 

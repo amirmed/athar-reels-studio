@@ -47,7 +47,7 @@ export const BrandingPanel: React.FC<BrandingPanelProps> = ({
 
   const watermarkColors = [
     { color: '#ffffff', name: t('editor.colorWhite', 'أبيض') },
-    { color: '#fbbf24', name: t('editor.colorGold', 'ذهبي') },
+    { color: '#cbb06b', name: t('editor.colorGold', 'ذهبي') },
     { color: '#34d399', name: t('editor.colorEmerald', 'زمردي') },
     { color: '#38bdf8', name: t('editor.colorSky', 'سماوي') },
     { color: '#e2e8f0', name: t('editor.colorSilver', 'فضي') },

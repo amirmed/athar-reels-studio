@@ -4,6 +4,8 @@ import {
   ExportProjectOptions,
   ExportProgressEvent,
   ExportResult,
+  revokeExportBlobUrl,
+  registerExportBlobUrl,
 } from '../services/exportOrchestrator';
 import { logger } from '../utils/logger';
 
@@ -58,14 +60,10 @@ export function useExportJob(): UseExportJobReturn {
   const abortControllerRef = useRef<AbortController | null>(null);
   const blobUrlRef = useRef<string | null>(null);
 
-  // Clean up any generated blob URLs upon unmount or replacement
+  // Clean up any generated blob URLs upon unmount, replacement, or reset
   const cleanupBlobUrl = useCallback(() => {
-    if (blobUrlRef.current && blobUrlRef.current.startsWith('blob:')) {
-      try {
-        URL.revokeObjectURL(blobUrlRef.current);
-      } catch (err) {
-        logger.debug('[useExportJob] URL revoke error:', err);
-      }
+    if (blobUrlRef.current) {
+      revokeExportBlobUrl(blobUrlRef.current);
       blobUrlRef.current = null;
     }
   }, []);
@@ -137,11 +135,10 @@ export function useExportJob(): UseExportJobReturn {
         });
 
         if (result.success) {
-          let blobUrl: string | null = null;
-          if (result.blob) {
-            blobUrl = URL.createObjectURL(result.blob);
-            blobUrlRef.current = blobUrl;
-          }
+          const blobUrl =
+            result.blobUrl ||
+            (result.blob ? registerExportBlobUrl(URL.createObjectURL(result.blob)) : null);
+          blobUrlRef.current = blobUrl;
 
           setState((prev) => ({
             ...prev,

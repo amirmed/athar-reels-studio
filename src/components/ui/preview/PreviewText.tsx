@@ -72,7 +72,7 @@ export const PreviewText: React.FC<PreviewTextProps> = React.memo(
       shadows.push(`${sX}px ${sY}px ${sBlur}px ${sColor}`);
     }
     if (textSettings?.enableGlow) {
-      const gColor = textSettings?.glowColor || '#fbbf24';
+      const gColor = textSettings?.glowColor || '#cbb06b';
       const gIntensity = textSettings?.glowIntensity ?? 16;
       shadows.push(`0 0 ${gIntensity}px ${gColor}dd`);
       shadows.push(`0 0 ${gIntensity * 1.8}px ${gColor}66`);
@@ -86,7 +86,7 @@ export const PreviewText: React.FC<PreviewTextProps> = React.memo(
 
     // Gradient Fills
     const gradientFills: Record<string, string> = {
-      gold: 'linear-gradient(135deg, #fef08a 0%, #fbbf24 50%, #d97706 100%)',
+      gold: 'linear-gradient(135deg, #f5f0dc 0%, #cbb06b 50%, #9b7a36 100%)',
       silver: 'linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #64748b 100%)',
       emerald: 'linear-gradient(135deg, #a7f3d0 0%, #34d399 50%, #059669 100%)',
       amber: 'linear-gradient(135deg, #fed7aa 0%, #f97316 50%, #c2410c 100%)',
@@ -252,7 +252,7 @@ export const PreviewText: React.FC<PreviewTextProps> = React.memo(
                     ? '#f97316'
                     : highlightStyle === 'radiantWhite'
                       ? '#ffffff'
-                      : '#fbbf24');
+                      : '#cbb06b');
               const inactiveOpacity = textSettings?.inactiveWordOpacity ?? 0.6;
               const shouldScale = textSettings?.highlightScale !== false;
 
@@ -429,7 +429,7 @@ export const PreviewText: React.FC<PreviewTextProps> = React.memo(
               );
             })()}
 
-            {displayAyahNumber && (
+            {displayAyahNumber && textSettings?.showAyahNumber !== false && (
               <p className="text-center text-xs text-gold-400 mt-2 font-medium">
                 {displayAyahNumber}
               </p>

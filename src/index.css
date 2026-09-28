@@ -6,9 +6,9 @@
   font-weight: 300 900;
   font-display: swap;
   src:
-    url('/fonts/Cairo-Arabic.woff2') format('woff2'),
-    url('/fonts/Cairo-Regular.ttf') format('truetype');
-  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+FB50-FDFF, U+FE70-FEFC;
+    url('/fonts/Cairo-Regular.ttf') format('truetype'),
+    url('/fonts/Cairo-Arabic.woff2') format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+FB50-FDFF, U+FE70-FEFC;
 }
 @font-face {
   font-family: 'Cairo';
@@ -16,8 +16,8 @@
   font-weight: 300 900;
   font-display: swap;
   src:
-    url('/fonts/Cairo-Latin.woff2') format('woff2'),
-    url('/fonts/Cairo-Regular.ttf') format('truetype');
+    url('/fonts/Cairo-Regular.ttf') format('truetype'),
+    url('/fonts/Cairo-Latin.woff2') format('woff2');
   unicode-range:
     U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+2000-206F, U+20AC, U+2122, U+FEFF, U+FFFD;
 }
@@ -36,9 +36,9 @@
   font-weight: 400;
   font-display: swap;
   src:
-    url('/fonts/Amiri-Regular-Arabic.woff2') format('woff2'),
-    url('/fonts/Amiri-Regular.ttf') format('truetype');
-  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+FB50-FDFF, U+FE70-FEFC;
+    url('/fonts/Amiri-Regular.ttf') format('truetype'),
+    url('/fonts/Amiri-Regular-Arabic.woff2') format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+FB50-FDFF, U+FE70-FEFC;
 }
 @font-face {
   font-family: 'Amiri';
@@ -46,8 +46,8 @@
   font-weight: 400;
   font-display: swap;
   src:
-    url('/fonts/Amiri-Regular-Latin.woff2') format('woff2'),
-    url('/fonts/Amiri-Regular.ttf') format('truetype');
+    url('/fonts/Amiri-Regular.ttf') format('truetype'),
+    url('/fonts/Amiri-Regular-Latin.woff2') format('woff2');
   unicode-range:
     U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+2000-206F, U+20AC, U+2122, U+FEFF, U+FFFD;
 }
@@ -57,9 +57,9 @@
   font-weight: 700;
   font-display: swap;
   src:
-    url('/fonts/Amiri-Bold-Arabic.woff2') format('woff2'),
-    url('/fonts/Amiri-Bold.ttf') format('truetype');
-  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+FB50-FDFF, U+FE70-FEFC;
+    url('/fonts/Amiri-Bold.ttf') format('truetype'),
+    url('/fonts/Amiri-Bold-Arabic.woff2') format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+FB50-FDFF, U+FE70-FEFC;
 }
 
 /* Noto Naskh Arabic — High-Precision Quranic Text */
@@ -129,6 +129,7 @@
   --color-surface-500: 100 112 155;
   --color-surface-600: 79 89 129;
   --color-surface-700: 65 73 105;
+  --color-surface-750: 47 53 79;
   --color-surface-800: 30 34 53;
   --color-surface-900: 22 25 39;
   --color-surface-950: 13 15 26;
@@ -147,6 +148,7 @@ body.dark,
   --color-surface-500: 100 112 155;
   --color-surface-600: 79 89 129;
   --color-surface-700: 65 73 105;
+  --color-surface-750: 47 53 79;
   --color-surface-800: 30 34 53;
   --color-surface-900: 22 25 39;
   --color-surface-950: 13 15 26;
@@ -165,6 +167,7 @@ body.light,
   --color-surface-500: 98 112 136;
   --color-surface-600: 180 192 208;
   --color-surface-700: 215 224 235;
+  --color-surface-750: 228 235 242;
   --color-surface-800: 241 245 250;
   --color-surface-900: 255 255 255;
   --color-surface-950: 245 247 251;
@@ -403,42 +406,42 @@ html.comfortable-reading .text-sm,
 
   /* High performance panel surfaces */
   .glass-panel {
-    @apply bg-surface-900/90 border border-surface-700/40 rounded-2xl;
+    @apply bg-surface-900/90 border border-surface-700/25 rounded-xl;
   }
 
   .glass-panel-solid {
-    @apply bg-surface-900 border border-surface-700/40 rounded-2xl;
+    @apply bg-surface-900 border border-surface-700/25 rounded-xl;
   }
 
   .glass-dock {
-    @apply bg-surface-950 border-s border-surface-700/30;
+    @apply bg-surface-950 border-s border-surface-700/20;
   }
 
   .glass-inspector {
-    @apply bg-surface-900 border-s border-surface-700/40 shadow-2xl;
+    @apply bg-surface-900 border-s border-surface-700/25 shadow-xl;
   }
 
   .floating-toolbar {
-    @apply bg-surface-900/95 backdrop-blur-md border border-surface-700/50 rounded-2xl shadow-2xl;
+    @apply bg-surface-900/95 backdrop-blur-md border border-surface-700/35 rounded-xl shadow-xl;
   }
 
   .glass-card {
-    @apply bg-surface-800/80 border border-surface-700/30 rounded-xl;
+    @apply bg-surface-800/60 border border-surface-700/25 rounded-xl;
   }
 
   .glass-input {
-    @apply bg-surface-800/80 border border-surface-700/50 rounded-xl px-4 py-3 text-surface-50 placeholder-surface-500 
-           focus:border-gold-400/50 focus:ring-2 focus:ring-gold-400/20 transition-colors duration-150;
+    @apply bg-surface-800/80 border border-surface-700/40 rounded-xl px-4 py-2.5 text-surface-50 placeholder-surface-500 
+           focus:border-gold-400/50 focus:ring-1 focus:ring-gold-400/20 transition-colors duration-150;
   }
 
   .glass-select {
-    @apply bg-surface-800/80 border border-surface-700/50 rounded-xl px-4 py-3 text-surface-50 
-           focus:border-gold-400/50 focus:ring-2 focus:ring-gold-400/20 transition-colors duration-150
+    @apply bg-surface-800/80 border border-surface-700/40 rounded-xl px-4 py-2.5 text-surface-50 
+           focus:border-gold-400/50 focus:ring-1 focus:ring-gold-400/20 transition-colors duration-150
            appearance-none cursor-pointer;
   }
 
   .glass-button {
-    @apply bg-surface-800/60 border border-surface-700/50 rounded-xl px-4 py-2.5 text-surface-200
+    @apply bg-surface-800/60 border border-surface-700/40 rounded-xl px-4 py-2 text-surface-200
            hover:bg-surface-700/70 hover:text-surface-50 hover:border-surface-600
            active:scale-[0.98] transition-[background-color,border-color,color,transform] duration-150 font-medium;
     will-change: transform;
@@ -446,38 +449,35 @@ html.comfortable-reading .text-sm,
   }
 
   .btn-primary {
-    @apply bg-gradient-to-l from-gold-500 to-amber-400 border-0 rounded-xl px-6 py-3
-           font-bold shadow-lg shadow-gold-500/20
-           hover:shadow-xl hover:shadow-gold-500/30 hover:from-gold-400 hover:to-amber-300
-           active:scale-[0.98] transition-[box-shadow,transform] duration-150;
+    @apply bg-gold-500 hover:bg-gold-400 border border-gold-400/30 rounded-xl px-5 py-2.5
+           font-bold shadow-md shadow-black/20 text-onbrand
+           active:scale-[0.98] transition-[background-color,border-color,box-shadow,transform] duration-150;
     color: rgb(var(--color-on-brand));
     will-change: transform;
     transform: translateZ(0);
   }
 
   .btn-primary-sm {
-    @apply bg-gradient-to-l from-gold-500 to-amber-400 border-0 rounded-lg px-4 py-2
-           text-sm font-bold shadow-md shadow-gold-500/20
-           hover:shadow-lg hover:shadow-gold-500/30 hover:from-gold-400 hover:to-amber-300
-           active:scale-[0.98] transition-[box-shadow,transform] duration-150;
+    @apply bg-gold-500 hover:bg-gold-400 border border-gold-400/30 rounded-lg px-3.5 py-1.5
+           text-sm font-bold shadow-sm shadow-black/20 text-onbrand
+           active:scale-[0.98] transition-[background-color,border-color,box-shadow,transform] duration-150;
     color: rgb(var(--color-on-brand));
     will-change: transform;
     transform: translateZ(0);
   }
 
   .btn-gold {
-    @apply bg-gradient-to-l from-gold-500 to-amber-400 border-0 rounded-xl px-6 py-3
-           font-bold shadow-lg shadow-gold-500/20
-           hover:shadow-xl hover:shadow-gold-500/30 hover:from-gold-400 hover:to-amber-300
-           active:scale-[0.98] transition-[box-shadow,transform] duration-150;
+    @apply bg-gold-500 hover:bg-gold-400 border border-gold-400/30 rounded-xl px-5 py-2.5
+           font-bold shadow-md shadow-black/20 text-onbrand
+           active:scale-[0.98] transition-[background-color,border-color,box-shadow,transform] duration-150;
     color: rgb(var(--color-on-brand));
     will-change: transform;
     transform: translateZ(0);
   }
 
   .btn-ghost {
-    @apply bg-transparent border border-surface-700/50 rounded-xl px-4 py-2.5
-           text-surface-200 font-medium
+    @apply bg-transparent border border-surface-700/40 rounded-xl px-4 py-2
+           text-surface-300 font-medium
            hover:bg-surface-800/60 hover:text-surface-50 hover:border-surface-600
            active:scale-[0.98] transition-[background-color,border-color,color,transform] duration-150;
     will-change: transform;
@@ -485,7 +485,7 @@ html.comfortable-reading .text-sm,
   }
 
   .btn-danger {
-    @apply bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2.5
+    @apply bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2
            text-red-400 font-medium
            hover:bg-red-500/20 hover:border-red-500/30
            active:scale-[0.98] transition-[background-color,border-color,color,transform] duration-150;
@@ -536,75 +536,52 @@ html.comfortable-reading .text-sm,
   /* ==================== Standardized Spacing Scale (4px Base) ==================== */
   /* Tight: 12px (p-3) | Normal: 16px (p-4) | Comfortable: 20px (p-5) | Spacious: 24px (p-6) */
   .card-tight {
-    @apply p-tight rounded-xl bg-surface-900/90 border border-surface-700/40;
+    @apply p-tight rounded-lg bg-surface-900/90 border border-surface-700/25;
   }
 
   .card-normal {
-    @apply p-normal rounded-2xl bg-surface-900/90 border border-surface-700/40;
+    @apply p-normal rounded-xl bg-surface-900/90 border border-surface-700/25;
   }
 
   .card-comfortable {
-    @apply p-comfortable rounded-2xl bg-surface-900/95 border border-surface-700/40;
+    @apply p-comfortable rounded-xl bg-surface-900/95 border border-surface-700/25;
   }
 
   .card-spacious {
-    @apply p-spacious rounded-3xl bg-surface-900/95 border border-surface-700/40;
+    @apply p-spacious rounded-2xl bg-surface-900/95 border border-surface-700/25;
   }
 
   .section-title {
-    @apply text-lg font-bold text-surface-50 mb-4;
+    @apply text-base font-bold text-surface-50 mb-3;
   }
 
   .label {
-    @apply text-sm font-medium text-surface-400 mb-2 block;
+    @apply text-xs font-medium text-surface-400 mb-1.5 block;
   }
 
   /* Sidebar navigation item */
   .nav-item {
-    @apply flex items-center gap-3 px-4 py-3 rounded-xl text-surface-400 font-medium
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-surface-400 font-medium
            hover:bg-surface-800/60 hover:text-surface-50 cursor-pointer
-           transition-all duration-200;
+           transition-all duration-150;
   }
 
   .nav-item.active {
-    @apply bg-accent-500/10 text-accent-400 border-s-2 border-accent-500;
+    @apply bg-gold-500/10 text-gold-400 border-s-2 border-gold-500 font-bold;
   }
 
   /* Separator */
   .divider {
-    @apply border-t border-surface-700/40 my-4;
+    @apply border-t border-surface-700/30 my-3;
   }
 
-  /* Glow effect */
+  /* Subtle ambient lighting */
   .glow-accent {
-    box-shadow: 0 0 40px -10px rgba(20, 184, 166, 0.25);
+    box-shadow: 0 0 24px -8px rgba(83, 135, 103, 0.12);
   }
 
   .glow-gold {
-    box-shadow: 0 0 40px -10px rgba(245, 158, 11, 0.25);
-  }
-
-  /* Background pattern */
-  .pattern-dots {
-    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-    background-size: 24px 24px;
-  }
-
-  html.light .pattern-dots {
-    background-image: radial-gradient(circle, rgba(15, 23, 42, 0.06) 1px, transparent 1px);
-  }
-
-  .pattern-grid {
-    background-image:
-      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-    background-size: 40px 40px;
-  }
-
-  html.light .pattern-grid {
-    background-image:
-      linear-gradient(rgba(15, 23, 42, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
+    box-shadow: 0 0 24px -8px rgba(184, 152, 73, 0.14);
   }
 }
 
@@ -659,7 +636,8 @@ html.comfortable-reading .text-sm,
 }
 
 /* Animation utilities */
-.animate-in {
+/* Fallback for standalone .animate-in when not paired with tailwindcss-animate modifier classes */
+.animate-in:not([class*='fade-in']):not([class*='zoom-in']):not([class*='slide-in']):not([class*='spin-in']) {
   animation: fadeSlideUp 0.4s ease-out both;
 }
 

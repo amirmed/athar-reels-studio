@@ -47,6 +47,8 @@ interface PreviewFrameProps {
   audioPeaks?: number[];
   onWordClick?: (ayahIndex: number, word: QuranWord) => void;
   onWatermarkDragEnd?: (x: number, y: number) => void;
+  isTextSelected?: boolean;
+  onSelectText?: () => void;
 }
 
 const aspectDimensions = {
@@ -88,6 +90,8 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = React.memo(
     audioPeaks,
     onWordClick,
     onWatermarkDragEnd,
+    isTextSelected = false,
+    onSelectText,
   }) => {
     const isPerf = performanceMode === 'performance';
 
@@ -254,12 +258,30 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = React.memo(
               dragConstraints={{ left: -100, right: 100, top: -150, bottom: 150 }}
               whileHover={{ scale: 1.01 }}
               whileDrag={{ scale: 1.02, zIndex: 50 }}
-              className="group/drag relative pointer-events-auto cursor-grab active:cursor-grabbing select-none gpu-layer"
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelectText?.();
+              }}
+              className={`group/drag relative pointer-events-auto cursor-grab active:cursor-grabbing select-none gpu-layer p-2 transition-all ${
+                isTextSelected
+                  ? 'ring-1.5 ring-gold-400/90 rounded-2xl bg-black/25 shadow-2xl backdrop-blur-xs'
+                  : 'hover:ring-1 hover:ring-white/20 rounded-2xl'
+              }`}
             >
+              {/* Corner Anchor Handles for Selected Text Layer */}
+              {isTextSelected && (
+                <>
+                  <div className="absolute -top-1 -start-1 w-2 h-2 rounded-xs bg-gold-400 border border-black shadow-xs pointer-events-none z-30" />
+                  <div className="absolute -top-1 -end-1 w-2 h-2 rounded-xs bg-gold-400 border border-black shadow-xs pointer-events-none z-30" />
+                  <div className="absolute -bottom-1 -start-1 w-2 h-2 rounded-xs bg-gold-400 border border-black shadow-xs pointer-events-none z-30" />
+                  <div className="absolute -bottom-1 -end-1 w-2 h-2 rounded-xs bg-gold-400 border border-black shadow-xs pointer-events-none z-30" />
+                </>
+              )}
+
               {/* Drag Handle Indicator */}
               <div className="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover/drag:opacity-100 transition-opacity bg-black/85 px-2 py-0.5 rounded-full text-[10px] text-white/70 border border-white/[0.08] flex items-center gap-1 shadow-md pointer-events-none whitespace-nowrap z-20">
                 <Move size={10} className="text-gold-400" />
-                <span>اسحب للتحريك في أي مكان</span>
+                <span>اسحب للتحريك أو انقر للتعديل السريع</span>
               </div>
 
               {/* Header Title & Reciter Badge */}

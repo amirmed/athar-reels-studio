@@ -1,3 +1,5 @@
+import tailwindAnimate from 'tailwindcss-animate';
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -17,33 +19,34 @@ export default {
           500: 'rgb(var(--color-surface-500) / <alpha-value>)',
           600: 'rgb(var(--color-surface-600) / <alpha-value>)',
           700: 'rgb(var(--color-surface-700) / <alpha-value>)',
+          750: 'rgb(var(--color-surface-750) / <alpha-value>)',
           800: 'rgb(var(--color-surface-800) / <alpha-value>)',
           900: 'rgb(var(--color-surface-900) / <alpha-value>)',
           950: 'rgb(var(--color-surface-950) / <alpha-value>)',
         },
         accent: {
-          50: '#f0fdfa',
-          100: '#ccfbef',
-          200: '#99f6e0',
-          300: '#5eead4',
-          400: '#2dd4bf',
-          500: '#14b8a6',
-          600: '#0d9488',
-          700: '#0f766e',
-          800: '#115e59',
-          900: '#134e4a',
+          50: '#f2f7f4',
+          100: '#e1ede5',
+          200: '#c5dcce',
+          300: '#9ec2ac',
+          400: '#72a384',
+          500: '#538767',
+          600: '#3f6c51',
+          700: '#345642',
+          800: '#2c4637',
+          900: '#263b30',
         },
         gold: {
-          50: '#fffbeb',
-          100: '#fef3c7',
-          200: '#fde68a',
-          300: '#fcd34d',
-          400: '#fbbf24',
-          500: '#f59e0b',
-          600: '#d97706',
-          700: '#b45309',
-          800: '#92400e',
-          900: '#78350f',
+          50: '#fbf9f2',
+          100: '#f6f1e2',
+          200: '#ece1c4',
+          300: '#ddc997',
+          400: '#cbb06b',
+          500: '#b89849',
+          600: '#9f7e36',
+          700: '#81632d',
+          800: '#695028',
+          900: '#574224',
         },
         onbrand: 'rgb(var(--color-on-brand) / <alpha-value>)',
       },
@@ -72,9 +75,16 @@ export default {
         'spacious': '1.5rem',      // 24px (p-6)
       },
       borderRadius: {
-        '2xl': '1rem',
-        '3xl': '1.5rem',
-        '4xl': '2rem',
+        'xs': '0.125rem',
+        '2xl': '0.75rem',
+        '3xl': '1rem',
+        '4xl': '1.25rem',
+      },
+      ringWidth: {
+        '1.5': '1.5px',
+      },
+      boxShadow: {
+        'xs': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
       },
       backdropBlur: {
         xs: '2px',
@@ -120,5 +130,5 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [tailwindAnimate],
 };

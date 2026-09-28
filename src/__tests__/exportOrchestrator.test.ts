@@ -9,6 +9,9 @@ import {
   resolveTargetOutputPath,
   isProjectExporting,
   resetExportMutex,
+  registerExportBlobUrl,
+  revokeExportBlobUrl,
+  fetchAndDecodeAudio,
 } from '../services/exportOrchestrator';
 
 describe('ExportOrchestrator Service', () => {
@@ -308,6 +311,356 @@ describe('ExportOrchestrator Service', () => {
       const firstExportResult = await firstExportPromise;
       expect(firstExportResult.success).toBe(true);
       expect(isProjectExporting()).toBe(false);
+    });
+
+    it('falls back gracefully to MediaRecorder when electronAPI is absent and webcodecs fails', async () => {
+      resetExportMutex();
+      // Temporarily remove electronAPI to simulate browser environment
+      const prevElectronAPI = (globalThis as any).electronAPI;
+      delete (globalThis as any).electronAPI;
+      if (typeof window !== 'undefined') {
+        delete (window as any).electronAPI;
+      }
+
+      // Mock MediaRecorder in jsdom/node
+      const mockChunks: Blob[] = [new Blob([new Uint8Array(2048)], { type: 'video/webm' })];
+      class MockMediaRecorder {
+        state = 'inactive';
+        ondataavailable: ((e: any) => void) | null = null;
+        onstop: (() => void) | null = null;
+        onerror: ((e: any) => void) | null = null;
+
+        static isTypeSupported() {
+          return true;
+        }
+
+        start() {
+          this.state = 'recording';
+          setTimeout(() => {
+            if (this.ondataavailable) {
+              this.ondataavailable({ data: mockChunks[0] });
+            }
+          }, 10);
+        }
+
+        requestData() {
+          if (this.ondataavailable) {
+            this.ondataavailable({ data: mockChunks[0] });
+          }
+        }
+
+        stop() {
+          this.state = 'inactive';
+          if (this.onstop) {
+            this.onstop();
+          }
+        }
+      }
+
+      const originalMR = (globalThis as any).MediaRecorder;
+      (globalThis as any).MediaRecorder = MockMediaRecorder;
+      if (typeof window !== 'undefined') {
+        (window as any).MediaRecorder = MockMediaRecorder;
+      }
+
+      // Mock canvas, AudioContext, MediaStream, requestAnimationFrame for node test runner
+      const mockTrack = { stop: vi.fn() };
+      const mockStream = {
+        getVideoTracks: () => [mockTrack],
+        getAudioTracks: () => [],
+        getTracks: () => [mockTrack],
+      };
+
+      const mockCtx2d = {
+        fillRect: vi.fn(),
+        drawImage: vi.fn(),
+        measureText: vi.fn(() => ({ width: 50 })),
+        fillText: vi.fn(),
+        save: vi.fn(),
+        restore: vi.fn(),
+        beginPath: vi.fn(),
+        closePath: vi.fn(),
+        stroke: vi.fn(),
+        fill: vi.fn(),
+        strokeRect: vi.fn(),
+        roundRect: vi.fn(),
+        arc: vi.fn(),
+        moveTo: vi.fn(),
+        lineTo: vi.fn(),
+        createRadialGradient: vi.fn(() => ({ addColorStop: vi.fn() })),
+        createLinearGradient: vi.fn(() => ({ addColorStop: vi.fn() })),
+      };
+
+      const mockCanvas = {
+        width: 1080,
+        height: 1920,
+        getContext: vi.fn(() => mockCtx2d),
+        captureStream: vi.fn(() => mockStream),
+      };
+
+      const mockAudioDest = {
+        stream: mockStream,
+      };
+
+      class MockAudioContext {
+        state = 'running';
+        currentTime = 0;
+        resume = vi.fn().mockResolvedValue(undefined);
+        close = vi.fn().mockResolvedValue(undefined);
+        createMediaStreamDestination = vi.fn(() => mockAudioDest);
+        createBufferSource = vi.fn(() => ({
+          buffer: null,
+          connect: vi.fn(),
+          start: vi.fn(),
+          stop: vi.fn(),
+          disconnect: vi.fn(),
+        }));
+        createGain = vi.fn(() => ({
+          gain: { value: 1.0 },
+          connect: vi.fn(),
+        }));
+        createOscillator = vi.fn(() => ({
+          connect: vi.fn(),
+          start: vi.fn(),
+          stop: vi.fn(),
+        }));
+      }
+
+      class MockMediaStream {
+        constructor() {
+          return mockStream as any;
+        }
+      }
+
+      const prevDoc = (globalThis as any).document;
+      const prevAudioCtx = (globalThis as any).AudioContext;
+      const prevMediaStream = (globalThis as any).MediaStream;
+      const prevRAF = (globalThis as any).requestAnimationFrame;
+      const prevCAF = (globalThis as any).cancelAnimationFrame;
+
+      (globalThis as any).document = {
+        createElement: (tag: string) => {
+          if (tag === 'canvas') return mockCanvas;
+          return {};
+        },
+      };
+      (globalThis as any).AudioContext = MockAudioContext;
+      (globalThis as any).MediaStream = MockMediaStream;
+      (globalThis as any).requestAnimationFrame = (cb: Function) => setTimeout(cb, 5);
+      (globalThis as any).cancelAnimationFrame = (id: any) => clearTimeout(id);
+
+      if (typeof window !== 'undefined') {
+        (window as any).document = (globalThis as any).document;
+        (window as any).AudioContext = MockAudioContext;
+        (window as any).MediaStream = MockMediaStream;
+        (window as any).requestAnimationFrame = (globalThis as any).requestAnimationFrame;
+        (window as any).cancelAnimationFrame = (globalThis as any).cancelAnimationFrame;
+      }
+
+      try {
+        const res = await exportProject({
+          projectName: 'Browser Fallback Reel',
+          aspectRatio: '9:16',
+          totalDuration: 0.1,
+          ayahs: [
+            {
+              number: 1,
+              numberInSurah: 1,
+              surahNumber: 1,
+              surahName: 'الفاتحة',
+              juz: 1,
+              page: 1,
+              audioUrl: '',
+              text: 'بسم الله الرحمن الرحيم',
+              duration: 0.1,
+            },
+          ],
+        });
+
+        expect(res.success).toBe(true);
+        expect(res.engine).toBe('mediarecorder');
+        expect(res.blob).toBeDefined();
+        expect(res.blobUrl).toBeDefined();
+      } finally {
+        // Restore
+        vi.restoreAllMocks();
+        if (prevElectronAPI) {
+          (globalThis as any).electronAPI = prevElectronAPI;
+          if (typeof window !== 'undefined') {
+            (window as any).electronAPI = prevElectronAPI;
+          }
+        }
+        if (originalMR) {
+          (globalThis as any).MediaRecorder = originalMR;
+          if (typeof window !== 'undefined') {
+            (window as any).MediaRecorder = originalMR;
+          }
+        } else {
+          delete (globalThis as any).MediaRecorder;
+          if (typeof window !== 'undefined') {
+            delete (window as any).MediaRecorder;
+          }
+        }
+
+        if (prevDoc !== undefined) {
+          (globalThis as any).document = prevDoc;
+          if (typeof window !== 'undefined') (window as any).document = prevDoc;
+        } else {
+          delete (globalThis as any).document;
+          if (typeof window !== 'undefined') delete (window as any).document;
+        }
+
+        if (prevAudioCtx !== undefined) {
+          (globalThis as any).AudioContext = prevAudioCtx;
+          if (typeof window !== 'undefined') (window as any).AudioContext = prevAudioCtx;
+        } else {
+          delete (globalThis as any).AudioContext;
+          if (typeof window !== 'undefined') delete (window as any).AudioContext;
+        }
+
+        if (prevMediaStream !== undefined) {
+          (globalThis as any).MediaStream = prevMediaStream;
+          if (typeof window !== 'undefined') (window as any).MediaStream = prevMediaStream;
+        } else {
+          delete (globalThis as any).MediaStream;
+          if (typeof window !== 'undefined') delete (window as any).MediaStream;
+        }
+
+        if (prevRAF !== undefined) {
+          (globalThis as any).requestAnimationFrame = prevRAF;
+          if (typeof window !== 'undefined') (window as any).requestAnimationFrame = prevRAF;
+        } else {
+          delete (globalThis as any).requestAnimationFrame;
+          if (typeof window !== 'undefined') delete (window as any).requestAnimationFrame;
+        }
+
+        if (prevCAF !== undefined) {
+          (globalThis as any).cancelAnimationFrame = prevCAF;
+          if (typeof window !== 'undefined') (window as any).cancelAnimationFrame = prevCAF;
+        } else {
+          delete (globalThis as any).cancelAnimationFrame;
+          if (typeof window !== 'undefined') delete (window as any).cancelAnimationFrame;
+        }
+      }
+    });
+  });
+
+  describe('Blob URL Memory Management', () => {
+    it('registers a blob url and automatically revokes it after timeout', () => {
+      vi.useFakeTimers();
+      const originalRevoke = URL.revokeObjectURL;
+      const mockRevoke = vi.fn();
+      URL.revokeObjectURL = mockRevoke;
+
+      try {
+        const testUrl = 'blob:http://localhost:5173/test-video-uuid-1';
+        registerExportBlobUrl(testUrl, 1000);
+
+        // Before timeout, should not be revoked yet
+        expect(mockRevoke).not.toHaveBeenCalled();
+
+        // Advance timers past timeout
+        vi.advanceTimersByTime(1001);
+        expect(mockRevoke).toHaveBeenCalledWith(testUrl);
+      } finally {
+        URL.revokeObjectURL = originalRevoke;
+        vi.useRealTimers();
+      }
+    });
+
+    it('explicitly revokes blob url and cancels pending auto-revoke timer', () => {
+      vi.useFakeTimers();
+      const originalRevoke = URL.revokeObjectURL;
+      const mockRevoke = vi.fn();
+      URL.revokeObjectURL = mockRevoke;
+
+      try {
+        const testUrl = 'blob:http://localhost:5173/test-video-uuid-2';
+        registerExportBlobUrl(testUrl, 5000);
+
+        // Explicit revocation
+        revokeExportBlobUrl(testUrl);
+        expect(mockRevoke).toHaveBeenCalledTimes(1);
+        expect(mockRevoke).toHaveBeenCalledWith(testUrl);
+
+        // Advance timers past the original 5000ms: should NOT trigger a second revoke
+        vi.advanceTimersByTime(6000);
+        expect(mockRevoke).toHaveBeenCalledTimes(1);
+      } finally {
+        URL.revokeObjectURL = originalRevoke;
+        vi.useRealTimers();
+      }
+    });
+
+    it('gracefully handles undefined, invalid or non-blob URLs without crashing', () => {
+      expect(() => revokeExportBlobUrl(undefined)).not.toThrow();
+      expect(() => revokeExportBlobUrl('')).not.toThrow();
+      expect(() => revokeExportBlobUrl('https://example.com/video.mp4')).not.toThrow();
+    });
+  });
+
+  describe('Smart Audio Fetch Guard', () => {
+    it('returns null if fetchAndDecodeAudio fails all attempts', async () => {
+      const mockCtx = {} as AudioContext;
+      const originalFetch = globalThis.fetch;
+      globalThis.fetch = vi.fn().mockRejectedValue(new Error('Network error'));
+
+      try {
+        const res = await fetchAndDecodeAudio(mockCtx, 'https://example.com/audio.mp3', 1);
+        expect(res).toBeNull();
+      } finally {
+        globalThis.fetch = originalFetch;
+      }
+    });
+
+    it('returns error result when audioUrls are requested but all fail to download', async () => {
+      const originalFetch = globalThis.fetch;
+      globalThis.fetch = vi.fn().mockRejectedValue(new Error('Network timeout'));
+
+      const prevAudioCtx = (globalThis as any).AudioContext;
+      class MockAudioContext {
+        state = 'running';
+        resume = vi.fn().mockResolvedValue(undefined);
+        close = vi.fn().mockResolvedValue(undefined);
+        createBuffer = vi.fn();
+      }
+
+      (globalThis as any).AudioContext = MockAudioContext;
+      if (typeof window !== 'undefined') (window as any).AudioContext = MockAudioContext;
+
+      try {
+        const res = await exportProject({
+          projectName: 'Failed Audio Test',
+          aspectRatio: '9:16',
+          totalDuration: 5,
+          audioUrls: ['https://example.com/failed_recitation.mp3'],
+          ayahs: [
+            {
+              number: 1,
+              numberInSurah: 1,
+              surahNumber: 1,
+              surahName: 'الفاتحة',
+              juz: 1,
+              page: 1,
+              audioUrl: 'https://example.com/failed_recitation.mp3',
+              text: 'بسم الله الرحمن الرحيم',
+              duration: 5,
+            },
+          ],
+        });
+
+        expect(res.success).toBe(false);
+        expect(res.error).toContain('تعذر تحميل تلاوة القارئ الصوتية');
+      } finally {
+        globalThis.fetch = originalFetch;
+        if (prevAudioCtx !== undefined) {
+          (globalThis as any).AudioContext = prevAudioCtx;
+          if (typeof window !== 'undefined') (window as any).AudioContext = prevAudioCtx;
+        } else {
+          delete (globalThis as any).AudioContext;
+          if (typeof window !== 'undefined') delete (window as any).AudioContext;
+        }
+      }
     });
   });
 });

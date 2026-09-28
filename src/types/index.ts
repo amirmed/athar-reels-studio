@@ -124,6 +124,7 @@ export interface TextSettings {
     'none' | 'wordByWord' | 'lineByLine' | 'fadeIn' | 'typewriter' | 'scaleBounce' | 'glowPulse';
   // Display Mode (Single Ayah Slide vs Smart Chunking vs Continuous)
   displayMode?: 'single_ayah' | 'chunked' | 'continuous';
+  showAyahNumber?: boolean; // Toggle display of ayah bracket and number ﴿١﴾
   // Word-by-word Karaoke settings
   wordHighlightEnabled?: boolean;
   wordHighlightStyle?: WordHighlightStyle;

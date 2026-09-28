@@ -33,7 +33,7 @@ export const PreviewWaveform: React.FC<PreviewWaveformProps> = React.memo(
         <AudioWaveformBar
           isPlaying={isPlaying}
           style={textSettings?.waveformStyle || 'bars'}
-          color={textSettings?.waveformColor || '#fbbf24'}
+          color={textSettings?.waveformColor || '#cbb06b'}
           height={textSettings?.waveformHeight || (size === 'fullscreen' ? 36 : 22)}
           opacity={textSettings?.waveformOpacity ?? 0.85}
           peaks={peaks}

@@ -33,7 +33,7 @@ export const QuranPlaylistModal: React.FC<QuranPlaylistModalProps> = ({
       title="مكتبة المقاطع القرآنية حسب المشاعر والاحتياج"
       subtitle="مقاطع قرآنية جاهزة بتصميم سينمائي وقراء مختارين للتطبيق بضغطة واحدة"
       headerIcon={<BookOpen size={20} className="text-gold-400" />}
-      size="xl"
+      size="lg"
     >
       <div className="space-y-4">
         {/* Category Tabs */}

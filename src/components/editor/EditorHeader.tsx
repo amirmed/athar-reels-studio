@@ -184,11 +184,11 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
         <button
           type="button"
           onClick={onOpenAutoReel}
-          className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600/20 to-gold-500/20 hover:from-purple-600/30 hover:to-gold-500/30 text-purple-700 dark:text-purple-200 text-xs font-bold border border-purple-400/30 transition-all cursor-pointer shadow-sm active:scale-95"
+          className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gold-500/10 hover:bg-gold-500/20 text-gold-300 text-xs font-medium border border-gold-500/25 transition-all cursor-pointer shadow-sm active:scale-95"
           title={t('editor.autoReelTooltip', 'توليد ريلز تلقائي بالذكاء الاصطناعي')}
           aria-label={t('editor.autoReelTooltip', 'توليد ريلز تلقائي بالذكاء الاصطناعي')}
         >
-          <Sparkles size={13} className="text-purple-500 dark:text-purple-300 animate-pulse" />
+          <Sparkles size={13} className="text-gold-400" />
           <span className="hidden sm:inline">Auto-Reel AI</span>
         </button>
 
@@ -197,9 +197,9 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           <button
             type="button"
             onClick={() => setIsToolsMenuOpen(!isToolsMenuOpen)}
-            className={`p-2 rounded-xl border transition-all cursor-pointer flex items-center gap-1 text-xs font-bold ${
+            className={`p-2 rounded-xl border transition-all cursor-pointer flex items-center gap-1 text-xs font-medium ${
               isToolsMenuOpen
-                ? 'bg-gold-500/20 text-gold-700 dark:text-gold-300 border-gold-500/40'
+                ? 'bg-gold-500/15 text-gold-300 border-gold-500/30'
                 : 'bg-surface-800 hover:bg-surface-700 text-surface-200 hover:text-surface-50 border-surface-700/40'
             }`}
             title={t('editor.creativeToolsMore', 'المزيد من الأدوات الإبداعية والاستوديوهات')}
@@ -218,7 +218,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.96 }}
                 transition={{ duration: 0.15 }}
-                className="absolute start-0 sm:end-auto mt-2 w-56 bg-surface-900 border border-gold-500/30 rounded-2xl p-2 shadow-2xl z-50 space-y-1 text-start"
+                className="absolute start-0 sm:end-auto mt-2 w-56 bg-surface-900 border border-gold-500/25 rounded-xl p-2 shadow-xl z-50 space-y-1 text-start"
               >
                 <div className="px-3 py-1.5 border-b border-surface-700/40 text-[11px] font-bold text-surface-400">
                   {t('editor.additionalStudios', 'استوديوهات وأدوات إضافية:')}

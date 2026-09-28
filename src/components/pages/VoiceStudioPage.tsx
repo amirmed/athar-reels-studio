@@ -25,6 +25,7 @@ import {
 import { surahs } from '../../data/mockData';
 import { initialAzkarList } from '../../data/azkarHadithData';
 import { fetchAyahsWithAudio, AyahData } from '../../services/quranApi';
+import { sanitizeQuranTextForDisplay } from '../../utils/arabicTextUtils';
 import { MosqueReverbPreset, AzkarItem, Project, Spatial8DStyle } from '../../types';
 import { createDefaultProject } from '../../utils/projectDefaults';
 import { voiceStudioEngine } from '../../services/voiceStudioEngine';
@@ -64,7 +65,7 @@ export const VoiceStudioPage: React.FC = () => {
 
   // Teleprompter Visual Controls
   const [fontSize, setFontSize] = useState<number>(36);
-  const [fontFamily, _setFontFamily] = useState<string>('Amiri');
+  const [fontFamily, setFontFamily] = useState<string>('Amiri');
   const [prompterTheme, setPrompterTheme] = useState<PrompterTheme>('obsidian');
   const [isAutoScrolling, setIsAutoScrolling] = useState<boolean>(false);
   const [scrollSpeed, setScrollSpeed] = useState<number>(0.45); // Calm natural recitation tempo
@@ -94,7 +95,7 @@ export const VoiceStudioPage: React.FC = () => {
   const [show8DBadge, setShow8DBadge] = useState<boolean>(true);
 
   const [recitationVolume, _setRecitationVolume] = useState<number>(90);
-  const [customReciterName, setCustomReciterName] = useState<string>('تلاوتي الخاصة 🎙️');
+  const [customReciterName, setCustomReciterName] = useState<string>('تلاوتي الخاصة');
   const [ambientSoundId, setAmbientSoundId] = useState<string>('none');
   const [ambientVolume, setAmbientVolume] = useState<number>(0);
   const [_isTestingAmbient, _setIsTestingAmbient] = useState<boolean>(false);
@@ -495,7 +496,7 @@ export const VoiceStudioPage: React.FC = () => {
       resolvedText = customText;
     }
 
-    const resolvedReciter = customReciterName.trim() || 'تلاوتي الخاصة 🎙️';
+    const resolvedReciter = customReciterName.trim() || 'تلاوتي الخاصة';
     const newProjectId = `voice-reel-${Date.now()}`;
     let permanentAudioUrl: string | null = null;
 
@@ -592,13 +593,13 @@ export const VoiceStudioPage: React.FC = () => {
         displayMode: 'chunked',
         wordHighlightEnabled: true,
         wordHighlightStyle: 'goldGlow',
-        wordHighlightColor: '#fbbf24',
+        wordHighlightColor: '#cbb06b',
         showProgressBar: true,
         progressBarStyle: 'neonGlow',
-        progressBarColor: '#fbbf24',
+        progressBarColor: '#cbb06b',
         showWaveform: true,
         waveformStyle: 'bars' as const,
-        waveformColor: '#fbbf24',
+        waveformColor: '#cbb06b',
         colorGrading: 'royalGold',
         cameraMotion: 'slowZoom',
         showTitleBadge: isQuran,
@@ -616,7 +617,7 @@ export const VoiceStudioPage: React.FC = () => {
     addToast({
       message: t(
         'voiceStudio.projectCreatedToast',
-        'تم تحويل تسجيلك الصوتي بنجاح إلى مشروع ريلز احترافي! 🚀✨'
+        'تم تحويل تسجيلك الصوتي بنجاح إلى مشروع ريلز احترافي! ✨'
       ),
       type: 'success',
     });
@@ -849,15 +850,27 @@ export const VoiceStudioPage: React.FC = () => {
                 />
               </div>
 
-              <div className="flex items-center gap-1 text-xs text-surface-300 font-bold">
+              <div className="flex items-center gap-1.5 text-xs text-surface-300 font-bold">
                 <span className="text-[11px]">{t('voiceStudio.fontLabel', 'الخط:')}</span>
+                <select
+                  value={fontFamily}
+                  onChange={(e) => setFontFamily(e.target.value)}
+                  className="py-1 px-2 rounded-xl bg-surface-800 border border-surface-700/50 text-[11px] font-bold text-surface-200 cursor-pointer shadow-sm focus:outline-none focus:border-gold-400"
+                  title={t('voiceStudio.fontFamilyTitle', 'نوع الخط')}
+                >
+                  <option value="Amiri">المصحف الأميري</option>
+                  <option value="Noto Naskh Arabic">النسخ القرآني</option>
+                  <option value="Scheherazade New">شهرزاد العثماني</option>
+                  <option value="Cairo">كايرو</option>
+                  <option value="Tajawal">تجوال</option>
+                </select>
                 <input
                   type="range"
                   min={22}
                   max={64}
                   value={fontSize}
                   onChange={(e) => setFontSize(Number(e.target.value))}
-                  className="w-16 accent-gold-400 cursor-pointer"
+                  className="w-14 accent-gold-400 cursor-pointer"
                   title={`${t('voiceStudio.fontSize', 'حجم الخط')}: ${fontSize}px`}
                 />
               </div>
@@ -1060,13 +1073,16 @@ export const VoiceStudioPage: React.FC = () => {
             ref={prompterContainerRef}
             className={`flex-1 overflow-y-auto p-8 sm:p-12 text-center transition-all duration-300 relative ${themeStyles[prompterTheme]}`}
             style={{
-              fontFamily,
+              fontFamily: `"${fontFamily}", "Amiri", "Noto Naskh Arabic", "Scheherazade New", serif`,
               transform: isMirrored ? 'scaleX(-1)' : 'none',
             }}
           >
             {/* Elegant Islamic Header in Prompter */}
             {prompterMode === 'quran' && selectedSurahNumber !== 9 && fromAyah === 1 && (
-              <div className="mb-8 text-gold-600 dark:text-gold-400 font-serif text-xl sm:text-2xl select-none font-bold">
+              <div
+                className="mb-8 text-gold-600 dark:text-gold-400 font-serif text-xl sm:text-2xl select-none font-bold"
+                style={{ fontFamily: `"${fontFamily}", "Amiri", "Noto Naskh Arabic", "Scheherazade New", serif` }}
+              >
                 بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
               </div>
             )}
@@ -1081,14 +1097,17 @@ export const VoiceStudioPage: React.FC = () => {
                 ) : (
                   <div
                     className="leading-[2.4] font-medium tracking-wide max-w-3xl mx-auto select-none text-surface-50"
-                    style={{ fontSize: `${fontSize}px` }}
+                    style={{
+                      fontSize: `${fontSize}px`,
+                      fontFamily: `"${fontFamily}", "Amiri", "Noto Naskh Arabic", "Scheherazade New", serif`,
+                    }}
                   >
                     {ayahs.map((ayah) => (
                       <span
                         key={ayah.numberInSurah}
                         className="inline transition-colors hover:text-gold-500"
                       >
-                        {ayah.text}{' '}
+                        {sanitizeQuranTextForDisplay(ayah.text)}{' '}
                         <span className="inline-flex items-center justify-center mx-1 text-gold-600 dark:text-gold-400 font-serif text-lg sm:text-xl font-bold">
                           ۝{ayah.numberInSurah}
                         </span>{' '}

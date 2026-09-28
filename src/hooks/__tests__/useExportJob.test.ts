@@ -4,6 +4,8 @@ import * as exportOrchestrator from '../../services/exportOrchestrator';
 
 vi.mock('../../services/exportOrchestrator', () => ({
   exportProject: vi.fn(),
+  revokeExportBlobUrl: vi.fn(),
+  registerExportBlobUrl: vi.fn((url) => url),
   PLATFORM_PRESETS: [],
   ASPECT_RATIO_DIMENSIONS: {},
   QUALITY_BITRATES: {},

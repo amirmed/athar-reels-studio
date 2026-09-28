@@ -26,12 +26,12 @@ const IllustrationFirstTime: React.FC = () => (
   >
     <defs>
       <linearGradient id="goldGrad" x1="20" y1="20" x2="140" y2="140" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#fbbf24" />
-        <stop offset="1" stopColor="#d97706" />
+        <stop stopColor="#cbb06b" />
+        <stop offset="1" stopColor="#b89849" />
       </linearGradient>
       <radialGradient id="sunGrad" cx="80" cy="80" r="60" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#fbbf24" stopOpacity="0.2" />
-        <stop offset="1" stopColor="#fbbf24" stopOpacity="0" />
+        <stop stopColor="#cbb06b" stopOpacity="0.2" />
+        <stop offset="1" stopColor="#cbb06b" stopOpacity="0" />
       </radialGradient>
     </defs>
 
@@ -65,10 +65,10 @@ const IllustrationFirstTime: React.FC = () => (
     <path d="M74 72 L90 80 L74 88 Z" fill="url(#goldGrad)" />
 
     {/* Floating Magic Stars */}
-    <circle cx="42" cy="40" r="3" fill="#fbbf24" />
-    <path d="M122 42 L124 46 L128 48 L124 50 L122 54 L120 50 L116 48 L120 46 Z" fill="#fbbf24" />
-    <circle cx="120" cy="116" r="2.5" fill="#f59e0b" />
-    <path d="M38 110 L40 113 L43 114 L40 115 L38 118 L36 115 L33 114 L36 113 Z" fill="#fcd34d" />
+    <circle cx="42" cy="40" r="3" fill="#cbb06b" />
+    <path d="M122 42 L124 46 L128 48 L124 50 L122 54 L120 50 L116 48 L120 46 Z" fill="#cbb06b" />
+    <circle cx="120" cy="116" r="2.5" fill="#b89849" />
+    <path d="M38 110 L40 113 L43 114 L40 115 L38 118 L36 115 L33 114 L36 113 Z" fill="#ddc997" />
   </svg>
 );
 
@@ -182,12 +182,12 @@ const IllustrationDefault: React.FC = () => (
   >
     <defs>
       <linearGradient id="defGoldGrad" x1="30" y1="30" x2="130" y2="130" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#fbbf24" />
-        <stop offset="1" stopColor="#d97706" />
+        <stop stopColor="#cbb06b" />
+        <stop offset="1" stopColor="#b89849" />
       </linearGradient>
       <radialGradient id="defGoldGlow" cx="80" cy="80" r="60" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#fbbf24" stopOpacity="0.18" />
-        <stop offset="1" stopColor="#fbbf24" stopOpacity="0" />
+        <stop stopColor="#cbb06b" stopOpacity="0.18" />
+        <stop offset="1" stopColor="#cbb06b" stopOpacity="0" />
       </radialGradient>
     </defs>
 
@@ -215,9 +215,9 @@ const IllustrationDefault: React.FC = () => (
     />
 
     {/* Small Star Sparkles */}
-    <circle cx="44" cy="38" r="2.5" fill="#fcd34d" />
-    <circle cx="124" cy="50" r="3" fill="#fbbf24" />
-    <path d="M120 104 L122 107 L125 108 L122 109 L120 112 L118 109 L115 108 L118 107 Z" fill="#fbbf24" />
+    <circle cx="44" cy="38" r="2.5" fill="#ddc997" />
+    <circle cx="124" cy="50" r="3" fill="#cbb06b" />
+    <path d="M120 104 L122 107 L125 108 L122 109 L120 112 L118 109 L115 108 L118 107 Z" fill="#cbb06b" />
   </svg>
 );
 

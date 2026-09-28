@@ -19,7 +19,7 @@ export const AudioWaveformBar: React.FC<AudioWaveformBarProps> = React.memo(
   ({
     isPlaying = false,
     style = 'bars',
-    color = '#fbbf24',
+    color = '#cbb06b',
     height = 28,
     opacity = 0.85,
     barCount = 28,

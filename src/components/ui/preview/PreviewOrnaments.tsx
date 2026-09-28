@@ -19,7 +19,7 @@ export const PreviewOrnaments: React.FC<PreviewOrnamentsProps> = React.memo(
     isPlaying,
   }) => {
     const style = textSettings?.ornamentStyle || 'geometricArabesque';
-    const color = textSettings?.ornamentColor || '#fbbf24';
+    const color = textSettings?.ornamentColor || '#cbb06b';
     const opacity = textSettings?.ornamentOpacity ?? 0.75;
     const showOrnaments =
       textSettings?.showIslamicOrnaments !== false &&
@@ -28,7 +28,7 @@ export const PreviewOrnaments: React.FC<PreviewOrnamentsProps> = React.memo(
 
     // Cinematic Progress Bar Calculation
     const barStyle = textSettings?.progressBarStyle || 'neonGlow';
-    const barColor = textSettings?.progressBarColor || '#fbbf24';
+    const barColor = textSettings?.progressBarColor || '#cbb06b';
     const barHeight = textSettings?.progressBarHeight || 3;
     const showProgressBar = textSettings?.showProgressBar !== false;
 

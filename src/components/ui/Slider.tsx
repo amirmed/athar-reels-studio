@@ -19,7 +19,7 @@ export interface SliderProps {
 
 const ACCENT_COLOR_HEX: Record<NonNullable<SliderProps['accentColor']>, string> = {
   teal: '#14b8a6',
-  gold: '#fbbf24',
+  gold: '#cbb06b',
   amber: '#f59e0b',
   emerald: '#10b981',
   blue: '#0ea5e9',

@@ -49,12 +49,12 @@ export const READY_CLIPS_LIBRARY: ClipTemplate[] = [
     categoryIcon: '🌅',
     description:
       'مقطع ريلز مصمم للنشر الصباحي يشمل آية الكرسي كاملة بصوت عذب يبعث الطمأنينة وحفظ اليوم.',
-    badge: 'ترند صباحي ☀️',
+    badge: 'أجواء صباحية',
     surahName: 'البقرة',
     surahNumber: 2,
     fromAyah: 255,
     toAyah: 255,
-    reciterName: 'ياسر الدوسري 🎙️',
+    reciterName: 'ياسر الدوسري',
     reciterId: 'dossari_128',
     backgroundUrl:
       'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1080&q=85',
@@ -88,7 +88,7 @@ export const READY_CLIPS_LIBRARY: ClipTemplate[] = [
     surahNumber: 112,
     fromAyah: 1,
     toAyah: 4,
-    reciterName: 'إسلام صبحي 🎙️',
+    reciterName: 'إسلام صبحي',
     reciterId: 'islam_sobhi',
     backgroundUrl:
       'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1080&q=85',
@@ -121,7 +121,7 @@ export const READY_CLIPS_LIBRARY: ClipTemplate[] = [
     surahNumber: 71,
     fromAyah: 10,
     toAyah: 12,
-    reciterName: 'شريف مصطفى 🎙️',
+    reciterName: 'شريف مصطفى',
     reciterId: 'sherif_mossad',
     backgroundUrl:
       'https://images.pexels.com/photos/1529881/pexels-photo-1529881.jpeg?auto=compress&cs=tinysrgb&w=1280',
@@ -149,7 +149,7 @@ export const READY_CLIPS_LIBRARY: ClipTemplate[] = [
     surahNumber: 18,
     fromAyah: 1,
     toAyah: 10,
-    reciterName: 'ياسر الدوسري 🎙️',
+    reciterName: 'ياسر الدوسري',
     reciterId: 'dossari_128',
     backgroundUrl:
       'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1080&q=85',
@@ -183,7 +183,7 @@ export const READY_CLIPS_LIBRARY: ClipTemplate[] = [
     surahNumber: 33,
     fromAyah: 56,
     toAyah: 56,
-    reciterName: 'عبد الرحمن السديس 🎙️',
+    reciterName: 'عبد الرحمن السديس',
     reciterId: 'sudais',
     backgroundUrl:
       'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=1080&q=85',
@@ -216,7 +216,7 @@ export const READY_CLIPS_LIBRARY: ClipTemplate[] = [
     surahNumber: 18,
     fromAyah: 107,
     toAyah: 110,
-    reciterName: 'شريف مصطفى 🎙️',
+    reciterName: 'شريف مصطفى',
     reciterId: 'sherif_mossad',
     backgroundUrl:
       'https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=1080&q=85',
@@ -244,7 +244,7 @@ export const READY_CLIPS_LIBRARY: ClipTemplate[] = [
     surahNumber: 17,
     fromAyah: 23,
     toAyah: 24,
-    reciterName: 'إسلام صبحي 🎙️',
+    reciterName: 'إسلام صبحي',
     reciterId: 'islam_sobhi',
     backgroundUrl:
       'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=1080&q=85',
@@ -278,7 +278,7 @@ export const READY_CLIPS_LIBRARY: ClipTemplate[] = [
     surahNumber: 21,
     fromAyah: 87,
     toAyah: 88,
-    reciterName: 'ياسر الدوسري 🎙️',
+    reciterName: 'ياسر الدوسري',
     reciterId: 'dossari_128',
     backgroundUrl:
       'https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=1080&q=85',
@@ -310,7 +310,7 @@ export const READY_CLIPS_LIBRARY: ClipTemplate[] = [
     surahNumber: 3,
     fromAyah: 8,
     toAyah: 9,
-    reciterName: 'شريف مصطفى 🎙️',
+    reciterName: 'شريف مصطفى',
     reciterId: 'sherif_mossad',
     backgroundUrl:
       'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1080&q=85',
@@ -338,7 +338,7 @@ export const READY_CLIPS_LIBRARY: ClipTemplate[] = [
     surahNumber: 67,
     fromAyah: 1,
     toAyah: 5,
-    reciterName: 'ياسر الدوسري 🎙️',
+    reciterName: 'ياسر الدوسري',
     reciterId: 'dossari_128',
     backgroundUrl:
       'https://images.unsplash.com/photo-1509773896068-7fd415d91e2e?auto=format&fit=crop&w=1080&q=85',
@@ -370,7 +370,7 @@ export const READY_CLIPS_LIBRARY: ClipTemplate[] = [
     surahNumber: 17,
     fromAyah: 78,
     toAyah: 80,
-    reciterName: 'إسلام صبحي 🎙️',
+    reciterName: 'إسلام صبحي',
     reciterId: 'islam_sobhi',
     backgroundUrl:
       'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1080&q=85',
@@ -396,7 +396,7 @@ export const READY_CLIPS_LIBRARY: ClipTemplate[] = [
     surahNumber: 32,
     fromAyah: 15,
     toAyah: 17,
-    reciterName: 'شريف مصطفى 🎙️',
+    reciterName: 'شريف مصطفى',
     reciterId: 'sherif_mossad',
     backgroundUrl:
       'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1080&q=85',

@@ -166,16 +166,16 @@ export const ArabicAiVoiceModal: React.FC<ArabicAiVoiceModalProps> = ({
           fontFamily: 'Amiri',
           wordHighlightEnabled: true,
           wordHighlightStyle: 'goldGlow',
-          wordHighlightColor: '#fbbf24',
+          wordHighlightColor: '#cbb06b',
           inactiveWordOpacity: 0.55,
           highlightScale: true,
           showProgressBar: true,
           progressBarStyle: 'neonGlow',
-          progressBarColor: '#fbbf24',
+          progressBarColor: '#cbb06b',
           progressBarHeight: 4,
           showIslamicOrnaments: true,
           ornamentStyle: 'royalFrame',
-          ornamentColor: '#fbbf24',
+          ornamentColor: '#cbb06b',
           ornamentOpacity: 0.8,
           translationFontSize: 14,
           translationColor: '#e2e8f0',
@@ -346,7 +346,7 @@ export const ArabicAiVoiceModal: React.FC<ArabicAiVoiceModalProps> = ({
               ) : (
                 <Zap size={15} />
               )}
-              <span>إنشاء ريلز بصوت الـ AI 🚀</span>
+              <span>إنشاء ريلز بالصوت المحدد</span>
             </button>
           </div>
         </div>

@@ -405,10 +405,11 @@ function concatAudio(inputs: string[], outputPath: string, timeoutMs = 60_000): 
 function getBundledFontsDir(): string {
   const possiblePaths = [
     path.join(process.resourcesPath || '', 'fonts'),
-    path.join(process.cwd(), 'resources', 'fonts'),
-    path.join(__dirname, '..', 'resources', 'fonts'),
-    path.join(__dirname, '..', '..', 'resources', 'fonts'),
     path.join(process.cwd(), 'public', 'fonts'),
+    path.join(process.cwd(), 'dist', 'fonts'),
+    path.join(__dirname, '..', 'public', 'fonts'),
+    path.join(__dirname, '..', 'dist', 'fonts'),
+    path.join(__dirname, '..', '..', 'public', 'fonts'),
   ];
   for (const p of possiblePaths) {
     if (p && fs.existsSync(p)) {

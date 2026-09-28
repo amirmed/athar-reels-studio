@@ -13,28 +13,24 @@ interface StatCardProps {
 
 const colorMap = {
   accent: {
-    bg: 'from-accent-500/10 to-accent-600/5',
-    icon: 'bg-accent-500/15 text-accent-400',
-    border: 'border-accent-500/15',
-    glow: 'shadow-accent-500/5',
+    bg: 'bg-surface-900/90',
+    icon: 'bg-surface-800 text-gold-400 border border-surface-700/30',
+    border: 'border-surface-700/30',
   },
   gold: {
-    bg: 'from-gold-500/10 to-gold-600/5',
-    icon: 'bg-gold-500/15 text-gold-400',
-    border: 'border-gold-500/15',
-    glow: 'shadow-gold-500/5',
+    bg: 'bg-surface-900/90',
+    icon: 'bg-surface-800 text-gold-400 border border-surface-700/30',
+    border: 'border-surface-700/30',
   },
   emerald: {
-    bg: 'from-emerald-500/10 to-emerald-600/5',
-    icon: 'bg-emerald-500/15 text-emerald-400',
-    border: 'border-emerald-500/15',
-    glow: 'shadow-emerald-500/5',
+    bg: 'bg-surface-900/90',
+    icon: 'bg-surface-800 text-accent-400 border border-surface-700/30',
+    border: 'border-surface-700/30',
   },
   surface: {
-    bg: 'from-surface-800/60 to-surface-900/60',
-    icon: 'bg-surface-700/60 text-surface-300',
-    border: 'border-surface-700/40',
-    glow: 'shadow-black/10',
+    bg: 'bg-surface-900/90',
+    icon: 'bg-surface-800 text-surface-300 border border-surface-700/30',
+    border: 'border-surface-700/30',
   },
 };
 
@@ -51,36 +47,36 @@ export const StatCard: React.FC<StatCardProps> = ({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 15 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay, ease: [0.4, 0, 0.2, 1] }}
+      transition={{ duration: 0.25, delay, ease: [0.4, 0, 0.2, 1] }}
       className={`
-        glass-card bg-gradient-to-bl ${colors.bg} border ${colors.border}
-        p-5 hover:border-surface-700/60 transition-all duration-300
-        hover:shadow-xl ${colors.glow} group cursor-default overflow-hidden
+        rounded-xl ${colors.bg} border ${colors.border}
+        p-4 hover:border-gold-500/30 transition-all duration-150
+        shadow-sm group cursor-default overflow-hidden
       `}
     >
       <div className="flex items-start justify-between gap-3 min-w-0">
         <div className="flex-1 min-w-0 overflow-hidden">
-          <p className="text-xs sm:text-[13px] text-surface-300 font-semibold mb-1.5 truncate">
+          <p className="text-xs text-surface-400 font-medium mb-1 truncate">
             {title}
           </p>
           <p
             className={`${
               isTextValue
-                ? 'text-base sm:text-lg font-bold leading-snug font-arabic'
-                : 'text-2xl sm:text-3xl font-black font-mono'
+                ? 'text-sm sm:text-base font-bold leading-snug font-arabic'
+                : 'text-2xl sm:text-3xl font-bold font-mono'
             } text-surface-50 truncate block w-full tracking-tight`}
             title={String(value)}
           >
             {value}
           </p>
-          {trend && <p className="text-xs text-accent-400 mt-1.5 font-bold truncate">{trend}</p>}
+          {trend && <p className="text-xs text-gold-400/90 mt-1 font-medium truncate">{trend}</p>}
         </div>
         <div
-          className={`w-11 h-11 rounded-2xl shrink-0 ${colors.icon} flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-sm`}
+          className={`w-10 h-10 rounded-xl shrink-0 ${colors.icon} flex items-center justify-center transition-transform duration-150 shadow-sm`}
         >
-          <Icon size={20} />
+          <Icon size={18} />
         </div>
       </div>
     </motion.div>

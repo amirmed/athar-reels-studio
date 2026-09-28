@@ -19,11 +19,11 @@ interface ModalProps {
 }
 
 const sizeMap: Record<NonNullable<ModalProps['size']>, string> = {
-  sm: 'max-w-md w-full',
-  md: 'max-w-lg w-full',
-  lg: 'max-w-2xl w-full',
-  xl: 'max-w-4xl w-full',
-  full: 'max-w-6xl w-full',
+  sm: 'max-w-sm w-full',
+  md: 'max-w-md w-full',
+  lg: 'max-w-xl w-full',
+  xl: 'max-w-2xl w-full',
+  full: 'max-w-3xl w-full',
 };
 
 // Global counter for nested / multiple modals body scroll locking
@@ -161,7 +161,7 @@ export const Modal: React.FC<ModalProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 15 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className={`relative w-full max-w-[calc(100vw-1.5rem)] sm:max-w-[calc(100vw-3rem)] ${sizeMap[size] || sizeMap.md} bg-surface-900 border border-surface-700/50 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[90vh] my-auto shrink-0 z-10 ${className}`}
+            className={`relative w-full max-w-[calc(100vw-1.5rem)] ${sizeMap[size] || sizeMap.md} mx-auto bg-surface-900 border border-surface-700/50 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[90vh] my-auto shrink-0 z-10 ${className}`}
           >
             {/* Header */}
             {(title || headerIcon || headerActions) && (

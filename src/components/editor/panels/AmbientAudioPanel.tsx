@@ -77,7 +77,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
   ];
 
   const waveformGlowColors = [
-    { id: '#fbbf24', name: t('editor.colorGold', 'ذهبي') },
+    { id: '#cbb06b', name: t('editor.colorGold', 'ذهبي') },
     { id: '#10b981', name: t('editor.colorEmerald', 'زمردي') },
     { id: '#38bdf8', name: t('editor.colorSky', 'سماوي') },
     { id: '#ffffff', name: t('editor.colorWhite', 'أبيض') },
@@ -589,7 +589,7 @@ export const AmbientAudioPanel: React.FC<AmbientAudioPanelProps> = ({
                     type="button"
                     onClick={() => setTextSettings((s) => ({ ...s, waveformColor: c.id }))}
                     className={`w-7 h-7 rounded-full border-2 transition-all flex items-center justify-center cursor-pointer ${
-                      (textSettings.waveformColor || '#fbbf24') === c.id
+                      (textSettings.waveformColor || '#cbb06b') === c.id
                         ? 'scale-110 border-white shadow-lg'
                         : 'border-transparent opacity-60 hover:opacity-100'
                     }`}

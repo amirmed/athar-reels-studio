@@ -82,7 +82,7 @@ export const ViralCaptionModal: React.FC<ViralCaptionModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="مولد الكابشن والهاشتاجات الفيروسية 🚀"
+      title="مولد الكابشن والهاشتاجات للنشر"
       subtitle="جاهز للنشر المباشر على تيك توك، إنستغرام ريلز، ويوتيوب شورتس"
       headerIcon={<Sparkles size={20} className="text-gold-400" />}
       size="lg"

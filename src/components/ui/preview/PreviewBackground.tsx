@@ -97,9 +97,7 @@ export const PreviewBackground: React.FC<PreviewBackgroundProps> = React.memo(
             </AnimatePresence>
           )
         )}
-        <div className="absolute inset-0 pattern-dots opacity-20"></div>
 
-        {/* Video Effect Overlays */}
         {videoEffect === 'vignette' && (
           <div
             className="absolute inset-0 pointer-events-none z-10"

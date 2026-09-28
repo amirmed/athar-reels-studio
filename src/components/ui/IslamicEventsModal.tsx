@@ -38,7 +38,7 @@ export const IslamicEventsModal: React.FC<IslamicEventsModalProps> = ({
       title={t('islamicEventsModal.title', 'مركز المناسبات والمواسم الهجرية 🌙✨')}
       subtitle={t('islamicEventsModal.subtitle', 'قوالب حصرية متوافقة مع التقويم الهجري، يوم الجمعة، رمضان، ومواقيت اليوم')}
       headerIcon={<Calendar size={20} className="text-gold-400" />}
-      size="xl"
+      size="lg"
     >
       <div className="space-y-4">
         {/* Live Occasion Spotlight Banner */}
@@ -127,7 +127,7 @@ export const IslamicEventsModal: React.FC<IslamicEventsModalProps> = ({
         </div>
 
         {/* Preset Items Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           {currentCategory.items.map((item) => (
             <div
               key={item.id}

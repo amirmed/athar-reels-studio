@@ -89,16 +89,16 @@ export const EditorPage: React.FC = () => {
       fontFamily: 'Amiri',
       wordHighlightEnabled: true,
       wordHighlightStyle: 'goldGlow' as const,
-      wordHighlightColor: '#fbbf24',
+      wordHighlightColor: '#cbb06b',
       inactiveWordOpacity: 0.6,
       highlightScale: true,
       showProgressBar: true,
       progressBarStyle: 'neonGlow',
-      progressBarColor: '#fbbf24',
+      progressBarColor: '#cbb06b',
       progressBarHeight: 4,
       showIslamicOrnaments: true,
       ornamentStyle: 'royalFrame',
-      ornamentColor: '#fbbf24',
+      ornamentColor: '#cbb06b',
       ornamentOpacity: 0.85,
     }
   );
@@ -1096,6 +1096,7 @@ export const EditorPage: React.FC = () => {
           textSettings={textSettings}
           setTextSettings={setTextSettings}
           showTranslation={showTranslation}
+          setShowTranslation={setShowTranslation}
           showTafsir={showTafsir}
           backgroundFile={backgroundFile}
           backgroundOpacity={backgroundOpacity}
@@ -1412,7 +1413,7 @@ export const EditorPage: React.FC = () => {
                 ? audioSettings.customReciterName ||
                   currentProject.customReciterName ||
                   currentProject.reciter ||
-                  'تلاوتي الخاصة 🎙️'
+                  'تلاوتي الخاصة'
                 : reciters.find((r) => r.id === reciterId)?.name || currentProject.reciter,
             customReciterName: audioSettings.customReciterName || currentProject.customReciterName,
             backgroundUrl: backgroundFile,
@@ -1439,7 +1440,7 @@ export const EditorPage: React.FC = () => {
           }));
           if (currentProject) {
             updateProject(currentProject.id, {
-              reciter: 'تسجيلي الخاص (أنا) 🎙️',
+              reciter: 'تسجيلي الخاص (أنا)',
               reciterId: 'custom_voice',
               customAudioUrl: audioData.audioUrl,
               audioSettings: {

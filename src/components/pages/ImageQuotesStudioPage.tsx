@@ -107,7 +107,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
     textAlign: 'center',
     showOrnament: true,
     ornamentStyle: 'royalFrame',
-    ornamentColor: '#fbbf24',
+    ornamentColor: '#cbb06b',
     ornamentOpacity: 0.85,
     showReferenceBadge: true,
     watermark: 'atar-studio.com',
@@ -908,7 +908,7 @@ export const ImageQuotesStudioPage: React.FC = () => {
                         <div className="flex items-center gap-2">
                           {[
                             { color: '#ffffff', name: 'أبيض' },
-                            { color: '#fbbf24', name: 'ذهبي' },
+                            { color: '#cbb06b', name: 'ذهبي' },
                             { color: '#34d399', name: 'زمردي' },
                             { color: '#38bdf8', name: 'سماوي' },
                             { color: '#e2e8f0', name: 'فضي' },
