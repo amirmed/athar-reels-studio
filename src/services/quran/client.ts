@@ -12,16 +12,15 @@ export function abortableSleep(ms: number, signal?: AbortSignal | null): Promise
     );
   }
   return new Promise((resolve, reject) => {
-    let timer: ReturnType<typeof setTimeout> | undefined;
-    const onAbort = () => {
-      if (timer !== undefined) clearTimeout(timer);
-      reject(signal?.reason || new DOMException('The operation was aborted', 'AbortError'));
-    };
-
-    timer = setTimeout(() => {
+    const timer = setTimeout(() => {
       if (signal) signal.removeEventListener('abort', onAbort);
       resolve();
     }, ms);
+
+    const onAbort = () => {
+      clearTimeout(timer);
+      reject(signal?.reason || new DOMException('The operation was aborted', 'AbortError'));
+    };
 
     if (signal) {
       signal.addEventListener('abort', onAbort, { once: true });

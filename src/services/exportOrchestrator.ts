@@ -903,7 +903,9 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
       silenceOsc.connect(silenceGain);
       silenceGain.connect(dest);
       silenceOsc.start();
-    } catch {}
+    } catch (err) {
+      void err;
+    }
   }
 
   const fallbackAyah =
@@ -962,13 +964,17 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
       try {
         bgVideo.pause();
         bgVideo.src = '';
-      } catch {}
+      } catch (err) {
+        void err;
+      }
     }
     if (activeBufferSource) {
       try {
         activeBufferSource.stop();
         activeBufferSource.disconnect();
-      } catch {}
+      } catch (err) {
+        void err;
+      }
     }
   };
 
@@ -988,7 +994,7 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
         'video/mp4',
       ];
 
-  let selectedMime = candidateMimes.find((m) => {
+  const selectedMime = candidateMimes.find((m) => {
     try {
       return MediaRecorder.isTypeSupported(m);
     } catch {
@@ -1043,7 +1049,9 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
       if (recorder.state !== 'inactive') {
         try {
           recorder.stop();
-        } catch {}
+        } catch (err) {
+          void err;
+        }
       }
       reject(new Error('تم إلغاء عملية التصدير من قِبل المستخدم'));
     };
@@ -1089,18 +1097,24 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
         if (recorder.state === 'recording') {
           try {
             recorder.requestData();
-          } catch {}
+          } catch (err) {
+            void err;
+          }
           setTimeout(() => {
             try {
               if (recorder.state !== 'inactive') {
                 recorder.stop();
               }
-            } catch {}
+            } catch (err) {
+              void err;
+            }
           }, 100);
         } else if (recorder.state !== 'inactive') {
           try {
             recorder.stop();
-          } catch {}
+          } catch (err) {
+            void err;
+          }
         }
         return;
       }

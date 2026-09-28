@@ -322,7 +322,9 @@ export async function exportVideoWithWebCodecs(params: WebCodecsExportParams): P
         chosenVideoCodec = codec;
         break;
       }
-    } catch {}
+    } catch (err) {
+      void err;
+    }
   }
 
   // 3. Verify AudioEncoder support first before registering audio track with Muxer

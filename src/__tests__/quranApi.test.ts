@@ -128,6 +128,7 @@ describe('Quran API & Audio Multi-CDN Service', () => {
       ).rejects.toThrow();
 
       // Because the caller cancelled, it must NOT retry
+      expect(callCount).toBe(1);
       expect(fetchSpy).toHaveBeenCalledTimes(1);
       fetchSpy.mockRestore();
     });
@@ -184,6 +185,7 @@ describe('Quran API & Audio Multi-CDN Service', () => {
 
       // Must have aborted immediately during sleep (e.g. ~20-100ms) rather than waiting 5000ms
       expect(elapsed).toBeLessThan(1000);
+      expect(callCount).toBe(1);
       expect(fetchSpy).toHaveBeenCalledTimes(1);
       fetchSpy.mockRestore();
     });

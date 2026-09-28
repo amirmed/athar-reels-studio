@@ -8,7 +8,7 @@ import type { IncomingHttpHeaders } from 'http';
 import { createWriteStream } from 'fs';
 import { spawn } from 'child_process';
 import { buildAudioFilters, ExportAudioSettings } from '../src/services/audioDspFilters';
-import { isSafeUserPath, isSafeRemoteDownloadUrl, validateSafeDownloadUrlAsync } from './pathSecurity.js';
+import { isSafeUserPath, validateSafeDownloadUrlAsync } from './pathSecurity.js';
 
 let ffmpeg: any;
 let ffmpegBinaryPath = '';
@@ -96,7 +96,7 @@ async function initFFmpeg() {
     }
   } catch (err: any) {
     console.error('[FFmpeg] Init error:', err);
-    throw new Error(`فشل تحميل محرك FFmpeg: ${err.message}`);
+    throw new Error(`فشل تحميل محرك FFmpeg: ${err.message}`, { cause: err });
   }
 }
 
@@ -1138,7 +1138,7 @@ export function setupExportHandlers(tempDir: string) {
             if (downloadedAudio.length === 1 && syncedTotalDuration && syncedTotalDuration > 0) {
               audioDurations.push(syncedTotalDuration);
             } else {
-              throw new Error(`تعذر قراءة مدة ملف الصوت ${i + 1}/${downloadedAudio.length}`);
+              throw new Error(`تعذر قراءة مدة ملف الصوت ${i + 1}/${downloadedAudio.length}`, { cause: e });
             }
           }
         }
@@ -1170,7 +1170,7 @@ export function setupExportHandlers(tempDir: string) {
             backgroundKind = inferBackgroundKind(bgPath, download.contentType) || mediaKindFromFile(localBgPath) || backgroundKind;
           } catch (e) {
             console.warn('[Export] Failed to download background:', e);
-            throw new Error(`فشل تحميل الخلفية: ${errorMessage(e)}`);
+            throw new Error(`فشل تحميل الخلفية: ${errorMessage(e)}`, { cause: e });
           }
           safeSendProgress(_event.sender, { phase: 'تم تحميل الخلفية', percent: 32 });
         } else {

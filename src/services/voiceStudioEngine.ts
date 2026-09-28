@@ -69,14 +69,18 @@ export class VoiceStudioEngine {
       this.stream.getTracks().forEach((track) => {
         try {
           track.stop();
-        } catch {}
+        } catch (err) {
+          void err;
+        }
       });
       this.stream = null;
     }
     if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
       try {
         this.mediaRecorder.stop();
-      } catch {}
+      } catch (err) {
+        void err;
+      }
     }
     this.mediaRecorder = null;
     this.recordedChunks = [];
@@ -195,7 +199,9 @@ export class VoiceStudioEngine {
         stream.getTracks().forEach((track) => {
           try {
             track.stop();
-          } catch {}
+          } catch (trackErr) {
+            void trackErr;
+          }
         });
       }
       this.stream = null;
@@ -225,7 +231,9 @@ export class VoiceStudioEngine {
           this.stream.getTracks().forEach((track) => {
             try {
               track.stop();
-            } catch {}
+            } catch (trackErr) {
+              void trackErr;
+            }
           });
           this.stream = null;
         }
@@ -258,7 +266,9 @@ export class VoiceStudioEngine {
               audioElem.onerror = () => metaRes();
               setTimeout(metaRes, 400);
             });
-          } catch {}
+          } catch (metaErr) {
+            void metaErr;
+          }
 
           // Create a matching fallback buffer with accurate duration
           try {
@@ -267,7 +277,9 @@ export class VoiceStudioEngine {
             const finalDuration = Math.max(0.1, duration);
             const numFrames = Math.max(1, Math.round(sampleRate * finalDuration));
             this.currentBuffer = ctx.createBuffer(1, numFrames, sampleRate);
-          } catch {}
+          } catch (bufErr) {
+            void bufErr;
+          }
 
           resolve({ blob, url, duration: Math.max(0.1, Math.round(duration * 100) / 100) });
         }

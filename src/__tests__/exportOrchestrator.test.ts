@@ -446,7 +446,7 @@ describe('ExportOrchestrator Service', () => {
       };
       (globalThis as any).AudioContext = MockAudioContext;
       (globalThis as any).MediaStream = MockMediaStream;
-      (globalThis as any).requestAnimationFrame = (cb: Function) => setTimeout(cb, 5);
+      (globalThis as any).requestAnimationFrame = (cb: (time: number) => void) => setTimeout(() => cb(Date.now()), 5);
       (globalThis as any).cancelAnimationFrame = (id: any) => clearTimeout(id);
 
       if (typeof window !== 'undefined') {
