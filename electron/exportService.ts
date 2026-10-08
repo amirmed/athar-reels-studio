@@ -13,6 +13,10 @@ import { isSafeUserPath, validateSafeDownloadUrlAsync } from './pathSecurity.js'
 let ffmpeg: any;
 let ffmpegBinaryPath = '';
 
+export type SupportedVideoEncoder = 'h264_nvenc' | 'h264_qsv' | 'h264_amf' | 'libx264';
+let cachedBestEncoder: SupportedVideoEncoder | null = null;
+let isExportCancelled = false;
+
 type DownloadResult = {
   filePath: string;
   contentType?: string;
@@ -98,6 +102,141 @@ async function initFFmpeg() {
     console.error('[FFmpeg] Init error:', err);
     throw new Error(`فشل تحميل محرك FFmpeg: ${err.message}`, { cause: err });
   }
+}
+
+export async function detectBestVideoEncoder(forceProbe = false): Promise<SupportedVideoEncoder> {
+  if (cachedBestEncoder && !forceProbe) return cachedBestEncoder;
+
+  if (!ffmpegBinaryPath) {
+    try {
+      await initFFmpeg();
+    } catch {
+      return 'libx264';
+    }
+  }
+
+  const bin = ffmpegBinaryPath;
+  if (!bin) return 'libx264';
+
+  const candidates: Array<{ encoder: SupportedVideoEncoder; testArgs: string[] }> = [
+    { encoder: 'h264_nvenc', testArgs: ['-c:v', 'h264_nvenc', '-preset', 'p4'] },
+    { encoder: 'h264_qsv', testArgs: ['-c:v', 'h264_qsv'] },
+    { encoder: 'h264_amf', testArgs: ['-c:v', 'h264_amf'] },
+  ];
+
+  for (const { encoder, testArgs } of candidates) {
+    try {
+      const isWorking = await new Promise<boolean>((resolve) => {
+        const proc = spawn(
+          bin,
+          ['-y', '-f', 'lavfi', '-i', 'testsrc=duration=0.04:size=256x256:rate=25', ...testArgs, '-f', 'null', '-'],
+          { stdio: 'ignore', windowsHide: true }
+        );
+        const timer = setTimeout(() => {
+          try {
+            proc.kill('SIGKILL');
+          } catch (kErr) {
+            void kErr;
+          }
+          resolve(false);
+        }, 1500);
+
+        proc.on('close', (code) => {
+          clearTimeout(timer);
+          resolve(code === 0);
+        });
+        proc.on('error', () => {
+          clearTimeout(timer);
+          resolve(false);
+        });
+      });
+
+      if (isWorking) {
+        console.log(`[FFmpeg] Hardware acceleration verified with encoder: ${encoder}`);
+        cachedBestEncoder = encoder;
+        return encoder;
+      }
+    } catch (encErr) {
+      void encErr;
+    }
+  }
+
+  console.log('[FFmpeg] Using CPU software encoder: libx264');
+  cachedBestEncoder = 'libx264';
+  return 'libx264';
+}
+
+function buildVideoOutputOptions(
+  encoder: SupportedVideoEncoder,
+  effectiveFps: number,
+  totalDur: number,
+  qualityPreset: string,
+  crf: number,
+  bitrate?: number,
+  outputExt?: string
+): string[] {
+  const videoOutputOptions = [
+    '-y',
+    `-c:v ${encoder}`,
+    `-r ${effectiveFps}`,
+    '-pix_fmt yuv420p',
+    `-t ${totalDur}`,
+  ];
+
+  const vBitrate = bitrate && bitrate > 0 ? Math.round(bitrate / 1000) : 0;
+
+  if (encoder === 'h264_nvenc') {
+    videoOutputOptions.push('-preset p4');
+    if (vBitrate > 0) {
+      videoOutputOptions.push(
+        `-b:v ${vBitrate}k`,
+        `-maxrate ${Math.round(vBitrate * 1.5)}k`,
+        `-bufsize ${vBitrate * 2}k`
+      );
+    } else {
+      videoOutputOptions.push('-rc vbr', `-cq ${crf}`);
+    }
+  } else if (encoder === 'h264_qsv') {
+    videoOutputOptions.push('-preset medium');
+    if (vBitrate > 0) {
+      videoOutputOptions.push(
+        `-b:v ${vBitrate}k`,
+        `-maxrate ${Math.round(vBitrate * 1.5)}k`,
+        `-bufsize ${vBitrate * 2}k`
+      );
+    } else {
+      videoOutputOptions.push(`-global_quality ${crf}`);
+    }
+  } else if (encoder === 'h264_amf') {
+    videoOutputOptions.push('-quality balanced');
+    if (vBitrate > 0) {
+      videoOutputOptions.push(
+        `-b:v ${vBitrate}k`,
+        `-maxrate ${Math.round(vBitrate * 1.5)}k`,
+        `-bufsize ${vBitrate * 2}k`
+      );
+    } else {
+      videoOutputOptions.push('-rc cqp', `-qp_i ${crf}`, `-qp_p ${crf}`);
+    }
+  } else {
+    // libx264
+    videoOutputOptions.push(`-preset ${qualityPreset}`);
+    if (vBitrate > 0) {
+      videoOutputOptions.push(
+        `-b:v ${vBitrate}k`,
+        `-maxrate ${Math.round(vBitrate * 1.5)}k`,
+        `-bufsize ${vBitrate * 2}k`
+      );
+    } else {
+      videoOutputOptions.push(`-crf ${crf}`);
+    }
+  }
+
+  if (outputExt !== '.mkv') {
+    videoOutputOptions.push('-movflags +faststart');
+  }
+
+  return videoOutputOptions;
 }
 
 function getContentType(headers: IncomingHttpHeaders): string | undefined {
@@ -343,6 +482,7 @@ export interface ExportOptions {
   showTafsir?: boolean;
   surahName?: string;
   reciterName?: string;
+  hwAcceleration?: boolean | 'auto' | 'nvenc' | 'qsv' | 'amf' | 'off';
 }
 
 const crfMap = { standard: 28, high: 20, premium: 16 };
@@ -934,6 +1074,7 @@ let isNativeExportActive = false;
 let activeJobTempDir: string | null = null;
 
 export function killActiveExport(): void {
+  isExportCancelled = true;
   if (activeFfmpegCmd) {
     try {
       activeFfmpegCmd.kill('SIGKILL');
@@ -997,7 +1138,25 @@ export function setupExportHandlers(tempDir: string) {
     return { success: true };
   });
 
+  ipcMain.handle('export:getHardwareEncoder', async () => {
+    try {
+      await initFFmpeg();
+      const encoder = await detectBestVideoEncoder();
+      return {
+        encoder,
+        isHardwareAccelerated: encoder !== 'libx264',
+      };
+    } catch (err: any) {
+      return {
+        encoder: 'libx264',
+        isHardwareAccelerated: false,
+        error: err.message,
+      };
+    }
+  });
+
   ipcMain.handle('export:start', async (_event, options: ExportOptions) => {
+    isExportCancelled = false;
     if (isNativeExportActive) {
       return {
         success: false,
@@ -1250,143 +1409,160 @@ export function setupExportHandlers(tempDir: string) {
 
       const effectiveFps = Math.max(15, Math.min(60, options.fps ?? 25));
 
-      return new Promise<{ success: boolean; outputPath?: string; error?: string }>((resolve) => {
-        let cmd = ffmpeg();
-        activeFfmpegCmd = cmd;
+      // Determine video encoder (Hardware acceleration with seamless CPU fallback)
+      let chosenEncoder: SupportedVideoEncoder = 'libx264';
+      if (options.hwAcceleration !== false && options.hwAcceleration !== 'off') {
+        if (options.hwAcceleration === 'nvenc') chosenEncoder = 'h264_nvenc';
+        else if (options.hwAcceleration === 'qsv') chosenEncoder = 'h264_qsv';
+        else if (options.hwAcceleration === 'amf') chosenEncoder = 'h264_amf';
+        else chosenEncoder = await detectBestVideoEncoder();
+      }
 
-        if (isVideo && effectiveBg) {
-          cmd = cmd.input(effectiveBg).inputOptions(['-stream_loop', '-1']);
-        } else if (isImage && effectiveBg) {
-          cmd = cmd.input(effectiveBg).inputOptions(['-loop', '1', '-framerate', String(effectiveFps)]);
-        } else {
-          cmd = cmd.input(`color=black:size=${w}x${h}:rate=${effectiveFps}`).inputFormat('lavfi');
-        }
+      const totalExpectedFrames = Math.max(1, Math.round(totalDur * effectiveFps));
+      const outputExt = path.extname(options.outputPath).toLowerCase();
 
-        if (mergedAudio) cmd = cmd.input(mergedAudio);
+      const runRenderPass = (encoderToUse: SupportedVideoEncoder): Promise<{ success: boolean; outputPath?: string; error?: string }> => {
+        return new Promise((resolve) => {
+          let cmd = ffmpeg();
+          activeFfmpegCmd = cmd;
 
-        // Video filter: scale + crop + drawtext
-        const vfParts: string[] = [
-          options.videoEffect === 'kenBurns'
-            ? `scale=${Math.round(w * 1.1)}:${Math.round(h * 1.1)}:force_original_aspect_ratio=increase`
-            : `scale=${w}:${h}:force_original_aspect_ratio=increase`,
-          options.videoEffect === 'kenBurns'
-            ? `crop=${w}:${h}:x=(in_w-out_w)/2+sin(t/4)*20:y=(in_h-out_h)/2`
-            : `crop=${w}:${h}`,
-        ];
-        if (options.bgOpacity !== undefined && options.bgOpacity < 0.98) {
-          const opacity = Math.max(0, Math.min(1, options.bgOpacity)).toFixed(3);
-          vfParts.push(`lutrgb=r=val*${opacity}:g=val*${opacity}:b=val*${opacity}`);
-        }
-        addVideoEffectFilters(vfParts, options.videoEffect, w, h);
-        if (textFilters.length > 0) vfParts.push(...textFilters);
-
-        cmd.videoFilter(vfParts.join(','));
-
-        const outputExt = path.extname(options.outputPath).toLowerCase();
-        const videoOutputOptions = [
-          '-c:v libx264',
-          `-r ${effectiveFps}`,
-          `-preset ${preset}`,
-          '-pix_fmt yuv420p',
-          `-t ${totalDur}`,
-        ];
-
-        if (options.bitrate && options.bitrate > 0) {
-          const vBitrate = Math.round(options.bitrate / 1000);
-          videoOutputOptions.push(
-            `-b:v ${vBitrate}k`,
-            `-maxrate ${Math.round(vBitrate * 1.5)}k`,
-            `-bufsize ${vBitrate * 2}k`
-          );
-        } else {
-          videoOutputOptions.push(`-crf ${crf}`);
-        }
-
-        if (outputExt !== '.mkv') {
-          videoOutputOptions.push('-movflags +faststart');
-        }
-
-        cmd.outputOptions(videoOutputOptions);
-
-        if (mergedAudio) {
-          const audioFilters = buildAudioFilters(options.audioSettings, totalDur);
-          const audioOutputOptions = [
-            '-map 0:v',
-            '-map 1:a',
-            '-c:a aac',
-            `-b:a ${abitrate}`,
-            '-max_muxing_queue_size 1024',
-          ];
-          if (audioFilters.length > 0) {
-            audioOutputOptions.push(`-af ${audioFilters.join(',')}`);
+          if (isVideo && effectiveBg) {
+            cmd = cmd.input(effectiveBg).inputOptions(['-stream_loop', '-1']);
+          } else if (isImage && effectiveBg) {
+            cmd = cmd.input(effectiveBg).inputOptions(['-loop', '1', '-framerate', String(effectiveFps)]);
+          } else {
+            cmd = cmd.input(`color=black:size=${w}x${h}:rate=${effectiveFps}`).inputFormat('lavfi');
           }
-          cmd.outputOptions(audioOutputOptions);
-        } else {
-          cmd.outputOptions(['-an']);
-        }
 
-        activeFfmpegCmd = cmd;
+          if (mergedAudio) cmd = cmd.input(mergedAudio);
 
-        const totalExpectedFrames = Math.max(1, Math.round(totalDur * effectiveFps));
+          // Video filter: scale + crop + video effects + text/subtitles
+          const vfParts: string[] = [
+            options.videoEffect === 'kenBurns'
+              ? `scale=${Math.round(w * 1.1)}:${Math.round(h * 1.1)}:force_original_aspect_ratio=increase`
+              : `scale=${w}:${h}:force_original_aspect_ratio=increase`,
+            options.videoEffect === 'kenBurns'
+              ? `crop=${w}:${h}:x=(in_w-out_w)/2+sin(t/4)*20:y=(in_h-out_h)/2`
+              : `crop=${w}:${h}`,
+          ];
+          if (options.bgOpacity !== undefined && options.bgOpacity < 0.98) {
+            const opacity = Math.max(0, Math.min(1, options.bgOpacity)).toFixed(3);
+            vfParts.push(`lutrgb=r=val*${opacity}:g=val*${opacity}:b=val*${opacity}`);
+          }
+          addVideoEffectFilters(vfParts, options.videoEffect, w, h);
+          if (textFilters.length > 0) vfParts.push(...textFilters);
 
-        cmd
-          .output(options.outputPath)
-          .on('start', () => {
-            // Started export safely
-          })
-          .on('progress', (prog: any) => {
-            let calculatedPercent = 0;
-            if (typeof prog.percent === 'number' && prog.percent > 0 && !isNaN(prog.percent)) {
-              calculatedPercent = prog.percent;
-            } else if (typeof prog.frames === 'number' && prog.frames > 0 && totalExpectedFrames > 0) {
-              calculatedPercent = Math.min(100, Math.max(0, (prog.frames / totalExpectedFrames) * 100));
-            } else if (prog.timemark && typeof prog.timemark === 'string') {
-              const parts = prog.timemark.split(':');
-              if (parts.length === 3) {
-                const elapsed = parseFloat(parts[0]) * 3600 + parseFloat(parts[1]) * 60 + parseFloat(parts[2]);
-                if (!isNaN(elapsed) && totalDur > 0) {
-                  calculatedPercent = Math.min(100, Math.max(0, (elapsed / totalDur) * 100));
+          cmd.videoFilter(vfParts.join(','));
+
+          const videoOutputOptions = buildVideoOutputOptions(
+            encoderToUse,
+            effectiveFps,
+            totalDur,
+            preset,
+            crf,
+            options.bitrate,
+            outputExt
+          );
+          cmd.outputOptions(videoOutputOptions);
+
+          if (mergedAudio) {
+            const audioFilters = buildAudioFilters(options.audioSettings, totalDur);
+            const audioOutputOptions = [
+              '-map 0:v',
+              '-map 1:a',
+              '-c:a aac',
+              `-b:a ${abitrate}`,
+              '-max_muxing_queue_size 1024',
+            ];
+            if (audioFilters.length > 0) {
+              audioOutputOptions.push(`-af ${audioFilters.join(',')}`);
+            }
+            cmd.outputOptions(audioOutputOptions);
+          } else {
+            cmd.outputOptions(['-an']);
+          }
+
+          cmd
+            .output(options.outputPath)
+            .on('start', () => {
+              const encLabel = encoderToUse !== 'libx264' ? `تسريع العتاد (${encoderToUse})` : 'المعالج (libx264)';
+              console.log(`[FFmpeg] Rendering started with ${encLabel}`);
+            })
+            .on('progress', (prog: any) => {
+              let calculatedPercent = 0;
+              if (typeof prog.percent === 'number' && prog.percent > 0 && !isNaN(prog.percent)) {
+                calculatedPercent = prog.percent;
+              } else if (typeof prog.frames === 'number' && prog.frames > 0 && totalExpectedFrames > 0) {
+                calculatedPercent = Math.min(100, Math.max(0, (prog.frames / totalExpectedFrames) * 100));
+              } else if (prog.timemark && typeof prog.timemark === 'string') {
+                const parts = prog.timemark.split(':');
+                if (parts.length === 3) {
+                  const elapsed = parseFloat(parts[0]) * 3600 + parseFloat(parts[1]) * 60 + parseFloat(parts[2]);
+                  if (!isNaN(elapsed) && totalDur > 0) {
+                    calculatedPercent = Math.min(100, Math.max(0, (elapsed / totalDur) * 100));
+                  }
                 }
               }
-            }
 
-            const pct = Math.min(98, Math.max(35, 35 + Math.round(calculatedPercent * 0.62)));
-            safeSendProgress(_event.sender, {
-              phase: `جاري التصدير... ${Math.round(calculatedPercent)}%`,
-              percent: pct,
-              timemark: prog.timemark,
-              currentFrame: prog.frames,
-              totalFrames: totalExpectedFrames,
-              fps: prog.currentFps,
-            });
-          })
-          .on('end', () => {
-            cleanup();
-            try {
-              const size = fs.existsSync(options.outputPath)
-                ? fs.statSync(options.outputPath).size
-                : 0;
-              if (size < 1024) {
-                resolve({
-                  success: false,
-                  error: `الملف الناتج فارغ أو تالف (${size} بايت). أعد المحاولة أو غيّر إعدادات الجودة.`,
-                });
+              const pct = Math.min(98, Math.max(35, 35 + Math.round(calculatedPercent * 0.62)));
+              const hwSuffix = encoderToUse !== 'libx264' ? ' [GPU ⚡]' : '';
+              safeSendProgress(_event.sender, {
+                phase: `جاري التصدير${hwSuffix}... ${Math.round(calculatedPercent)}%`,
+                percent: pct,
+                timemark: prog.timemark,
+                currentFrame: prog.frames,
+                totalFrames: totalExpectedFrames,
+                fps: prog.currentFps,
+              });
+            })
+            .on('end', () => {
+              try {
+                const size = fs.existsSync(options.outputPath)
+                  ? fs.statSync(options.outputPath).size
+                  : 0;
+                if (size < 1024) {
+                  if (encoderToUse !== 'libx264' && !isExportCancelled) {
+                    console.warn(`[FFmpeg] Hardware encode produced empty file (${size} bytes). Retrying with libx264 (CPU)...`);
+                    safeSendProgress(_event.sender, {
+                      phase: 'تنبيه: التراجع التلقائي إلى المعالج CPU...',
+                      percent: 35,
+                    });
+                    resolve(runRenderPass('libx264'));
+                    return;
+                  }
+                  resolve({
+                    success: false,
+                    error: `الملف الناتج فارغ أو تالف (${size} بايت). أعد المحاولة أو غيّر إعدادات الجودة.`,
+                  });
+                  return;
+                }
+              } catch (e: any) {
+                resolve({ success: false, error: `تعذر التحقق من الملف الناتج: ${e.message}` });
                 return;
               }
-            } catch (e: any) {
-              resolve({ success: false, error: `تعذر التحقق من الملف الناتج: ${e.message}` });
-              return;
-            }
-            safeSendProgress(_event.sender, { phase: 'اكتمل التصدير ✅', percent: 100 });
-            resolve({ success: true, outputPath: options.outputPath });
-          })
-          .on('error', (err: any) => {
-            cleanup();
-            console.error('[FFmpeg Error]', err.message);
-            resolve({ success: false, error: err.message });
-          })
-          .run();
-      });
+              cleanup();
+              safeSendProgress(_event.sender, { phase: 'اكتمل التصدير ✅', percent: 100 });
+              resolve({ success: true, outputPath: options.outputPath });
+            })
+            .on('error', (err: any) => {
+              if (encoderToUse !== 'libx264' && !isExportCancelled) {
+                console.warn(`[FFmpeg] Hardware encoder ${encoderToUse} failed: ${err.message}. Seamlessly falling back to CPU encoder (libx264)...`);
+                safeSendProgress(_event.sender, {
+                  phase: 'تنبيه: التراجع التلقائي إلى المعالج CPU...',
+                  percent: 35,
+                });
+                resolve(runRenderPass('libx264'));
+                return;
+              }
+              cleanup();
+              console.error('[FFmpeg Error]', err.message);
+              resolve({ success: false, error: err.message });
+            })
+            .run();
+        });
+      };
+
+      return await runRenderPass(chosenEncoder);
 
     } catch (err: any) {
       cleanup();

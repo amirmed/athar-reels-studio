@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAppStore } from '../../store/useAppStore';
 import { useTranslation } from '../../i18n';
@@ -58,6 +58,15 @@ export const ExportPage: React.FC = () => {
   );
   const [quality, setQuality] = useState<'standard' | 'high' | 'premium'>('high');
   const [activePublishJob, setActivePublishJob] = useState<ExportJob | null>(null);
+  const [hwEncoderInfo, setHwEncoderInfo] = useState<{ encoder: string; isHardwareAccelerated: boolean } | null>(null);
+
+  useEffect(() => {
+    if (window.electronAPI?.videoExport?.getHardwareEncoder) {
+      window.electronAPI.videoExport.getHardwareEncoder().then((res) => {
+        if (res) setHwEncoderInfo(res);
+      }).catch(() => {});
+    }
+  }, []);
 
   // Real export: delegates to unified useExportJob hook
   const performRealExport = useCallback(
@@ -425,10 +434,18 @@ export const ExportPage: React.FC = () => {
                 <div className="w-10 h-10 rounded-xl bg-accent-500/15 flex items-center justify-center">
                   <Download size={20} className="text-accent-400" />
                 </div>
-                <div>
-                  <h3 className="text-base font-bold text-surface-50">
-                    {t('export.newExport', 'تصدير جديد')}
-                  </h3>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <h3 className="text-base font-bold text-surface-50">
+                      {t('export.newExport', 'تصدير جديد')}
+                    </h3>
+                    {hwEncoderInfo?.isHardwareAccelerated && (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[11px] font-semibold">
+                        <Zap size={11} className="text-emerald-400" />
+                        <span>تسريع العتاد ({hwEncoderInfo.encoder.replace('h264_', '').toUpperCase()})</span>
+                      </span>
+                    )}
+                  </div>
                   <p className="text-xs text-surface-400">
                     {currentProject ? currentProject.name : t('export.noProjectSelected', 'لم يتم اختيار مشروع')}
                   </p>

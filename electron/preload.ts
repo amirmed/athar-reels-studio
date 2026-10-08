@@ -51,6 +51,7 @@ const electronAPI = {
     start: (options: unknown) => ipcRenderer.invoke('export:start', options),
     choosePath: (projectName: string) => ipcRenderer.invoke('export:choosePath', projectName),
     cancel: () => ipcRenderer.invoke('export:cancel'),
+    getHardwareEncoder: () => ipcRenderer.invoke('export:getHardwareEncoder'),
     onProgress: (cb: (data: { phase: string; percent: number; timemark?: string }) => void) => {
       const handler = (_: unknown, data: { phase: string; percent: number; timemark?: string }) => cb(data);
       ipcRenderer.on('export:progress', handler);

@@ -14,6 +14,7 @@ import {
   Pause,
   RotateCcw,
   Eye,
+  Zap,
 } from 'lucide-react';
 import { Modal } from './Modal';
 import { ThumbnailModal } from './ThumbnailModal';
@@ -124,6 +125,15 @@ export const ExportModal: React.FC<ExportModalProps> = ({
   const [selectedPlatformPreset, setSelectedPlatformPreset] = useState<string>('tiktok');
   const [activeTab, setActiveTab] = useState<'export' | 'preview'>('export');
   const [estimatedSizeMb, setEstimatedSizeMb] = useState(0);
+  const [hwEncoderInfo, setHwEncoderInfo] = useState<{ encoder: string; isHardwareAccelerated: boolean } | null>(null);
+
+  useEffect(() => {
+    if (isOpen && window.electronAPI?.videoExport?.getHardwareEncoder) {
+      window.electronAPI.videoExport.getHardwareEncoder().then((res) => {
+        if (res) setHwEncoderInfo(res);
+      }).catch(() => {});
+    }
+  }, [isOpen]);
 
   // Live Canvas Preview Player State
   const [isPreviewPlaying, setIsPreviewPlaying] = useState(true);
@@ -404,6 +414,19 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                 <span>{t('exportModal.tabPreview', 'معاينة حية دقيقة قبل التصدير 🎥')}</span>
               </button>
             </div>
+
+            {hwEncoderInfo?.isHardwareAccelerated && (
+              <div className="flex items-center justify-between px-3.5 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-xs">
+                <div className="flex items-center gap-2">
+                  <Zap size={14} className="text-emerald-400 animate-pulse" />
+                  <span className="font-semibold">تسريع التصدير بكرت الشاشة مفعل:</span>
+                  <span className="font-mono bg-emerald-500/20 px-1.5 py-0.5 rounded text-[11px] font-bold">
+                    {hwEncoderInfo.encoder.replace('h264_', '').toUpperCase()}
+                  </span>
+                </div>
+                <span className="text-[11px] text-emerald-300/80 hidden sm:inline">3x–6x أسرع مع توفير المعالج ⚡</span>
+              </div>
+            )}
 
             {/* TAB 1: 5.3 📐 Platform Presets */}
             {activeTab === 'export' && (

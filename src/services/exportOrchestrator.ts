@@ -536,6 +536,7 @@ export async function exportProject(options: ExportProjectOptions): Promise<Expo
         bitrate: targetBitrate,
         outputPath: targetFfmpegOutputPath || undefined,
         totalDuration,
+        hwAcceleration: 'auto',
       });
 
       unbindProgress();

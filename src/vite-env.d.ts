@@ -151,6 +151,7 @@ export interface ElectronExportOptions {
   reciterName?: string;
   fps?: number;
   bitrate?: number;
+  hwAcceleration?: boolean | 'auto' | 'nvenc' | 'qsv' | 'amf' | 'off';
 }
 
 export interface ElectronExportProgressData {
@@ -171,6 +172,11 @@ export interface ElectronVideoExportAPI {
   }>;
   choosePath: (projectName: string) => Promise<string | null>;
   cancel: () => Promise<{ success: boolean }>;
+  getHardwareEncoder?: () => Promise<{
+    encoder: string;
+    isHardwareAccelerated: boolean;
+    error?: string;
+  }>;
   onProgress: (cb: (data: ElectronExportProgressData) => void) => () => void;
 }
 
