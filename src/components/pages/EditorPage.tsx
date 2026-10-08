@@ -182,6 +182,19 @@ export const EditorPage: React.FC = () => {
   const playingRef = useRef(false);
   const autoAdvanceTimersRef = useRef<Set<number>>(new Set());
 
+  // Safe tracking refs to eliminate stale closures and exhaustive-deps warnings
+  const currentProjectRef = useRef(currentProject);
+  currentProjectRef.current = currentProject;
+  const audioSettingsRef = useRef(audioSettings);
+  audioSettingsRef.current = audioSettings;
+  const ayahsRef = useRef(ayahs);
+  ayahsRef.current = ayahs;
+  const tRef = useRef(t);
+  tRef.current = t;
+  const addToastRef = useRef(addToast);
+  addToastRef.current = addToast;
+  const playFromIndexRef = useRef<(index: number) => void>(() => {});
+
   // Undo/Redo Engine
   const handleApplySnapshot = useCallback((snapshot: EditorSnapshot) => {
     setTextSettings(snapshot.textSettings);
@@ -267,29 +280,30 @@ export const EditorPage: React.FC = () => {
 
   // Sync state when project changes
   useEffect(() => {
-    if (currentProject) {
-      if (currentProject.surahNumber) setSurahNumber(currentProject.surahNumber);
-      if (currentProject.fromAyah !== undefined || currentProject.toAyah !== undefined) {
-        const rawPFrom = Math.max(1, currentProject.fromAyah ?? 1);
-        const rawPTo = Math.max(1, currentProject.toAyah ?? 7);
+    const proj = currentProjectRef.current;
+    if (proj && proj.id === currentProject?.id) {
+      if (proj.surahNumber) setSurahNumber(proj.surahNumber);
+      if (proj.fromAyah !== undefined || proj.toAyah !== undefined) {
+        const rawPFrom = Math.max(1, proj.fromAyah ?? 1);
+        const rawPTo = Math.max(1, proj.toAyah ?? 7);
         setFromAyah(Math.min(rawPFrom, rawPTo));
         setToAyah(Math.max(rawPFrom, rawPTo));
       }
-      if (currentProject.reciterId) setReciterId(currentProject.reciterId);
-      if (currentProject.aspectRatio) setAspectRatio(currentProject.aspectRatio as '9:16' | '1:1' | '16:9');
-      if (currentProject.backgroundUrl !== undefined)
-        setBackgroundFile(currentProject.backgroundUrl);
-      if (currentProject.backgroundOpacity !== undefined)
-        setBackgroundOpacity(currentProject.backgroundOpacity);
-      if (currentProject.textSettings) setTextSettings(currentProject.textSettings);
-      if (currentProject.audioSettings) setAudioSettings(currentProject.audioSettings);
-      if (currentProject.watermark !== undefined) setWatermark(currentProject.watermark);
-      if (currentProject.translationEnabled !== undefined)
-        setShowTranslation(currentProject.translationEnabled);
-      if (currentProject.tafsirEnabled !== undefined) setShowTafsir(currentProject.tafsirEnabled);
-      if (currentProject.transition) setTransition(currentProject.transition);
-      if (currentProject.videoEffect) setVideoEffect(currentProject.videoEffect);
-      if (currentProject.activeTemplateId !== undefined) setActiveTemplateId(currentProject.activeTemplateId);
+      if (proj.reciterId) setReciterId(proj.reciterId);
+      if (proj.aspectRatio) setAspectRatio(proj.aspectRatio as '9:16' | '1:1' | '16:9');
+      if (proj.backgroundUrl !== undefined)
+        setBackgroundFile(proj.backgroundUrl);
+      if (proj.backgroundOpacity !== undefined)
+        setBackgroundOpacity(proj.backgroundOpacity);
+      if (proj.textSettings) setTextSettings(proj.textSettings);
+      if (proj.audioSettings) setAudioSettings(proj.audioSettings);
+      if (proj.watermark !== undefined) setWatermark(proj.watermark);
+      if (proj.translationEnabled !== undefined)
+        setShowTranslation(proj.translationEnabled);
+      if (proj.tafsirEnabled !== undefined) setShowTafsir(proj.tafsirEnabled);
+      if (proj.transition) setTransition(proj.transition);
+      if (proj.videoEffect) setVideoEffect(proj.videoEffect);
+      if (proj.activeTemplateId !== undefined) setActiveTemplateId(proj.activeTemplateId);
       setCurrentAyahIndex(0);
       setAudioCurrentTime(0);
     }
@@ -297,28 +311,31 @@ export const EditorPage: React.FC = () => {
 
   // Restore persistent audio on mount / project change if page was refreshed
   useEffect(() => {
+    const proj = currentProjectRef.current;
+    const audioSet = audioSettingsRef.current;
     const rawVoice =
-      audioSettings.customRecordedAudioUrl ||
-      currentProject?.audioSettings?.customRecordedAudioUrl ||
-      currentProject?.customAudioUrl;
+      audioSet.customRecordedAudioUrl ||
+      proj?.audioSettings?.customRecordedAudioUrl ||
+      proj?.customAudioUrl;
     const customKey =
-      audioSettings.customAudioKey ||
-      currentProject?.audioSettings?.customAudioKey ||
-      currentProject?.customAudioKey ||
+      audioSet.customAudioKey ||
+      proj?.audioSettings?.customAudioKey ||
+      proj?.customAudioKey ||
       currentProject?.id;
 
     if (rawVoice || customKey) {
       resolveValidAudioUrl(rawVoice, currentProject?.id, customKey).then((validUrl) => {
-        if (validUrl && validUrl !== audioSettings.customRecordedAudioUrl) {
+        if (validUrl && validUrl !== audioSettingsRef.current.customRecordedAudioUrl) {
           setAudioSettings((prev) => ({
             ...prev,
             customRecordedAudioUrl: validUrl,
           }));
-          if (currentProject && updateProject) {
-            updateProject(currentProject.id, {
+          const currentProj = currentProjectRef.current;
+          if (currentProj && updateProject) {
+            updateProject(currentProj.id, {
               customAudioUrl: validUrl,
               audioSettings: {
-                ...currentProject.audioSettings,
+                ...currentProj.audioSettings,
                 customRecordedAudioUrl: validUrl,
               },
             });
@@ -331,7 +348,7 @@ export const EditorPage: React.FC = () => {
         }
       });
     }
-  }, [currentProject?.id]);
+  }, [currentProject?.id, updateProject]);
 
   // Waveform Timing Editor Word Save Handler
   const handleSaveWords = useCallback(
@@ -418,7 +435,7 @@ export const EditorPage: React.FC = () => {
   // Ambient sound playback with strict lifecycle management (no restart glitches on volume drag)
   useEffect(() => {
     if (isPlaying && audioSettings.ambientSoundId && audioSettings.ambientSoundId !== 'none') {
-      const vol = audioSettings.ambientSoundVolume ?? 28;
+      const vol = audioSettingsRef.current.ambientSoundVolume ?? 28;
       if (
         proceduralAmbientEngine.getCurrentSoundId() === audioSettings.ambientSoundId &&
         proceduralAmbientEngine.getIsPlaying()
@@ -598,13 +615,18 @@ export const EditorPage: React.FC = () => {
     }
   }, [
     currentProject?.id,
+    currentProject?.name,
     currentProject?.contentType,
     currentProject?.customText,
     currentProject?.customTitle,
     currentProject?.customAudioUrl,
+    currentProject?.customAudioKey,
     currentProject?.surahNumber,
     currentProject?.fromAyah,
     currentProject?.toAyah,
+    currentProject?.audioSettings?.customAudioDuration,
+    currentProject?.audioSettings?.customAudioKey,
+    currentProject?.audioSettings?.customRecordedAudioUrl,
     surahNumber,
     fromAyah,
     toAyah,
@@ -626,18 +648,7 @@ export const EditorPage: React.FC = () => {
   useEffect(() => {
     unifiedAudioEngine.setVolume((audioSettings.recitationVolume || 85) / 100);
     unifiedAudioEngine.configureAudioEffects(audioSettings);
-  }, [
-    audioSettings.recitationVolume,
-    audioSettings.enable8DAudio,
-    audioSettings.eightDSpeed,
-    audioSettings.eightDDepth,
-    audioSettings.eightDStyle,
-    audioSettings.reverbPreset,
-    audioSettings.reverbLevel,
-    audioSettings.enableStudioClarity,
-    audioSettings.enableVoiceWarmth,
-    audioSettings.enableNoiseGate,
-  ]);
+  }, [audioSettings]);
 
   // Connect Audio Engine state listeners with strict teardown
   useEffect(() => {
@@ -650,12 +661,12 @@ export const EditorPage: React.FC = () => {
     const unsubComplete = unifiedAudioEngine.onItemComplete(() => {
       setCurrentAyahIndex((prevIdx) => {
         const nextIdx = prevIdx + 1;
-        if (nextIdx < ayahs.length) {
-          const t = window.setTimeout(() => {
-            autoAdvanceTimersRef.current.delete(t);
-            playFromIndex(nextIdx);
+        if (nextIdx < ayahsRef.current.length) {
+          const timerId = window.setTimeout(() => {
+            autoAdvanceTimersRef.current.delete(timerId);
+            playFromIndexRef.current(nextIdx);
           }, 25);
-          autoAdvanceTimersRef.current.add(t);
+          autoAdvanceTimersRef.current.add(timerId);
           return nextIdx;
         } else {
           playingRef.current = false;
@@ -683,15 +694,15 @@ export const EditorPage: React.FC = () => {
     });
 
     const unsubError = unifiedAudioEngine.onError((_errorMsg) => {
-      addToast({
-        message: t(
+      addToastRef.current({
+        message: tRef.current(
           'editor.audioPlayError',
           'تعذر تشغيل تلاوة القارئ. قد يكون هناك انقطاع في الاتصال أو عدم توفر السورة لهذا القارئ 🎙️'
         ),
         type: 'warning',
         duration: 8000,
         action: {
-          label: t('editor.changeReciter', 'تغيير القارئ 🔄'),
+          label: tRef.current('editor.changeReciter', 'تغيير القارئ 🔄'),
           onClick: () => {
             setIsReciterModalOpen(true);
           },
@@ -701,17 +712,19 @@ export const EditorPage: React.FC = () => {
       playingRef.current = false;
     });
 
+    const autoAdvanceTimers = autoAdvanceTimersRef.current;
+
     return () => {
       unsubState();
       unsubComplete();
       unsubError();
-      autoAdvanceTimersRef.current.forEach((t) => window.clearTimeout(t));
-      autoAdvanceTimersRef.current.clear();
+      autoAdvanceTimers.forEach((timerId) => window.clearTimeout(timerId));
+      autoAdvanceTimers.clear();
       unifiedAudioEngine.setProgressListener(null);
       unifiedAudioEngine.stop();
       proceduralAmbientEngine.stop();
     };
-  }, [ayahs, surahNumber]);
+  }, []);
 
   // Audio Playback Controls
   const playFromIndex = (index: number) => {
@@ -752,6 +765,7 @@ export const EditorPage: React.FC = () => {
       words: ayah?.words,
     });
   };
+  playFromIndexRef.current = playFromIndex;
 
   const stopAudio = () => {
     autoAdvanceTimersRef.current.forEach((t) => window.clearTimeout(t));
@@ -838,6 +852,11 @@ export const EditorPage: React.FC = () => {
     t,
   ]);
 
+  const togglePlayRef = useRef(togglePlay);
+  togglePlayRef.current = togglePlay;
+  const handleSaveRef = useRef(handleSave);
+  handleSaveRef.current = handleSave;
+
   // Global Pro Keyboard Shortcuts Studio
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -854,7 +873,7 @@ export const EditorPage: React.FC = () => {
       // Space -> Toggle Play / Pause
       if (e.code === 'Space') {
         e.preventDefault();
-        togglePlay();
+        togglePlayRef.current();
         return;
       }
 
@@ -862,7 +881,7 @@ export const EditorPage: React.FC = () => {
       if (e.key === 'ArrowLeft') {
         e.preventDefault();
         if (currentAyahIndex < ayahs.length - 1) {
-          playFromIndex(currentAyahIndex + 1);
+          playFromIndexRef.current(currentAyahIndex + 1);
         }
         return;
       }
@@ -871,7 +890,7 @@ export const EditorPage: React.FC = () => {
       if (e.key === 'ArrowRight') {
         e.preventDefault();
         if (currentAyahIndex > 0) {
-          playFromIndex(currentAyahIndex - 1);
+          playFromIndexRef.current(currentAyahIndex - 1);
         }
         return;
       }
@@ -879,7 +898,7 @@ export const EditorPage: React.FC = () => {
       // Ctrl + E -> Export Modal
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'e') {
         e.preventDefault();
-        handleSave();
+        handleSaveRef.current();
         setShowExportModal(true);
         return;
       }
@@ -887,7 +906,7 @@ export const EditorPage: React.FC = () => {
       // Ctrl + S -> Save Toast
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
         e.preventDefault();
-        handleSave();
+        handleSaveRef.current();
         return;
       }
 
@@ -896,7 +915,7 @@ export const EditorPage: React.FC = () => {
         e.preventDefault();
         setAudioSettings((s) => {
           const next = s.ambientSoundId === 'none' ? 'gentle_rain' : 'none';
-          addToast({
+          addToastRef.current({
             message:
               next === 'none'
                 ? t('editor.ambientMuted', 'تم كتم صوت الطبيعة 🔇')
@@ -920,20 +939,17 @@ export const EditorPage: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [
     isAnyModalOpen,
-    isPlaying,
     currentAyahIndex,
     ayahs.length,
-    togglePlay,
-    playFromIndex,
-    handleSave,
-    addToast,
+    t,
   ]);
 
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('saved');
 
   // Debounced Autosave Engine with Snapshot Thumbnail Generator (Connected to Settings)
   useEffect(() => {
-    if (!currentProject) return;
+    const proj = currentProjectRef.current;
+    if (!proj) return;
     if (settings.autoSave === false) {
       setSaveStatus('idle');
       return;
@@ -947,10 +963,12 @@ export const EditorPage: React.FC = () => {
       setSaveStatus('saving');
 
       try {
-        let thumb = currentProject.thumbnail;
+        const currentProj = currentProjectRef.current;
+        if (!currentProj) return;
+        let thumb = currentProj.thumbnail;
         try {
           const generated = await generateProjectThumbnailDataUrl({
-            surahName: surahs.find((s) => s.number === surahNumber)?.name || currentProject.surah,
+            surahName: surahs.find((s) => s.number === surahNumber)?.name || currentProj.surah,
             fromAyah,
             toAyah,
             backgroundUrl: backgroundFile,
@@ -962,7 +980,7 @@ export const EditorPage: React.FC = () => {
           console.warn('[Autosave] Failed to generate project thumbnail snapshot', e);
         }
 
-        updateProject(currentProject.id, {
+        updateProject(currentProj.id, {
           textSettings,
           audioSettings,
           translationEnabled: showTranslation,
@@ -1010,6 +1028,7 @@ export const EditorPage: React.FC = () => {
     transition,
     videoEffect,
     activeTemplateId,
+    updateProject,
   ]);
 
 
